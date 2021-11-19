@@ -33,6 +33,7 @@ module.exports = {
   transformIgnorePatterns: [
     "/node_modules/",
     "^.+\\.module\\.(css|sass|scss)$",
+    "[/\\\\]node_modules[/\\\\].+\\.(ts|tsx)$",
   ],
   verbose: true,
 };
