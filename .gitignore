@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+.vscode/settings.json
 
 # testing
 /coverage
@@ -35,3 +36,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# cypress
+cypress/screenshots/
+cypress/videos/
