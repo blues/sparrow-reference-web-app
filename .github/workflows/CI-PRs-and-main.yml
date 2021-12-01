@@ -1,0 +1,16 @@
+name: CI-PRs-and-main
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: crazy-max/ghaction-dump-context@v1
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+      - run: docker build . --file Dockerfile.prod

@@ -2,28 +2,18 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, download our dependencies:
+First, install [Volta](https://docs.volta.sh/guide/getting-started).
+
+Download our dependencies:
 
 ```bash
-npm install
+yarn install
 ```
-
-Check you're using the same versions of Node and NPM as recommended by the `package.json`'s Volta pins.
-
-```bash
-node -v && npm -v
-```
-
-If you need to download Volta locally to let it handle managing Node.js and npm dependencies without having to think about it, follow the [download instructions here](https://docs.volta.sh/guide/getting-started).
-
-Current Node and npm versions:
-
-`Node.js v16.13.0, NPM: 8.1.4`
 
 Then, run the development server:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Open [http://localhost:4000](http://localhost:4000) with your browser to see the result.
@@ -55,4 +45,31 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Deploy on Microsoft Azure Cloud
+
+Note: Deploying as Azure Container Instances will cost about $30/mo.
+
+Build Machine and Cloud Setup:
+
+1. Sign up for [Azure](https://azure.microsoft.com/en-us/)
+2. Sign up for [Docker Hub](https://hub.docker.com/signup)
+3. Install [Docker](https://docs.docker.com/get-docker/)
+4. Install [docker-compose](https://docs.docker.com/compose/install/)
+5. Install the confusingly named [Compose
+   CLI](https://github.com/docker/compose-cli) which adds cloud-specific
+   compose-like support to `docker` via a wrapper of the standard `docker` cli.
+6. Check that _Compose CLI_ is working. `docker version | grep 'Cloud integration' && echo Yay || echo Boo`
+7. Sign into Azure using `docker login azure` https://docs.docker.com/cloud/aci-integration/
+8. Create a docker context on Azure named however you like. `docker context create aci myacicontext`
+9. Activate the new context `docker context use myacicontext`
+
+Configure the _sparrow-starter_ site
+
+1. `cp .env .env.production.local`
+2. Configure the _Required_ variables and optional ones if needed.
+
+Deploy:
+
+`./deploy.sh`
