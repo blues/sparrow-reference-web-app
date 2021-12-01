@@ -126,7 +126,3 @@ To update the Sensor Location or Name, we query the Note API with the sensor's M
 - **Set Gateway Environment Variables** ([API Doc](https://dev.blues.io/reference/notehub-api/environment-variable-api/#set-environment-variables-by-device))
 
 - **Delete Gateway Environment Variables** ([API Doc](https://dev.blues.io/reference/notehub-api/environment-variable-api/#delete-environment-variable-by-device))
-
-List of corresponding API endpoint urls we will need to build and integrate with the Notehub API
-Document any outstanding questions or requirements around integrating with the Notehub API
-Create stories for work that needs to be done to make this happen
