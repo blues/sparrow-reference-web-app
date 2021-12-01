@@ -1,10 +1,10 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.css";
-import Link from 'next/link';
+import Link from "next/link";
+import { Button, Card, DatePicker } from "antd";
+import styles from "../styles/Home.module.scss";
 
-const Home: NextPage = () => {
+const Home: NextPage = function HomePage() {
   return (
     <div className={styles.container}>
       <Head>
@@ -16,11 +16,33 @@ const Home: NextPage = () => {
       <main>
         <h1>Sparrow Starter</h1>
         <ul>
-          <li><Link href="/12345">Gateway 12345 Summary Page</Link></li>
-          <li><Link href="/12345/details">Gateway 12345 Details Page</Link></li>
-          <li><Link href="/12345/sensor/67890">Sensor 67890 Summary Page</Link></li>
-          <li><Link href="/12345/sensor/67890/details">Sensor 67890 Details Page</Link></li>
+          <li>
+            <Link href="/12345">Gateway 12345 Summary Page</Link>
+          </li>
+          <li>
+            <Link href="/12345/details">Gateway 12345 Details Page</Link>
+          </li>
+          <li>
+            <Link href="/12345/sensor/67890">Sensor 67890 Summary Page</Link>
+          </li>
+          <li>
+            <Link href="/12345/sensor/67890/details">
+              Sensor 67890 Details Page
+            </Link>
+          </li>
         </ul>
+        <Button type="primary">Button</Button>
+        <Card
+          title="Default size card"
+          extra={<a href="#">More</a>}
+          style={{ width: 300 }}
+        >
+          <p>Card content</p>
+          <p>Card content</p>
+          <p>Card content</p>
+        </Card>
+        <Button danger>Default</Button>
+        <DatePicker />
       </main>
     </div>
   );
