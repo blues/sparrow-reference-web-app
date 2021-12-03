@@ -10,7 +10,9 @@ const Home: NextPage = function Home() {
       extra: <Link href="/12345">Summary</Link>,
       contents: (
         <li>
-          <Link href="/12345">Gateway 12345 Summary Page</Link>
+          <Link href="/12345">
+            <a>Gateway 12345 Summary Page</a>
+          </Link>
         </li>
       ),
     },
@@ -21,7 +23,9 @@ const Home: NextPage = function Home() {
       extra: <Link href="/12345">Summary</Link>,
       contents: (
         <li>
-          <Link href="/12345/sensor/67890">Sensor 67890 Details Page</Link>
+          <Link href="/12345/sensor/67890">
+            <a>Sensor 67890 Details Page</a>
+          </Link>
         </li>
       ),
     },
@@ -30,7 +34,9 @@ const Home: NextPage = function Home() {
       extra: <Link href="/12345/sensor/67890">Summary</Link>,
       contents: (
         <li>
-          <Link href="/12345/sensor/67890">Sensor 67890 Details Page</Link>
+          <Link href="/12345/sensor/67890">
+            <a>Sensor 67890 Details Page</a>
+          </Link>
         </li>
       ),
     },
