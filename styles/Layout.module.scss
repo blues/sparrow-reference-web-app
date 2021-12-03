@@ -1,0 +1,12 @@
+@import "colors.scss";
+
+.mainContent {
+  min-height: 100%;
+  height: calc(100vh - 64px - 99px);
+  max-width: 960px;
+  margin: auto;
+
+  .ant-layout {
+    background-color: $bw-color--brand0 !important;
+  }
+}

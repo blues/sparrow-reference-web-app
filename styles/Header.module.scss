@@ -1,0 +1,12 @@
+@import "colors.scss";
+
+.header {
+  background-color: $bw-color--brand4;
+  padding: 0 50px 0 20px !important;
+  display: flex;
+
+  .headerText {
+    color: white;
+    padding-left: 20px;
+  }
+}
