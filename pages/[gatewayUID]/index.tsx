@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 
-const GatewaySummary: NextPage = function GatewaySummary() {
+const GatewaySummary: NextPage = () => {
   const router = useRouter();
   const { gatewayUID } = router.query;
 
