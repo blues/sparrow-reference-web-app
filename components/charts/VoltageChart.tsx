@@ -1,4 +1,5 @@
 import { ChartData, ChartOptions } from "chart.js";
+import { CHART_DATE_FORMAT } from "./chartHelper";
 import LineChart from "./LineChart";
 
 type VoltageChartProps = {
@@ -8,7 +9,7 @@ type VoltageChartProps = {
   }[]
 }
 
-export default function VoltageChart(props: VoltageChartProps) {
+const VoltageChart = (props: VoltageChartProps) => {
   const labels = props.data.map((obj) => obj.when);
   const values = props.data.map((obj) => obj.value);
 
@@ -30,15 +31,15 @@ export default function VoltageChart(props: VoltageChartProps) {
         type: "time",
         time: {
           displayFormats: {
-            millisecond: "MMM do hh:mm",
-            second: "MMM do hh:mm",
-            minute: "MMM do hh:mm",
-            hour: "MMM do hh:mm",
-            day: "MMM do hh:mm",
-            week: "MMM do hh:mm",
-            month: "MMM do hh:mm",
-            quarter: "MMM do hh:mm",
-            year: "MMM do hh:mm",
+            millisecond: CHART_DATE_FORMAT,
+            second: CHART_DATE_FORMAT,
+            minute: CHART_DATE_FORMAT,
+            hour: CHART_DATE_FORMAT,
+            day: CHART_DATE_FORMAT,
+            week: CHART_DATE_FORMAT,
+            month: CHART_DATE_FORMAT,
+            quarter: CHART_DATE_FORMAT,
+            year: CHART_DATE_FORMAT,
           }
         }
       },
@@ -54,3 +55,5 @@ export default function VoltageChart(props: VoltageChartProps) {
 
   return <LineChart data={data} options={options} />
 }
+
+export default VoltageChart;

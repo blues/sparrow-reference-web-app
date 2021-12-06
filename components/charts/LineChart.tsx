@@ -9,7 +9,9 @@ type LineChartProps = {
   options?: ChartOptions,
 };
 
-export default function LineChart(props: LineChartProps) {
+const LineChart = (props: LineChartProps) => {
   const options = getChartOptions(props.options) as ChartOptions<"line">;
   return <Line data={props.data} options={options} />;
 }
+
+export default LineChart;

@@ -23,6 +23,9 @@ ChartJS.register(
   Legend,
 );
 
+// See https://date-fns.org/v2.27.0/docs/format
+export const CHART_DATE_FORMAT = "MMM do hh:mm";
+
 export const GLOBAL_CHART_OPTIONS: ChartOptions = {
   responsive: true,
   interaction: {
