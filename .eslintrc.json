@@ -20,5 +20,17 @@
     "tsconfigRootDir": ".",
     "project": "tsconfig.json"
   },
-  "plugins": ["only-warn"]
+  "plugins": ["only-warn"],
+  "rules": {
+    "react/function-component-definition": [0],
+    // this eslint error is a known issue with Next.js - this is a fix to keep eslint happy: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/issues/402
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": ["Link"],
+        "specialLink": ["hrefLeft", "hrefRight"],
+        "aspects": ["invalidHref", "preferButton"]
+      }
+    ]
+  }
 }

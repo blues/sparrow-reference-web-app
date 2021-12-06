@@ -1,7 +1,7 @@
 import { Layout } from "antd";
 import styles from "../styles/Footer.module.scss";
 
-const Sidebar = function SidebarComponent() {
+const FooterComponent = () => {
   const { Footer } = Layout;
   return (
     <>
@@ -24,4 +24,4 @@ const Sidebar = function SidebarComponent() {
   );
 };
 
-export default Sidebar;
+export default FooterComponent;

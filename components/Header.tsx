@@ -5,7 +5,7 @@ import { Layout } from "antd";
 import Logo from "../public/images/sparrow_logo.svg";
 import styles from "../styles/Header.module.scss";
 
-const HeaderComponent = function HeaderComponent() {
+const HeaderComponent = () => {
   const { Header } = Layout;
   return (
     <Header className={styles.header}>

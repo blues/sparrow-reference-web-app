@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Card } from "antd";
 import styles from "../styles/Card.module.scss";
 
-const CardComponent = function CardComponent({
+const CardComponent = ({
   title,
   extra,
   children,
@@ -10,12 +10,10 @@ const CardComponent = function CardComponent({
   title: string;
   extra: any;
   children: ReactNode;
-}) {
-  return (
-    <Card className={styles.cardStyle} title={title} extra={extra}>
-      {children}
-    </Card>
-  );
-};
+}) => (
+  <Card className={styles.cardStyle} title={title} extra={extra}>
+    {children}
+  </Card>
+);
 
 export default CardComponent;

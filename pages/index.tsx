@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import Card from "../components/Card";
 import styles from "../styles/Home.module.scss";
 
-const Home: NextPage = function Home() {
+const Home: NextPage = () => {
   const gatewayInfo = [
     {
       title: "Gateway Summary Page",

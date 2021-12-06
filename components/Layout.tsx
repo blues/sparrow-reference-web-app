@@ -4,11 +4,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../styles/Layout.module.scss";
 
-const LayoutComponent = function LayoutComponent({
-  children,
-}: {
-  children: ReactNode;
-}) {
+const LayoutComponent = ({ children }: { children: ReactNode }) => {
   const { Content } = Layout;
   return (
     <Layout>
