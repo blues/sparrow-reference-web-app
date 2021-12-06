@@ -1,0 +1,8 @@
+@import "_variables.scss";
+
+.container {
+  .groupedCards {
+    display: flex;
+    flex-direction: row;
+  }
+}

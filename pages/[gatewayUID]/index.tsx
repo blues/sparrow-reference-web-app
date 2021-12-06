@@ -1,5 +1,5 @@
-import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
 
 const GatewaySummary: NextPage = () => {
   const router = useRouter();
