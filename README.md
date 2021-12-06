@@ -51,7 +51,10 @@ Check out the [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 Note: Deploying as Azure Container Instances will cost about $30/mo.
 
-Build Machine and Cloud Setup:
+If you need more details on any of the steps below, see
+[Docker and ACI](https://docs.docker.com/cloud/aci-integration/)
+
+Build Machine and Cloud Setup
 
 1. Sign up for [Azure](https://azure.microsoft.com/en-us/)
 2. Sign up for [Docker Hub](https://hub.docker.com/signup)
@@ -65,11 +68,11 @@ Build Machine and Cloud Setup:
 8. Create a docker context on Azure named however you like. `docker context create aci myacicontext`
 9. Activate the new context `docker context use myacicontext`
 
-Configure the _sparrow-starter_ site
+Configure the _sparrow-starter_ environment
 
 1. `cp .env .env.production.local`
 2. Configure the _Required_ variables and optional ones if needed.
 
-Deploy:
+Build Dockerfile.prod and Deploy
 
 `./deploy.sh`

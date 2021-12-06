@@ -7,6 +7,18 @@ on:
       - main
 
 jobs:
+  build-and-test:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: crazy-max/ghaction-dump-context@v1
+      - uses: actions/checkout@v2
+      - uses: volta-cli/action@v1
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test:coverage
+      - run: yarn lint
+      #- run: yarn lint:all
+      #- run: yarn cypress:run
   docker-build:
     runs-on: ubuntu-18.04
     steps:
