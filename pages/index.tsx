@@ -20,21 +20,21 @@ const Home: NextPage = () => {
   const sensorInfo = [
     {
       title: "Sensor Summary Page",
-      extra: <Link href="/12345">Summary</Link>,
+      extra: <Link href="/12345/sensor/67890">Summary</Link>,
       contents: (
         <li>
           <Link href="/12345/sensor/67890">
-            <a>Sensor 67890 Details Page</a>
+            <a>Sensor 67890 Summary Page</a>
           </Link>
         </li>
       ),
     },
     {
       title: "Sensor Details Page",
-      extra: <Link href="/12345/sensor/67890">Summary</Link>,
+      extra: <Link href="/12345/sensor/67890/details">Summary</Link>,
       contents: (
         <li>
-          <Link href="/12345/sensor/67890">
+          <Link href="/12345/sensor/67890/details">
             <a>Sensor 67890 Details Page</a>
           </Link>
         </li>
