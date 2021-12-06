@@ -6,12 +6,12 @@ import styles from "../styles/Home.module.scss";
 const Home: NextPage = () => {
   const gatewayInfo = [
     {
-      title: "Gateway Summary Page",
-      extra: <Link href="/12345">Summary</Link>,
+      title: "Gateway Details Page",
+      extra: <Link href="/12345/details">Summary</Link>,
       contents: (
         <li>
-          <Link href="/12345">
-            <a>Gateway 12345 Summary Page</a>
+          <Link href="/12345/details">
+            <a>Gateway 12345 Details Page</a>
           </Link>
         </li>
       ),
