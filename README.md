@@ -76,3 +76,35 @@ Configure the _sparrow-starter_ environment
 Build Dockerfile.prod and Deploy
 
 `./deploy.sh`
+
+## Deploy on Netlify
+
+[![Netlify Status]()]()
+
+This is a [Next.js](https://nextjs.org/) project set up to be instantly deployed
+to [Netlify](https://netlify.com)!
+
+See `netlify.toml` for deployment configuration, and `jsconfig.json` for setting
+up absolute imports and aliases. It also includes the [Essential Next.js Build
+Plugin](https://github.com/netlify/netlify-plugin-nextjs), which will allow for
+you to implement features like Preview Mode, server-side rendering/incremental
+static regeneration via Netlify Functions, and internationalized routing.
+
+### Deployment options
+
+**Option one:** One-click deploy
+
+(If you click this button, it will create a new repo for you that looks exactly
+like this one, and sets that repo up immediately for deployment on Netlify)
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-starter)
+
+**Option two:** Manual clone
+
+1. Clone this repo: `git clone https://github.com/netlify-templates/next-netlify-starter.git`
+2. Navigate to the directory and run `npm install`
+3. Run `npm run dev`
+4. Make your changes
+5. Connect to [Netlify](https://netlify.com/) manually (the `netlify.toml` file
+   is the one you'll need to make sure stays intact to make sure the export is
+   done and pointed to the right stuff)
