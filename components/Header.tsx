@@ -11,10 +11,10 @@ const HeaderComponent = () => {
     <Header className={styles.header}>
       <Link href="/">
         <a>
-          <Image src={Logo} height={50} width={50} alt="Sparrow Logo" />
+        <Image src={Logo} height={70} width={100} alt="Sparrow Logo" />
         </a>
       </Link>
-      <h1 className={styles.headerText}>Your Company Name Here</h1>
+      <h4 className={styles.headerText}>Your Company Name Here</h4>
     </Header>
   );
 };

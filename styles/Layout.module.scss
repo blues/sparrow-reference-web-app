@@ -3,6 +3,7 @@
 .mainContent {
   height: calc(100vh - $header-bar-height - $footer-bar-height);
   max-width: 960px;
+  width: 900px;
   margin: auto;
   overflow: auto;
   padding-bottom: 50px;

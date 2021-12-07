@@ -1,91 +1,64 @@
-import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
-
-import VoltageChart from '../../components/charts/VoltageChart';
-
-// Using hardcoded voltage data temporarily
-const mockVoltageData = [
-  {
-    when: new Date('2021-11-19T18:46:09Z'),
-    value: 2.835,
-  },
-  {
-    when: new Date('2021-11-19T17:43:09Z'),
-    value: 2.907,
-  },
-  {
-    when: new Date('2021-11-19T17:06:22Z'),
-    value: 2.849,
-  },
-  {
-    when: new Date('2021-11-19T15:42:19Z'),
-    value: 2.886,
-  },
-  {
-    when: new Date('2021-11-19T14:42:00Z'),
-    value: 2.921,
-  },
-  {
-    when: new Date('2021-11-19T13:40:25Z'),
-    value: 2.943,
-  },
-  {
-    when: new Date('2021-11-19T12:40:28Z'),
-    value: 2.958,
-  },
-  {
-    when: new Date('2021-11-19T11:40:29Z'),
-    value: 2.931,
-  },
-  {
-    when: new Date('2021-11-19T09:41:09Z'),
-    value: 2.895,
-  },
-  {
-    when: new Date('2021-11-19T08:41:09Z'),
-    value: 2.928,
-  },
-  {
-    when: new Date('2021-11-19T07:40:29Z'),
-    value: 2.921,
-  },
-  {
-    when: new Date('2021-11-19T05:41:50Z'),
-    value: 2.901,
-  },
-  {
-    when: new Date('2021-11-19T03:41:51Z'),
-    value: 2.931,
-  },
-  {
-    when: new Date('2021-11-19T02:40:30Z'),
-    value: 2.925,
-  },
-  {
-    when: new Date('2021-11-19T01:40:31Z'),
-    value: 2.925,
-  },
-  {
-    when: new Date('2021-11-19T00:40:31Z'),
-    value: 2.91,
-  },
-  {
-    when: new Date('2021-11-18T22:39:29Z'),
-    value: 3.6989999999999994,
-  },
-].reverse();
+import Link from "next/link";
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import Card from "../../components/Card";
+import styles from "../../styles/Home.module.scss";
 
 const GatewayDetails: NextPage = () => {
   const router = useRouter();
   const { gatewayUID } = router.query;
 
+  const sensorInfo = [
+    {
+      title: "Lobby",
+      extra: <Link href="/12345/sensor/67890">Summary</Link>,
+      contents: (
+        <>
+          <li>Temperature: 72° F</li>
+          <li>Humidity: 23%</li>
+          <li>Motion: inactive</li>
+          <li>Battery: 36%</li>
+          <li>Last active: 3 minutes ago</li>
+        </>
+      ),
+    },
+    {
+      title: "Conference Room",
+      extra: <Link href="/12345/sensor/67890/details">Summary</Link>,
+      contents: (
+        <>
+          <li>Temperature: 68° F</li>
+          <li>Humidity: 18%</li>
+          <li>Motion: inactive</li>
+          <li>Battery: 72%</li>
+          <li>Last active: 38 seconds ago</li>
+        </>
+      ),
+    },
+  ];
+
   return (
     <div>
       <h1>Gateway Details</h1>
-      <p>Gateway UID: {gatewayUID}</p>
 
-      <div style={{ width: '500px' }}>
-        <VoltageChart data={mockVoltageData} />
+      <div className={styles.container}>
+        <h2>Gateway</h2>
+        <div>
+          <span>Device Name: 2nd Floor Gateway</span>
+          <br />
+          <span>Location: Anytown, USA</span>
+          <br />
+          <span>Last Seen: 16 seconds ago</span>
+        </div>
+
+        <h2>Sensors</h2>
+        <div className={styles.groupedCards}>
+          {sensorInfo.map((sensor) => (
+            <Card key={sensor.title} title={sensor.title} extra={sensor.extra}>
+              {sensor.contents}
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );

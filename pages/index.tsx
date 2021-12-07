@@ -11,7 +11,7 @@ const Home: NextPage = () => {
       contents: (
         <li>
           <Link href="/12345/details">
-            <a>Gateway 12345 Details Page</a>
+            <a>Gateway 12345</a>
           </Link>
         </li>
       ),
@@ -24,7 +24,7 @@ const Home: NextPage = () => {
       contents: (
         <li>
           <Link href="/12345/sensor/67890">
-            <a>Sensor 67890 Summary Page</a>
+            <a>Sensor 67890</a>
           </Link>
         </li>
       ),
@@ -35,7 +35,7 @@ const Home: NextPage = () => {
       contents: (
         <li>
           <Link href="/12345/sensor/67890/details">
-            <a>Sensor 67890 Details Page</a>
+            <a>Sensor 67890</a>
           </Link>
         </li>
       ),

@@ -1,9 +1,15 @@
 @import "_variables.scss";
 
 .header {
-  background-color: $bw-color--brand4;
-  padding: 0 50px 0 20px !important;
+  background-color: $bw-color--brand4 !important;
+  padding: 0 100px !important;
   display: flex;
+  justify-content: space-between;
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
 
   .headerText {
     color: white;
