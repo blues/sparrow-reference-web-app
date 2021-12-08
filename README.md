@@ -2,7 +2,16 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+#### Environment vars
+First, we need to setup our project's Environment Variables. 
+
+Create a file called `.env.local` in the root of the project. You can see an example of the specific environment variables you'll need in [.env.local.example](.env.local.example).
+
+#### Dependencies
+
 First, install [Volta](https://docs.volta.sh/guide/getting-started).
+
+Next, we'll need to download our project's dependencies:
 
 Download our dependencies:
 
