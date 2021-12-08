@@ -5,3 +5,5 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+[template.environment]
+  NEXT_PUBLIC_COMPANY_NAME = "Company Name for Header"

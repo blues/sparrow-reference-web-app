@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Layout } from "antd";
 import Logo from "../public/images/sparrow_logo.svg";
 import styles from "../styles/Header.module.scss";
+import { Config } from "./Config";
 
 const HeaderComponent = () => {
   const { Header } = Layout;
@@ -14,7 +15,7 @@ const HeaderComponent = () => {
           <Image src={Logo} height={50} width={50} alt="Sparrow Logo" />
         </a>
       </Link>
-      <h1 className={styles.headerText}>Your Company Name Here</h1>
+      <h1 className={styles.headerText}>{Config.companyName}</h1>
     </Header>
   );
 };

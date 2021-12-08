@@ -82,7 +82,10 @@ function source_env_file() {
   local retcode=0
   log "Sourcing environment from $1"
   set -o allexport
-  source "$1" || retcode=11
+  set +o errexit
+  source "$1" 
+  retcode=$?
+  set -o errexit
   set +o allexport
   return $retcode
 }
