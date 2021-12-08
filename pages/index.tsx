@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { NextPage } from "next";
-import Card from "../components/Card";
+import Card from "../src/components/elements/Card";
 import styles from "../styles/Home.module.scss";
 
 const Home: NextPage = () => {

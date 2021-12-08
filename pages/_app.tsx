@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Layout from "../components/Layout";
+import Layout from "../src/components/layout/Layout";
 import "../styles/globals.css";
 
 require("../styles/antd-variables.less");

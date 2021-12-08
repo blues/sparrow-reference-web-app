@@ -1,13 +1,9 @@
 import Link from "next/link";
 import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import Card from "../../components/Card";
+import Card from "../../src/components/elements/Card";
 import styles from "../../styles/Home.module.scss";
 
 const GatewayDetails: NextPage = () => {
-  const router = useRouter();
-  const { gatewayUID } = router.query;
-
   const sensorInfo = [
     {
       title: "Lobby",
