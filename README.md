@@ -41,15 +41,41 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
+## Deploy on Netlify (recommended)
+
+[![Netlify Status]()]()
+
+This [Next.js](https://nextjs.org/) project is set up to be instantly deployed
+to [Netlify](https://netlify.com)!
+
+### Deployment options
+
+**Option one:** One-click deploy
+
+(If you click this button, it will create a new repo for you that looks exactly
+like this one, and sets that repo up immediately for deployment on Netlify)
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-starter)
+
+**Option two:** Manual clone
+
+1. Clone this repo: `git clone https://github.com/netlify-templates/next-netlify-starter.git`
+2. Navigate to the directory and run `npm install`
+3. Run `npm run dev`
+4. Make your changes
+5. Connect to [Netlify](https://netlify.com/) manually (the `netlify.toml` file
+   is the one you'll need to make sure stays intact to make sure the export is
+   done and pointed to the right stuff)
+
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The next easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 ## Deploy on Microsoft Azure Cloud
 
-Note: Deploying as Azure Container Instances will cost about $30/mo.
+Note: Running this site as Azure Container Instances will cost about $30/mo.
 
 If you need more details on any of the steps below, see
 [Docker and ACI](https://docs.docker.com/cloud/aci-integration/)
@@ -76,35 +102,3 @@ Configure the _sparrow-starter_ environment
 Build Dockerfile.prod and Deploy
 
 `./deploy.sh`
-
-## Deploy on Netlify
-
-[![Netlify Status]()]()
-
-This is a [Next.js](https://nextjs.org/) project set up to be instantly deployed
-to [Netlify](https://netlify.com)!
-
-See `netlify.toml` for deployment configuration, and `jsconfig.json` for setting
-up absolute imports and aliases. It also includes the [Essential Next.js Build
-Plugin](https://github.com/netlify/netlify-plugin-nextjs), which will allow for
-you to implement features like Preview Mode, server-side rendering/incremental
-static regeneration via Netlify Functions, and internationalized routing.
-
-### Deployment options
-
-**Option one:** One-click deploy
-
-(If you click this button, it will create a new repo for you that looks exactly
-like this one, and sets that repo up immediately for deployment on Netlify)
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-starter)
-
-**Option two:** Manual clone
-
-1. Clone this repo: `git clone https://github.com/netlify-templates/next-netlify-starter.git`
-2. Navigate to the directory and run `npm install`
-3. Run `npm run dev`
-4. Make your changes
-5. Connect to [Netlify](https://netlify.com/) manually (the `netlify.toml` file
-   is the one you'll need to make sure stays intact to make sure the export is
-   done and pointed to the right stuff)
