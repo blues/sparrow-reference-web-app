@@ -15,6 +15,10 @@ readonly CLOUD_COMPOSE=(docker compose --file "$COMPOSE_FILE") # no hyphen
 
 ## Low level functions
 function verify_docker_context_is_azure(){
+  docker context use "$AZURE_DOCKER_CONTEXT" || {
+    log "Failed: docker context use $AZURE_DOCKER_CONTEXT"
+    return 11
+  }
   docker context inspect | grep "Type" | grep "aci" || {
     log 'Error: `docker context inspect` does not report "Type":"aci".'
     log 'FYI, [docker context ls] shows:'
@@ -52,10 +56,12 @@ function verify_prereqs_are_met(){
 }
 
 function build_docker_images() {
+  docker context use default
   "${LOCAL_COMPOSE[@]}" build
 }
 
 function push_docker_images() {
+  docker context use default
   "${LOCAL_COMPOSE[@]}" push
 }
 
@@ -72,6 +78,7 @@ function prepare_to_deploy(){
 }
 
 function deploy(){
+  docker context use "$AZURE_DOCKER_CONTEXT"
   "${CLOUD_COMPOSE[@]}" up || {
     log 'Error: Docker Compose CLI failed'
     return 11
@@ -110,12 +117,12 @@ function main() {
 
   log "Deploying Sparrow Starter to the Cloud."
 
-  verify_prereqs_are_met || {
-    log "Error: Prerequisites are not met."
-    return 11
-  }
   configure_environment || {
     log "Error: Could not configure environment."
+    return 11
+  }
+  verify_prereqs_are_met || {
+    log "Error: Prerequisites are not met."
     return 11
   }
   prepare_to_deploy || {
