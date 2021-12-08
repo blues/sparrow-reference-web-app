@@ -96,8 +96,8 @@ Build Machine and Cloud Setup
 
 Configure the _sparrow-starter_ environment
 
-1. `cp .env .env.production.local`
-2. Configure the _Required_ variables and optional ones if needed.
+1. `cp .env.local.example .env.production.local`
+2. Configure the _Required_ variables and the Azure variables.
 
 Build Dockerfile.prod and Deploy
 
