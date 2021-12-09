@@ -1,10 +1,11 @@
+import { AppProps } from "next/app";
 import Head from "next/head";
 import Layout from "../src/components/layout/Layout";
 import "../styles/globals.css";
 
 require("../styles/antd-variables.less");
 
-const MyApp = ({ Component, pageProps }) => (
+const MyApp = ({ Component, pageProps }: AppProps) => (
   <>
     <Head>
       <title>Sparrow Starter</title>
