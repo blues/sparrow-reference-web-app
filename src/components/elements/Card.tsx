@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Card } from "antd";
-import styles from "../../styles/Card.module.scss";
+import styles from "../../../styles/Card.module.scss";
 
 const CardComponent = ({
   title,

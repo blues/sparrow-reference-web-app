@@ -1,4 +1,6 @@
 import { Form } from "antd";
+import { Store } from "antd/lib/form/interface";
+import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import styles from "../../../styles/Form.module.scss";
 
 export interface FormProps {
@@ -14,15 +16,15 @@ const FormComponent = ({
   onFinishFailed,
 }: {
   formItems: FormProps[];
-  onFinish: (values: any) => void;
-  onFinishFailed: (values: any) => void;
+  onFinish: (values: Store) => void;
+  onFinishFailed: (values: ValidateErrorEntity) => void;
 }) => {
   const [form] = Form.useForm();
   return (
     <Form
       form={form}
       layout="vertical"
-      onFinish={(values) => onFinish(values)}
+      onFinish={(values: Store) => onFinish(values)}
       onFinishFailed={(values) => onFinishFailed(values)}
     >
       {formItems.map((formItem) => (

@@ -4,10 +4,10 @@ import LineChart from "./LineChart";
 
 type VoltageChartProps = {
   data: {
-    when: Date,
-    value: number,
-  }[]
-}
+    when: Date;
+    value: number;
+  }[];
+};
 
 const VoltageChart = (props: VoltageChartProps) => {
   const labels = props.data.map((obj) => obj.when);
@@ -40,20 +40,24 @@ const VoltageChart = (props: VoltageChartProps) => {
             month: CHART_DATE_FORMAT,
             quarter: CHART_DATE_FORMAT,
             year: CHART_DATE_FORMAT,
-          }
-        }
+          },
+        },
       },
       yAxis: {
         min: 0,
         max: 5,
         ticks: {
           stepSize: 1,
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  };
 
-  return <LineChart data={data} options={options} />
-}
+  return (
+    <div style={{ width: "900px" }}>
+      <LineChart data={data} options={options} />
+    </div>
+  );
+};
 
 export default VoltageChart;

@@ -1,5 +1,7 @@
 import React from "react";
 import { Input, Button, Tabs } from "antd";
+import { Store } from "antd/lib/form/interface";
+import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import type { NextPage } from "next";
 import Form, { FormProps } from "../../../../src/components/elements/Form";
 import VoltageChart from "../../../../src/components/charts/VoltageChart";
@@ -38,12 +40,16 @@ const SensorDetails: NextPage = () => {
     },
   ];
 
-  const formOnFinish = (values: any) => {
+  const formOnFinish = (values: Store) => {
     console.log("Success:", values);
   };
 
-  const formOnFinishFailed = (errorInfo: any) => {
+  const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
     console.log("Failed:", errorInfo);
+  };
+
+  const callback = (key: string) => {
+    console.log(key);
   };
 
   // Using hardcoded voltage data temporarily
@@ -118,22 +124,14 @@ const SensorDetails: NextPage = () => {
     },
   ].reverse();
 
-  function callback(key) {
-    console.log(key);
-  }
-
   return (
     <div>
       <h1>Conference Room</h1>
-
       <Tabs defaultActiveKey="1" onChange={callback}>
         <TabPane tab="Summary" key="1">
           <h2>Current Readings</h2>
-
           <h3>Voltage</h3>
-          <div style={{ width: "900px" }}>
-            <VoltageChart data={mockVoltageData} />
-          </div>
+          <VoltageChart data={mockVoltageData} />
         </TabPane>
         <TabPane tab="Device Details" key="2">
           <Form

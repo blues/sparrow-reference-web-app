@@ -20,6 +20,7 @@
     "date-fns": "^2.27.0",
     "next": "12.0.4",
     "next-plugin-antd-less": "^1.5.2",
+    "rc-field-form": "^1.22.0",
     "react": "17.0.2",
     "react-chartjs-2": "^4.0.0",
     "react-dom": "17.0.2",
