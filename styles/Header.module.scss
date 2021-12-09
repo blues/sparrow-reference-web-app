@@ -1,8 +1,6 @@
 @import "_variables.scss";
 
 .header {
-  background-color: $bw-color--brand4 !important;
-  padding: 0 100px !important;
   display: flex;
   justify-content: space-between;
 
@@ -12,7 +10,7 @@
   }
 
   .headerText {
-    color: white;
+    color: #fff;
     padding-left: 20px;
   }
 }

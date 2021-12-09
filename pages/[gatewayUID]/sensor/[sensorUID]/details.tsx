@@ -1,4 +1,3 @@
-import React from "react";
 import { Input, Button, Tabs } from "antd";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";

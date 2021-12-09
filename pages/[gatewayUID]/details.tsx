@@ -9,26 +9,26 @@ const GatewayDetails: NextPage = () => {
       title: "Lobby",
       extra: <Link href="/12345/sensor/67890">Summary</Link>,
       contents: (
-        <>
+        <ul>
           <li>Temperature: 72° F</li>
           <li>Humidity: 23%</li>
           <li>Motion: inactive</li>
           <li>Battery: 36%</li>
           <li>Last active: 3 minutes ago</li>
-        </>
+        </ul>
       ),
     },
     {
       title: "Conference Room",
       extra: <Link href="/12345/sensor/67890/details">Summary</Link>,
       contents: (
-        <>
+        <ul>
           <li>Temperature: 68° F</li>
           <li>Humidity: 18%</li>
           <li>Motion: inactive</li>
           <li>Battery: 72%</li>
           <li>Last active: 38 seconds ago</li>
-        </>
+        </ul>
       ),
     },
   ];
