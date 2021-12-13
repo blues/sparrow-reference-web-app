@@ -2,11 +2,9 @@
 *
 
 # Whitelist
-!components/
-!pages/
+!src/
 !public/
 !sample-data/
-!styles/
 
 !.bablerc.js
 !.eslintrc.json

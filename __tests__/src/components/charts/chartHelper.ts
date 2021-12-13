@@ -1,7 +1,7 @@
 import {
   GLOBAL_CHART_OPTIONS,
   getChartOptions,
-} from "../../../src/components/charts/chartHelper";
+} from "../../../../src/components/charts/chartHelper";
 
 describe("Chart option handling", () => {
   it("Returns the global options by default", () => {

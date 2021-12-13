@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Layout } from "antd";
 import { Config } from "../Config";
 import Logo from "../../../public/images/sparrow_logo.svg";
-import styles from "../../../styles/Header.module.scss";
+import styles from "../../styles/Header.module.scss";
 
 const HeaderComponent = () => {
   const { Header } = Layout;

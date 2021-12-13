@@ -2,8 +2,8 @@ import { Input, Button, Tabs } from "antd";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import type { NextPage } from "next";
-import Form, { FormProps } from "../../../../src/components/elements/Form";
-import VoltageChart from "../../../../src/components/charts/VoltageChart";
+import Form, { FormProps } from "../../../../components/elements/Form";
+import VoltageChart from "../../../../components/charts/VoltageChart";
 import styles from "../../../../styles/Form.module.scss";
 
 const SensorDetails: NextPage = () => {

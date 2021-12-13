@@ -1,5 +1,5 @@
 import { Layout } from "antd";
-import styles from "../../../styles/Footer.module.scss";
+import styles from "../../styles/Footer.module.scss";
 
 const FooterComponent = () => {
   const { Footer } = Layout;

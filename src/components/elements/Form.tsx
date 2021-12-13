@@ -1,7 +1,7 @@
 import { Form } from "antd";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
-import styles from "../../../styles/Form.module.scss";
+import styles from "../../styles/Form.module.scss";
 
 export interface FormProps {
   label?: string;
