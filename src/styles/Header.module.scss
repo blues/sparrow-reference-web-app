@@ -1,0 +1,16 @@
+@import "_variables.scss";
+
+.header {
+  display: flex;
+  justify-content: space-between;
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .headerText {
+    color: #fff;
+    padding-left: 20px;
+  }
+}

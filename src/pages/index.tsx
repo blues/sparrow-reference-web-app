@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { NextPage } from "next";
-import Card from "../components/Card";
+import Card from "../components/elements/Card";
 import styles from "../styles/Home.module.scss";
 
 const Home: NextPage = () => {
   const gatewayInfo = [
     {
-      title: "Gateway Summary Page",
-      extra: <Link href="/12345">Summary</Link>,
+      title: "Gateway Details Page",
+      extra: <Link href="/12345/details">Summary</Link>,
       contents: (
         <li>
-          <Link href="/12345">
-            <a>Gateway 12345 Summary Page</a>
+          <Link href="/12345/details">
+            <a>Gateway 12345</a>
           </Link>
         </li>
       ),
@@ -20,22 +20,22 @@ const Home: NextPage = () => {
   const sensorInfo = [
     {
       title: "Sensor Summary Page",
-      extra: <Link href="/12345">Summary</Link>,
+      extra: <Link href="/12345/sensor/67890">Summary</Link>,
       contents: (
         <li>
           <Link href="/12345/sensor/67890">
-            <a>Sensor 67890 Details Page</a>
+            <a>Sensor 67890</a>
           </Link>
         </li>
       ),
     },
     {
       title: "Sensor Details Page",
-      extra: <Link href="/12345/sensor/67890">Summary</Link>,
+      extra: <Link href="/12345/sensor/67890/details">Summary</Link>,
       contents: (
         <li>
-          <Link href="/12345/sensor/67890">
-            <a>Sensor 67890 Details Page</a>
+          <Link href="/12345/sensor/67890/details">
+            <a>Sensor 67890</a>
           </Link>
         </li>
       ),
