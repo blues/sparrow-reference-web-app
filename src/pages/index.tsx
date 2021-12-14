@@ -1,62 +1,63 @@
+import React from "react";
+import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next";
 import Link from "next/link";
-import { NextPage } from "next";
+import { formatDistanceToNow } from "date-fns";
 import Card from "../components/elements/Card";
+import { getGateways } from "../lib/gateways";
+import Gateway from "../models/Gateway";
+import Sensor from "../models/Sensor";
 import styles from "../styles/Home.module.scss";
+import { getSensors } from "../lib/sensors";
 
-const Home: NextPage = () => {
-  const gatewayInfo = [
-    {
-      title: "Gateway Details Page",
-      extra: <Link href="/12345/details">Summary</Link>,
-      contents: (
-        <li>
-          <Link href="/12345/details">
-            <a>Gateway 12345</a>
-          </Link>
-        </li>
-      ),
-    },
-  ];
-  const sensorInfo = [
-    {
-      title: "Sensor Summary Page",
-      extra: <Link href="/12345/sensor/67890">Summary</Link>,
-      contents: (
-        <li>
-          <Link href="/12345/sensor/67890">
-            <a>Sensor 67890</a>
-          </Link>
-        </li>
-      ),
-    },
-    {
-      title: "Sensor Details Page",
-      extra: <Link href="/12345/sensor/67890/details">Summary</Link>,
-      contents: (
-        <li>
-          <Link href="/12345/sensor/67890/details">
-            <a>Sensor 67890</a>
-          </Link>
-        </li>
-      ),
-    },
-  ];
+type HomeData = {
+  gateways: Gateway[];
+  sensors: Sensor[];
+}
+
+const Home: NextPage = ({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const gateways: Gateway[] = data.gateways;
+  const sensors: Sensor[] = data.sensors;
 
   return (
     <div className={styles.container}>
       <h2>Gateways</h2>
       <div className={styles.groupedCards}>
-        {gatewayInfo.map((gateway) => (
-          <Card key={gateway.title} title={gateway.title} extra={gateway.extra}>
-            {gateway.contents}
-          </Card>
-        ))}
+      {gateways.map(gateway => (
+        <Card
+          key={gateway.uid}
+          title={gateway.serialNumber}
+          extra={<Link href={`/${gateway.uid}/details`}>Details</Link>}
+        >
+          <ul>
+            <li>Location: {gateway.location}</li>
+            <li>
+              Last seen:
+              {formatDistanceToNow(new Date(gateway.lastActivity), { addSuffix: true })}
+            </li>
+            <li>Voltage: {gateway.voltage} V</li>
+          </ul>
+        </Card>
+      ))}
       </div>
+
       <h2>Sensors</h2>
       <div className={styles.groupedCards}>
-        {sensorInfo.map((sensor) => (
-          <Card key={sensor.title} title={sensor.title} extra={sensor.extra}>
-            {sensor.contents}
+        {sensors.map(sensor => (
+          <Card
+            key={sensor.macAddress}
+            title={sensor.name}
+            extra={<Link href={`/${sensor.gatewayUID}/sensor/${sensor.macAddress}/details`}>Details</Link>}
+          >
+            <ul>
+              <li>Humidity: {sensor.humidity}</li>
+              <li>Pressure: {sensor.pressure}</li>
+              <li>Temperature: {sensor.temperature}</li>
+              <li>Voltage: {sensor.voltage}</li>
+              <li>
+                Last seen:
+                {formatDistanceToNow(new Date(sensor.lastActivity), { addSuffix: true })}
+              </li>
+            </ul>
           </Card>
         ))}
       </div>
@@ -65,3 +66,13 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps = async() => {
+  const gateways = await getGateways();
+  const sensors = await getSensors(gateways);
+  const data: HomeData = { gateways, sensors };
+
+  return {
+    props: { data }
+  }
+};
