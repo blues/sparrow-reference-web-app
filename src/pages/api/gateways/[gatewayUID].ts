@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import fetch from 'node-fetch';
+import axios, {AxiosResponse} from 'axios';
 import config from '../../../../config';
 
 export default async function gatewaysHandler(
@@ -26,19 +26,24 @@ export default async function gatewaysHandler(
   // API path
   const endpoint = `${baseURL}/v1/projects/${appUID}/devices/${gatewayUID}`;
   // API headers
-  const headers = new Headers({
+  const headers = {
     'Content-Type': 'application/json',
     'X-SESSION-TOKEN': authToken
-  });
+  };
 
   // API call
   try {
-    const response = await fetch(endpoint, { method: 'GET', headers });
-    const responseJSON = await response.json();
+    const response: AxiosResponse = await axios.get(endpoint, { headers });
     // Return JSON
-    res.status(200).json(responseJSON);
+    res.status(200).json(response.data);
   } catch (err) {
-    // Return 500 error
-    res.status(500).json({ err: 'Failed to fetch gateway data' });
+    // Check if we got a useful response
+    if (axios.isAxiosError(err) && err.response) {
+      // Return the specific error
+      res.status(err.response.status).json({ err: err.response.statusText });
+    } else {
+      // Return 500 error
+      res.status(500).json({ err: 'Failed to fetch Gateway data' });
+    }
   }
 }
