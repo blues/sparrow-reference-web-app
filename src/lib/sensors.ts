@@ -30,7 +30,7 @@ export async function getSensors(gateways: Gateway[]) {
     },
     {
       name: "1F Atrium",
-      macAddress: "20323746323650020031002f",
+      macAddress: "203237343323650020031002f",
       humidity: 25.2343425,
       pressure: 121352,
       temperature: 24.1243,

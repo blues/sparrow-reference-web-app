@@ -1,5 +1,5 @@
 import React from "react";
-import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import Card from "../components/elements/Card";
@@ -14,9 +14,8 @@ type HomeData = {
   sensors: Sensor[];
 }
 
-const Home: NextPage = ({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const gateways: Gateway[] = data.gateways;
-  const sensors: Sensor[] = data.sensors;
+const Home: NextPage<HomeData> = (data) => {
+  const { gateways, sensors } = data;
 
   return (
     <div className={styles.container}>
@@ -67,12 +66,11 @@ const Home: NextPage = ({ data }: InferGetServerSidePropsType<typeof getServerSi
 
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async() => {
+export const getServerSideProps: GetServerSideProps<HomeData> = async() => {
   const gateways = await getGateways();
   const sensors = await getSensors(gateways);
-  const data: HomeData = { gateways, sensors };
 
   return {
-    props: { data }
+    props: { gateways, sensors }
   }
 };
