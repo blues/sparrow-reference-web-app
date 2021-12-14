@@ -9,13 +9,13 @@ export default async function gatewaysHandler(
 ) {
   // Only allow GET requests
   if (req.method !== 'GET') {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ err: 'Method not allowed' });
     return;
   }
 
   // Gateway UID must be a string
   if (typeof req.query.gatewayUID !== 'string') {
-    res.status(400).json({ error: 'Invalid gateway UID parameter' });
+    res.status(400).json({ err: 'Invalid gateway UID parameter' });
     return;
   }
 
@@ -39,6 +39,6 @@ export default async function gatewaysHandler(
     res.status(200).json(responseJSON);
   } catch (err) {
     // Return 500 error
-    res.status(500).json({ error: 'Failed to fetch gateway data' });
+    res.status(500).json({ err: 'Failed to fetch gateway data' });
   }
 }
