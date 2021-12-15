@@ -20,7 +20,7 @@ describe("/api/gateways/[gatewayUID] API Endpoint", () => {
       url: `/api/gateways/INVALID`,
       failOnStatusCode: false,
     }).then((response) => {
-      // Notehub response incdicates resource doesn't exist
+      // Notehub response indicates resource doesn't exist
       expect(response.status).to.eq(404);
     });
   });
