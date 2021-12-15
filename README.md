@@ -168,5 +168,5 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 This repo contains a unit testing that utilizes [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/). You can view the tests in the `__tests__` folder, and you can run the full test suite using the command below.
 
 ```sh
-npm run test
+yarn test
 ```
