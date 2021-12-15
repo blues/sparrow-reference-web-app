@@ -10,7 +10,7 @@ interface NotehubDevice {
   fleet_uids: string[];
   tower_location?: NotehubLocation;
   gps_location?: NotehubLocation;
-  triangulated_location: NotehubLocation;
+  triangulated_location?: NotehubLocation;
   voltage: number;
   temperature: number;
 }
