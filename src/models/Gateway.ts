@@ -1,8 +1,7 @@
 interface Gateway {
   uid: string;
-  serial_number: string;
-  last_activity: string;
-  tower_location: string;
+  serialNumber: string;
+  lastActivity: string;
   location?: string;
   voltage: number;
 }
