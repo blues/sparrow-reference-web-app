@@ -19,6 +19,7 @@ module.exports = {
     "^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$":
       "<rootDir>/__mocks__/fileMock.js",
   },
+  setupFiles: ["<rootDir>/jest/setEnvVars.js"],
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
     "<rootDir>/.next/",
