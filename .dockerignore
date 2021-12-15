@@ -13,3 +13,4 @@
 !package.json
 !tsconfig.json
 !yarn.lock
+!config.ts
