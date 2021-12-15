@@ -11,11 +11,6 @@
 This is an example webapp to configure and view sensor data from Blues Wireless
 Sparrow devices.
 
-#### Environment vars
-First, we need to setup our project's Environment Variables. 
-
-Create a file called `.env.local` in the root of the project. You can see an example of the specific environment variables you'll need in [.env.local.example](.env.local.example).
-
 #### Dependencies
 
 #### Environment vars
@@ -51,10 +46,27 @@ The `src/pages/api` directory is mapped to `/api/*`. Files in this directory are
 
 ## Testing
 
+#### Jest
 This repo contains a unit testing that utilizes [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/). You can view the tests in the `__tests__` folder, and you can run the full test suite using the command below.
 
 ```
-npm run test
+yarn test
+```
+
+#### Cypress
+
+Additionally, [Cypress](https://www.cypress.io/) is set up for automated UI & API testing. 
+
+You'll need a `cypress.env.json` so Cypress has a UID with which to test the API endpoint.
+```
+{
+  "gatewayUID": "dev:###############"
+}
+```
+Then you can run the following to run the Cypress tests in your terminal.
+
+```
+yarn cypress:run
 ```
 
 ## Learn More
