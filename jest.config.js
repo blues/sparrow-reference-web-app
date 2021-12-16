@@ -1,4 +1,6 @@
 // see this section of Next.js docs for addt info: https://nextjs.org/docs/testing#jest-and-react-testing-library
+const { loadEnvConfig } = require("@next/env");
+loadEnvConfig(process.env.PWD);
 
 module.exports = {
   collectCoverageFrom: [
@@ -6,6 +8,7 @@ module.exports = {
     "!**/*.d.ts",
     "!**/node_modules/**",
   ],
+  globalSetup: "<rootDir>/jest/setupEnv.js",
   moduleNameMapper: {
     /* Handle CSS imports (with CSS modules)
     https://jestjs.io/docs/webpack#mocking-css-modules */
@@ -19,7 +22,6 @@ module.exports = {
     "^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$":
       "<rootDir>/__mocks__/fileMock.js",
   },
-  setupFiles: ["<rootDir>/jest/setEnvVars.js"],
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
     "<rootDir>/.next/",

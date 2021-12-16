@@ -1,10 +1,14 @@
-- [Sparrow Starter](#sparrow-starter)
+- [Sparrow Starter](#sparrow-starter) - [Dependencies](#dependencies) - [Environment vars](#environment-vars) - [Dependencies](#dependencies-1)
+  - [Testing](#testing)
+    - [Jest](#jest)
+    - [Cypress](#cypress)
+  - [Learn More](#learn-more)
   - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
   - [Deploy on Vercel](#deploy-on-vercel)
   - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
   - [Development](#development)
     - [Frameworks](#frameworks)
-  - [Testing](#testing)
+  - [Testing](#testing-1)
 
 # Sparrow Starter
 
@@ -14,7 +18,8 @@ Sparrow devices.
 #### Dependencies
 
 #### Environment vars
-First, we need to setup our project's Environment Variables. 
+
+First, we need to setup our project's Environment Variables.
 
 Create a file called `.env.local` in the root of the project. You can see an example of the specific environment variables you'll need in [.env.local.example](.env.local.example).
 
@@ -40,29 +45,62 @@ Open [http://localhost:4000](http://localhost:4000) with your browser to see the
 
 You can start editing the page by modifying `src/pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be edited in the `src/api/` folder. 
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be edited in the `src/api/` folder.
 
 The `src/pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
 ## Testing
 
 #### Jest
-This repo contains a unit testing that utilizes [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/). You can view the tests in the `__tests__` folder, and you can run the full test suite using the command below.
 
+This repo contains a unit testing setup that primarily utilizes [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
+
+**Unit Test Setup**
+The API routes require environment variables to be able to connect to Notehub, so we must also set similar env vars for the unit tests to run successfully. Jest test setup is handled by the `setupEnv.js` file inside of the `jest/` folder, and a local `.env.test.local` file is needed to supply those env vars.
+
+Before running unit tests, create a `.env.test.local` file at the root of your project, and add the following environment variables to it with the placeholders filled in:
+
+```.env
+HUB_BASE_URL=https://api.notefile.net
+HUB_AUTH_TOKEN=[YOUR_AUTH_TOKEN_HERE]
+HUB_APP_UID=[YOUR_NOTEHUB_PROJECT_ID_HERE]
+HUB_DEVICE_UID=[YOUR_DEVICE_ID_HERE]
 ```
+
+See the `.env.test` file for a reference point.
+
+**Running Unit Tests**
+You can view the tests in the `__tests__` folder, and you can run the full test suite using the command below.
+
+```bash
 yarn test
+```
+
+**Code Coverage from Unit Tests**
+To see code coverage for the entire project, run the following command.
+
+```bash
+yarn test:coverage
+```
+
+Once the coverage report's been generated, you can also open it in the browser through VSCode typing:
+
+```bash
+open coverage/lcov-report/index.html
 ```
 
 #### Cypress
 
-Additionally, [Cypress](https://www.cypress.io/) is set up for automated UI & API testing. 
+Additionally, [Cypress](https://www.cypress.io/) is set up for automated UI & API testing.
 
 You'll need a `cypress.env.json` in the root folder so that Cypress has a known Gateway UID with which to test the API endpoint.
+
 ```
 {
   "gatewayUID": "dev:###############"
 }
 ```
+
 Then you can run `yarn cypress:run` to run the Cypress tests in your terminal, or `yarn cypress:open` to launch the Cypress GUI.
 
 ## Learn More
