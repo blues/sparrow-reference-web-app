@@ -1,4 +1,3 @@
-import React from "react";
 import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -14,8 +13,11 @@ type HomeData = {
   sensors: Sensor[];
 };
 
-const Home: NextPage<HomeData> = (data) => {
-  const { gateways, sensors } = data;
+const Home: NextPage<HomeData> = ({ gateways, sensors }) => {
+  const getFormattedLastSeen = (date: string) =>
+    formatDistanceToNow(new Date(date), {
+      addSuffix: true,
+    });
 
   return (
     <div className={styles.container}>
@@ -29,13 +31,8 @@ const Home: NextPage<HomeData> = (data) => {
           >
             <ul>
               <li>Location: {gateway.location}</li>
-              <li>
-                Last seen:
-                {formatDistanceToNow(new Date(gateway.lastActivity), {
-                  addSuffix: true,
-                })}
-              </li>
-              <li>Voltage: {gateway.voltage} V</li>
+              <li>Last seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
+              <li>Voltage: {gateway.voltage}V</li>
             </ul>
           </Card>
         ))}
@@ -56,16 +53,11 @@ const Home: NextPage<HomeData> = (data) => {
             }
           >
             <ul>
-              <li>Humidity: {sensor.humidity}</li>
-              <li>Pressure: {sensor.pressure}</li>
-              <li>Temperature: {sensor.temperature}</li>
-              <li>Voltage: {sensor.voltage}</li>
-              <li>
-                Last seen:
-                {formatDistanceToNow(new Date(sensor.lastActivity), {
-                  addSuffix: true,
-                })}
-              </li>
+              <li>Humidity: {sensor.humidity}%</li>
+              <li>Pressure: {sensor.pressure / 1000} kPa</li>
+              <li>Temperature: {sensor.temperature}°C</li>
+              <li>Voltage: {sensor.voltage}V</li>
+              <li>Last seen: {getFormattedLastSeen(sensor.lastActivity)}</li>
             </ul>
           </Card>
         ))}
