@@ -1,4 +1,6 @@
-- [Sparrow Starter](#sparrow-starter) - [Dependencies](#dependencies) - [Environment vars](#environment-vars) - [Dependencies](#dependencies-1)
+- [Sparrow Starter](#sparrow-starter)
+  - [Environment vars](#environment-vars)
+  - [Dependencies](#dependencies)
   - [Testing](#testing)
     - [Jest](#jest)
     - [Cypress](#cypress)
@@ -8,14 +10,11 @@
   - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
   - [Development](#development)
     - [Frameworks](#frameworks)
-  - [Testing](#testing-1)
 
 # Sparrow Starter
 
 This is an example webapp to configure and view sensor data from Blues Wireless
 Sparrow devices.
-
-#### Dependencies
 
 #### Environment vars
 
@@ -56,7 +55,7 @@ The `src/pages/api` directory is mapped to `/api/*`. Files in this directory are
 This repo contains a unit testing setup that primarily utilizes [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
 
 **Unit Test Setup**
-The API routes require environment variables to be able to connect to Notehub, so we must also set similar env vars for the unit tests to run successfully. Jest test setup is handled by the `setupEnv.js` file inside of the `jest/` folder, and a local `.env.test.local` file is needed to supply those env vars.
+The API routes require environment variables to connect to Notehub, so you must set environment variables for the unit tests to run successfully. Jest test setup is handled by the `setupEnv.js` file inside of the `jest/` folder, and a local `.env.test.local` file is needed to supply those env vars.
 
 Before running unit tests, create a `.env.test.local` file at the root of your project, and add the following environment variables to it with the placeholders filled in:
 
@@ -83,7 +82,7 @@ To see code coverage for the entire project, run the following command.
 yarn test:coverage
 ```
 
-Once the coverage report's been generated, you can also open it in the browser through VSCode typing:
+Once the coverage report's been generated, you can also open it in the browser via the command line by typing:
 
 ```bash
 open coverage/lcov-report/index.html
@@ -200,11 +199,3 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Testing
-
-This repo contains a unit testing that utilizes [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/). You can view the tests in the `__tests__` folder, and you can run the full test suite using the command below.
-
-```sh
-yarn test
-```
