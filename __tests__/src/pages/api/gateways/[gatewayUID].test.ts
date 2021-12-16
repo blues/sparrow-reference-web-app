@@ -1,30 +1,26 @@
 /**
  * @jest-environment node
  */
-import { createMocks } from "node-mocks-http";
+import { createMocks, RequestMethod } from "node-mocks-http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import gatewaysHandler from "../../../../../src/pages/api/gateways/[gatewayUID]";
 
 describe("/api/gateways/[gatewayUID] API Endpoint", () => {
-  const baseUrl = process.env.HUB_BASE_URL;
-  const appUID = process.env.HUB_APP_UID;
   const authToken = process.env.HUB_AUTH_TOKEN;
   const gatewayUID = process.env.HUB_DEVICE_UID;
 
-  const { req, res }: { req: NextApiRequest; res: NextApiResponse } =
-    createMocks({
-      method: "GET",
-    });
-
-  beforeEach(() => {
+  function mockRequestResponse (method:RequestMethod="GET") {
+    const { req, res }: { req: NextApiRequest; res: NextApiResponse } = createMocks({ method });
     req.headers = {
       "Content-Type": "application/json",
       "X-SESSION-TOKEN": authToken,
     };
     req.query = { gatewayUID: `${gatewayUID}` };
-  });
+    return {req, res};
+  }
 
   it("should return a successful response from Notehub", async () => {
+    const {req, res} = mockRequestResponse();
     await gatewaysHandler(req, res);
 
     expect(res.statusCode).toBe(200);
@@ -33,9 +29,8 @@ describe("/api/gateways/[gatewayUID] API Endpoint", () => {
   });
 
   it("should return a 404 if Gateway UID is invalid", async () => {
+    const {req, res} = mockRequestResponse();
     req.query = { gatewayUID: "hello_world" };
-
-    const { res }: { res: NextApiResponse } = createMocks();
 
     await gatewaysHandler(req, res);
 
@@ -45,9 +40,8 @@ describe("/api/gateways/[gatewayUID] API Endpoint", () => {
   });
 
   it("should return a 400 if Gateway UID is missing", async () => {
-    req.query = { gatewayUID: null };
-
-    const { res }: { res: NextApiResponse } = createMocks();
+    const {req, res} = mockRequestResponse();
+    req.query = {}; // Equivalent to a null gatewayUID
 
     await gatewaysHandler(req, res);
 
@@ -59,8 +53,7 @@ describe("/api/gateways/[gatewayUID] API Endpoint", () => {
   });
 
   it("should return a 405 if HTTP method is not GET", async () => {
-    const { req, res }: { req: NextApiRequest; res: NextApiResponse } =
-      createMocks({ method: "POST" });
+    const {req, res} = mockRequestResponse("POST");
 
     await gatewaysHandler(req, res);
     expect(res.statusCode).toBe(405);
