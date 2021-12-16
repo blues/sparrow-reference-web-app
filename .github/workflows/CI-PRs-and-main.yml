@@ -15,12 +15,13 @@ jobs:
       - uses: volta-cli/action@v1
       - run: yarn install
       - run: yarn build
-      - run: yarn test:coverage
-        with: 
+      - name: Run unit tests
+        env: 
           super_secret: ${{ secrets.HUB_APP_UID }}
           super_secret: ${{ secrets.HUB_AUTH_TOKEN }}
           super_secret: ${{ secrets.HUB_BASE_URL }}
           super_secret: ${{ secrets.HUB_DEVICE_UID }}
+        run: yarn test:coverage  
       - run: yarn lint
       #- run: yarn lint:all
       #- run: yarn cypress:run
