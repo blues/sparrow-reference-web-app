@@ -6,6 +6,7 @@ declare global {
       HUB_AUTH_TOKEN: string;
       HUB_APP_UID: string;
       HUB_DEVICE_UID: string;
+      APP_BASE_URL: string;
     }
   }
 }
