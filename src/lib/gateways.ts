@@ -7,7 +7,7 @@ export default async function getGateways() {
   const gateways: Gateway[] = [];
 
   const resp = await axios.get(
-    `http://localhost:4000/api/gateways/${config.deviceUID}`
+    `${config.appBaseUrl}/api/gateways/${config.hubDeviceUID}`
   );
   const json = resp.data as NotehubDevice;
 
