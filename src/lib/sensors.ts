@@ -37,7 +37,7 @@ export default async function getSensors(gatewayData: Gateway[]) {
     const macAddressResp = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
     );
-    return macAddressResp.data;
+    return { events: macAddressResp.data.latest_events };
   };
 
   /* if we have more than one gateway to get mac addresses for,
