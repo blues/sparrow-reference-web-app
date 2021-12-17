@@ -1,6 +1,9 @@
+import axios from "axios";
+import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
+import config from "../../config";
 
-export default function getSensors() {
+export default async function getSensors(gatewayData: Gateway[]) {
   // Using mock data for now. What we need to do is get the latest events,
   // loop through them to find all unique mac addresses (in the "file" field).
   // Then, for each unique sensor, make a call to /sensor/[macAddress]/config
@@ -27,6 +30,23 @@ export default function getSensors() {
       gatewayUID: "dev:868050040065365",
     },
   ];
+
+  const macAddresses: [] = [];
+
+  const getMacAddressData = async (gateway: Gateway) => {
+    const macAddressResp = await axios.get(
+      `${config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
+    );
+    return macAddressResp.data;
+  };
+
+  /* if we have more than one gateway to get mac addresses for,
+  loop through all the gateway UIDs and collect the latest events back */
+  const getAllMacAddressEvents = (gateways: Gateway[]) =>
+    Promise.all(gateways.map(getMacAddressData));
+
+  const events = await getAllMacAddressEvents(gatewayData);
+  console.log(events);
 
   return mockSensors;
 }

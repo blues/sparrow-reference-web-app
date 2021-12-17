@@ -70,7 +70,7 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   const gateways = await getGateways();
-  const sensors = getSensors();
+  const sensors = await getSensors(gateways);
 
   return {
     props: { gateways, sensors },
