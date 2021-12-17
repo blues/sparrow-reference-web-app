@@ -1,61 +1,52 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
+import axios, { AxiosResponse } from "axios";
+import {HTTP_STATUS, HTTP_HEADER} from '../../../../constants/http';
+import config from "../../../../../config";
 
-export default function handler(
+export default async function sensorsHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === 'GET') {
-    // Stubbed response for Latest Events API call
-    res.status(200).json({
-      "latest_events": [
-        {
-          "file": "20323746323650050028000a#air.qo",
-          "captured": "2021-11-30T20:30:19Z",
-          "received": "2021-11-30T20:30:45Z",
-          "event_uid": "1961a1cd-6c10-4f70-a242-291838f4f125",
-          "body": {
-            "humidity": 27.234375,
-            "pressure": 101152,
-            "temperature": 22.6875,
-            "voltage": 2.733
-          }
-        },
-        {
-          "file": "20323746323650050028000a#motion.qo",
-          "captured": "2021-11-30T14:31:24Z",
-          "received": "2021-11-30T14:31:42Z",
-          "event_uid": "55cfc7d3-2987-43b9-9fb7-33173edb5949",
-          "body": {
-            "count": 1,
-            "total": 281
-          }
-        },
-        {
-          "file": "20323746323650050029000b#air.qo",
-          "captured": "2021-10-01T18:52:41Z",
-          "received": "2021-10-01T19:07:13Z",
-          "event_uid": "8fd30b3b-766a-4a90-9dbc-9e0a21ae73bf",
-          "body": {
-            "humidity": 38.15625,
-            "pressure": 101950,
-            "temperature": 24.265625,
-            "voltage": 2.725
-          }
-        },
-        {
-          "file": "20323746323650050029000b#motion.qo",
-          "captured": "2021-10-01T17:57:26Z",
-          "received": "2021-10-01T18:07:12Z",
-          "event_uid": "f3bbd770-40ee-4526-aeda-a560f069528a",
-          "body": {
-            "count": 3
-          }
-        }
-      ]
-    });
-  } else {
-    // Other methods not allowed at this route
-    res.status(405).end();
+  // Only allow GET requests
+  if (req.method !== "GET") {
+    res.status(405).json({ err: HTTP_STATUS.METHOD_NOT_ALLOWED });
+    return;
+  }
+
+  // Gateway UID must be a string
+  if (typeof req.query.gatewayUID !== "string") {
+    res.status(400).json({ err: HTTP_STATUS.INVALID_GATEWAY });
+    return;
+  }
+
+  // Query params
+  const { gatewayUID } = req.query;
+  // Notehub values
+  const { hubBaseURL, hubAuthToken, hubAppUID } = config;
+  // API path
+  const endpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/devices/${gatewayUID}/latest`;
+  // API headers
+  const headers = {
+    [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
+    [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
+  };
+
+  // API call
+  try {
+    const response: AxiosResponse = await axios.get(endpoint, { headers });
+    // Return JSON
+    res.status(200).json(response.data);
+  } catch (err) {
+    // Check if we got a useful response
+    if (axios.isAxiosError(err)) {
+      if (err.response && err.response.status === 404) {
+        // Return 404 error
+        res.status(404).json({ err: HTTP_STATUS.NOT_FOUND_SENSORS });
+      }
+    } else {
+      // Return 500 error
+      res.status(500).json({ err: HTTP_STATUS.INTERNAL_ERR_SENSORS });
+    }
   }
 }
