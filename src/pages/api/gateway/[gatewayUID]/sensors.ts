@@ -23,13 +23,13 @@ export default async function sensorsHandler(
   // Query params
   const { gatewayUID } = req.query;
   // Notehub values
-  const { baseURL, authToken, appUID } = config;
+  const { hubBaseURL, hubAuthToken, hubAppUID } = config;
   // API path
-  const endpoint = `${baseURL}/v1/projects/${appUID}/devices/${gatewayUID}/latest`;
+  const endpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/devices/${gatewayUID}/latest`;
   // API headers
   const headers = {
     [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
-    [HTTP_HEADER.SESSION_TOKEN]: authToken,
+    [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
   };
 
   // API call
