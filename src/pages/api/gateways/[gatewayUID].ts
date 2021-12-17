@@ -22,13 +22,13 @@ export default async function gatewaysHandler(
   // Query params
   const { gatewayUID } = req.query;
   // Notehub values
-  const { baseURL, authToken, appUID } = config;
+  const { hubBaseURL, hubAuthToken, hubAppUID } = config;
   // API path
-  const endpoint = `${baseURL}/v1/projects/${appUID}/devices/${gatewayUID}`;
+  const endpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/devices/${gatewayUID}`;
   // API headers
   const headers = {
     "Content-Type": "application/json",
-    "X-SESSION-TOKEN": authToken,
+    "X-SESSION-TOKEN": hubAuthToken,
   };
 
   // API call
