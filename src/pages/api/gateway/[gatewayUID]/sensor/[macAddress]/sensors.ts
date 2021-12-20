@@ -10,12 +10,21 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     case "GET":
       // Stubbed response for note.get for sensor config.db
       res.status(200).json({
-        note: "20323746323650020031002f",
+        when: 1638304240,
+        note: "20323746323650050028000a",
         body: {
-          loc: "87JFH688+2H",
-          name: "0F Furnace",
+          // not sure what these values are for so commenting out for now
+          // gateway_rssi: -95,
+          // gateway_snr: -20,
+          // lost: 6,
+          // received: 11082,
+          // sensor_ltp: -4,
+          // sensor_rssi: -93,
+          // sensor_snr: -6,
+          // sensor_txp: 5,
+          // when: 1638304237,
+          voltage: 2.706,
         },
-        time: 1632763519,
       });
       break;
     default:
