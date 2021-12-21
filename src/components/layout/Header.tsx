@@ -2,9 +2,9 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Layout } from "antd";
-import { Config } from "../Config";
 import Logo from "../../../public/images/sparrow_logo.svg";
 import styles from "../../styles/Header.module.scss";
+import config from "../../../config";
 
 const HeaderComponent = () => {
   const { Header } = Layout;
@@ -15,7 +15,7 @@ const HeaderComponent = () => {
           <Image src={Logo} height={70} width={100} alt="Sparrow Logo" />
         </a>
       </Link>
-      <h1 className={styles.headerText}>{Config.companyName}</h1>
+      <h1 className={styles.headerText}>{config.companyName}</h1>
     </Header>
   );
 };
