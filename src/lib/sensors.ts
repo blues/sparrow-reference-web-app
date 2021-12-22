@@ -2,9 +2,10 @@ import axios from "axios";
 import { flattenDeep, uniqBy } from "lodash";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
+import NotehubEvents from "../models/NotehubEvents";
 import config from "../../config";
 
-export default async function getSensors(gatewayData: Gateway[]) {
+export default async function getSensors(gatewaysList: Gateway[]) {
   // Using mock data for now. What we need to do is get the latest events,
   // loop through them to find all unique mac addresses (in the "file" field).
   // Then, for each unique sensor, make a call to /sensor/[macAddress]/config
@@ -35,14 +36,27 @@ export default async function getSensors(gatewayData: Gateway[]) {
   // todo rename ALL variables here
   // 1. Get mac addresses and latest sensor data on the API side
 
-  const getMacAddressData = async (gateway: Gateway) => {
-    const { data } = await axios.get(
+  const getLatestSensorDataByGateway = async (gateway: Gateway) => {
+    const resp = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
     );
 
-    // console.log(data.latest_events);
+    const latestSensorEvents = resp.data as NotehubEvents;
 
-    const gatewayMacAddress = data.latest_events.map((event) => ({
+    // filter out all latest_events that are not `motion.qo` or `air.qo` files - those indicate they are sensor files
+    const filteredSensorData = latestSensorEvents.filter(
+      (event: NotehubEvent) => {
+        if (
+          event.file.includes("#motion.qo") ||
+          event.file.includes("#air.qo")
+        ) {
+          return event;
+        }
+      }
+    );
+    // console.log(filteredSensorData);
+
+    const latestSensorData = filteredSensorData.map((event) => ({
       gatewayUID: `${gateway.uid}`,
       macAddress: event.file,
       humidity: event.body?.humidity,
@@ -51,80 +65,75 @@ export default async function getSensors(gatewayData: Gateway[]) {
       voltage: event.body?.voltage,
       lastActivity: event.captured,
     }));
-    return gatewayMacAddress;
+    return latestSensorData;
   };
 
   /* if we have more than one gateway to get mac addresses for,
   loop through all the gateway UIDs and collect the latest events back */
-  const getAllMacAddressEvents = async (gateways: Gateway[]) =>
-    Promise.all(gateways.map(getMacAddressData));
+  const getAllLatestSensorEvents = async (gateways: Gateway[]) =>
+    Promise.all(gateways.map(getLatestSensorDataByGateway));
 
-  const allSensorEvents = await getAllMacAddressEvents(gatewayData);
-  // console.log("ALL SENSOR DATA", allSensorEvents);
+  const latestSensorEvents = await getAllLatestSensorEvents(gatewaysList);
+  // console.log("ALL SENSOR DATA", latestSensorEvents);
 
-  const macAddresses = uniqBy(
-    flattenDeep(allSensorEvents)
-      .map((macAddrObj) => {
-        if (macAddrObj.macAddress.includes("#")) {
-          const splitString: string = macAddrObj.macAddress.split("#");
-          const macAddress: string = splitString[0];
-          return {
-            gatewayUID: macAddrObj.gatewayUID,
-            macAddress,
-            humidity: macAddrObj?.humidity,
-            pressure: macAddrObj?.pressure,
-            temperature: macAddrObj?.temperature,
-            voltage: macAddrObj?.voltage,
-            lastActivity: macAddrObj?.lastActivity,
-          };
-        }
-      })
+  const simplifiedSensorEvents = uniqBy(
+    flattenDeep(latestSensorEvents)
+      .map(
+        (sensorEvent) => ({
+          gatewayUID: sensorEvent.gatewayUID,
+          macAddress: sensorEvent.macAddress.split("#")[0],
+          humidity: sensorEvent?.humidity,
+          pressure: sensorEvent?.pressure,
+          temperature: sensorEvent?.temperature,
+          voltage: sensorEvent?.voltage,
+          lastActivity: sensorEvent?.lastActivity,
+        })
+        // }
+      )
       .filter((addr) => addr !== undefined),
     "macAddress"
   );
 
-  // console.log("UNIQUE mac addresses ", macAddresses);
+  // console.log("UNIQUE mac addresses ", simplifiedSensorEvents);
 
   // 2. Get the sensor.db events from the API via the mac addresses
   // using note.get API call - add sensor.db api stub
   // 3. Get the names of the sensors from the API via config.db also using mac addresses
   // still using the note.get API call
-  const getSensorData = async (gatewaySensorInfo: Sensor) => {
-    const sensorDbInfo = await axios.get(
-      `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/sensors`
-    );
+  const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
     const sensorNameInfo = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
     );
-    // const lastActivity: string =
-    //   sensorDbInfo.data.when > sensorNameInfo.data.time
-    //     ? sensorDbInfo.data.when
-    //     : sensorNameInfo.data.time;
+
     // console.log(sensorNameInfo.data);
 
     // 4. Mix it all together and make it look like our mocked data
     return {
       macAddress: gatewaySensorInfo.macAddress,
       gatewayUID: gatewaySensorInfo.gatewayUID,
-      name: sensorNameInfo.data.body.name,
-      voltage: sensorDbInfo.data.body.voltage,
+      name: sensorNameInfo.data.body.name
+        ? sensorNameInfo.data.body.name
+        : "No sensor name currently set.",
+      voltage: gatewaySensorInfo.voltage
+        ? gatewaySensorInfo.voltage
+        : "No voltage readings currently available.",
       lastActivity: gatewaySensorInfo.lastActivity,
       humidity: gatewaySensorInfo.humidity
         ? gatewaySensorInfo.humidity
-        : 27.234375,
+        : "No humidity readings currently available.",
       pressure: gatewaySensorInfo.pressure
         ? gatewaySensorInfo.pressure
-        : 101152,
+        : "No pressure readings currently available.",
       temperature: gatewaySensorInfo.temperature
         ? gatewaySensorInfo.temperature
-        : 22.6875,
+        : "No temperature readings currently available.",
     };
   };
 
   const getAllSensorData = async (gatewaySensorInfo: Sensor[]) =>
-    Promise.all(gatewaySensorInfo.map(getSensorData));
+    Promise.all(gatewaySensorInfo.map(getExtraSensorDetails));
 
-  const allSensorData = await getAllSensorData(macAddresses);
+  const allSensorData = await getAllSensorData(simplifiedSensorEvents);
 
   return allSensorData;
 }
