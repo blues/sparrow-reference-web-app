@@ -33,16 +33,23 @@ export default async function getSensors(gatewayData: Gateway[]) {
   ];
 
   // todo rename ALL variables here
-  // 1. Get mac addresses on the API side
+  // 1. Get mac addresses and latest sensor data on the API side
 
   const getMacAddressData = async (gateway: Gateway) => {
     const { data } = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
     );
 
+    // console.log(data.latest_events);
+
     const gatewayMacAddress = data.latest_events.map((event) => ({
       gatewayUID: `${gateway.uid}`,
       macAddress: event.file,
+      humidity: event.body?.humidity,
+      pressure: event.body?.pressure,
+      temperature: event.body?.temperature,
+      voltage: event.body?.voltage,
+      lastActivity: event.captured,
     }));
     return gatewayMacAddress;
   };
@@ -64,6 +71,11 @@ export default async function getSensors(gatewayData: Gateway[]) {
           return {
             gatewayUID: macAddrObj.gatewayUID,
             macAddress,
+            humidity: macAddrObj?.humidity,
+            pressure: macAddrObj?.pressure,
+            temperature: macAddrObj?.temperature,
+            voltage: macAddrObj?.voltage,
+            lastActivity: macAddrObj?.lastActivity,
           };
         }
       })
@@ -71,7 +83,7 @@ export default async function getSensors(gatewayData: Gateway[]) {
     "macAddress"
   );
 
-  console.log("UNIQUE mac addresses ", macAddresses);
+  // console.log("UNIQUE mac addresses ", macAddresses);
 
   // 2. Get the sensor.db events from the API via the mac addresses
   // using note.get API call - add sensor.db api stub
@@ -84,10 +96,11 @@ export default async function getSensors(gatewayData: Gateway[]) {
     const sensorNameInfo = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
     );
-    const lastActivity: string =
-      sensorDbInfo.data.when > sensorNameInfo.data.time
-        ? sensorDbInfo.data.when
-        : sensorNameInfo.data.time;
+    // const lastActivity: string =
+    //   sensorDbInfo.data.when > sensorNameInfo.data.time
+    //     ? sensorDbInfo.data.when
+    //     : sensorNameInfo.data.time;
+    // console.log(sensorNameInfo.data);
 
     // 4. Mix it all together and make it look like our mocked data
     return {
@@ -95,10 +108,16 @@ export default async function getSensors(gatewayData: Gateway[]) {
       gatewayUID: gatewaySensorInfo.gatewayUID,
       name: sensorNameInfo.data.body.name,
       voltage: sensorDbInfo.data.body.voltage,
-      lastActivity,
-      humidity: 27.234375,
-      pressure: 101152,
-      temperature: 22.6875,
+      lastActivity: gatewaySensorInfo.lastActivity,
+      humidity: gatewaySensorInfo.humidity
+        ? gatewaySensorInfo.humidity
+        : 27.234375,
+      pressure: gatewaySensorInfo.pressure
+        ? gatewaySensorInfo.pressure
+        : 101152,
+      temperature: gatewaySensorInfo.temperature
+        ? gatewaySensorInfo.temperature
+        : 22.6875,
     };
   };
 

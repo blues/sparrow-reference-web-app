@@ -39,11 +39,12 @@ const Home: NextPage<HomeData> = ({ gateways, sensors }) => {
       </div>
 
       <h2>Sensors</h2>
+      {/* todo remove this macAddress from title after names are no longer mocked */}
       <div className={styles.groupedCards}>
         {sensors.map((sensor) => (
           <Card
             key={sensor.macAddress}
-            title={sensor.name}
+            title={`${sensor.name}-${sensor.macAddress}`}
             extra={
               <Link
                 href={`/${sensor.gatewayUID}/sensor/${sensor.macAddress}/details`}
@@ -70,7 +71,9 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   const gateways = await getGateways();
+  // todo consider renaming this to latestSensorData
   const sensors = await getSensors(gateways);
+  // console.log(sensors);
 
   return {
     props: { gateways, sensors },

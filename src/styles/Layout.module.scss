@@ -3,7 +3,7 @@
 .mainContent {
   height: calc(100vh - $header-bar-height - $footer-bar-height);
   max-width: 960px;
-  width: 900px;
+  width: 960px; /* todo adjust back to 900px once macAddress is removed from card title for ID purposes */
   margin: auto;
   overflow: auto;
   padding-bottom: 50px;
