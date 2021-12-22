@@ -1,10 +1,10 @@
 interface Sensor {
   name: string;
   macAddress: string;
-  humidity: number;
-  pressure: number;
-  temperature: number;
-  voltage: number;
+  humidity: number | string;
+  pressure: number | string;
+  temperature: number | string;
+  voltage: number | string;
   lastActivity: string;
   gatewayUID: string;
 }

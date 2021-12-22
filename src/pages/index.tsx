@@ -3,17 +3,17 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import Card from "../components/elements/Card";
 import getGateways from "../lib/gateways";
-import getSensors from "../lib/sensors";
+import getLatestSensorData from "../lib/latestSensorData";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
 import styles from "../styles/Home.module.scss";
 
 type HomeData = {
   gateways: Gateway[];
-  sensors: Sensor[];
+  latestSensorData: Sensor[];
 };
 
-const Home: NextPage<HomeData> = ({ gateways, sensors }) => {
+const Home: NextPage<HomeData> = ({ gateways, latestSensorData }) => {
   const getFormattedLastSeen = (date: string) =>
     formatDistanceToNow(new Date(date), {
       addSuffix: true,
@@ -41,7 +41,7 @@ const Home: NextPage<HomeData> = ({ gateways, sensors }) => {
       <h2>Sensors</h2>
       {/* todo remove this macAddress from title after names are no longer mocked */}
       <div className={styles.groupedCards}>
-        {sensors.map((sensor) => (
+        {latestSensorData.map((sensor) => (
           <Card
             key={sensor.macAddress}
             title={`${sensor.name}-${sensor.macAddress}`}
@@ -54,10 +54,30 @@ const Home: NextPage<HomeData> = ({ gateways, sensors }) => {
             }
           >
             <ul>
-              <li>Humidity: {sensor.humidity}%</li>
-              <li>Pressure: {sensor.pressure / 1000} kPa</li>
-              <li>Temperature: {sensor.temperature}°C</li>
-              <li>Voltage: {sensor.voltage}V</li>
+              <li>
+                Humidity:&nbsp;
+                {typeof sensor.humidity === "string"
+                  ? `${sensor.humidity}`
+                  : `${sensor.humidity}%`}
+              </li>
+              <li>
+                Pressure:&nbsp;
+                {typeof sensor.pressure === "string"
+                  ? `${sensor.pressure}`
+                  : `${sensor.pressure / 1000} kPa`}
+              </li>
+              <li>
+                Temperature:&nbsp;
+                {typeof sensor.temperature === "string"
+                  ? `${sensor.temperature}`
+                  : `${sensor.temperature}°C`}
+              </li>
+              <li>
+                Voltage:&nbsp;
+                {typeof sensor.voltage === "string"
+                  ? `${sensor.voltage}`
+                  : `${sensor.voltage}V`}
+              </li>
               <li>Last seen: {getFormattedLastSeen(sensor.lastActivity)}</li>
             </ul>
           </Card>
@@ -71,11 +91,9 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   const gateways = await getGateways();
-  // todo consider renaming this to latestSensorData
-  const sensors = await getSensors(gateways);
-  // console.log(sensors);
+  const latestSensorData = await getLatestSensorData(gateways);
 
   return {
-    props: { gateways, sensors },
+    props: { gateways, latestSensorData },
   };
 };

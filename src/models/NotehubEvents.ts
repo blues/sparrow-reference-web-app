@@ -1,11 +1,7 @@
+import NotehubEvent from "./NotehubEvent";
+
 interface NotehubEvents {
-  latest_events: [
-    file: string,
-    captured: string,
-    received: string,
-    event_uid: string,
-    body: any // todo fix this
-  ];
+  latest_events: [NotehubEvent];
 }
 
 export default NotehubEvents;
