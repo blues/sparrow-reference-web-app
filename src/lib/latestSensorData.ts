@@ -78,6 +78,7 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
       `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
     );
 
+    // todo handle failure state once Rob's branch merged in
     const sensorNameInfo = resp.data as NotehubSensorConfig;
 
     // 4. Put tt all together

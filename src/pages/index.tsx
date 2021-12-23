@@ -10,10 +10,10 @@ import styles from "../styles/Home.module.scss";
 
 type HomeData = {
   gateways: Gateway[];
-  latestSensorData: Sensor[];
+  latestSensorDataList: Sensor[];
 };
 
-const Home: NextPage<HomeData> = ({ gateways, latestSensorData }) => {
+const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
   const getFormattedLastSeen = (date: string) =>
     formatDistanceToNow(new Date(date), {
       addSuffix: true,
@@ -41,7 +41,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorData }) => {
       <h2>Sensors</h2>
       {/* todo remove this macAddress from title after names are no longer mocked */}
       <div className={styles.groupedCards}>
-        {latestSensorData.map((sensor) => (
+        {latestSensorDataList.map((sensor) => (
           <Card
             key={sensor.macAddress}
             title={`${sensor.name}-${sensor.macAddress}`}
@@ -91,9 +91,9 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   const gateways = await getGateways();
-  const latestSensorData = await getLatestSensorData(gateways);
+  const latestSensorDataList = await getLatestSensorData(gateways);
 
   return {
-    props: { gateways, latestSensorData },
+    props: { gateways, latestSensorDataList },
   };
 };

@@ -1,18 +1,31 @@
+import { GetServerSideProps, NextPage } from "next";
 import { Input, Button, Tabs } from "antd";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
-import type { NextPage } from "next";
 import Form, { FormProps } from "../../../../components/elements/Form";
+import getSensorDetailsData from "../../../../lib/sensorDetailsData";
+import Sensor from "../../../../models/Sensor";
 import VoltageChart from "../../../../components/charts/VoltageChart";
 import styles from "../../../../styles/Form.module.scss";
 
-const SensorDetails: NextPage = () => {
+type SensorDetailsData = {
+  latestSensorData: Sensor;
+  historicalSensorData: Sensor[];
+};
+
+const SensorDetails: NextPage<SensorDetailsData> = ({
+  latestSensorData,
+  historicalSensorData,
+}) => {
+  console.log(latestSensorData);
   const { TabPane } = Tabs;
 
   const formItems: FormProps[] = [
     {
       label: "Last Updated",
-      contents: <div className={styles.formData}>13 minutes ago</div>,
+      contents: (
+        <div className={styles.formData}>{latestSensorData?.lastActivity}</div>
+      ),
     },
     {
       label: "Name",
@@ -27,6 +40,7 @@ const SensorDetails: NextPage = () => {
       contents: <Input placeholder="Sensor location" />,
     },
     {
+      // todo question: do gateways have accessible names too?
       label: "Gateway",
       contents: <div className={styles.formData}>2nd Floor Gateway</div>,
     },
@@ -125,10 +139,38 @@ const SensorDetails: NextPage = () => {
 
   return (
     <div>
-      <h1>Conference Room</h1>
+      <h1>{latestSensorData.name}</h1>
       <Tabs defaultActiveKey="1" onChange={callback}>
         <TabPane tab="Summary" key="1">
           <h2>Current Readings</h2>
+          {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
+          <p>Last Seen: {latestSensorData.lastActivity}</p>
+          <ul>
+            <li>
+              Temperature:&nbsp;
+              {typeof latestSensorData.temperature === "string"
+                ? `${latestSensorData.temperature}`
+                : `${latestSensorData.temperature}°C`}
+            </li>
+            <li>
+              Humidity:&nbsp;
+              {typeof latestSensorData.humidity === "string"
+                ? `${latestSensorData.humidity}`
+                : `${latestSensorData.humidity}%`}
+            </li>
+            <li>
+              Pressure:&nbsp;
+              {typeof latestSensorData.pressure === "string"
+                ? `${latestSensorData.pressure}`
+                : `${latestSensorData.pressure / 1000} kPa`}
+            </li>
+            <li>
+              Voltage:&nbsp;
+              {typeof latestSensorData.voltage === "string"
+                ? `${latestSensorData.voltage}`
+                : `${latestSensorData.voltage}V`}
+            </li>
+          </ul>
           <h3>Voltage</h3>
           <VoltageChart data={mockVoltageData} />
         </TabPane>
@@ -145,3 +187,19 @@ const SensorDetails: NextPage = () => {
 };
 
 export default SensorDetails;
+
+export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
+  async ({ query }) => {
+    const { gatewayUID, sensorUID } = query;
+
+    const { latestSensorData } =
+      // const { latestSensorData, historicalSensorData } =
+      await getSensorDetailsData(gatewayUID, sensorUID);
+
+    // return {
+    //   props: { gateways, latestSensorData },
+    // };
+    return {
+      props: { latestSensorData },
+    };
+  };
