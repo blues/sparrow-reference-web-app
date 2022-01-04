@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../constants/http";
+import NotehubEvent from "../../../../models/NotehubEvent";
 import config from "../../../../../config";
 
 export default async function historicalSensorsHandler(
@@ -20,10 +21,10 @@ export default async function historicalSensorsHandler(
     return;
   }
 
-  // todo default start date to 14 days if no other start passed in
+  // todo default start date to X days if no other start passed in
   const currentDate = new Date();
   const startDate = Math.round(
-    (currentDate.getTime() - 14 * 24 * 60 * 60 * 1000) / 1000
+    (currentDate.getTime() - 40 * 24 * 60 * 60 * 1000) / 1000
   );
   // Notehub values
   const { hubBaseURL, hubAuthToken, hubAppUID } = config;
@@ -35,28 +36,40 @@ export default async function historicalSensorsHandler(
     [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
   };
 
-  let eventArray: object[] = [];
+  interface NotehubResponse {
+    events: NotehubEvent[];
+    has_more: boolean;
+    through: string;
+  }
+
+  let eventArray: NotehubEvent[] = [];
 
   // API call
   try {
-    const response: AxiosResponse = await axios.get(initialEndpoint, {
-      headers,
-    });
+    const response: AxiosResponse<NotehubResponse> = await axios.get(
+      initialEndpoint,
+      {
+        headers,
+      }
+    );
     eventArray = response.data.events;
     while (response.data.has_more) {
       // API path for all subsequent event calls
+      // console.log("DATA THROUGH ================", response.data.through);
       const recurringEndpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/events?since=${response.data.through}`;
-      const response2: AxiosResponse = await axios.get(recurringEndpoint, {
-        headers,
-      });
-      eventArray = [...eventArray, response2.data.events];
-      if (response2.data.has_more) {
-        response.data.has_more = response2.data.through;
+      const newerResponseData: AxiosResponse<NotehubResponse> = await axios.get(
+        recurringEndpoint,
+        {
+          headers,
+        }
+      );
+      eventArray = [...eventArray, ...newerResponseData.data.events];
+      if (newerResponseData.data.has_more) {
+        response.data.through = newerResponseData.data.through;
       } else {
         response.data.has_more = false;
       }
     }
-    // console.log(eventArray);
     // Return JSON
     res.status(200).json(eventArray);
   } catch (err) {

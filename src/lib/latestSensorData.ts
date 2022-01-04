@@ -2,7 +2,7 @@ import axios from "axios";
 import { flattenDeep, uniqBy } from "lodash";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
-import NotehubEvents from "../models/NotehubEvents";
+import NotehubLatestEvents from "../models/NotehubLatestEvents";
 import NotehubEvent from "../models/NotehubEvent";
 import config from "../../config";
 import NotehubSensorConfig from "../models/NotehubSensorConfig";
@@ -15,7 +15,7 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
       `${config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
     );
 
-    const latestSensorEvents = resp.data as NotehubEvents;
+    const latestSensorEvents = resp.data as NotehubLatestEvents;
 
     // filter out all latest_events that are not `motion.qo` or `air.qo` files - those indicate they are sensor files
     const filteredSensorData = latestSensorEvents.latest_events.filter(

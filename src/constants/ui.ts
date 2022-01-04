@@ -7,4 +7,12 @@ const SENSOR_MESSAGE = {
   NO_TEMPERATURE: "No temperature readings currently available.",
 };
 
-export { SENSOR_MESSAGE };
+// Historical sensor data fallbacks for no historical sensor data to display
+const HISTORICAL_SENSOR_DATA_MESSAGE = {
+  NO_VOLTAGE_HISTORY: "No voltage history currently available.",
+  NO_HUMIDITY_HISTORY: "No humidity history currently available.",
+  NO_PRESSURE_HISTORY: "No pressure history currently available.",
+  NO_TEMPERATURE_HISTORY: "No temperature history currently available.",
+};
+
+export { SENSOR_MESSAGE, HISTORICAL_SENSOR_DATA_MESSAGE };

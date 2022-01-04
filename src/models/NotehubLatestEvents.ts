@@ -1,7 +1,7 @@
 import NotehubEvent from "./NotehubEvent";
 
-interface NotehubEvents {
+interface NotehubLatestEvents {
   latest_events: [NotehubEvent];
 }
 
-export default NotehubEvents;
+export default NotehubLatestEvents;
