@@ -74,7 +74,6 @@ export default async function sensorConfigHandler(
 
   try {
     // API call
-    console.log(endpoint, postBody);
     const response: AxiosResponse = await axios.post(endpoint, postBody, {
       headers,
     });
@@ -85,8 +84,8 @@ export default async function sensorConfigHandler(
       const { err } = response.data as NotehubErr;
       // Check the error message
       if (err.includes("note-noexist")) {
-        // Return 404 error
-        res.status(204).json(err);
+        // Return 204 error (request succeeded, but nothing to see here)
+        res.status(204).json({ err: HTTP_STATUS.NOT_FOUND_CONFIG });
         return;
       }
     } else {
