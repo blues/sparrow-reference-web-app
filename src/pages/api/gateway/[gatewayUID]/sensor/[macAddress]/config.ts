@@ -85,7 +85,7 @@ export default async function sensorConfigHandler(
       // Check the error message
       if (err.includes("note-noexist")) {
         // Return 204 error (request succeeded, but nothing to see here)
-        res.status(204).json({ err: HTTP_STATUS.NOT_FOUND_CONFIG });
+        res.status(204).send();
         return;
       }
     } else {
