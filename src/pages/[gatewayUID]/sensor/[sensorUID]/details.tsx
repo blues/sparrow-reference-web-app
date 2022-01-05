@@ -1,5 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/router";
 import { Input, Button, Tabs } from "antd";
+import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import Form, { FormProps } from "../../../../components/elements/Form";
@@ -20,6 +22,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   historicalSensorData,
 }) => {
   const { TabPane } = Tabs;
+  const { query } = useRouter();
 
   const formItems: FormProps[] = [
     {
@@ -31,6 +34,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     {
       label: "Name",
       name: "name",
+      rules: [
+        { required: true, message: "Please add the name of your sensor" },
+      ],
       tooltip: "What is the name of your sensor?",
       contents: <Input placeholder="Name of sensor" />,
     },
@@ -38,6 +44,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
       label: "Location",
       name: "location",
       tooltip: "Where is your sensor located?",
+      rules: [
+        { required: true, message: "Please add the location of your sensor" },
+      ],
       contents: <Input placeholder="Sensor location" />,
     },
     {
@@ -46,6 +55,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
       contents: <div className={styles.formData}>2nd Floor Gateway</div>,
     },
     {
+      // todo disable button when fields not entered
       contents: (
         <Button type="primary" htmlType="submit">
           Save Changes
@@ -54,16 +64,17 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     },
   ];
 
-  const formOnFinish = (values: Store) => {
+  const formOnFinish = async (values: Store) => {
     console.log("Success:", values);
+    console.log(query.gatewayUID, query.sensorUID);
+    const temp = await axios.post(
+      `/api/gateway/${query.gatewayUID}/sensor/${query.sensorUID}/config`
+    );
+    console.log(temp);
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
     console.log("Failed:", errorInfo);
-  };
-
-  const callback = (key: string) => {
-    console.log(key);
   };
 
   const formatChartData = <C extends keyof NotehubEvent["body"]>(
@@ -100,7 +111,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   return (
     <div>
       <h1>{latestSensorData.name}</h1>
-      <Tabs defaultActiveKey="1" onChange={callback}>
+      <Tabs defaultActiveKey="1">
         <TabPane tab="Summary" key="1">
           <h2>Current Readings</h2>
           {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}

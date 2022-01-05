@@ -7,6 +7,12 @@ export interface FormProps {
   label?: string;
   tooltip?: string;
   name?: string;
+  rules?: [
+    {
+      required: boolean;
+      message: string;
+    }
+  ];
   contents: JSX.Element;
 }
 
@@ -33,6 +39,7 @@ const FormComponent = ({
           label={formItem.label}
           name={formItem.name}
           tooltip={formItem.tooltip}
+          rules={formItem.rules}
           className={styles.formLabel}
         >
           {formItem.contents}
