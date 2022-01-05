@@ -1,29 +1,97 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
+import axios, { AxiosResponse } from "axios";
+import {HTTP_STATUS, HTTP_HEADER} from '../../../../../../constants/http';
+import config from "../../../../../../../config";
+import type NotehubErr from '../../../../../../models/NotehubErr';
+import type NoteSensorConfigBody from "../../../../../../models/NoteSensorConfigBody";
 
-export default function handler(
+export default async function sensorConfigHandler (
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // Gateway UID must be a string
+  if (typeof req.query.gatewayUID !== "string") {
+    res.status(400).json({ err: HTTP_STATUS.INVALID_GATEWAY });
+    return;
+  }
+  // Sensor MAC must be a string
+  if (typeof req.query.macAddress !== "string") {
+    res.status(400).json({ err: HTTP_STATUS.INVALID_SENSOR_MAC });
+    return;
+  }
+
+  // Query params
+  const { gatewayUID, macAddress } = req.query;
+  // Body params
+  const { loc, name } = req.body as NoteSensorConfigBody;
+  // Notehub values
+  const { hubBaseURL, hubAuthToken, hubProductUID } = config;
+  // API path
+  const endpoint = `${hubBaseURL}/req?product=${hubProductUID}&device=${gatewayUID}`;
+  // API headers
+  const headers = {
+    [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
+    [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken
+  };
+
+  // note.get payload
+  const noteGet = {
+    req: "note.get", 
+    file: "config.db", 
+    note: macAddress
+  };
+  // note.update payload
+  const noteUpdate = {
+    req: "note.update", 
+    file: "config.db", 
+    note: macAddress,
+    body: {
+      loc, name
+    }
+  };
+
+  // Costruct body based on HTTP method
+  let postBody;
   switch (req.method) {
-    case 'POST':
-      // Stubbed response for note.update success (empty JSON object)
-      res.status(200).json({});
+    case "GET":
+      postBody = noteGet;
       break;
-    case 'GET':
-      // Stubbed response for note.get for sensor config.db
-      res.status(200).json({
-        "note": "20323746323650020031002f",
-        "body": {
-          "loc": "87JFH688+2H",
-          "name": "0F Furnace"
-        },
-        "time": 1632763519
-      });
+    case "POST":
+      // Check config body params
+      if (loc === undefined || name === undefined) {
+        res.status(400).json({ err: HTTP_STATUS.INVALID_CONFIG_BODY });
+        return;
+      }
+      postBody = noteUpdate;
       break;
     default:
       // Other methods not allowed at this route
-      res.status(405).end();
-      break;
+      res.status(405).json({ err: HTTP_STATUS.METHOD_NOT_ALLOWED });
+      return;
+  }
+
+  try {
+    // API call
+    const response: AxiosResponse = await axios.post(endpoint, postBody, { headers });
+    // This call responds with a 200/OK even if the note was 404/NotFound.
+    // But it will contain an err property we can watch out for.
+    if ('err' in response.data) {
+      // Assert error type
+      const { err } = response.data as NotehubErr;
+      // Check the error message
+      if (err.includes('note-noexist')) {
+        // Return 404 error
+        res.status(404).json({ err: HTTP_STATUS.NOT_FOUND_CONFIG });
+        return;
+      }
+    } else {
+      // Return JSON
+      res.status(200).json(response.data);
+      return;
+    }
+  } catch (err) {
+    // Return 500 error
+    res.status(500).json({ err: HTTP_STATUS.INTERNAL_ERR_CONFIG });
   }
 }
