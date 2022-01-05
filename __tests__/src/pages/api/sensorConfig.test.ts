@@ -44,9 +44,9 @@
     expect(res.statusMessage).toEqual("OK");
   });
 
-  it("POST should return a 400 if Sensor Config is missing", async () => {
+  it("POST should return a 400 if Sensor MAC is missing", async () => {
     const {req, res} = mockRequestResponse("POST");
-    req.body = {}
+    req.body = {} // Equivalent to a null Sensor MAC
     await sensorConfigHandler(req, res);
 
     expect(res.statusCode).toBe(400);
@@ -57,13 +57,14 @@
     expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.INVALID_CONFIG_BODY });
   });
  
-   it("should return a 404 if Sensor MAC is invalid", async () => {
+   it("should return a 204 if Sensor Config cannot be found", async () => {
      const {req, res} = mockRequestResponse();
-     req.query.macAddress = "hello_world";
+     // Pass a MAC address string that almost certainly won't exist
+     req.query.macAddress = "not_a_real_sensor_mac";
  
      await sensorConfigHandler(req, res);
  
-     expect(res.statusCode).toBe(404);
+     expect(res.statusCode).toBe(204);
      // eslint-disable-next-line no-underscore-dangle
      expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.NOT_FOUND_CONFIG });
    });
