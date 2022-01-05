@@ -24,6 +24,7 @@ export default async function getSensorDetailsData(
         if (event.file.includes(`${sensorUID}`)) {
           return event;
         }
+        return false;
       }
     );
 
@@ -80,6 +81,7 @@ export default async function getSensorDetailsData(
         ) {
           return true;
         }
+        return false;
       }
     );
 

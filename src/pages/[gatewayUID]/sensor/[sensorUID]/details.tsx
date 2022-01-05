@@ -66,9 +66,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     console.log(key);
   };
 
-  const formatChartData = (
+  const formatChartData = <C extends keyof NotehubEvent["body"]>(
     sensorEvents: NotehubEvent[],
-    chartValue: string
+    chartValue: C
   ) => {
     if (sensorEvents.length) {
       const formattedData = sensorEvents
@@ -77,6 +77,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
           if (event.file && event.file.includes("#air.qo")) {
             return event;
           }
+          return false;
         })
         .map((filteredEvents) => {
           const chartDataObj = {

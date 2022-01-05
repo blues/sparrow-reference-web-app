@@ -55,8 +55,8 @@ export default async function historicalSensorsHandler(
     eventArray = response.data.events;
     while (response.data.has_more) {
       // API path for all subsequent event calls
-      // console.log("DATA THROUGH ================", response.data.through);
       const recurringEndpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/events?since=${response.data.through}`;
+      // eslint-disable-next-line no-await-in-loop
       const newerResponseData: AxiosResponse<NotehubResponse> = await axios.get(
         recurringEndpoint,
         {

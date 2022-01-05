@@ -24,8 +24,9 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
           event.file.includes("#motion.qo") ||
           event.file.includes("#air.qo")
         ) {
-          return event;
+          return true;
         }
+        return false;
       }
     );
 
