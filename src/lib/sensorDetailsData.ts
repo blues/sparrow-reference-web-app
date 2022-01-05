@@ -33,7 +33,6 @@ export default async function getSensorDetailsData(
       `${config.appBaseUrl}/api/gateway/${gatewayUID}/sensor/${sensorUID}/config`
     );
 
-    // todo handle failure state once Rob's branch merged in
     const sensorNameInfo = sensorDetails.data as NotehubSensorConfig;
 
     // combine the sensor data objs into one
@@ -41,7 +40,9 @@ export default async function getSensorDetailsData(
       filteredSensorData.map((event) => ({
         gatewayUID: `${gatewayUID}`,
         macAddress: `${sensorUID}`,
-        name: sensorNameInfo.body.name,
+        name: sensorNameInfo?.body?.name
+          ? sensorNameInfo.body.name
+          : SENSOR_MESSAGE.NO_NAME,
         humidity: event.body?.humidity
           ? event.body.humidity
           : SENSOR_MESSAGE.NO_HUMIDITY,

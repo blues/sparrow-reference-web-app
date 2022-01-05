@@ -78,15 +78,15 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
     const resp = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
     );
-
-    // todo handle failure state once Rob's branch merged in
     const sensorNameInfo = resp.data as NotehubSensorConfig;
 
     // 4. Put tt all together
     return {
       macAddress: gatewaySensorInfo.macAddress,
       gatewayUID: gatewaySensorInfo.gatewayUID,
-      name: sensorNameInfo.body.name,
+      name: sensorNameInfo?.body?.name
+        ? sensorNameInfo.body.name
+        : gatewaySensorInfo.name,
       voltage: gatewaySensorInfo.voltage,
       lastActivity: gatewaySensorInfo.lastActivity,
       humidity: gatewaySensorInfo.humidity,

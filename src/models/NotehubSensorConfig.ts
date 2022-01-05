@@ -1,10 +1,9 @@
+import NoteSensorConfigBody from "./NoteSensorConfigBody";
+
 interface NotehubSensorConfig {
   note: string;
   time: number;
-  body: {
-    loc: string;
-    name: string;
-  };
+  body: NoteSensorConfigBody;
 }
 
 export default NotehubSensorConfig;

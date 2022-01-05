@@ -42,7 +42,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     },
     {
       label: "Location",
-      name: "location",
+      name: "loc",
       tooltip: "Where is your sensor located?",
       rules: [
         { required: true, message: "Please add the location of your sensor" },
@@ -55,7 +55,6 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
       contents: <div className={styles.formData}>2nd Floor Gateway</div>,
     },
     {
-      // todo disable button when fields not entered
       contents: (
         <Button type="primary" htmlType="submit">
           Save Changes
@@ -65,12 +64,11 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   ];
 
   const formOnFinish = async (values: Store) => {
-    console.log("Success:", values);
-    console.log(query.gatewayUID, query.sensorUID);
-    const temp = await axios.post(
-      `/api/gateway/${query.gatewayUID}/sensor/${query.sensorUID}/config`
+    const response = await axios.post(
+      `/api/gateway/${query.gatewayUID}/sensor/${query.sensorUID}/config`,
+      values
     );
-    console.log(temp);
+    console.log(`Success: ${response}`);
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
