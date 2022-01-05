@@ -39,12 +39,11 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
       </div>
 
       <h2>Sensors</h2>
-      {/* todo remove this macAddress from title after names are no longer mocked */}
       <div className={styles.groupedCards}>
         {latestSensorDataList.map((sensor) => (
           <Card
             key={sensor.macAddress}
-            title={`${sensor.name}-${sensor.macAddress}`}
+            title={`${sensor.name}`}
             extra={
               <Link
                 href={`/${sensor.gatewayUID}/sensor/${sensor.macAddress}/details`}

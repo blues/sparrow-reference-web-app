@@ -9,7 +9,7 @@ import NotehubSensorConfig from "../models/NotehubSensorConfig";
 import { SENSOR_MESSAGE } from "../constants/ui";
 
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
-  // 1. Get latest sensor data from API
+  // get latest sensor data from API
   const getLatestSensorDataByGateway = async (gateway: Gateway) => {
     const resp = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
@@ -73,14 +73,14 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
     "macAddress"
   );
 
-  // 3. Get the names of the sensors from the API via config.db
+  // get the names of the sensors from the API via config.db
   const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
     const resp = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
     );
     const sensorNameInfo = resp.data as NotehubSensorConfig;
 
-    // 4. Put tt all together
+    // put it all together in one snapshot object
     return {
       macAddress: gatewaySensorInfo.macAddress,
       gatewayUID: gatewaySensorInfo.gatewayUID,
