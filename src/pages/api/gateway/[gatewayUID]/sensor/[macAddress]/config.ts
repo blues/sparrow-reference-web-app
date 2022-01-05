@@ -81,8 +81,8 @@ export default async function sensorConfigHandler (
       const { err } = response.data as NotehubErr;
       // Check the error message
       if (err.includes('note-noexist')) {
-        // Return 404 error
-        res.status(404).json({ err: HTTP_STATUS.NOT_FOUND_CONFIG });
+        // Return 204 error (request succeeded, but nothing to see here)
+        res.status(204).json({ err: HTTP_STATUS.NOT_FOUND_CONFIG });
         return;
       }
     } else {
