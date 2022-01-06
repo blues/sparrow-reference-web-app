@@ -10,6 +10,7 @@ import Sensor from "../../../../models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
 import NotehubEvent from "../../../../models/NotehubEvent";
 import { HISTORICAL_SENSOR_DATA_MESSAGE } from "../../../../constants/ui";
+
 import styles from "../../../../styles/Form.module.scss";
 
 type SensorDetailsData = {
@@ -50,7 +51,6 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
       contents: <Input placeholder="Sensor location" />,
     },
     {
-      // todo question: do gateways have accessible names too?
       label: "Gateway",
       contents: <div className={styles.formData}>2nd Floor Gateway</div>,
     },
