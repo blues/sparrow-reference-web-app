@@ -81,7 +81,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     if (sensorEvents.length) {
       const formattedData = sensorEvents
         .filter((event) => {
-          // currently only formatting `air.qo` events because I'm not sure how to display data from `motio.qo` events yet
+          // currently only formatting `air.qo` events because I'm not sure how to display data from `motion.qo` events yet
           if (event.file && event.file.includes("#air.qo")) {
             return event;
           }
