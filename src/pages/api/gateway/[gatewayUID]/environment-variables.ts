@@ -1,10 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
-import type NotehubEnvVars from "../../../../models/NotehubEnvVars";
+import type NotehubEnvVars from "../../../../services/notehub/NotehubEnvVars";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../constants/http";
 import config from "../../../../../config";
-
 
 export default async function environmentVariablesHandler(
   req: NextApiRequest,
@@ -65,7 +64,11 @@ export default async function environmentVariablesHandler(
       try {
         const response: AxiosResponse = await axios.put(
           endpoint,
-          { environment_variables: JSON.parse(environmentVariables) as NotehubEnvVars },
+          {
+            environment_variables: JSON.parse(
+              environmentVariables
+            ) as NotehubEnvVars,
+          },
           { headers }
         );
         // Return JSON

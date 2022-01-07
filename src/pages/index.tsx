@@ -2,8 +2,8 @@ import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import Card from "../components/elements/Card";
-import getGateways from "../lib/gateways";
-import getLatestSensorData from "../lib/latestSensorData";
+import { service, services } from "../services/ServiceLocator";
+import getLatestSensorData from "../services/latestSensorData";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
 import { SENSOR_MESSAGE } from "../constants/ui";
@@ -90,7 +90,10 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
-  const gateways = await getGateways();
+  // const temp = new NotehubGatewayDataService();
+  // todo find the gatewaydataservice interface via service locator
+  const gateways = await services().getGatewayService().getGateways("");
+  console.log("GATEWAY -------", gateways);
   const latestSensorDataList = await getLatestSensorData(gateways);
 
   return {
