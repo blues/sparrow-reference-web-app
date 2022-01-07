@@ -13,6 +13,7 @@ import {
   HISTORICAL_SENSOR_DATA_MESSAGE,
   SENSOR_MESSAGE,
 } from "../../../../constants/ui";
+import SparrowQueryInterface from "../../../../lib/interfaces/SparrowQueryInterface";
 import styles from "../../../../styles/Form.module.scss";
 
 type SensorDetailsData = {
@@ -66,8 +67,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   ];
 
   const formOnFinish = async (values: Store) => {
+    const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
     const response = await axios.post(
-      `/api/gateway/${query.gatewayUID}/sensor/${query.sensorUID}/config`,
+      `/api/gateway/${gatewayUID}/sensor/${sensorUID}/config`,
       values
     );
     console.log(`Success: ${response}`);
@@ -203,7 +205,9 @@ export default SensorDetails;
 
 export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
   async ({ query }) => {
-    const { gatewayUID, sensorUID } = query;
+    // extended interface needed to eliminate TS error of possible undefined string values
+    // the query string values will never be undefined in this situation
+    const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
 
     const { latestSensorData, historicalSensorData } =
       await getSensorDetailsData(gatewayUID, sensorUID);
