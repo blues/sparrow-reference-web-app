@@ -4,6 +4,7 @@ import NotehubLatestEvents from "../models/NotehubLatestEvents";
 import NotehubEvent from "../models/NotehubEvent";
 import config from "../../config";
 import NotehubSensorConfig from "../models/NotehubSensorConfig";
+import { SENSOR_MESSAGE } from "../constants/ui";
 
 export default async function getSensorDetailsData(
   gatewayUID: string,
@@ -39,11 +40,13 @@ export default async function getSensorDetailsData(
       filteredSensorData.map((event) => ({
         gatewayUID: `${gatewayUID}`,
         macAddress: `${sensorUID}`,
-        name: sensorNameInfo?.body?.name,
-        humidity: event.body?.humidity,
-        pressure: event.body?.pressure,
-        temperature: event.body?.temperature,
-        voltage: event.body?.voltage,
+        name: sensorNameInfo?.body?.name
+          ? sensorNameInfo.body.name
+          : SENSOR_MESSAGE.NO_NAME,
+        ...(event.body?.humidity && { humidity: event.body.humidity }),
+        ...(event.body?.pressure && { pressure: event.body.pressure }),
+        ...(event.body?.temperature && { temperature: event.body.temperature }),
+        ...(event.body?.voltage && { voltage: event.body.voltage }),
         lastActivity: event.captured,
       })),
       "macAddress"

@@ -213,8 +213,6 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
       await getSensorDetailsData(gatewayUID, sensorUID);
 
     return {
-      props: JSON.parse(
-        JSON.stringify({ latestSensorData, historicalSensorData })
-      ),
+      props: { latestSensorData, historicalSensorData },
     };
   };

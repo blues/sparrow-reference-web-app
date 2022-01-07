@@ -85,7 +85,7 @@ export default async function sensorConfigHandler(
       // Check the error message
       if (err.includes("note-noexist")) {
         // Return 204 error (request succeeded, but nothing to see here)
-        res.status(204).send("");
+        res.status(204).end();
         return;
       }
     } else {
