@@ -112,4 +112,41 @@ describe("/api/gateways/[gatewayUID]/environment-variables/[key] DELETE API Endp
     expect(res._getJSONData().environment_variables.key1).toEqual(undefined);
     expect(res.statusMessage).toEqual("OK");
   });
+
+  it("should return a 400 if Gateway UID is missing", async () => {
+    const { req, res } = mockRequestResponse("DELETE");
+    req.query = { key: "key1" }; // Equivalent to a null gatewayUID
+
+    await environmentVariablesDeleteHandler(req, res);
+
+    expect(res.statusCode).toBe(400);
+    // eslint-disable-next-line no-underscore-dangle
+    expect(res._getJSONData()).toEqual({
+      err: HTTP_STATUS.INVALID_GATEWAY,
+    });
+  });
+
+  it("should return a 400 if key is missing", async () => {
+    const { req, res } = mockRequestResponse("DELETE");
+    req.query = { gatewayUID: "uid" };
+
+    await environmentVariablesDeleteHandler(req, res);
+
+    expect(res.statusCode).toBe(400);
+    // eslint-disable-next-line no-underscore-dangle
+    expect(res._getJSONData()).toEqual({
+      err: HTTP_STATUS.INVALID_ENV_VAR_KEY,
+    });
+  });
+
+  it("should return a 405 if HTTP method is not DELETE", async () => {
+    const { req, res } = mockRequestResponse("GET");
+
+    await environmentVariablesDeleteHandler(req, res);
+    expect(res.statusCode).toBe(405);
+    // eslint-disable-next-line no-underscore-dangle
+    expect(res._getJSONData()).toEqual({
+      err: HTTP_STATUS.METHOD_NOT_ALLOWED,
+    });
+  });
 });

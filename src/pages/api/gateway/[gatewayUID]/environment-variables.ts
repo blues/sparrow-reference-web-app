@@ -19,7 +19,6 @@ export default async function environmentVariablesHandler(
   // Notehub values
   const { hubBaseURL, hubAuthToken, hubAppUID } = config;
   // API path
-  // const endpoint = `${hubBaseURL}/v1/projects/app:2e79cf4b-676e-4652-96bb-d3b13c0f19b8/devices/dev:868050040247757/environment_variables`;
   const endpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/devices/${gatewayUID}/environment_variables`;
   // API headers
   const headers = {
