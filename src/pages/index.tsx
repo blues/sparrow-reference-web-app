@@ -94,8 +94,6 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   const latestSensorDataList = await getLatestSensorData(gateways);
 
   return {
-    /* json transformations necessary to prevent having to set empty props as null 
-    on server side and make types either string | null or number | null */
-    props: JSON.parse(JSON.stringify({ gateways, latestSensorDataList })),
+    props: { gateways, latestSensorDataList },
   };
 };

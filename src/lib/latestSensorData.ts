@@ -75,8 +75,8 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
     return {
       macAddress: gatewaySensorInfo.macAddress,
       gatewayUID: gatewaySensorInfo.gatewayUID,
-      name: sensorNameInfo?.body?.name,
-      voltage: gatewaySensorInfo.voltage,
+      ...sensorNameInfo?.body?.name && { name: sensorNameInfo?.body?.name },
+      ...gatewaySensorInfo.voltage && { voltage: gatewaySensorInfo.voltage },
       lastActivity: gatewaySensorInfo.lastActivity,
       humidity: gatewaySensorInfo.humidity,
       pressure: gatewaySensorInfo.pressure,
