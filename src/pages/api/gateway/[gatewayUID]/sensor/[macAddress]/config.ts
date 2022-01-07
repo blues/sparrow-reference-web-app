@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../../../constants/http";
 import config from "../../../../../../../config";
-import type NotehubErr from "../../../../../../models/NotehubErr";
+import type NotehubErr from "../../../../../../lib/notehub/NotehubErr";
 import type NoteSensorConfigBody from "../../../../../../models/NoteSensorConfigBody";
 
 export default async function sensorConfigHandler(
@@ -85,7 +85,7 @@ export default async function sensorConfigHandler(
       // Check the error message
       if (err.includes("note-noexist")) {
         // Return 204 error (request succeeded, but nothing to see here)
-        res.status(204).send();
+        res.status(204).end();
         return;
       }
     } else {

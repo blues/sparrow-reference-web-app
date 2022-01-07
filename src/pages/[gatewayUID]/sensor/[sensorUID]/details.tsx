@@ -5,15 +5,17 @@ import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import Form, { FormProps } from "../../../../components/elements/Form";
-import getSensorDetailsData from "../../../../lib/sensorDetailsData";
 import Sensor from "../../../../models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
 import NotehubEvent from "../../../../models/NotehubEvent";
-import { HISTORICAL_SENSOR_DATA_MESSAGE } from "../../../../constants/ui";
+import {
+  HISTORICAL_SENSOR_DATA_MESSAGE,
+  SENSOR_MESSAGE,
+} from "../../../../constants/ui";
+import SparrowQueryInterface from "../../../../lib/interfaces/SparrowQueryInterface";
 import styles from "../../../../styles/Form.module.scss";
 
 const sensorDataService: SensorDataService = ServiceLocator.sensorDataService();
-
 
 type SensorDetailsData = {
   latestSensorData: Sensor;
@@ -67,9 +69,11 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   ];
 
   const formOnFinish = async (values: Store) => {
-    const location = values.loc;
-    const name = values.name;
-    sensorDataService.setDeviceProperties(query.sensorID, {location, name});
+    const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
+    const response = await axios.post(
+      `/api/gateway/${gatewayUID}/sensor/${sensorUID}/config`,
+      values
+    );
     console.log(`Success: ${response}`);
   };
 
@@ -84,7 +88,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     if (sensorEvents.length) {
       const formattedData = sensorEvents
         .filter((event) => {
-          // currently only formatting `air.qo` events because I'm not sure how to display data from `motio.qo` events yet
+          // currently only formatting `air.qo` events because I'm not sure how to display data from `motion.qo` events yet
           if (event.file && event.file.includes("#air.qo")) {
             return event;
           }
@@ -119,27 +123,27 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
           <ul>
             <li>
               Temperature:&nbsp;
-              {typeof latestSensorData.temperature === "string"
-                ? `${latestSensorData.temperature}`
-                : `${latestSensorData.temperature}°C`}
+              {latestSensorData.temperature
+                ? `${latestSensorData.temperature}°C`
+                : SENSOR_MESSAGE.NO_TEMPERATURE}
             </li>
             <li>
               Humidity:&nbsp;
-              {typeof latestSensorData.humidity === "string"
-                ? `${latestSensorData.humidity}`
-                : `${latestSensorData.humidity}%`}
+              {latestSensorData.humidity
+                ? `${latestSensorData.humidity}%`
+                : SENSOR_MESSAGE.NO_HUMIDITY}
             </li>
             <li>
               Pressure:&nbsp;
-              {typeof latestSensorData.pressure === "string"
-                ? `${latestSensorData.pressure}`
-                : `${latestSensorData.pressure / 1000} kPa`}
+              {latestSensorData.pressure
+                ? `${latestSensorData.pressure / 1000} kPa`
+                : SENSOR_MESSAGE.NO_PRESSURE}
             </li>
             <li>
               Voltage:&nbsp;
-              {typeof latestSensorData.voltage === "string"
-                ? `${latestSensorData.voltage}`
-                : `${latestSensorData.voltage}V`}
+              {latestSensorData.voltage
+                ? `${latestSensorData.voltage}V`
+                : SENSOR_MESSAGE.NO_VOLTAGE}
             </li>
           </ul>
           <h3>Voltage</h3>
@@ -203,7 +207,9 @@ export default SensorDetails;
 
 export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
   async ({ query }) => {
-    const { gatewayUID, sensorUID } = query;
+    // extended interface needed to eliminate TS error of possible undefined string values
+    // the query string values will never be undefined in this situation
+    const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
 
     const { latestSensorData, historicalSensorData, ok } =
       await sensorDataService.getSensorDetailsData(gatewayUID, sensorUID);

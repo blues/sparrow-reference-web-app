@@ -43,18 +43,10 @@ export default async function getSensorDetailsData(
         name: sensorNameInfo?.body?.name
           ? sensorNameInfo.body.name
           : SENSOR_MESSAGE.NO_NAME,
-        humidity: event.body?.humidity
-          ? event.body.humidity
-          : SENSOR_MESSAGE.NO_HUMIDITY,
-        pressure: event.body?.pressure
-          ? event.body.pressure
-          : SENSOR_MESSAGE.NO_PRESSURE,
-        temperature: event.body?.temperature
-          ? event.body.temperature
-          : SENSOR_MESSAGE.NO_TEMPERATURE,
-        voltage: event.body?.voltage
-          ? event.body.voltage
-          : SENSOR_MESSAGE.NO_VOLTAGE,
+        ...(event.body?.humidity && { humidity: event.body.humidity }),
+        ...(event.body?.pressure && { pressure: event.body.pressure }),
+        ...(event.body?.temperature && { temperature: event.body.temperature }),
+        ...(event.body?.voltage && { voltage: event.body.voltage }),
         lastActivity: event.captured,
       })),
       "macAddress"
@@ -68,7 +60,7 @@ export default async function getSensorDetailsData(
   // Get historical sensor data from API
   const getHistoricalSensorData = async () => {
     const resp = await axios.get(
-      `${config.appBaseUrl}/api/gateway/${gatewayUID}/historicalSensors`
+      `${config.appBaseUrl}/api/gateway/${gatewayUID}/historical-sensors`
     );
 
     const sensorEvents = resp.data as NotehubEvent[];

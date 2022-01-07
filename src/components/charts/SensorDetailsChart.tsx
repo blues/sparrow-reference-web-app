@@ -2,7 +2,7 @@ import { ChartData, ChartOptions } from "chart.js";
 import { CHART_DATE_FORMAT } from "./chartHelper";
 import LineChart from "./LineChart";
 
-type PressureChartProps = {
+type SensorDetailsChartProps = {
   label: string;
   yAxisMin: number;
   yAxisMax: number;
@@ -12,12 +12,12 @@ type PressureChartProps = {
   }[];
 };
 
-const PressureChart = ({
+const SensorDetailsChart = ({
   data,
   label,
   yAxisMin,
   yAxisMax,
-}: PressureChartProps) => {
+}: SensorDetailsChartProps) => {
   const labels = data.map((obj) => obj.when);
   const values = data.map((obj) => obj.value);
 
@@ -68,4 +68,4 @@ const PressureChart = ({
   );
 };
 
-export default PressureChart;
+export default SensorDetailsChart;

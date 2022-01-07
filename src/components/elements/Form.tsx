@@ -33,9 +33,10 @@ const FormComponent = ({
       onFinish={(values: Store) => onFinish(values)}
       onFinishFailed={(values) => onFinishFailed(values)}
     >
-      {formItems.map((formItem) => (
+      {formItems.map((formItem, index) => (
         <Form.Item
-          key={formItem.label}
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
           label={formItem.label}
           name={formItem.name}
           tooltip={formItem.tooltip}
