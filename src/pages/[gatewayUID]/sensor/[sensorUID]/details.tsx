@@ -9,7 +9,10 @@ import getSensorDetailsData from "../../../../lib/sensorDetailsData";
 import Sensor from "../../../../models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
 import NotehubEvent from "../../../../models/NotehubEvent";
-import { HISTORICAL_SENSOR_DATA_MESSAGE } from "../../../../constants/ui";
+import {
+  HISTORICAL_SENSOR_DATA_MESSAGE,
+  SENSOR_MESSAGE,
+} from "../../../../constants/ui";
 import styles from "../../../../styles/Form.module.scss";
 
 type SensorDetailsData = {
@@ -116,27 +119,27 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
           <ul>
             <li>
               Temperature:&nbsp;
-              {typeof latestSensorData.temperature === "string"
-                ? `${latestSensorData.temperature}`
-                : `${latestSensorData.temperature}°C`}
+              {latestSensorData.temperature
+                ? `${latestSensorData.temperature}°C`
+                : SENSOR_MESSAGE.NO_TEMPERATURE}
             </li>
             <li>
               Humidity:&nbsp;
-              {typeof latestSensorData.humidity === "string"
-                ? `${latestSensorData.humidity}`
-                : `${latestSensorData.humidity}%`}
+              {latestSensorData.humidity
+                ? `${latestSensorData.humidity}%`
+                : SENSOR_MESSAGE.NO_HUMIDITY}
             </li>
             <li>
               Pressure:&nbsp;
-              {typeof latestSensorData.pressure === "string"
-                ? `${latestSensorData.pressure}`
-                : `${latestSensorData.pressure / 1000} kPa`}
+              {latestSensorData.pressure
+                ? `${latestSensorData.pressure / 1000} kPa`
+                : SENSOR_MESSAGE.NO_PRESSURE}
             </li>
             <li>
               Voltage:&nbsp;
-              {typeof latestSensorData.voltage === "string"
-                ? `${latestSensorData.voltage}`
-                : `${latestSensorData.voltage}V`}
+              {latestSensorData.voltage
+                ? `${latestSensorData.voltage}V`
+                : SENSOR_MESSAGE.NO_VOLTAGE}
             </li>
           </ul>
           <h3>Voltage</h3>
@@ -206,6 +209,8 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
       await getSensorDetailsData(gatewayUID, sensorUID);
 
     return {
-      props: { latestSensorData, historicalSensorData },
+      props: JSON.parse(
+        JSON.stringify({ latestSensorData, historicalSensorData })
+      ),
     };
   };

@@ -4,7 +4,6 @@ import NotehubLatestEvents from "../models/NotehubLatestEvents";
 import NotehubEvent from "../models/NotehubEvent";
 import config from "../../config";
 import NotehubSensorConfig from "../models/NotehubSensorConfig";
-import { SENSOR_MESSAGE } from "../constants/ui";
 
 export default async function getSensorDetailsData(
   gatewayUID: string,
@@ -40,21 +39,11 @@ export default async function getSensorDetailsData(
       filteredSensorData.map((event) => ({
         gatewayUID: `${gatewayUID}`,
         macAddress: `${sensorUID}`,
-        name: sensorNameInfo?.body?.name
-          ? sensorNameInfo.body.name
-          : SENSOR_MESSAGE.NO_NAME,
-        humidity: event.body?.humidity
-          ? event.body.humidity
-          : SENSOR_MESSAGE.NO_HUMIDITY,
-        pressure: event.body?.pressure
-          ? event.body.pressure
-          : SENSOR_MESSAGE.NO_PRESSURE,
-        temperature: event.body?.temperature
-          ? event.body.temperature
-          : SENSOR_MESSAGE.NO_TEMPERATURE,
-        voltage: event.body?.voltage
-          ? event.body.voltage
-          : SENSOR_MESSAGE.NO_VOLTAGE,
+        name: sensorNameInfo?.body?.name,
+        humidity: event.body?.humidity,
+        pressure: event.body?.pressure,
+        temperature: event.body?.temperature,
+        voltage: event.body?.voltage,
         lastActivity: event.captured,
       })),
       "macAddress"
@@ -68,7 +57,7 @@ export default async function getSensorDetailsData(
   // Get historical sensor data from API
   const getHistoricalSensorData = async () => {
     const resp = await axios.get(
-      `${config.appBaseUrl}/api/gateway/${gatewayUID}/historicalSensors`
+      `${config.appBaseUrl}/api/gateway/${gatewayUID}/historical-sensors`
     );
 
     const sensorEvents = resp.data as NotehubEvent[];

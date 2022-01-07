@@ -6,7 +6,6 @@ import NotehubLatestEvents from "../models/NotehubLatestEvents";
 import NotehubEvent from "../models/NotehubEvent";
 import config from "../../config";
 import NotehubSensorConfig from "../models/NotehubSensorConfig";
-import { SENSOR_MESSAGE } from "../constants/ui";
 
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   // get latest sensor data from API
@@ -33,10 +32,10 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
     const latestSensorData = filteredSensorData.map((event) => ({
       gatewayUID: `${gateway.uid}`,
       macAddress: event.file,
-      humidity: event.body?.humidity,
-      pressure: event.body?.pressure,
-      temperature: event.body?.temperature,
-      voltage: event.body?.voltage,
+      humidity: event.body.humidity,
+      pressure: event.body.pressure,
+      temperature: event.body.temperature,
+      voltage: event.body.voltage,
       lastActivity: event.captured,
     }));
     return latestSensorData;
@@ -52,21 +51,13 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   const simplifiedSensorEvents = uniqBy(
     flattenDeep(latestSensorEvents)
       .map((sensorEvent) => ({
-        name: SENSOR_MESSAGE.NO_NAME,
+        name: undefined,
         gatewayUID: sensorEvent.gatewayUID,
         macAddress: sensorEvent.macAddress.split("#")[0],
-        humidity: sensorEvent?.humidity
-          ? sensorEvent.humidity
-          : SENSOR_MESSAGE.NO_HUMIDITY,
-        pressure: sensorEvent?.pressure
-          ? sensorEvent.pressure
-          : SENSOR_MESSAGE.NO_PRESSURE,
-        temperature: sensorEvent?.temperature
-          ? sensorEvent.temperature
-          : SENSOR_MESSAGE.NO_TEMPERATURE,
-        voltage: sensorEvent?.voltage
-          ? sensorEvent.voltage
-          : SENSOR_MESSAGE.NO_VOLTAGE,
+        humidity: sensorEvent.humidity,
+        pressure: sensorEvent.pressure,
+        temperature: sensorEvent.temperature,
+        voltage: sensorEvent.voltage,
         lastActivity: sensorEvent.lastActivity,
       }))
       .filter((addr) => addr !== undefined),
@@ -80,13 +71,11 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
     );
     const sensorNameInfo = resp.data as NotehubSensorConfig;
 
-    // put it all together in one snapshot object
+    // put it all together in one object
     return {
       macAddress: gatewaySensorInfo.macAddress,
       gatewayUID: gatewaySensorInfo.gatewayUID,
-      name: sensorNameInfo?.body?.name
-        ? sensorNameInfo.body.name
-        : gatewaySensorInfo.name,
+      name: sensorNameInfo?.body?.name,
       voltage: gatewaySensorInfo.voltage,
       lastActivity: gatewaySensorInfo.lastActivity,
       humidity: gatewaySensorInfo.humidity,

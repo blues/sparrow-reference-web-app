@@ -6,6 +6,7 @@ import getGateways from "../lib/gateways";
 import getLatestSensorData from "../lib/latestSensorData";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
+import { SENSOR_MESSAGE } from "../constants/ui";
 import styles from "../styles/Home.module.scss";
 
 type HomeData = {
@@ -43,7 +44,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
         {latestSensorDataList.map((sensor) => (
           <Card
             key={sensor.macAddress}
-            title={`${sensor.name}`}
+            title={sensor.name ? `${sensor.name}` : SENSOR_MESSAGE.NO_NAME}
             extra={
               <Link
                 href={`/${sensor.gatewayUID}/sensor/${sensor.macAddress}/details`}
@@ -55,27 +56,27 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
             <ul>
               <li>
                 Humidity:&nbsp;
-                {typeof sensor.humidity === "string"
-                  ? `${sensor.humidity}`
-                  : `${sensor.humidity}%`}
+                {sensor.humidity
+                  ? `${sensor.humidity}%`
+                  : SENSOR_MESSAGE.NO_HUMIDITY}
               </li>
               <li>
                 Pressure:&nbsp;
-                {typeof sensor.pressure === "string"
-                  ? `${sensor.pressure}`
-                  : `${sensor.pressure / 1000} kPa`}
+                {sensor.pressure
+                  ? `${sensor.pressure / 1000} kPa`
+                  : SENSOR_MESSAGE.NO_PRESSURE}
               </li>
               <li>
                 Temperature:&nbsp;
-                {typeof sensor.temperature === "string"
-                  ? `${sensor.temperature}`
-                  : `${sensor.temperature}°C`}
+                {sensor.temperature
+                  ? `${sensor.temperature}°C`
+                  : SENSOR_MESSAGE.NO_TEMPERATURE}
               </li>
               <li>
                 Voltage:&nbsp;
-                {typeof sensor.voltage === "string"
-                  ? `${sensor.voltage}`
-                  : `${sensor.voltage}V`}
+                {sensor.voltage
+                  ? `${sensor.voltage}V`
+                  : SENSOR_MESSAGE.NO_VOLTAGE}
               </li>
               <li>Last seen: {getFormattedLastSeen(sensor.lastActivity)}</li>
             </ul>
@@ -93,6 +94,8 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   const latestSensorDataList = await getLatestSensorData(gateways);
 
   return {
-    props: { gateways, latestSensorDataList },
+    /* json transformations necessary to prevent having to set empty props as null 
+    on server side and make types either string | null or number | null */
+    props: JSON.parse(JSON.stringify({ gateways, latestSensorDataList })),
   };
 };
