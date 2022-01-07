@@ -1,6 +1,6 @@
 interface NoteSensorConfigBody {
   loc: string;
-  name: string
+  name: string;
 }
 
 export default NoteSensorConfigBody;

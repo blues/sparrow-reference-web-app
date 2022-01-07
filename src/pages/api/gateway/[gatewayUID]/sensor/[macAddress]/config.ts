@@ -1,12 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
-import {HTTP_STATUS, HTTP_HEADER} from '../../../../../../constants/http';
+import { HTTP_STATUS, HTTP_HEADER } from "../../../../../../constants/http";
 import config from "../../../../../../../config";
-import type NotehubErr from '../../../../../../models/NotehubErr';
+import type NotehubErr from "../../../../../../models/NotehubErr";
 import type NoteSensorConfigBody from "../../../../../../models/NoteSensorConfigBody";
 
-export default async function sensorConfigHandler (
+export default async function sensorConfigHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -32,23 +32,24 @@ export default async function sensorConfigHandler (
   // API headers
   const headers = {
     [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
-    [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken
+    [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
   };
 
   // note.get payload
   const noteGet = {
-    req: "note.get", 
-    file: "config.db", 
-    note: macAddress
+    req: "note.get",
+    file: "config.db",
+    note: macAddress,
   };
   // note.update payload
   const noteUpdate = {
-    req: "note.update", 
-    file: "config.db", 
+    req: "note.update",
+    file: "config.db",
     note: macAddress,
     body: {
-      loc, name
-    }
+      loc,
+      name,
+    },
   };
 
   // Costruct body based on HTTP method
@@ -73,16 +74,18 @@ export default async function sensorConfigHandler (
 
   try {
     // API call
-    const response: AxiosResponse = await axios.post(endpoint, postBody, { headers });
+    const response: AxiosResponse = await axios.post(endpoint, postBody, {
+      headers,
+    });
     // This call responds with a 200/OK even if the note was 404/NotFound.
     // But it will contain an err property we can watch out for.
-    if ('err' in response.data) {
+    if ("err" in response.data) {
       // Assert error type
       const { err } = response.data as NotehubErr;
       // Check the error message
-      if (err.includes('note-noexist')) {
+      if (err.includes("note-noexist")) {
         // Return 204 error (request succeeded, but nothing to see here)
-        res.status(204).json({ err: HTTP_STATUS.NOT_FOUND_CONFIG });
+        res.status(204).end();
         return;
       }
     } else {

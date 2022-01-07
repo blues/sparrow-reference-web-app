@@ -7,7 +7,11 @@ const GatewayDetails: NextPage = () => {
   const sensorInfo = [
     {
       title: "Lobby",
-      extra: <Link href="/12345/sensor/67890">Summary</Link>,
+      extra: (
+        <Link href="/dev:868050040065365/sensor/20323746323650050028000a/details">
+          Summary
+        </Link>
+      ),
       contents: (
         <ul>
           <li>Temperature: 72° F</li>
@@ -20,7 +24,11 @@ const GatewayDetails: NextPage = () => {
     },
     {
       title: "Conference Room",
-      extra: <Link href="/12345/sensor/67890/details">Summary</Link>,
+      extra: (
+        <Link href="/dev:868050040065365/sensor/20323746323650050029000b/details">
+          Summary
+        </Link>
+      ),
       contents: (
         <ul>
           <li>Temperature: 68° F</li>

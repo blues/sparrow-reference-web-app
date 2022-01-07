@@ -4,6 +4,7 @@
   .groupedCards {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
   }
 
   h2 {

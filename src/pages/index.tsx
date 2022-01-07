@@ -3,17 +3,18 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import Card from "../components/elements/Card";
 import getGateways from "../lib/gateways";
-import getSensors from "../lib/sensors";
+import getLatestSensorData from "../lib/latestSensorData";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
+import { SENSOR_MESSAGE } from "../constants/ui";
 import styles from "../styles/Home.module.scss";
 
 type HomeData = {
   gateways: Gateway[];
-  sensors: Sensor[];
+  latestSensorDataList: Sensor[];
 };
 
-const Home: NextPage<HomeData> = ({ gateways, sensors }) => {
+const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
   const getFormattedLastSeen = (date: string) =>
     formatDistanceToNow(new Date(date), {
       addSuffix: true,
@@ -40,10 +41,10 @@ const Home: NextPage<HomeData> = ({ gateways, sensors }) => {
 
       <h2>Sensors</h2>
       <div className={styles.groupedCards}>
-        {sensors.map((sensor) => (
+        {latestSensorDataList.map((sensor) => (
           <Card
             key={sensor.macAddress}
-            title={sensor.name}
+            title={sensor.name ? `${sensor.name}` : SENSOR_MESSAGE.NO_NAME}
             extra={
               <Link
                 href={`/${sensor.gatewayUID}/sensor/${sensor.macAddress}/details`}
@@ -53,10 +54,30 @@ const Home: NextPage<HomeData> = ({ gateways, sensors }) => {
             }
           >
             <ul>
-              <li>Humidity: {sensor.humidity}%</li>
-              <li>Pressure: {sensor.pressure / 1000} kPa</li>
-              <li>Temperature: {sensor.temperature}°C</li>
-              <li>Voltage: {sensor.voltage}V</li>
+              <li>
+                Humidity:&nbsp;
+                {sensor.humidity
+                  ? `${sensor.humidity}%`
+                  : SENSOR_MESSAGE.NO_HUMIDITY}
+              </li>
+              <li>
+                Pressure:&nbsp;
+                {sensor.pressure
+                  ? `${sensor.pressure / 1000} kPa`
+                  : SENSOR_MESSAGE.NO_PRESSURE}
+              </li>
+              <li>
+                Temperature:&nbsp;
+                {sensor.temperature
+                  ? `${sensor.temperature}°C`
+                  : SENSOR_MESSAGE.NO_TEMPERATURE}
+              </li>
+              <li>
+                Voltage:&nbsp;
+                {sensor.voltage
+                  ? `${sensor.voltage}V`
+                  : SENSOR_MESSAGE.NO_VOLTAGE}
+              </li>
               <li>Last seen: {getFormattedLastSeen(sensor.lastActivity)}</li>
             </ul>
           </Card>
@@ -70,9 +91,9 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   const gateways = await getGateways();
-  const sensors = getSensors();
+  const latestSensorDataList = await getLatestSensorData(gateways);
 
   return {
-    props: { gateways, sensors },
+    props: { gateways, latestSensorDataList },
   };
 };

@@ -2,22 +2,30 @@ import { ChartData, ChartOptions } from "chart.js";
 import { CHART_DATE_FORMAT } from "./chartHelper";
 import LineChart from "./LineChart";
 
-type VoltageChartProps = {
+type SensorDetailsChartProps = {
+  label: string;
+  yAxisMin: number;
+  yAxisMax: number;
   data: {
-    when: Date;
+    when: string;
     value: number;
   }[];
 };
 
-const VoltageChart = (props: VoltageChartProps) => {
-  const labels = props.data.map((obj) => obj.when);
-  const values = props.data.map((obj) => obj.value);
+const SensorDetailsChart = ({
+  data,
+  label,
+  yAxisMin,
+  yAxisMax,
+}: SensorDetailsChartProps) => {
+  const labels = data.map((obj) => obj.when);
+  const values = data.map((obj) => obj.value);
 
-  const data: ChartData<"line"> = {
+  const chartData: ChartData<"line"> = {
     labels,
     datasets: [
       {
-        label: "Voltage",
+        label,
         data: values,
         borderColor: "#416681",
         pointRadius: 5,
@@ -44,8 +52,8 @@ const VoltageChart = (props: VoltageChartProps) => {
         },
       },
       yAxis: {
-        min: 0,
-        max: 5,
+        min: yAxisMin,
+        max: yAxisMax,
         ticks: {
           stepSize: 1,
         },
@@ -55,9 +63,9 @@ const VoltageChart = (props: VoltageChartProps) => {
 
   return (
     <div style={{ width: "900px" }}>
-      <LineChart data={data} options={options} />
+      <LineChart data={chartData} options={options} />
     </div>
   );
 };
 
-export default VoltageChart;
+export default SensorDetailsChart;

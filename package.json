@@ -14,11 +14,13 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.178",
     "antd": "^4.17.2",
     "axios": "^0.24.0",
     "chart.js": "^3.6.1",
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.27.0",
+    "lodash": "^4.17.21",
     "next": "12.0.4",
     "next-plugin-antd-less": "^1.5.2",
     "rc-field-form": "^1.22.0",
