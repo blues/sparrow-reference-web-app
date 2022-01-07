@@ -1,8 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
+import type NotehubEnvVars from "../../../../models/NotehubEnvVars";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../constants/http";
 import config from "../../../../../config";
+
 
 export default async function environmentVariablesHandler(
   req: NextApiRequest,
@@ -52,8 +54,8 @@ export default async function environmentVariablesHandler(
             .json({ err: HTTP_STATUS.INTERNAL_ERR_ENV_VARS_FETCH });
         }
       }
-
       break;
+
     case "PUT":
       if (typeof environmentVariables !== "string") {
         res.status(400).json({ err: HTTP_STATUS.INVALID_ENV_VARS });
@@ -63,10 +65,7 @@ export default async function environmentVariablesHandler(
       try {
         const response: AxiosResponse = await axios.put(
           endpoint,
-          // Disabling as we have unit tests that ensure invalid JSON in the
-          // query string results in a 500 error.
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          { environment_variables: JSON.parse(environmentVariables) },
+          { environment_variables: JSON.parse(environmentVariables) as NotehubEnvVars },
           { headers }
         );
         // Return JSON
