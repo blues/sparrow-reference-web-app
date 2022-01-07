@@ -1,7 +1,9 @@
-interface Gateway {
+
+import Device from "./Device";
+
+interface Gateway extends Device {
   uid: string;
   serialNumber: string;
-  lastActivity: string;
   location?: string;
   voltage: number;
 }

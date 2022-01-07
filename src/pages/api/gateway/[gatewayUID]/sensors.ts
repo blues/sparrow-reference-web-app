@@ -4,6 +4,7 @@ import axios, { AxiosResponse } from "axios";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../constants/http";
 import config from "../../../../../config";
 
+
 export default async function sensorsHandler(
   req: NextApiRequest,
   res: NextApiResponse

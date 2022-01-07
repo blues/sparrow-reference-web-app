@@ -1,5 +1,6 @@
 import NotehubLocation from "./NotehubLocation";
 
+// lets move the notehub structs into a separate package
 interface NotehubDevice {
   uid: string;
   serial_number: string;

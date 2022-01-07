@@ -12,6 +12,9 @@ import NotehubEvent from "../../../../models/NotehubEvent";
 import { HISTORICAL_SENSOR_DATA_MESSAGE } from "../../../../constants/ui";
 import styles from "../../../../styles/Form.module.scss";
 
+const sensorDataService: SensorDataService = ServiceLocator.sensorDataService();
+
+
 type SensorDetailsData = {
   latestSensorData: Sensor;
   historicalSensorData: NotehubEvent[];
@@ -64,10 +67,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   ];
 
   const formOnFinish = async (values: Store) => {
-    const response = await axios.post(
-      `/api/gateway/${query.gatewayUID}/sensor/${query.sensorUID}/config`,
-      values
-    );
+    const location = values.loc;
+    const name = values.name;
+    sensorDataService.setDeviceProperties(query.sensorID, {location, name});
     console.log(`Success: ${response}`);
   };
 
@@ -203,10 +205,10 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
   async ({ query }) => {
     const { gatewayUID, sensorUID } = query;
 
-    const { latestSensorData, historicalSensorData } =
-      await getSensorDetailsData(gatewayUID, sensorUID);
+    const { latestSensorData, historicalSensorData, ok } =
+      await sensorDataService.getSensorDetailsData(gatewayUID, sensorUID);
 
     return {
-      props: { latestSensorData, historicalSensorData },
+      props: { latestSensorData, historicalSensorData, ok },
     };
   };

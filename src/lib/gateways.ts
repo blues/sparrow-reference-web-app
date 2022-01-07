@@ -1,14 +1,18 @@
 import axios from "axios";
 import Gateway from "../models/Gateway";
 import config from "../../config";
-import NotehubDevice from "../models/NotehubDevice";
+import NotehubDevice from "./notehub/NotehubDevice";
+import NotehubApiService from "./NotehubApi";
+
+const notehubApi: NotehubApiService;
+
+
+
 
 export default async function getGateways() {
   const gateways: Gateway[] = [];
 
-  const resp = await axios.get(
-    `${config.appBaseUrl}/api/gateways/${config.hubDeviceUID}`
-  );
+  const resp = await notehubApi.getGateways();
   const json = resp.data as NotehubDevice;
 
   const gateway = {
