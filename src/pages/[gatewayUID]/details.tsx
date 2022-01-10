@@ -1,50 +1,44 @@
-import Link from "next/link";
 import type { NextPage } from "next";
-import Card from "../../components/elements/Card";
+import SensorDetailsCard from "../../components/elements/SensorDetailsCard";
 import styles from "../../styles/Home.module.scss";
 
 const GatewayDetails: NextPage = () => {
-  const sensorInfo = [
+  // placeholder data until real connection to Notehub data is established
+  const mockedSensorDetails = [
     {
-      title: "Lobby",
-      extra: (
-        <Link href="/dev:868050040065365/sensor/20323746323650050028000a/details">
-          Summary
-        </Link>
-      ),
-      contents: (
-        <ul>
-          <li>Temperature: 72° F</li>
-          <li>Humidity: 23%</li>
-          <li>Motion: inactive</li>
-          <li>Battery: 36%</li>
-          <li>Last active: 3 minutes ago</li>
-        </ul>
-      ),
+      macAddress: "20323746323650050028000a",
+      gatewayUID: "dev:868050040065365",
+      name: "TEST_NAME",
+      voltage: 2.733,
+      lastActivity: "2021-11-30T20:30:19Z",
+      humidity: 27.234375,
+      pressure: 101152,
+      temperature: 22.6875,
     },
     {
-      title: "Conference Room",
-      extra: (
-        <Link href="/dev:868050040065365/sensor/20323746323650050029000b/details">
-          Summary
-        </Link>
-      ),
-      contents: (
-        <ul>
-          <li>Temperature: 68° F</li>
-          <li>Humidity: 18%</li>
-          <li>Motion: inactive</li>
-          <li>Battery: 72%</li>
-          <li>Last active: 38 seconds ago</li>
-        </ul>
-      ),
+      macAddress: "20323746323650050029000b",
+      gatewayUID: "dev:868050040065365",
+      name: "No sensor name currently set.",
+      lastActivity: "2021-10-01T18:52:41Z",
+      humidity: 38.15625,
+      pressure: 101950,
+      temperature: 24.265625,
+    },
+    {
+      macAddress: "20323746323650050034000c",
+      gatewayUID: "dev:868050040065365",
+      name: "Garage Sensor",
+      voltage: 3.288,
+      lastActivity: "2021-11-11T15:28:38Z",
+      humidity: 63.1875,
+      pressure: 102999,
+      temperature: 9.7734375,
     },
   ];
 
   return (
     <div>
       <h1>Gateway Details</h1>
-
       <div className={styles.container}>
         <h2>Gateway</h2>
         <div>
@@ -57,10 +51,8 @@ const GatewayDetails: NextPage = () => {
 
         <h2>Sensors</h2>
         <div className={styles.groupedCards}>
-          {sensorInfo.map((sensor) => (
-            <Card key={sensor.title} title={sensor.title} extra={sensor.extra}>
-              {sensor.contents}
-            </Card>
+          {mockedSensorDetails.map((sensor) => (
+            <SensorDetailsCard key={sensor.macAddress} {...sensor} />
           ))}
         </div>
       </div>

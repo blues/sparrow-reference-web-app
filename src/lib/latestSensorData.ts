@@ -6,7 +6,6 @@ import NotehubLatestEvents from "../models/NotehubLatestEvents";
 import NotehubEvent from "../models/NotehubEvent";
 import config from "../../config";
 import NotehubSensorConfig from "../models/NotehubSensorConfig";
-import { SENSOR_MESSAGE } from "../constants/ui";
 
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   // get latest sensor data from API
@@ -76,9 +75,7 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
     return {
       macAddress: gatewaySensorInfo.macAddress,
       gatewayUID: gatewaySensorInfo.gatewayUID,
-      name: sensorNameInfo?.body?.name
-        ? sensorNameInfo.body.name
-        : SENSOR_MESSAGE.NO_NAME,
+      ...(sensorNameInfo?.body?.name && { name: sensorNameInfo.body.name }),
       ...(gatewaySensorInfo.voltage && { voltage: gatewaySensorInfo.voltage }),
       lastActivity: gatewaySensorInfo.lastActivity,
       ...(gatewaySensorInfo.humidity && {
