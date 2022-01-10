@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/jsx-key */
 import { GetServerSideProps, NextPage } from "next";
 import SensorDetailsCard from "../components/elements/SensorDetailsCard";
 import GatewayCard from "../components/elements/GatewayCard";
@@ -17,7 +19,6 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => (
     <h2>Gateways</h2>
     <div className={styles.groupedCards}>
       {gateways.map((gateway) => (
-        // eslint-disable-next-line react/jsx-key
         <GatewayCard {...gateway} />
       ))}
     </div>
@@ -25,7 +26,6 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => (
     <h2>Sensors</h2>
     <div className={styles.groupedCards}>
       {latestSensorDataList.map((sensor) => (
-        // eslint-disable-next-line react/jsx-key
         <SensorDetailsCard {...sensor} />
       ))}
     </div>
