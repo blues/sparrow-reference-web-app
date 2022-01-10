@@ -8,7 +8,7 @@ import Form, { FormProps } from "../../../../components/elements/Form";
 import getSensorDetailsData from "../../../../services/sensorDetailsData";
 import Sensor from "../../../../models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
-import NotehubEvent from "../../../../services/notehub/NotehubEvent";
+import NotehubEvent from "../../../../services/notehub/models/NotehubEvent";
 import {
   HISTORICAL_SENSOR_DATA_MESSAGE,
   SENSOR_MESSAGE,

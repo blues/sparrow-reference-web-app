@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import Card from "../components/elements/Card";
-import { service, services } from "../services/ServiceLocator";
+import { services } from "../services/ServiceLocator";
 import getLatestSensorData from "../services/latestSensorData";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";

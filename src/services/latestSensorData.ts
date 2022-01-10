@@ -2,10 +2,10 @@ import axios from "axios";
 import { flattenDeep, uniqBy } from "lodash";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
-import NotehubLatestEvents from "./notehub/NotehubLatestEvents";
-import NotehubEvent from "./notehub/NotehubEvent";
+import NotehubLatestEvents from "./notehub/models/NotehubLatestEvents";
+import NotehubEvent from "./notehub/models/NotehubEvent";
 import config from "../../config";
-import NotehubSensorConfig from "./notehub/NotehubSensorConfig";
+import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
 import { SENSOR_MESSAGE } from "../constants/ui";
 
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
