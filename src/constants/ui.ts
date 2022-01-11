@@ -20,4 +20,14 @@ const GATEWAY_MESSAGE = {
   NO_LOCATION: "No gateway location currently available.",
 };
 
-export { SENSOR_MESSAGE, HISTORICAL_SENSOR_DATA_MESSAGE, GATEWAY_MESSAGE };
+// Error messages when the project fails to display for some reason
+const ERROR_MESSAGE = {
+  UNAUTHORIZED: "User is unauthorized to access this project.",
+};
+
+export {
+  SENSOR_MESSAGE,
+  HISTORICAL_SENSOR_DATA_MESSAGE,
+  GATEWAY_MESSAGE,
+  ERROR_MESSAGE,
+};

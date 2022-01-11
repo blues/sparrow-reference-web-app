@@ -6,6 +6,8 @@ import getGateways from "../lib/gateways";
 import getLatestSensorData from "../lib/latestSensorData";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
+import { ERROR_MESSAGE } from "../constants/ui";
+import { HTTP_STATUS } from "../constants/http";
 import styles from "../styles/Home.module.scss";
 
 type HomeData = {
@@ -16,8 +18,8 @@ type HomeData = {
 
 const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
   <div className={styles.container}>
-    {err === "Error: Unauthorized to access this project" ? (
-      <h2>Sorry, you aren't authorized to view this project data.</h2>
+    {err === HTTP_STATUS.UNAUTHORIZED ? (
+      <h2>{ERROR_MESSAGE.UNAUTHORIZED}</h2>
     ) : (
       <>
         <h2>Gateways</h2>
@@ -50,7 +52,8 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
       props: { gateways, latestSensorDataList },
     };
   } catch (err) {
-    // console.log("LATEST GATEWAYS ERROR ", err);
-    return { props: { err } };
+    if (err instanceof Error) {
+      return { props: { err: err.message } };
+    }
   }
 };
