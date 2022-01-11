@@ -20,7 +20,6 @@ const SensorDetailsCardComponent = (props: Sensor) => {
   return (
     <Card
       className={styles.cardStyle}
-      key={macAddress}
       title={name ? `${name}` : SENSOR_MESSAGE.NO_NAME}
       extra={
         <Link href={`/${gatewayUID}/sensor/${macAddress}/details`}>

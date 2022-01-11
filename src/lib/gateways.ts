@@ -13,7 +13,11 @@ export default async function getGateways() {
 
   const gateway = {
     lastActivity: json.last_activity,
-    location: json.tower_location?.name,
+    ...((json?.triangulated_location || json?.tower_location) && {
+      location: json?.triangulated_location?.name
+        ? json.triangulated_location.name
+        : json.tower_location?.name,
+    }),
     serialNumber: json.serial_number,
     uid: json.uid,
     voltage: json.voltage,

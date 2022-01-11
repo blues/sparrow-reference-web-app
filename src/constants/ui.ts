@@ -15,4 +15,9 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
   NO_TEMPERATURE_HISTORY: "No temperature history currently available.",
 };
 
-export { SENSOR_MESSAGE, HISTORICAL_SENSOR_DATA_MESSAGE };
+// Gateway data fallbacks for empty data fields
+const GATEWAY_MESSAGE = {
+  NO_LOCATION: "No gateway location currently available.",
+};
+
+export { SENSOR_MESSAGE, HISTORICAL_SENSOR_DATA_MESSAGE, GATEWAY_MESSAGE };

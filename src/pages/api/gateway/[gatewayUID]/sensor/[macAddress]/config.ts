@@ -88,6 +88,10 @@ export default async function sensorConfigHandler(
         res.status(204).end();
         return;
       }
+      if (err.includes("insufficient permissions")) {
+        res.status(403).json({ err: HTTP_STATUS.UNAUTHORIZED });
+        return;
+      }
     } else {
       // Return JSON
       res.status(200).json(response.data);

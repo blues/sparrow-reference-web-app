@@ -2,6 +2,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import SensorDetailsCardComponent from "../../../src/components/elements/SensorDetailsCard";
+import { SENSOR_MESSAGE } from "../../../src/constants/ui";
 
 const mockSensorData = {
   name: "My Mocked Sensor",
@@ -12,6 +13,12 @@ const mockSensorData = {
   voltage: 4.2,
   lastActivity: "2022-01-01T15:28:38Z",
   gatewayUID: "abcdef",
+};
+
+const mockUndefinedSensorData = {
+  macAddress: "5678",
+  lastActivity: "2022-01-06T01:23:41Z",
+  gatewayUID: "ghijkl",
 };
 
 describe("Sensor details card component", () => {
@@ -31,6 +38,19 @@ describe("Sensor details card component", () => {
   });
 
   it("should render fallback messages when all sensor details are not supplied", () => {
-    // wip
+    render(<SensorDetailsCardComponent {...mockUndefinedSensorData} />);
+    expect(screen.getByText(SENSOR_MESSAGE.NO_NAME)).toBeInTheDocument();
+    expect(
+      screen.getByText(SENSOR_MESSAGE.NO_HUMIDITY, { exact: false })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(SENSOR_MESSAGE.NO_PRESSURE, { exact: false })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(SENSOR_MESSAGE.NO_TEMPERATURE, { exact: false })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(SENSOR_MESSAGE.NO_VOLTAGE, { exact: false })
+    ).toBeInTheDocument();
   });
 });
