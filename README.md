@@ -7,7 +7,7 @@ An example web application to configure and view sensor data from Blues Wireless
   - [Dependencies](#dependencies)
 - [Development](#development)
 - [Testing](#testing)
-  - [Testing with Jest](#testing-withjest)
+  - [Testing with Jest](#testing-with-jest)
   - [Testing with Cypress](#testing-with-cypress)
 - [Deploying](#deploying)
   - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
