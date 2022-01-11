@@ -14,7 +14,6 @@ const env = {
   HUB_BASE_URL: process.env.HUB_BASE_URL,
   HUB_DEVICE_UID: process.env.HUB_DEVICE_UID,
   HUB_PRODUCT_UID: process.env.HUB_PRODUCT_UID,
-  HUB_SENSOR_MAC: process.env.HUB_SENSOR_MAC,
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
 };
 
@@ -61,9 +60,6 @@ const Config = {
   },
   get hubProductUID() {
     return requiredEnvVar("HUB_PRODUCT_UID");
-  },
-  get hubSensorMAC() {
-    return requiredEnvVar("HUB_SENSOR_MAC");
   },
 };
 

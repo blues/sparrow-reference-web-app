@@ -8,10 +8,10 @@ declare global {
       HUB_PRODUCT_UID: string;
       HUB_DEVICE_UID: string;
       APP_BASE_URL: string;
-      HUB_SENSOR_MAC: string;
+      TEST_SENSOR_MAC: string;
     }
   }
 }
 
 // Empty export statement to treat this file as a module
-export {}
+export {};
