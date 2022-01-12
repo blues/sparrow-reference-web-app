@@ -9,7 +9,7 @@ import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
   const gatewayUID = process.env.HUB_DEVICE_UID;
-  const macAddress = process.env.HUB_SENSOR_MAC;
+  const macAddress = process.env.TEST_SENSOR_MAC;
 
   function mockRequestResponse(method: RequestMethod = "GET") {
     const { req, res }: { req: NextApiRequest; res: NextApiResponse } =
