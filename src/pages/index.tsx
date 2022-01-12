@@ -42,18 +42,20 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
 
 export default Home;
 
-// todo fix this TS error
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
+  let gateways: Gateway[] = [];
+  let latestSensorDataList: Sensor[] = [];
   try {
-    const gateways = await getGateways();
-    const latestSensorDataList = await getLatestSensorData(gateways);
+    gateways = await getGateways();
+    latestSensorDataList = await getLatestSensorData(gateways);
 
     return {
       props: { gateways, latestSensorDataList },
     };
   } catch (err) {
     if (err instanceof Error) {
-      return { props: { err: err.message } };
+      return { props: { gateways, latestSensorDataList, err: err.message } };
     }
+    return { props: { gateways, latestSensorDataList } };
   }
 };
