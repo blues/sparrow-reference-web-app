@@ -22,7 +22,7 @@ jobs:
           HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
           HUB_DEVICE_UID: ${{ secrets.HUB_DEVICE_UID }}
           HUB_PRODUCT_UID: ${{ secrets.HUB_PRODUCT_UID }}
-          HUB_SENSOR_MAC: ${{ secrets.HUB_SENSOR_MAC }}
+          TEST_SENSOR_MAC: ${{ secrets.TEST_SENSOR_MAC }}
         run: yarn test:coverage
       - run: yarn lint
       #- run: yarn lint:all
