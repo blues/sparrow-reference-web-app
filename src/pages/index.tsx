@@ -19,7 +19,7 @@ type HomeData = {
 const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
   <div className={styles.container}>
     {err === HTTP_STATUS.UNAUTHORIZED ? (
-      <h2>{ERROR_MESSAGE.UNAUTHORIZED}</h2>
+      <h2 className={styles.errorMessage}>{ERROR_MESSAGE.UNAUTHORIZED}</h2>
     ) : (
       <>
         <h2>Gateways</h2>
