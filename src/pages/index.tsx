@@ -24,15 +24,19 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
       <>
         <h2>Gateways</h2>
         <div className={styles.groupedCards}>
-          {gateways.map((gateway) => (
-            <GatewayCard key={gateway.uid} {...gateway} />
+          {gateways.map((gateway, index) => (
+            <GatewayCard key={gateway.uid} index={index} {...gateway} />
           ))}
         </div>
 
         <h2>Sensors</h2>
         <div className={styles.groupedCards}>
-          {latestSensorDataList.map((sensor) => (
-            <SensorDetailsCard key={sensor.macAddress} {...sensor} />
+          {latestSensorDataList.map((sensor, index) => (
+            <SensorDetailsCard
+              key={sensor.macAddress}
+              index={index}
+              {...sensor}
+            />
           ))}
         </div>
       </>

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import type { NextPage } from "next";
 import SensorDetailsCard from "../../components/elements/SensorDetailsCard";
 import styles from "../../styles/Home.module.scss";
@@ -51,8 +52,12 @@ const GatewayDetails: NextPage = () => {
 
         <h2>Sensors</h2>
         <div className={styles.groupedCards}>
-          {mockedSensorDetails.map((sensor) => (
-            <SensorDetailsCard key={sensor.macAddress} {...sensor} />
+          {mockedSensorDetails.map((sensor, index) => (
+            <SensorDetailsCard
+              key={sensor.macAddress}
+              index={index}
+              {...sensor}
+            />
           ))}
         </div>
       </div>
