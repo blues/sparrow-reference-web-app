@@ -2,7 +2,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import SensorDetailsCard from "../components/elements/SensorDetailsCard";
 import GatewayCard from "../components/elements/GatewayCard";
-import getGateways from "../lib/gateways";
+import { getGateways } from "../lib/gateways";
 import getLatestSensorData from "../lib/latestSensorData";
 import Gateway from "../models/Gateway";
 import Sensor from "../models/Sensor";
