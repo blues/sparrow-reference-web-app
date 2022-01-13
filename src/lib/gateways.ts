@@ -3,7 +3,7 @@ import Gateway from "../models/Gateway";
 import config from "../../config";
 import NotehubDevice from "../models/NotehubDevice";
 
-function notehubToSparrow(device: NotehubDevice) {
+export function notehubToSparrow(device: NotehubDevice) {
   return {
     lastActivity: device.last_activity,
     ...((device?.triangulated_location || device?.tower_location) && {
