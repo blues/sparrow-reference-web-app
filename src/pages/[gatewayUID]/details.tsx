@@ -9,7 +9,7 @@ const GatewayDetails: NextPage = () => {
       title: "Lobby",
       extra: (
         <Link href="/dev:868050040065365/sensor/20323746323650050028000a/details">
-          Summary
+          <a data-testid="sensor[0]-summary">Summary</a>
         </Link>
       ),
       contents: (
@@ -26,7 +26,7 @@ const GatewayDetails: NextPage = () => {
       title: "Conference Room",
       extra: (
         <Link href="/dev:868050040065365/sensor/20323746323650050029000b/details">
-          Summary
+          <a data-testid="sensor[1]-summary">Summary</a>
         </Link>
       ),
       contents: (

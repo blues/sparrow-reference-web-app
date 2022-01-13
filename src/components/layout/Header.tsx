@@ -11,7 +11,7 @@ const HeaderComponent = () => {
   return (
     <Header className={styles.header}>
       <Link href="/">
-        <a>
+        <a data-testid="Sparrow Logo">
           <Image src={Logo} height={70} width={100} alt="Sparrow Logo" />
         </a>
       </Link>
