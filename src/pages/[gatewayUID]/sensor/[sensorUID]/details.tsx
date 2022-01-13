@@ -42,7 +42,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
         { required: true, message: "Please add the name of your sensor" },
       ],
       tooltip: "What is the name of your sensor?",
-      contents: <Input placeholder="Name of sensor" />,
+      contents: (
+        <Input
+          data-testid="form-input-sensor-name"
+          placeholder="Name of sensor"
+        />
+      ),
     },
     {
       label: "Location",
@@ -51,7 +56,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
       rules: [
         { required: true, message: "Please add the location of your sensor" },
       ],
-      contents: <Input placeholder="Sensor location" />,
+      contents: (
+        <Input
+          data-testid="form-input-sensor-location"
+          placeholder="Sensor location"
+        />
+      ),
     },
     {
       label: "Gateway",
@@ -59,7 +69,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     },
     {
       contents: (
-        <Button type="primary" htmlType="submit">
+        <Button data-testid="form-submit" htmlType="submit" type="primary">
           Save Changes
         </Button>
       ),

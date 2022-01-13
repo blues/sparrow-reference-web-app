@@ -24,11 +24,15 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
     <div className={styles.container}>
       <h2>Gateways</h2>
       <div className={styles.groupedCards}>
-        {gateways.map((gateway) => (
+        {gateways.map((gateway, index) => (
           <Card
             key={gateway.uid}
             title={gateway.serialNumber}
-            extra={<Link href={`/${gateway.uid}/details`}>Details</Link>}
+            extra={
+              <Link href={`/${gateway.uid}/details`}>
+                <a data-testid={`gateway[${index}]-details`}>Details</a>
+              </Link>
+            }
           >
             <ul>
               <li>Location: {gateway.location}</li>
@@ -41,7 +45,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
 
       <h2>Sensors</h2>
       <div className={styles.groupedCards}>
-        {latestSensorDataList.map((sensor) => (
+        {latestSensorDataList.map((sensor, index) => (
           <Card
             key={sensor.macAddress}
             title={sensor.name ? `${sensor.name}` : SENSOR_MESSAGE.NO_NAME}
@@ -49,7 +53,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
               <Link
                 href={`/${sensor.gatewayUID}/sensor/${sensor.macAddress}/details`}
               >
-                Details
+                <a data-testid={`sensor[${index}]-details`}>Details</a>
               </Link>
             }
           >
