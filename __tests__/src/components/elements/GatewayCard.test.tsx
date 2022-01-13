@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import GatewayCardComponent from "../../../src/components/elements/GatewayCard";
-import { GATEWAY_MESSAGE } from "../../../src/constants/ui";
+import GatewayCardComponent from "../../../../src/components/elements/GatewayCard";
+import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 
 const mockGatewayData = {
   uid: "My Mocked Gatway",

@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import SensorDetailsCardComponent from "../../../src/components/elements/SensorDetailsCard";
-import { SENSOR_MESSAGE } from "../../../src/constants/ui";
+import SensorDetailsCardComponent from "../../../../src/components/elements/SensorDetailsCard";
+import { SENSOR_MESSAGE } from "../../../../src/constants/ui";
 
 const mockSensorData = {
   name: "My Mocked Sensor",
