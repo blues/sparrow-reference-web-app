@@ -6,6 +6,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import historicalSensorsHandler from "../../../../src/pages/api/gateway/[gatewayUID]/historical-sensors";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 
+jest.setTimeout(15000); // calls to notehub can be long running
+
 describe("/api/gateway/[gatewayUID]/historical-sensors API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
   const gatewayUID = process.env.HUB_DEVICE_UID;
@@ -22,7 +24,6 @@ describe("/api/gateway/[gatewayUID]/historical-sensors API Endpoint", () => {
   }
 
   it("GET should return a successful response from Notehub", async () => {
-    jest.setTimeout(15000); // added this as the call can be long running due to how far back in time the default date is set to
     const { req, res } = mockRequestResponse();
     await historicalSensorsHandler(req, res);
 
