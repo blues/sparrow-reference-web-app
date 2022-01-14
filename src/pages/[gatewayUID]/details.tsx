@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
-import SensorDetailsCard from "../../components/elements/SensorDetailsCard";
+import SensorCard from "../../components/elements/SensorCard";
 import { getGateway } from "../../lib/gateways";
 import { getFormattedLastSeen } from "../../components/helpers/helperFunctions";
 import getLatestSensorData from "../../lib/latestSensorData";
-import Gateway from "../../models/Gateway";
-import Sensor from "../../models/Sensor";
+import Gateway from "../../components/models/Gateway";
+import Sensor from "../../components/models/Sensor";
 import styles from "../../styles/Home.module.scss";
 
 type GatewayDetailsData = {
@@ -39,8 +39,12 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
             <>
               <h2>Sensors</h2>
               <div className={styles.groupedCards}>
-                {sensors.map((sensor) => (
-                  <SensorDetailsCard key={sensor.macAddress} {...sensor} />
+                {sensors.map((sensor, index) => (
+                  <SensorCard
+                    key={sensor.macAddress}
+                    index={index}
+                    sensorDetails={sensor}
+                  />
                 ))}
               </div>
             </>

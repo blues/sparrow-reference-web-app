@@ -9,6 +9,8 @@ import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 describe("/api/gateway/[gatewayUID]/historical-sensors API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
   const gatewayUID = process.env.HUB_DEVICE_UID;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const hubHistoricalDataStartDate = 7; // necessary for test to not timeout fetching historical data
 
   function mockRequestResponse(method: RequestMethod = "GET") {
     const { req, res }: { req: NextApiRequest; res: NextApiResponse } =

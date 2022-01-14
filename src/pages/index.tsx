@@ -1,11 +1,10 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { GetServerSideProps, NextPage } from "next";
-import SensorDetailsCard from "../components/elements/SensorDetailsCard";
+import SensorCard from "../components/elements/SensorCard";
 import GatewayCard from "../components/elements/GatewayCard";
 import { getGateways } from "../lib/gateways";
 import getLatestSensorData from "../lib/latestSensorData";
-import Gateway from "../models/Gateway";
-import Sensor from "../models/Sensor";
+import Gateway from "../components/models/Gateway";
+import Sensor from "../components/models/Sensor";
 import { ERROR_MESSAGE } from "../constants/ui";
 import { HTTP_STATUS } from "../constants/http";
 import styles from "../styles/Home.module.scss";
@@ -13,7 +12,7 @@ import styles from "../styles/Home.module.scss";
 type HomeData = {
   gateways: Gateway[];
   latestSensorDataList: Sensor[];
-  err?: string;
+  err?: typeof HTTP_STATUS.UNAUTHORIZED;
 };
 
 const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
@@ -24,15 +23,23 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
       <>
         <h2>Gateways</h2>
         <div className={styles.groupedCards}>
-          {gateways.map((gateway) => (
-            <GatewayCard key={gateway.uid} {...gateway} />
+          {gateways.map((gateway, index) => (
+            <GatewayCard
+              key={gateway.uid}
+              index={index}
+              gatewayDetails={gateway}
+            />
           ))}
         </div>
 
         <h2>Sensors</h2>
         <div className={styles.groupedCards}>
-          {latestSensorDataList.map((sensor) => (
-            <SensorDetailsCard key={sensor.macAddress} {...sensor} />
+          {latestSensorDataList.map((sensor, index) => (
+            <SensorCard
+              key={sensor.macAddress}
+              index={index}
+              sensorDetails={sensor}
+            />
           ))}
         </div>
       </>

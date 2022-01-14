@@ -21,13 +21,16 @@ export default async function historicalSensorsHandler(
     return;
   }
 
-  // todo default start date to X days if no other start passed in
+  // todo come up with a better way to make this start date configurable
+  // Notehub values
+  const { hubBaseURL, hubAuthToken, hubAppUID, hubHistoricalDataStartDate } =
+    config;
   const currentDate = new Date();
   const startDate = Math.round(
-    (currentDate.getTime() - 40 * 24 * 60 * 60 * 1000) / 1000
+    (currentDate.getTime() -
+      (Number({ hubHistoricalDataStartDate }) || 7) * 24 * 60 * 60 * 1000) /
+      1000
   );
-  // Notehub values
-  const { hubBaseURL, hubAuthToken, hubAppUID } = config;
   // API path for first event call
   const initialEndpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/events?startDate=${startDate}`;
   // API headers

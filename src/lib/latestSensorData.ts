@@ -1,7 +1,7 @@
 import axios from "axios";
 import { flattenDeep, uniqBy } from "lodash";
-import Gateway from "../models/Gateway";
-import Sensor from "../models/Sensor";
+import Gateway from "../components/models/Gateway";
+import Sensor from "../components/models/Sensor";
 import NotehubLatestEvents from "../models/NotehubLatestEvents";
 import NotehubEvent from "../models/NotehubEvent";
 import config from "../../config";
@@ -90,8 +90,9 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
         ...(gatewaySensorInfo.temperature && {
           temperature: gatewaySensorInfo.temperature,
         }),
-      };
+      } as Sensor;
     } catch (err) {
+      // this is only one of probably many potential error scenarios we'll have to handle
       // if user's unauthorized to see Notehub project, break early and display error in the UI
       throw new Error(HTTP_STATUS.UNAUTHORIZED);
     }
