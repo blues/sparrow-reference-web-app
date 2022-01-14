@@ -28,7 +28,7 @@ export default async function historicalSensorsHandler(
   const currentDate = new Date();
   const startDate = Math.round(
     (currentDate.getTime() -
-      Number({ hubHistoricalDataStartDate }) * 24 * 60 * 60 * 1000) /
+      (Number({ hubHistoricalDataStartDate }) || 7) * 24 * 60 * 60 * 1000) /
       1000
   );
   // API path for first event call
