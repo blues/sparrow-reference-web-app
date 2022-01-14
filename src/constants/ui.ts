@@ -22,7 +22,8 @@ const GATEWAY_MESSAGE = {
 
 // Error messages when the project fails to display for some reason
 const ERROR_MESSAGE = {
-  UNAUTHORIZED: "User is unauthorized to access this project.",
+  UNAUTHORIZED:
+    "User is unauthorized to access this project. Please contact the Notehub project owner to be invited to the project.",
 };
 
 export {

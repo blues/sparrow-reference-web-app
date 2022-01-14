@@ -12,7 +12,7 @@ import styles from "../styles/Home.module.scss";
 type HomeData = {
   gateways: Gateway[];
   latestSensorDataList: Sensor[];
-  err?: string;
+  err?: typeof HTTP_STATUS.UNAUTHORIZED;
 };
 
 const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (

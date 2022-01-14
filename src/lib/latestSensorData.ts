@@ -92,6 +92,7 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
         }),
       } as Sensor;
     } catch (err) {
+      // this is only one of probably many potential error scenarios we'll have to handle
       // if user's unauthorized to see Notehub project, break early and display error in the UI
       throw new Error(HTTP_STATUS.UNAUTHORIZED);
     }
