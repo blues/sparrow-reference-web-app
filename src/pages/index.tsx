@@ -25,7 +25,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
         <h2>Gateways</h2>
         <div className={styles.groupedCards}>
           {gateways.map((gateway, index) => (
-            <GatewayCard key={gateway.uid} index={index} {...gateway} />
+            <GatewayCard key={gateway.uid} index={index} gateway={gateway} />
           ))}
         </div>
 
@@ -35,7 +35,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
             <SensorDetailsCard
               key={sensor.macAddress}
               index={index}
-              {...sensor}
+              sensorDetails={sensor}
             />
           ))}
         </div>

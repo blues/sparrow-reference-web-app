@@ -5,10 +5,11 @@ import { SENSOR_MESSAGE } from "../../constants/ui";
 import { getFormattedLastSeen } from "../helpers/helperFunctions";
 import styles from "../../styles/Card.module.scss";
 
-const SensorDetailsCardComponent = (props: Sensor) => {
+const SensorDetailsCard = (props: { sensorDetails: Sensor; index: number }) => {
   // in the future perhaps try to make dynamic items based on model props
+  const { sensorDetails, index } = props;
   const {
-    name,
+    name = SENSOR_MESSAGE.NO_NAME,
     gatewayUID,
     macAddress,
     humidity,
@@ -16,14 +17,14 @@ const SensorDetailsCardComponent = (props: Sensor) => {
     temperature,
     voltage,
     lastActivity,
-  } = props;
+  } = sensorDetails;
   return (
     <Card
       className={styles.cardStyle}
-      title={name ? `${name}` : SENSOR_MESSAGE.NO_NAME}
+      title={name}
       extra={
         <Link href={`/${gatewayUID}/sensor/${macAddress}/details`}>
-          &#5171;
+          <a data-testid={`sensor[${index}]-details`}>&#5171;</a>
         </Link>
       }
     >
@@ -50,4 +51,4 @@ const SensorDetailsCardComponent = (props: Sensor) => {
   );
 };
 
-export default SensorDetailsCardComponent;
+export default SensorDetailsCard;

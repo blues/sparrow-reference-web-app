@@ -56,7 +56,7 @@ const GatewayDetails: NextPage = () => {
             <SensorDetailsCard
               key={sensor.macAddress}
               index={index}
-              {...sensor}
+              sensorDetails={sensor}
             />
           ))}
         </div>
