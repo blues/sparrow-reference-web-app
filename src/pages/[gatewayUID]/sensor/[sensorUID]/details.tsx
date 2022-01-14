@@ -6,7 +6,7 @@ import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import Form, { FormProps } from "../../../../components/elements/Form";
 import getSensorDetailsData from "../../../../lib/sensorDetailsData";
-import Sensor from "../../../../models/Sensor";
+import Sensor from "../../../../components/models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
 import NotehubEvent from "../../../../models/NotehubEvent";
 import {
@@ -14,6 +14,13 @@ import {
   SENSOR_MESSAGE,
 } from "../../../../constants/ui";
 import SparrowQueryInterface from "../../../../lib/interfaces/SparrowQueryInterface";
+import {
+  getFormattedChartData,
+  getFormattedTemperatureData,
+  getFormattedHumidityData,
+  getFormattedPressureData,
+  getFormattedVoltageData,
+} from "../../../../components/helpers/helperFunctions";
 import styles from "../../../../styles/Form.module.scss";
 
 type SensorDetailsData = {
@@ -89,36 +96,19 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     console.log("Failed:", errorInfo);
   };
 
-  const formatChartData = <C extends keyof NotehubEvent["body"]>(
-    sensorEvents: NotehubEvent[],
-    chartValue: C
-  ) => {
-    if (sensorEvents.length) {
-      const formattedData = sensorEvents
-        .filter((event) => {
-          // currently only formatting `air.qo` events because I'm not sure how to display data from `motion.qo` events yet
-          if (event.file && event.file.includes("#air.qo")) {
-            return event;
-          }
-          return false;
-        })
-        .map((filteredEvents) => {
-          const chartDataObj = {
-            when: filteredEvents.captured,
-            value: filteredEvents.body[chartValue],
-          };
-          return chartDataObj;
-        })
-        .reverse();
-      return formattedData;
-    }
-    return [];
-  };
+  const formattedTemperatureData =
+    getFormattedTemperatureData(latestSensorData);
+  const formattedHumidityData = getFormattedHumidityData(latestSensorData);
+  const formattedPressureData = getFormattedPressureData(latestSensorData);
+  const formattedVoltageData = getFormattedVoltageData(latestSensorData);
 
-  const voltageData = formatChartData(historicalSensorData, "voltage");
-  const temperatureData = formatChartData(historicalSensorData, "temperature");
-  const humidityData = formatChartData(historicalSensorData, "humidity");
-  const pressureData = formatChartData(historicalSensorData, "pressure");
+  const temperatureData = getFormattedChartData(
+    historicalSensorData,
+    "temperature"
+  );
+  const humidityData = getFormattedChartData(historicalSensorData, "humidity");
+  const pressureData = getFormattedChartData(historicalSensorData, "pressure");
+  const voltageData = getFormattedChartData(historicalSensorData, "voltage");
 
   return (
     <div>
@@ -131,27 +121,19 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
           <ul>
             <li>
               Temperature:&nbsp;
-              {latestSensorData.temperature
-                ? `${latestSensorData.temperature}°C`
-                : SENSOR_MESSAGE.NO_TEMPERATURE}
+              {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
             </li>
             <li>
               Humidity:&nbsp;
-              {latestSensorData.humidity
-                ? `${latestSensorData.humidity}%`
-                : SENSOR_MESSAGE.NO_HUMIDITY}
+              {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
             </li>
             <li>
               Pressure:&nbsp;
-              {latestSensorData.pressure
-                ? `${latestSensorData.pressure / 1000} kPa`
-                : SENSOR_MESSAGE.NO_PRESSURE}
+              {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
             </li>
             <li>
               Voltage:&nbsp;
-              {latestSensorData.voltage
-                ? `${latestSensorData.voltage}V`
-                : SENSOR_MESSAGE.NO_VOLTAGE}
+              {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
             </li>
           </ul>
           <h3>Voltage</h3>

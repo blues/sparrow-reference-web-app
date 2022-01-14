@@ -1,6 +1,10 @@
 @import "_variables.scss";
 
 .container {
+  .errorMessage {
+    text-align: center;
+  }
+
   .groupedCards {
     display: flex;
     flex-direction: row;

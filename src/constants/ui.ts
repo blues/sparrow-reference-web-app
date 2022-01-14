@@ -15,4 +15,20 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
   NO_TEMPERATURE_HISTORY: "No temperature history currently available.",
 };
 
-export { SENSOR_MESSAGE, HISTORICAL_SENSOR_DATA_MESSAGE };
+// Gateway data fallbacks for empty data fields
+const GATEWAY_MESSAGE = {
+  NO_LOCATION: "No gateway location currently available.",
+};
+
+// Error messages when the project fails to display for some reason
+const ERROR_MESSAGE = {
+  UNAUTHORIZED:
+    "User is unauthorized to access this project. Please contact the Notehub project owner to be invited to the project.",
+};
+
+export {
+  SENSOR_MESSAGE,
+  HISTORICAL_SENSOR_DATA_MESSAGE,
+  GATEWAY_MESSAGE,
+  ERROR_MESSAGE,
+};
