@@ -13,11 +13,7 @@ jobs:
       - uses: crazy-max/ghaction-dump-context@v1
       - uses: actions/checkout@v2
       - uses: volta-cli/action@v1
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
       - uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: node_modules
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -41,5 +37,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: crazy-max/ghaction-dump-context@v1
-      - uses: actions/checkout@v2
-      - run: docker build . --file Dockerfile.prod
+      # This is the a separate action that sets up buildx runner
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      # So now you can use Actions' own caching!
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      # And make it available for the builds
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          file: Dockerfile.prod
+          push: false
+          tags: user/app:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+        # This ugly bit is necessary if you don't want your cache to grow forever
+        # till it hits GitHub's limit of 5GB.
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
