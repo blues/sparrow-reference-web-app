@@ -19,9 +19,13 @@ const mockUndefinedGatewayData = {
   lastActivity: "2022-01-07T09:12:00Z",
 };
 
+const index = 1;
+
 describe("Gateway card component", () => {
   it("should render the card when gateway data is supplied", () => {
-    render(<GatewayCardComponent {...mockGatewayData} />);
+    render(
+      <GatewayCardComponent gatewayDetails={mockGatewayData} index={index} />
+    );
 
     expect(screen.getByText(mockGatewayData.serialNumber)).toBeInTheDocument();
     expect(
@@ -33,7 +37,12 @@ describe("Gateway card component", () => {
   });
 
   it("should render the card when particular gateway data is missing", () => {
-    render(<GatewayCardComponent {...mockUndefinedGatewayData} />);
+    render(
+      <GatewayCardComponent
+        gatewayDetails={mockUndefinedGatewayData}
+        index={index}
+      />
+    );
 
     expect(
       screen.getByText(mockUndefinedGatewayData.serialNumber)

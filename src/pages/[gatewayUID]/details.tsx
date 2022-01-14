@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import type { NextPage } from "next";
-import SensorDetailsCard from "../../components/elements/SensorDetailsCard";
+import SensorCard from "../../components/elements/SensorCard";
 import styles from "../../styles/Home.module.scss";
 
 const GatewayDetails: NextPage = () => {
@@ -53,10 +52,10 @@ const GatewayDetails: NextPage = () => {
         <h2>Sensors</h2>
         <div className={styles.groupedCards}>
           {mockedSensorDetails.map((sensor, index) => (
-            <SensorDetailsCard
+            <SensorCard
               key={sensor.macAddress}
               index={index}
-              {...sensor}
+              sensorDetails={sensor}
             />
           ))}
         </div>

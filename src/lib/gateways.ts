@@ -1,5 +1,5 @@
 import axios from "axios";
-import Gateway from "../models/Gateway";
+import Gateway from "../components/models/Gateway";
 import config from "../../config";
 import NotehubDevice from "../models/NotehubDevice";
 
