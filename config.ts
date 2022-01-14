@@ -16,7 +16,7 @@ const env = {
   HUB_PRODUCT_UID: process.env.HUB_PRODUCT_UID,
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
   // todo delete in future - this value only exists so we can configure how far in the past we're pulling Notehub data
-  HUB_HISTORICAL_DATA_START_DATE: process.env.HISTORICAL_DATA_START_DATE,
+  HUB_HISTORICAL_DATA_START_DATE: process.env.HUB_HISTORICAL_DATA_START_DATE,
 };
 
 const optionalEnvVar = (
