@@ -62,7 +62,7 @@ const SensorDetailsChart = ({
   };
 
   return (
-    <div style={{ width: "900px" }}>
+    <div style={{ width: "870px" }}>
       <LineChart data={chartData} options={options} />
     </div>
   );
