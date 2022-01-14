@@ -22,9 +22,9 @@ describe("/api/gateway/[gatewayUID]/historical-sensors API Endpoint", () => {
   }
 
   it("GET should return a successful response from Notehub", async () => {
+    jest.setTimeout(15000); // added this as the call can be long running due to how far back in time the default date is set to
     const { req, res } = mockRequestResponse();
     await historicalSensorsHandler(req, res);
-    jest.setTimeout(15000); // added this as the call can be long running due to how far back in time the default date is set to
 
     expect(res.statusCode).toBe(200);
     expect(res.getHeaders()).toEqual({
