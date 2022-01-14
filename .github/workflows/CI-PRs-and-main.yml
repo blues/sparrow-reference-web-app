@@ -19,7 +19,7 @@ jobs:
       - uses: actions/cache@v2
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          path: node_modules
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
@@ -38,9 +38,8 @@ jobs:
       #- run: yarn lint:all
       #- run: yarn cypress:run
   docker-build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: crazy-max/ghaction-dump-context@v1
       - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
       - run: docker build . --file Dockerfile.prod
