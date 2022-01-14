@@ -29,10 +29,8 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
         <div className={styles.container}>
           <ul>
             <li>Device Name: {gateway.serialNumber}</li>
-            <li>Location: {gateway.location}</li>
-            {gateway.location && (
-              <li>Last Seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
-            )}
+            {gateway.location && <li>Location: {gateway.location}</li>}
+            <li>Last Seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
           </ul>
 
           {sensors?.length > 0 && (
