@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import GatewayCardComponent from "../../../../src/components/elements/GatewayCard";
+import GatewayCard from "../../../../src/components/elements/GatewayCard";
 import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 
 const mockGatewayData = {
@@ -23,9 +23,7 @@ const index = 1;
 
 describe("Gateway card component", () => {
   it("should render the card when gateway data is supplied", () => {
-    render(
-      <GatewayCardComponent gatewayDetails={mockGatewayData} index={index} />
-    );
+    render(<GatewayCard gatewayDetails={mockGatewayData} index={index} />);
 
     expect(screen.getByText(mockGatewayData.serialNumber)).toBeInTheDocument();
     expect(
@@ -38,10 +36,7 @@ describe("Gateway card component", () => {
 
   it("should render the card when particular gateway data is missing", () => {
     render(
-      <GatewayCardComponent
-        gatewayDetails={mockUndefinedGatewayData}
-        index={index}
-      />
+      <GatewayCard gatewayDetails={mockUndefinedGatewayData} index={index} />
     );
 
     expect(

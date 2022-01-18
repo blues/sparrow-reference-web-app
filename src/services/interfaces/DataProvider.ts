@@ -1,11 +1,12 @@
-import Gateway from "../../models/Gateway";
-import Sensor from "../../models/Sensor";
+import Gateway from "../../components/models/Gateway";
+import Sensor from "../../components/models/Sensor";
 
 // todo decide if we need this level of abstraction
+// just shows gateway or sensor data
 interface DataProvider {
-  getGateways: (deviceID: string) => Promise<Gateway[]>;
+  getGateways: () => Promise<Gateway[]>;
   // placholder method for future story
-  getLatestSensorData: (gatewaysList: Gateway[]) => Promise<Sensor[]>;
+  // getSensorData: (gatewaysList: Gateway[]) => Promise<Sensor[]>;
 }
 
 // eslint-disable-next-line import/prefer-default-export

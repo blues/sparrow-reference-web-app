@@ -1,21 +1,18 @@
-import { GatewayDataService } from "./interfaces/GatewayDataService";
-import NotehubGatewayDataService from "./notehub/NotehubGatewayDataService";
 import HttpNotehubApiService from "./notehub/HttpNotehubApiService";
-// import { DataProvider } from "./interfaces/DataProvider";
-// import NotehubProvider from "./notehub/NotehubProvider";
+import AppService, { AppServiceInterface } from "./AppService";
+import NotehubDataProvider from "./notehub/NotehubDataProvider";
 
 class ServiceLocator {
-  gatewayDataService: GatewayDataService;
+  appService: AppServiceInterface;
 
   constructor() {
     const notehubApiService = new HttpNotehubApiService();
-    // todo decide if we need this level of abstraction
-    // const dataProvider = new NotehubProvider();
-    this.gatewayDataService = new NotehubGatewayDataService(notehubApiService);
+    const notehubDataProvider = new NotehubDataProvider(notehubApiService);
+    this.appService = new AppService(notehubDataProvider);
   }
 
-  getGatewayService(): GatewayDataService {
-    return this.gatewayDataService;
+  getAppService(): AppServiceInterface {
+    return this.appService;
   }
 }
 

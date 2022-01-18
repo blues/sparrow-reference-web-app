@@ -1,5 +1,5 @@
-import Sensor from "../../models/Sensor";
-import Gateway from "../../models/Gateway";
+import Sensor from "../../components/models/Sensor";
+import Gateway from "../../components/models/Gateway";
 
 interface SensorDataService {
   // placholder method for future story

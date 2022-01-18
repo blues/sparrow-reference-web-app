@@ -53,9 +53,8 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   let gateways: Gateway[] = [];
   let latestSensorDataList: Sensor[] = [];
   try {
-    // gateways = await getGateways();
     // todo find the gatewaydataservice interface via service locator
-    gateways = await services().getGatewayService().getGateways("");
+    gateways = await services().getAppService().getGateways();
     console.log("GATEWAY -------", gateways);
     latestSensorDataList = await getLatestSensorData(gateways);
 
