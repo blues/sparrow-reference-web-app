@@ -1,71 +1,80 @@
-import Link from "next/link";
-import type { NextPage } from "next";
-import Card from "../../components/elements/Card";
+/* eslint-disable react/jsx-props-no-spreading */
+import type { GetServerSideProps, NextPage } from "next";
+import { ParsedUrlQuery } from "querystring";
+import SensorCard from "../../components/elements/SensorCard";
+import { getGateway } from "../../lib/gateways";
+import { getFormattedLastSeen } from "../../components/helpers/helperFunctions";
+import getLatestSensorData from "../../lib/latestSensorData";
+import Gateway from "../../components/models/Gateway";
+import Sensor from "../../components/models/Sensor";
 import styles from "../../styles/Home.module.scss";
 
-const GatewayDetails: NextPage = () => {
-  const sensorInfo = [
-    {
-      title: "Lobby",
-      extra: (
-        <Link href="/dev:868050040065365/sensor/20323746323650050028000a/details">
-          Summary
-        </Link>
-      ),
-      contents: (
-        <ul>
-          <li>Temperature: 72° F</li>
-          <li>Humidity: 23%</li>
-          <li>Motion: inactive</li>
-          <li>Battery: 36%</li>
-          <li>Last active: 3 minutes ago</li>
-        </ul>
-      ),
-    },
-    {
-      title: "Conference Room",
-      extra: (
-        <Link href="/dev:868050040065365/sensor/20323746323650050029000b/details">
-          Summary
-        </Link>
-      ),
-      contents: (
-        <ul>
-          <li>Temperature: 68° F</li>
-          <li>Humidity: 18%</li>
-          <li>Motion: inactive</li>
-          <li>Battery: 72%</li>
-          <li>Last active: 38 seconds ago</li>
-        </ul>
-      ),
-    },
-  ];
-
-  return (
-    <div>
-      <h1>Gateway Details</h1>
-
-      <div className={styles.container}>
-        <h2>Gateway</h2>
-        <div>
-          <span>Device Name: 2nd Floor Gateway</span>
-          <br />
-          <span>Location: Anytown, USA</span>
-          <br />
-          <span>Last Seen: 16 seconds ago</span>
-        </div>
-
-        <h2>Sensors</h2>
-        <div className={styles.groupedCards}>
-          {sensorInfo.map((sensor) => (
-            <Card key={sensor.title} title={sensor.title} extra={sensor.extra}>
-              {sensor.contents}
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+type GatewayDetailsData = {
+  gateway: Gateway | null;
+  sensors: Sensor[];
+  err?: string;
 };
 
+const GatewayDetails: NextPage<GatewayDetailsData> = ({
+  gateway,
+  sensors,
+  err,
+}) => (
+  <>
+    {err && <h2 className={styles.errorMessage}>{err}</h2>}
+
+    {gateway && (
+      <div>
+        <h1>Gateway Details</h1>
+        <div className={styles.container}>
+          <ul>
+            <li>Device Name: {gateway.serialNumber}</li>
+            {gateway.location && <li>Location: {gateway.location}</li>}
+            <li>Last Seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
+          </ul>
+
+          {sensors?.length > 0 && (
+            <>
+              <h2>Sensors</h2>
+              <div className={styles.groupedCards}>
+                {sensors.map((sensor, index) => (
+                  <SensorCard
+                    key={sensor.macAddress}
+                    index={index}
+                    sensorDetails={sensor}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    )}
+  </>
+);
+
 export default GatewayDetails;
+
+interface GatewayDetailsQueryInterface extends ParsedUrlQuery {
+  gatewayUID: string;
+}
+
+export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
+  async ({ query }) => {
+    const { gatewayUID } = query as GatewayDetailsQueryInterface;
+    let gateway: Gateway | null = null;
+    let sensors: Sensor[] = [];
+    try {
+      gateway = await getGateway(gatewayUID);
+      sensors = await getLatestSensorData([gateway]);
+
+      return {
+        props: { gateway, sensors },
+      };
+    } catch (err) {
+      if (err instanceof Error) {
+        return { props: { gateway, sensors, err: err.message } };
+      }
+      return { props: { gateway, sensors } };
+    }
+  };

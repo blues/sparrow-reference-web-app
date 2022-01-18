@@ -1,4 +1,4 @@
-import Gateway from "../../models/Gateway";
+import Gateway from "../../components/models/Gateway";
 
 interface GatewayDataService {
   getGateways: (projectUID: string) => Promise<Gateway[]>;

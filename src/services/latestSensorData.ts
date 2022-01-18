@@ -1,12 +1,12 @@
 import axios from "axios";
 import { flattenDeep, uniqBy } from "lodash";
-import Gateway from "../models/Gateway";
-import Sensor from "../models/Sensor";
+import Gateway from "../components/models/Gateway";
+import Sensor from "../components/models/Sensor";
 import NotehubLatestEvents from "./notehub/models/NotehubLatestEvents";
 import NotehubEvent from "./notehub/models/NotehubEvent";
 import config from "../../config";
+import { HTTP_STATUS } from "../constants/http";
 import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
-import { SENSOR_MESSAGE } from "../constants/ui";
 
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   // get latest sensor data from API
@@ -67,30 +67,35 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
 
   // get the names of the sensors from the API via config.db
   const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
-    const resp = await axios.get(
-      `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
-    );
-    const sensorNameInfo = resp.data as NotehubSensorConfig;
-
-    // put it all together in one object
-    return {
-      macAddress: gatewaySensorInfo.macAddress,
-      gatewayUID: gatewaySensorInfo.gatewayUID,
-      name: sensorNameInfo?.body?.name
-        ? sensorNameInfo.body.name
-        : SENSOR_MESSAGE.NO_NAME,
-      ...(gatewaySensorInfo.voltage && { voltage: gatewaySensorInfo.voltage }),
-      lastActivity: gatewaySensorInfo.lastActivity,
-      ...(gatewaySensorInfo.humidity && {
-        humidity: gatewaySensorInfo.humidity,
-      }),
-      ...(gatewaySensorInfo.pressure && {
-        pressure: gatewaySensorInfo.pressure,
-      }),
-      ...(gatewaySensorInfo.temperature && {
-        temperature: gatewaySensorInfo.temperature,
-      }),
-    };
+    try {
+      const resp = await axios.get(
+        `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
+      );
+      const sensorNameInfo = resp?.data as NotehubSensorConfig;
+      // put it all together in one object
+      return {
+        macAddress: gatewaySensorInfo.macAddress,
+        gatewayUID: gatewaySensorInfo.gatewayUID,
+        ...(sensorNameInfo?.body?.name && { name: sensorNameInfo.body.name }),
+        ...(gatewaySensorInfo.voltage && {
+          voltage: gatewaySensorInfo.voltage,
+        }),
+        lastActivity: gatewaySensorInfo.lastActivity,
+        ...(gatewaySensorInfo.humidity && {
+          humidity: gatewaySensorInfo.humidity,
+        }),
+        ...(gatewaySensorInfo.pressure && {
+          pressure: gatewaySensorInfo.pressure,
+        }),
+        ...(gatewaySensorInfo.temperature && {
+          temperature: gatewaySensorInfo.temperature,
+        }),
+      } as Sensor;
+    } catch (err) {
+      // this is only one of probably many potential error scenarios we'll have to handle
+      // if user's unauthorized to see Notehub project, break early and display error in the UI
+      throw new Error(HTTP_STATUS.UNAUTHORIZED);
+    }
   };
 
   const getAllSensorData = async (gatewaySensorInfo: Sensor[]) =>

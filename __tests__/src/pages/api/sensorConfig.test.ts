@@ -9,7 +9,7 @@ import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
   const gatewayUID = process.env.HUB_DEVICE_UID;
-  const macAddress = process.env.HUB_SENSOR_MAC;
+  const macAddress = process.env.TEST_SENSOR_MAC;
 
   function mockRequestResponse(method: RequestMethod = "GET") {
     const { req, res }: { req: NextApiRequest; res: NextApiResponse } =
@@ -79,5 +79,26 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     expect(res.statusCode).toBe(400);
     // eslint-disable-next-line no-underscore-dangle
     expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.INVALID_SENSOR_MAC });
+  });
+
+  it("should return a 400 if Gateway UID is not a string", async () => {
+    const { req, res } = mockRequestResponse();
+    req.query.gatewayUID = 11; // Pass gateway UID of the incorrect type
+
+    await sensorConfigHandler(req, res);
+
+    expect(res.statusCode).toBe(400);
+    // eslint-disable-next-line no-underscore-dangle
+    expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.INVALID_GATEWAY });
+  });
+
+  it("should return a 405 if method not GET or POST is passed", async () => {
+    const { req, res } = mockRequestResponse("PUT");
+    req.body = { loc: "FAILING_TEST_LOCATION", name: "FAILING_TEST_NAME" };
+    await sensorConfigHandler(req, res);
+
+    expect(res.statusCode).toBe(405);
+    // eslint-disable-next-line no-underscore-dangle
+    expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.METHOD_NOT_ALLOWED });
   });
 });

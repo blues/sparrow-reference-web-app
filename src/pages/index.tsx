@@ -1,102 +1,71 @@
 import { GetServerSideProps, NextPage } from "next";
-import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
-import Card from "../components/elements/Card";
+import SensorCard from "../components/elements/SensorCard";
+import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
 import getLatestSensorData from "../services/latestSensorData";
-import Gateway from "../models/Gateway";
-import Sensor from "../models/Sensor";
-import { SENSOR_MESSAGE } from "../constants/ui";
+import Gateway from "../components/models/Gateway";
+import Sensor from "../components/models/Sensor";
+import { ERROR_MESSAGE } from "../constants/ui";
+import { HTTP_STATUS } from "../constants/http";
 import styles from "../styles/Home.module.scss";
 
 type HomeData = {
   gateways: Gateway[];
   latestSensorDataList: Sensor[];
+  err?: typeof HTTP_STATUS.UNAUTHORIZED;
 };
 
-const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList }) => {
-  const getFormattedLastSeen = (date: string) =>
-    formatDistanceToNow(new Date(date), {
-      addSuffix: true,
-    });
+const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
+  <div className={styles.container}>
+    {err === HTTP_STATUS.UNAUTHORIZED ? (
+      <h2 className={styles.errorMessage}>{ERROR_MESSAGE.UNAUTHORIZED}</h2>
+    ) : (
+      <>
+        <h2>Gateways</h2>
+        <div className={styles.groupedCards}>
+          {gateways.map((gateway, index) => (
+            <GatewayCard
+              key={gateway.uid}
+              index={index}
+              gatewayDetails={gateway}
+            />
+          ))}
+        </div>
 
-  return (
-    <div className={styles.container}>
-      <h2>Gateways</h2>
-      <div className={styles.groupedCards}>
-        {gateways.map((gateway) => (
-          <Card
-            key={gateway.uid}
-            title={gateway.serialNumber}
-            extra={<Link href={`/${gateway.uid}/details`}>Details</Link>}
-          >
-            <ul>
-              <li>Location: {gateway.location}</li>
-              <li>Last seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
-              <li>Voltage: {gateway.voltage}V</li>
-            </ul>
-          </Card>
-        ))}
-      </div>
-
-      <h2>Sensors</h2>
-      <div className={styles.groupedCards}>
-        {latestSensorDataList.map((sensor) => (
-          <Card
-            key={sensor.macAddress}
-            title={sensor.name ? `${sensor.name}` : SENSOR_MESSAGE.NO_NAME}
-            extra={
-              <Link
-                href={`/${sensor.gatewayUID}/sensor/${sensor.macAddress}/details`}
-              >
-                Details
-              </Link>
-            }
-          >
-            <ul>
-              <li>
-                Humidity:&nbsp;
-                {sensor.humidity
-                  ? `${sensor.humidity}%`
-                  : SENSOR_MESSAGE.NO_HUMIDITY}
-              </li>
-              <li>
-                Pressure:&nbsp;
-                {sensor.pressure
-                  ? `${sensor.pressure / 1000} kPa`
-                  : SENSOR_MESSAGE.NO_PRESSURE}
-              </li>
-              <li>
-                Temperature:&nbsp;
-                {sensor.temperature
-                  ? `${sensor.temperature}°C`
-                  : SENSOR_MESSAGE.NO_TEMPERATURE}
-              </li>
-              <li>
-                Voltage:&nbsp;
-                {sensor.voltage
-                  ? `${sensor.voltage}V`
-                  : SENSOR_MESSAGE.NO_VOLTAGE}
-              </li>
-              <li>Last seen: {getFormattedLastSeen(sensor.lastActivity)}</li>
-            </ul>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-};
+        <h2>Sensors</h2>
+        <div className={styles.groupedCards}>
+          {latestSensorDataList.map((sensor, index) => (
+            <SensorCard
+              key={sensor.macAddress}
+              index={index}
+              sensorDetails={sensor}
+            />
+          ))}
+        </div>
+      </>
+    )}
+  </div>
+);
 
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
-  // const temp = new NotehubGatewayDataService();
-  // todo find the gatewaydataservice interface via service locator
-  const gateways = await services().getGatewayService().getGateways("");
-  console.log("GATEWAY -------", gateways);
-  const latestSensorDataList = await getLatestSensorData(gateways);
+  let gateways: Gateway[] = [];
+  let latestSensorDataList: Sensor[] = [];
+  try {
+    // gateways = await getGateways();
+    // todo find the gatewaydataservice interface via service locator
+    gateways = await services().getGatewayService().getGateways("");
+    console.log("GATEWAY -------", gateways);
+    latestSensorDataList = await getLatestSensorData(gateways);
 
-  return {
-    props: { gateways, latestSensorDataList },
-  };
+    return {
+      props: { gateways, latestSensorDataList },
+    };
+  } catch (err) {
+    if (err instanceof Error) {
+      return { props: { gateways, latestSensorDataList, err: err.message } };
+    }
+    return { props: { gateways, latestSensorDataList } };
+  }
 };
