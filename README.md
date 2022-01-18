@@ -31,7 +31,7 @@ The Sparrow starter uses a series of environment variables to store project-spec
 
 ### Dependencies
 
-The Sparrow starter uses [Node.js](https://nodejs.org/en/) as a runtime, [Yarn](https://yarnpkg.com/) as a package manager, and [Volta](https://volta.sh/) as a way of enforcing consistent versions of all JavaScript-based tools. You can install these dependencies by following the following steps.
+The Sparrow starter uses [Node.js](https://nodejs.org/en/) as a runtime, [Yarn](https://yarnpkg.com/) as a package manager, and [Volta](https://volta.sh/) as a way of enforcing consistent versions of all JavaScript-based tools. You can install these dependencies by following the steps below.
 
 1. Install Volta by following [its installation instructions](https://docs.volta.sh/guide/getting-started).
 2. Run the command below in a terminal to install the appropriate versions of both Node.js and Yarn.
@@ -66,7 +66,7 @@ The project’s `src/pages/api` directory are [API routes](https://nextjs.org/do
 
 ## Testing
 
-The Sparrow starter contains both unit and end-to-end tests to help ensure the project runs as intended.
+The Sparrow starter contains both unit and end-to-end tests to ensure the project continues to work as intended.
 
 ### Testing with Jest
 
@@ -77,7 +77,7 @@ This repo contains a unit testing setup that utilizes [Jest](https://jestjs.io/)
 The Sparrow starter’s testing setup requires a test-specific environment variable file. Follow the steps below to create that file.
 
 1. Create a `.env.test.local` file in the root of your project.
-1. Copy the contents of the repo’s `.env.test` file and paste it into your `.env.test.local` file.
+1. Copy the contents of the repo’s [`.env.test.local.example`](.env.test.local.example) file and paste it into your `.env.test.local` file.
 1. Change the values in your `.env.test.local` file to your own values. (You can likely copy and paste them from your `.env.local` file.)
 
 **Running Unit Tests**

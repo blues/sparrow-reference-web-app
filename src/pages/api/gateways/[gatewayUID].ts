@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
-import {HTTP_STATUS, HTTP_HEADER} from '../../../constants/http';
+import { HTTP_STATUS, HTTP_HEADER } from "../../../constants/http";
 import config from "../../../../config";
 
 export default async function gatewaysHandler(
@@ -29,7 +29,7 @@ export default async function gatewaysHandler(
   // API headers
   const headers = {
     [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
-    [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken
+    [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
   };
 
   // API call

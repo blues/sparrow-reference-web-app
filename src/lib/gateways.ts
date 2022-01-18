@@ -3,26 +3,38 @@ import Gateway from "../components/models/Gateway";
 import config from "../../config";
 import NotehubDevice from "../models/NotehubDevice";
 
-export default async function getGateways() {
+export function notehubToSparrow(device: NotehubDevice) {
+  return {
+    lastActivity: device.last_activity,
+    ...((device?.triangulated_location || device?.tower_location) && {
+      location: device?.triangulated_location?.name
+        ? device.triangulated_location.name
+        : device.tower_location?.name,
+    }),
+    serialNumber: device.serial_number,
+    uid: device.uid,
+    voltage: device.voltage,
+  };
+}
+
+export async function getGateways() {
   const gateways: Gateway[] = [];
 
   const resp = await axios.get(
     `${config.appBaseUrl}/api/gateways/${config.hubDeviceUID}`
   );
   const json = resp.data as NotehubDevice;
-
-  const gateway = {
-    lastActivity: json.last_activity,
-    ...((json?.triangulated_location || json?.tower_location) && {
-      location: json?.triangulated_location?.name
-        ? json.triangulated_location.name
-        : json.tower_location?.name,
-    }),
-    serialNumber: json.serial_number,
-    uid: json.uid,
-    voltage: json.voltage,
-  };
+  const gateway = notehubToSparrow(json);
   gateways.push(gateway);
 
   return gateways;
+}
+
+export async function getGateway(gatewayUID: string) {
+  const resp = await axios.get(
+    `${config.appBaseUrl}/api/gateways/${gatewayUID}`
+  );
+  const json = resp.data as NotehubDevice;
+
+  return notehubToSparrow(json);
 }
