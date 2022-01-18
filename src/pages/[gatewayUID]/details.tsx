@@ -2,9 +2,9 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
 import SensorCard from "../../components/elements/SensorCard";
-import { getGateway } from "../../lib/gateways";
+import { services } from "../../services/ServiceLocator";
 import { getFormattedLastSeen } from "../../components/helpers/helperFunctions";
-import getLatestSensorData from "../../lib/latestSensorData";
+import getLatestSensorData from "../../services/latestSensorData";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import styles from "../../styles/Home.module.scss";
@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
     let gateway: Gateway | null = null;
     let sensors: Sensor[] = [];
     try {
-      gateway = await getGateway(gatewayUID);
+      gateway = await services().getAppService().getGateway(gatewayUID);
       sensors = await getLatestSensorData([gateway]);
 
       return {

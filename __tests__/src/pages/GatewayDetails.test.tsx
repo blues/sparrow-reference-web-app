@@ -2,8 +2,8 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import GatewayDetails from "../../../src/pages/[gatewayUID]/details";
-import Gateway from "../../../src/models/Gateway";
-import Sensor from "../../../src/models/Sensor";
+import Gateway from "../../../src/components/models/Gateway";
+import Sensor from "../../../src/components/models/Sensor";
 
 function getMockGateway(): Gateway {
   return {

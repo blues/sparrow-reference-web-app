@@ -6,7 +6,7 @@ import { NotehubApiService } from "../interfaces/NotehubApiService";
 import config from "../../../config";
 
 // this file connects to Notehub API endpoints to fetch data
-function notehubDeviceToSparrowGateway(device: NotehubDevice) {
+export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
     lastActivity: device.last_activity,
     ...((device?.triangulated_location || device?.tower_location) && {
@@ -39,6 +39,16 @@ export default class NotehubDataProvider implements DataProvider {
     gateways.push(gateway);
 
     return gateways;
+  }
+
+  async getGateway(gatewayUID: string) {
+    const singleGatewayJson = await this.notehubApiService.getGateways(
+      gatewayUID
+    );
+
+    const singleGateway = notehubDeviceToSparrowGateway(singleGatewayJson);
+
+    return singleGateway;
   }
 
   // todo refactor in future story

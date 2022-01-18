@@ -1,8 +1,9 @@
 import "@testing-library/jest-dom/extend-expect";
-import { notehubToSparrow } from "../../../src/lib/gateways";
-import NotehubDevice from "../../../src/models/NotehubDevice";
-import NotehubLocation from "../../../src/models/NotehubLocation";
+import { notehubDeviceToSparrowGateway } from "../../../src/services/notehub/NotehubDataProvider";
+import NotehubDevice from "../../../src/services/notehub/models/NotehubDevice";
+import NotehubLocation from "../../../src/services/notehub/models/NotehubLocation";
 
+// todo refactor this test to align with NotehubDataProvider.ts file
 function getMockDevice(): NotehubDevice {
   return {
     uid: "",
@@ -36,7 +37,7 @@ describe("Notehub data parsing", () => {
   };
 
   it("should not produce a location property when none exist", () => {
-    const data = notehubToSparrow(getMockDevice());
+    const data = notehubDeviceToSparrowGateway(getMockDevice());
     expect(data.location).toBe(undefined);
   });
 
@@ -44,14 +45,14 @@ describe("Notehub data parsing", () => {
     const device = getMockDevice();
     device.tower_location = mockLocation;
     device.triangulated_location = mockLocation2;
-    const data = notehubToSparrow(device);
+    const data = notehubDeviceToSparrowGateway(device);
     expect(data.location).toBe(mockLocation2.name);
   });
 
   it("should use tower location if it's the only one available", () => {
     const device = getMockDevice();
     device.tower_location = mockLocation;
-    const data = notehubToSparrow(device);
+    const data = notehubDeviceToSparrowGateway(device);
     expect(data.location).toBe(mockLocation.name);
   });
 });
