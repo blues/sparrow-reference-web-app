@@ -1,10 +1,16 @@
+# Notehub Starter App Backend
 
+This document details the various Notehub constructs that the sparrow starter app uses to retrieve the data for gateways and sensors. 
+
+* [Sensors](#sensors)
+* [Gateway Environment Variables](#gateway-environment-variables)
+* [Note Databases](#note-databases)
 
 # Sensors 
 
 ## Determining the Sensors paired with a Gateway
 
-The `sensors.db` file contains notes for each device paired with the gateway. The ID of each node is the ID of the device paired with the gateway.  See [sensors.db Notefile](#sensors.db-notefile)
+The `sensors.db` file contains notes for each device paired with the gateway. The ID of each node is the ID of the device paired with the gateway.  See [sensors.db Notefile](#sensorsdb-notefile).
 
 
 ## Notefiles and Sensor Readings
@@ -142,7 +148,7 @@ Default value: 60 (minutes)
 
 The sensor database (`sensors.db`) contains statistics about the operations of each sensor, with each NoteID being the ID of the sensor node whose stats it contains.
 
-The upside of keeping this database up-to-date is that the Notehub (and by extension the customer's cloud application) can see the message counts, RSSI, and so on, of each sensor node.  The downside, as I noted above, is that whenever the gateway is spending time moving statistics from memory into the Notecard via note.update, it isn't listening to the network for LoRa activity.
+The upside of keeping this database up-to-date is that the Notehub (and by extension the customer's cloud application) can see the message counts, RSSI, and so on, of each sensor node.  The downside, as I noted above, is that whenever the gateway is spending time moving statistics from memory into the Notecard via `note.update`, it isn't listening to the network for LoRa activity.
 
 
 ## `sensordb_reset_counts`
@@ -155,8 +161,8 @@ The way that you do this is to set this env var to the current unix epoch time. 
 
 # Note Databases
 
-* [`config.db`](#config.db-notefile) - stores configuration details about each sensor, such as its name and location
-* [`sensors.db`](#sensors.db-notefile) - stores connectivity details about each sensor, such as signal strength
+* [`config.db`](#configdb-notefile) - stores configuration details about each sensor, such as its name and location
+* [`sensors.db`](#sensorsdb-notefile) - stores connectivity details about each sensor, such as signal strength
 
 
 ## `config.db` Notefile
@@ -175,10 +181,10 @@ The NoteID of each note is the sensor ID.  The two (optional) fields currently i
 
 The sensor database `sensors.db` contains statistics about the operations of each sensor, with each NoteID being the ID of the sensor whose stats it contains.
 
-When a Sensor is paired, the database is update. (todo - check this.)
+When a Sensor is paired, the database is updated.
 Otherwise, device metrics are updated at the interval given by the [`sensordb_update_mins`](#sensordb_update_mins) environment variable for the gateway.
 
-This is an example of the 
+This is an example of a note in the database file 
 
 ```json
 {
