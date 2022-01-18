@@ -1,9 +1,11 @@
 import Gateway from "../../components/models/Gateway";
+import Sensor from "../../components/models/Sensor";
 import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider } from "../interfaces/DataProvider";
 import { NotehubApiService } from "../interfaces/NotehubApiService";
 import config from "../../../config";
 
+// this file connects to Notehub API endpoints to fetch data
 function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
     lastActivity: device.last_activity,
@@ -37,5 +39,24 @@ export default class NotehubDataProvider implements DataProvider {
     gateways.push(gateway);
 
     return gateways;
+  }
+
+  // todo refactor in future story
+  // stubbing this call to keep interface from yelling
+  async getLatestSensorData(gatewaysList: Gateway[]) {
+    const stubbedSensorData: Sensor = {
+      gatewayUID: "1234",
+      macAddress: "hello_world",
+      humidity: 2,
+      pressure: 100000,
+      temperature: 26,
+      voltage: 3.4,
+      lastActivity: "2021-11-11T16:40:02Z",
+    };
+
+    // call notehubApiService endpoint
+    await Promise.resolve();
+
+    return [stubbedSensorData];
   }
 }

@@ -2,6 +2,7 @@ import HttpNotehubApiService from "./notehub/HttpNotehubApiService";
 import AppService, { AppServiceInterface } from "./AppService";
 import NotehubDataProvider from "./notehub/NotehubDataProvider";
 
+// this class provides whatever service is needed to the React view component that needs it
 class ServiceLocator {
   appService: AppServiceInterface;
 

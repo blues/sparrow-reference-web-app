@@ -2,6 +2,7 @@ import axios from "axios";
 import { NotehubApiService } from "../interfaces/NotehubApiService";
 import NotehubDevice from "./models/NotehubDevice";
 
+// this class directly interacts with Notehub via HTTP calls
 export default class HttpNotehubApiService implements NotehubApiService {
   // todo eventually our config will be supplied from one source of truth in the app
   appBaseUrl: string;

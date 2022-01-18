@@ -8,6 +8,7 @@ import config from "../../config";
 import { HTTP_STATUS } from "../constants/http";
 import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
 
+// todo refactor in future story
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   // get latest sensor data from API
   const getLatestSensorDataByGateway = async (gateway: Gateway) => {

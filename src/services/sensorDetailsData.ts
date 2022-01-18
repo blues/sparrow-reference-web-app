@@ -6,6 +6,7 @@ import config from "../../config";
 import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
 import { SENSOR_MESSAGE } from "../constants/ui";
 
+//todo refactor in future story
 export default async function getSensorDetailsData(
   gatewayUID: string,
   sensorUID: string
