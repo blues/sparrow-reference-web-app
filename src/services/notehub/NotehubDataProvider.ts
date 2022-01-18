@@ -2,7 +2,7 @@ import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider } from "../interfaces/DataProvider";
-import { NotehubApiService } from "../interfaces/NotehubApiService";
+import { NotehubApiService } from "./NotehubApiService";
 import config from "../../../config";
 
 // this file connects to Notehub API endpoints to fetch data
@@ -31,7 +31,7 @@ export default class NotehubDataProvider implements DataProvider {
   async getGateways() {
     const gateways: Gateway[] = [];
 
-    const gatewayJson = await this.notehubApiService.getGateways(
+    const gatewayJson = await this.notehubApiService.getGateway(
       config.hubDeviceUID
     );
 
@@ -42,7 +42,7 @@ export default class NotehubDataProvider implements DataProvider {
   }
 
   async getGateway(gatewayUID: string) {
-    const singleGatewayJson = await this.notehubApiService.getGateways(
+    const singleGatewayJson = await this.notehubApiService.getGateway(
       gatewayUID
     );
 

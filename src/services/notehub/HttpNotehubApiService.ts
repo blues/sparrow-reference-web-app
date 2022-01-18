@@ -1,5 +1,5 @@
 import axios from "axios";
-import { NotehubApiService } from "../interfaces/NotehubApiService";
+import { NotehubApiService } from "./NotehubApiService";
 import NotehubDevice from "./models/NotehubDevice";
 
 // this class directly interacts with Notehub via HTTP calls
@@ -11,7 +11,7 @@ export default class HttpNotehubApiService implements NotehubApiService {
     this.appBaseUrl = "http://localhost:4000";
   }
 
-  async getGateways(hubDeviceUID: string) {
+  async getGateway(hubDeviceUID: string) {
     const resp = await axios.get(
       `${this.appBaseUrl}/api/gateways/${hubDeviceUID}`
     );
