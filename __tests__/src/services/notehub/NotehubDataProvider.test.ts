@@ -16,11 +16,13 @@ describe("Notehub data provider service functions", () => {
   };
 
   let notehubApiServiceMock: NotehubApiService;
+  let notehubDataProviderMock: NotehubDataProvider;
 
   beforeEach(() => {
     notehubApiServiceMock = {
       getGateway: jest.fn().mockResolvedValueOnce(mockedGatewayJson),
     };
+    notehubDataProviderMock = new NotehubDataProvider(notehubApiServiceMock);
   });
 
   it("should return a single sparrow gateway instance when getGateway is called", async () => {
@@ -33,8 +35,7 @@ describe("Notehub data provider service functions", () => {
       voltage: 3.8,
     };
 
-    const instance = new NotehubDataProvider(notehubApiServiceMock);
-    const res = await instance.getGateway(mockGatewayUID);
+    const res = await notehubDataProviderMock.getGateway(mockGatewayUID);
     expect(res).toEqual(mockedGatewaySparrowData);
   });
 
@@ -48,8 +49,7 @@ describe("Notehub data provider service functions", () => {
       },
     ];
 
-    const instance = new NotehubDataProvider(notehubApiServiceMock);
-    const res = await instance.getGateways();
+    const res = await notehubDataProviderMock.getGateways();
     expect(res).toEqual(mockedGatewaysSparrowData);
   });
 });
