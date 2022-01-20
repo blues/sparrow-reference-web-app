@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import NotehubEvent from "../../models/NotehubEvent";
+import NotehubEvent from "../../services/notehub/models/NotehubEvent";
 import Sensor from "../models/Sensor";
 import Gateway from "../models/Gateway";
 
