@@ -1,6 +1,6 @@
-import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
-import NotehubDataProvider from "../../../../src/services/notehub/NotehubDataProvider";
 import { NotehubApiService } from "../../../../src/services/notehub/NotehubApiService";
+import NotehubDataProvider from "../../../../src/services/notehub/NotehubDataProvider";
+import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
 
 describe("Notehub data provider service functions", () => {
   const mockedGatewayJson: NotehubDevice = {
