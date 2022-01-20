@@ -1,39 +1,26 @@
-import { NotehubApiService } from "../../../../src/services/notehub/NotehubApiService";
+import { NotehubAccessor } from "../../../../src/services/notehub/NotehubAccessor";
 import NotehubDataProvider from "../../../../src/services/notehub/NotehubDataProvider";
-import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
+import sparrowData from "../__serviceMocks__/sparrowData.json"; // mocked data to do with Sparrow portion of app goes here (i.e. gateways and sensors)
+import notehubData from "../__serviceMocks__/notehubData.json"; // mocked data to do with Notehub portion of app goes here (i.e. devices and events)
 
 describe("Notehub data provider service functions", () => {
-  const mockedGatewayJson: NotehubDevice = {
-    uid: "dev:5678",
-    serial_number: "9101112",
-    provisioned: "2021-12-01T11:34:56Z",
-    last_activity: "2021-12-14T07:47:29Z",
-    contact: "Test User 1",
-    product_uid: "net.test:sparrow",
-    fleet_uids: [],
-    voltage: 3.8,
-    temperature: 15,
-  };
+  const mockedGatewayJson = notehubData.successfulNotehubDeviceResponse;
 
-  let notehubApiServiceMock: NotehubApiService;
+  let notehubAccessorMock: NotehubAccessor;
   let notehubDataProviderMock: NotehubDataProvider;
 
   beforeEach(() => {
-    notehubApiServiceMock = {
+    notehubAccessorMock = {
       getGateway: jest.fn().mockResolvedValueOnce(mockedGatewayJson),
     };
-    notehubDataProviderMock = new NotehubDataProvider(notehubApiServiceMock);
+    notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock);
   });
 
   it("should return a single sparrow gateway instance when getGateway is called", async () => {
     const mockGatewayUID = "dev:5678";
 
-    const mockedGatewaySparrowData = {
-      lastActivity: "2021-12-14T07:47:29Z",
-      serialNumber: "9101112",
-      uid: "dev:5678",
-      voltage: 3.8,
-    };
+    const mockedGatewaySparrowData =
+      sparrowData.successfulGatewaySparrowDataResponse;
 
     const res = await notehubDataProviderMock.getGateway(mockGatewayUID);
     expect(res).toEqual(mockedGatewaySparrowData);
@@ -41,12 +28,7 @@ describe("Notehub data provider service functions", () => {
 
   it("should return a list sparrow gateway instances when getGateways is called", async () => {
     const mockedGatewaysSparrowData = [
-      {
-        lastActivity: "2021-12-14T07:47:29Z",
-        serialNumber: "9101112",
-        uid: "dev:5678",
-        voltage: 3.8,
-      },
+      sparrowData.successfulGatewaySparrowDataResponse,
     ];
 
     const res = await notehubDataProviderMock.getGateways();

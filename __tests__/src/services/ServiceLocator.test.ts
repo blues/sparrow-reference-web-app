@@ -3,7 +3,7 @@ import { services } from "../../../src/services/ServiceLocator";
 describe("Service locator", () => {
   const mockedDataProvider = {
     dataProvider: {
-      notehubApiService: { appBaseUrl: "http://localhost:4000" },
+      notehubAccessor: { appBaseUrl: "http://localhost:4000" },
     },
   };
 

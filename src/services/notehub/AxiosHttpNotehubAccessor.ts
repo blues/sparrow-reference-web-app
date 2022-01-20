@@ -1,9 +1,9 @@
 import axios from "axios";
-import { NotehubApiService } from "./NotehubApiService";
+import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
 
 // this class directly interacts with Notehub via HTTP calls
-export default class HttpNotehubApiService implements NotehubApiService {
+export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   // todo eventually our config will be supplied from one source of truth in the app
   appBaseUrl: string;
 

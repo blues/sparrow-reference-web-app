@@ -1,24 +1,16 @@
 import AppService from "../../../src/services/AppService";
-import { DataProvider } from "../../../src/services/interfaces/DataProvider";
+import { DataProvider } from "../../../src/services/DataProvider";
+import sparrowData from "./__serviceMocks__/sparrowData.json";
 
 describe("App Service", () => {
   let dataProviderMock: DataProvider;
   let appServiceMock: AppService;
 
-  const mockedGatewaySparrowData = {
-    lastActivity: "2021-11-27T03:56:29Z",
-    serialNumber: "010203",
-    uid: "dev:3456",
-    voltage: 4.4,
-  };
+  const mockedGatewaySparrowData =
+    sparrowData.successfulGatewaySparrowDataResponse;
 
   const mockedGatewaysSparrowData = [
-    {
-      lastActivity: "2021-11-16T20:08:55Z",
-      serialNumber: "020304",
-      uid: "dev:3456",
-      voltage: 5.0,
-    },
+    sparrowData.successfulGatewaySparrowDataResponse,
   ];
 
   beforeEach(() => {

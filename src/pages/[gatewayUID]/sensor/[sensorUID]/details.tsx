@@ -13,7 +13,7 @@ import {
   HISTORICAL_SENSOR_DATA_MESSAGE,
   SENSOR_MESSAGE,
 } from "../../../../constants/ui";
-import SparrowQueryInterface from "../../../../services/interfaces/SparrowQueryInterface";
+import SparrowQueryInterface from "../../../../interfaces/SparrowQueryInterface";
 import {
   getFormattedChartData,
   getFormattedTemperatureData,

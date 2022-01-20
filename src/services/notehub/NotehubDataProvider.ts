@@ -1,8 +1,8 @@
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import NotehubDevice from "./models/NotehubDevice";
-import { DataProvider } from "../interfaces/DataProvider";
-import { NotehubApiService } from "./NotehubApiService";
+import { DataProvider } from "../DataProvider";
+import { NotehubAccessor } from "./NotehubAccessor";
 import config from "../../../config";
 
 // this file connects to Notehub API endpoints to fetch data
@@ -21,17 +21,17 @@ export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
 }
 
 export default class NotehubDataProvider implements DataProvider {
-  notehubApiService: NotehubApiService;
+  notehubAccessor: NotehubAccessor;
 
-  constructor(notehubApiService: NotehubApiService) {
-    this.notehubApiService = notehubApiService;
+  constructor(notehubAccessor: NotehubAccessor) {
+    this.notehubAccessor = notehubAccessor;
   }
 
   // eventually this projectUID will need to be passed in - just not yet
   async getGateways() {
     const gateways: Gateway[] = [];
 
-    const gatewayJson = await this.notehubApiService.getGateway(
+    const gatewayJson = await this.notehubAccessor.getGateway(
       config.hubDeviceUID
     );
 
@@ -42,9 +42,7 @@ export default class NotehubDataProvider implements DataProvider {
   }
 
   async getGateway(gatewayUID: string) {
-    const singleGatewayJson = await this.notehubApiService.getGateway(
-      gatewayUID
-    );
+    const singleGatewayJson = await this.notehubAccessor.getGateway(gatewayUID);
 
     const singleGateway = notehubDeviceToSparrowGateway(singleGatewayJson);
 

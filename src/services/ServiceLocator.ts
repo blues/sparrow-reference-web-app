@@ -1,4 +1,4 @@
-import HttpNotehubApiService from "./notehub/HttpNotehubApiService";
+import AxiosHttpNotehubAccessor from "./notehub/AxiosHttpNotehubAccessor";
 import AppService, { AppServiceInterface } from "./AppService";
 import NotehubDataProvider from "./notehub/NotehubDataProvider";
 
@@ -7,8 +7,8 @@ class ServiceLocator {
   appService: AppServiceInterface;
 
   constructor() {
-    const notehubApiService = new HttpNotehubApiService();
-    const notehubDataProvider = new NotehubDataProvider(notehubApiService);
+    const notehubAccessor = new AxiosHttpNotehubAccessor();
+    const notehubDataProvider = new NotehubDataProvider(notehubAccessor);
     this.appService = new AppService(notehubDataProvider);
   }
 

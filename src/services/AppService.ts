@@ -1,5 +1,5 @@
 import Gateway from "../components/models/Gateway";
-import { DataProvider } from "./interfaces/DataProvider";
+import { DataProvider } from "./DataProvider";
 
 // this class / interface combo passes data and functions to the service locator file
 interface AppServiceInterface {
