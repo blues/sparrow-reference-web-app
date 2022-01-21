@@ -22,8 +22,14 @@ const GATEWAY_MESSAGE = {
 
 // Error messages when the project fails to display for some reason
 const ERROR_MESSAGE = {
-  UNAUTHORIZED:
+  FORBIDDEN:
     "User is unauthorized to access this project. Please contact the Notehub project owner to be invited to the project.",
+  GATEWAY_NOT_FOUND:
+    "We were unable to locate any gateways. Ensure your HUB_APP_UID and HUB_DEVICE_UID environment variables are configured correctly.",
+  INTERNAL_ERROR:
+    "An internal error occurred. If this problem persists please contact Blues support.",
+  UNAUTHORIZED:
+    "Authentication failed. Please ensure you have a valid HUB_AUTH_TOKEN environment variable.",
 };
 
 export {
