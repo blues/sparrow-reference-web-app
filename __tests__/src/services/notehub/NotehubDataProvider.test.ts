@@ -5,7 +5,6 @@ import NotehubDataProvider, {
 import sparrowData from "../__serviceMocks__/sparrowData.json"; // mocked data to do with Sparrow portion of app goes here (i.e. gateways and sensors)
 import notehubData from "../__serviceMocks__/notehubData.json"; // mocked data to do with Notehub portion of app goes here (i.e. devices and events)
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
-import NotehubLocation from "../../../../src/services/notehub/models/NotehubLocation";
 
 describe("Notehub data provider service functions", () => {
   const mockedGatewayJson = notehubData.successfulNotehubDeviceResponse;
@@ -42,36 +41,9 @@ describe("Notehub data provider service functions", () => {
 });
 
 describe("Notehub data parsing", () => {
-  function getMockDevice(): NotehubDevice {
-    return {
-      uid: "",
-      serial_number: "",
-      provisioned: "",
-      last_activity: "",
-      contact: "",
-      product_uid: "",
-      fleet_uids: [],
-      voltage: 0,
-      temperature: 0,
-    };
-  }
-
-  const mockLocation: NotehubLocation = {
-    when: "",
-    name: "Detroit",
-    country: "",
-    timezone: "",
-    latitude: 0,
-    longitude: 0,
-  };
-  const mockLocation2: NotehubLocation = {
-    when: "",
-    name: "Atlanta",
-    country: "",
-    timezone: "",
-    latitude: 0,
-    longitude: 0,
-  };
+  // Clone the mock device
+  const getMockDevice = () =>
+    ({ ...notehubData.successfulNotehubDeviceResponse } as NotehubDevice);
 
   it("should not produce a location property when none exist", () => {
     const data = notehubDeviceToSparrowGateway(getMockDevice());
@@ -80,16 +52,16 @@ describe("Notehub data parsing", () => {
 
   it("should choose triangulated location over tower", () => {
     const device = getMockDevice();
-    device.tower_location = mockLocation;
-    device.triangulated_location = mockLocation2;
+    device.tower_location = notehubData.exampleNotehubLocation1;
+    device.triangulated_location = notehubData.exampleNotehubLocation2;
     const data = notehubDeviceToSparrowGateway(device);
-    expect(data.location).toBe(mockLocation2.name);
+    expect(data.location).toBe(notehubData.exampleNotehubLocation2.name);
   });
 
   it("should use tower location if it's the only one available", () => {
     const device = getMockDevice();
-    device.tower_location = mockLocation;
+    device.tower_location = notehubData.exampleNotehubLocation1;
     const data = notehubDeviceToSparrowGateway(device);
-    expect(data.location).toBe(mockLocation.name);
+    expect(data.location).toBe(notehubData.exampleNotehubLocation1.name);
   });
 });
