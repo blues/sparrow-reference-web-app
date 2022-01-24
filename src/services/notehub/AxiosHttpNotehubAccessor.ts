@@ -3,29 +3,34 @@ import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
 import { HTTP_HEADER } from "../../constants/http";
 import { ERROR_MESSAGE } from "../../constants/ui";
+import Config from "../../../config";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   baseURL: string;
 
-  hubAppUID: string;
-
   hubDeviceUID: string;
 
   commonHeaders;
 
-  constructor(
-    hubBaseURL: string,
-    hubAppUID: string,
-    hubDeviceUID: string,
-    hubAuthToken: string
-  ) {
+  constructor() // hubAppUID: string, // hubBaseURL: string,
+  // hubDeviceUID: string,
+  // hubAuthToken: string
+  {
+    /*
     this.baseURL = `${hubBaseURL}/v1/projects/${hubAppUID}`;
     this.hubAppUID = hubAppUID;
     this.hubDeviceUID = hubDeviceUID;
     this.commonHeaders = {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
       [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
+    };
+    */
+    this.baseURL = `${Config.hubBaseURL}/v1/projects/${Config.hubAppUID}`;
+    this.hubDeviceUID = Config.hubDeviceUID;
+    this.commonHeaders = {
+      [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
+      [HTTP_HEADER.SESSION_TOKEN]: Config.hubAuthToken,
     };
   }
 
