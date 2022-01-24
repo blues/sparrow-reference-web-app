@@ -6,6 +6,7 @@ import getLatestSensorData from "../services/latestSensorData";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import styles from "../styles/Home.module.scss";
+import { getErrorMessage } from "../constants/ui";
 
 type HomeData = {
   gateways: Gateway[];
@@ -60,7 +61,13 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
     };
   } catch (err) {
     if (err instanceof Error) {
-      return { props: { gateways, latestSensorDataList, err: err.message } };
+      return {
+        props: {
+          gateways,
+          latestSensorDataList,
+          err: getErrorMessage(err.message),
+        },
+      };
     }
     return { props: { gateways, latestSensorDataList } };
   }

@@ -1,3 +1,6 @@
+import { assert } from "console";
+import ERROR_CODES from "../services/ErrorCodes";
+
 // Sensor data fallbacks for empty data fields
 const SENSOR_MESSAGE = {
   NO_NAME: "No sensor name currently set.",
@@ -32,9 +35,25 @@ const ERROR_MESSAGE = {
     "Authentication failed. Please ensure you have a valid HUB_AUTH_TOKEN environment variable.",
 };
 
+const getErrorMessage = (errorCode: string) => {
+  switch (errorCode) {
+    case ERROR_CODES.UNAUTHORIZED:
+      return ERROR_MESSAGE.UNAUTHORIZED;
+    case ERROR_CODES.FORBIDDEN:
+      return ERROR_MESSAGE.FORBIDDEN;
+    case ERROR_CODES.GATEWAY_NOT_FOUND:
+      return ERROR_MESSAGE.GATEWAY_NOT_FOUND;
+    case ERROR_CODES.INTERNAL_ERROR:
+      return ERROR_MESSAGE.INTERNAL_ERROR;
+    default:
+    // can we assert here?
+  }
+};
+
 export {
   SENSOR_MESSAGE,
   HISTORICAL_SENSOR_DATA_MESSAGE,
   GATEWAY_MESSAGE,
   ERROR_MESSAGE,
+  getErrorMessage,
 };

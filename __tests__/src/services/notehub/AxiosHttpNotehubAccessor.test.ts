@@ -1,6 +1,6 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { ERROR_MESSAGE } from "../../../../src/constants/ui";
+import ERROR_CODES from "../../../../src/services/ErrorCodes";
 import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
 import notehubData from "../__serviceMocks__/notehubData.json";
 
@@ -38,7 +38,7 @@ describe("Gateway handling", () => {
 
     await expect(
       axiosHttpNotehubAccessorMock.getGateway(mockDeviceUID)
-    ).rejects.toThrow(ERROR_MESSAGE.UNAUTHORIZED);
+    ).rejects.toThrow(ERROR_CODES.UNAUTHORIZED);
   });
 
   it("Should give an unauthorized error for 403s", async () => {
@@ -48,7 +48,7 @@ describe("Gateway handling", () => {
 
     await expect(
       axiosHttpNotehubAccessorMock.getGateway(mockDeviceUID)
-    ).rejects.toThrow(ERROR_MESSAGE.FORBIDDEN);
+    ).rejects.toThrow(ERROR_CODES.FORBIDDEN);
   });
 
   it("Should give an unauthorized error for 404s", async () => {
@@ -58,7 +58,7 @@ describe("Gateway handling", () => {
 
     await expect(
       axiosHttpNotehubAccessorMock.getGateway(mockDeviceUID)
-    ).rejects.toThrow(ERROR_MESSAGE.GATEWAY_NOT_FOUND);
+    ).rejects.toThrow(ERROR_CODES.GATEWAY_NOT_FOUND);
   });
 
   it("Should give an unauthorized error for 500s", async () => {
@@ -68,7 +68,7 @@ describe("Gateway handling", () => {
 
     await expect(
       axiosHttpNotehubAccessorMock.getGateway(mockDeviceUID)
-    ).rejects.toThrow(ERROR_MESSAGE.INTERNAL_ERROR);
+    ).rejects.toThrow(ERROR_CODES.INTERNAL_ERROR);
   });
 
   it("should return a valid response when getting all gateways", async () => {

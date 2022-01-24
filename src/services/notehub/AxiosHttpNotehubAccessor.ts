@@ -2,7 +2,7 @@ import axios from "axios";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
 import { HTTP_HEADER } from "../../constants/http";
-import { ERROR_MESSAGE } from "../../constants/ui";
+import ERROR_CODES from "../ErrorCodes";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -13,8 +13,8 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   commonHeaders;
 
   constructor(
-    hubAppUID: string,
     hubBaseURL: string,
+    hubAppUID: string,
     hubDeviceUID: string,
     hubAuthToken: string
   ) {
@@ -42,16 +42,16 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     } catch (e) {
       if (axios.isAxiosError(e)) {
         if (e.response?.status === 401) {
-          throw new Error(ERROR_MESSAGE.UNAUTHORIZED);
+          throw new Error(ERROR_CODES.UNAUTHORIZED);
         }
         if (e.response?.status === 403) {
-          throw new Error(ERROR_MESSAGE.FORBIDDEN);
+          throw new Error(ERROR_CODES.FORBIDDEN);
         }
         if (e.response?.status === 404) {
-          throw new Error(ERROR_MESSAGE.GATEWAY_NOT_FOUND);
+          throw new Error(ERROR_CODES.GATEWAY_NOT_FOUND);
         }
       }
-      throw new Error(ERROR_MESSAGE.INTERNAL_ERROR);
+      throw new Error(ERROR_CODES.INTERNAL_ERROR);
     }
   }
 }
