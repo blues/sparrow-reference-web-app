@@ -12,11 +12,12 @@ describe("Gateway handling", () => {
   beforeEach(() => {
     mock = new MockAdapter(axios);
 
-    axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor();
-    // "",
-    // "",
-    // mockDeviceUID,
-    // ""
+    axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
+      "",
+      "",
+      mockDeviceUID,
+      ""
+    );
   });
 
   const mockNotehubDeviceData = notehubData.successfulNotehubDeviceResponse;
