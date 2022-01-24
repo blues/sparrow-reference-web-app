@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import SensorCardComponent from "../../../../src/components/elements/SensorCard";
+import SensorCard from "../../../../src/components/elements/SensorCard";
 import { SENSOR_MESSAGE } from "../../../../src/constants/ui";
 
 const mockSensorData = {
@@ -25,9 +25,7 @@ const index = 1;
 
 describe("Sensor details card component", () => {
   it("should render the card when sensor details data is supplied", () => {
-    render(
-      <SensorCardComponent sensorDetails={mockSensorData} index={index} />
-    );
+    render(<SensorCard sensorDetails={mockSensorData} index={index} />);
 
     expect(screen.getByText(mockSensorData.name)).toBeInTheDocument();
     expect(
@@ -43,10 +41,7 @@ describe("Sensor details card component", () => {
 
   it("should render fallback messages when all sensor details are not supplied", () => {
     render(
-      <SensorCardComponent
-        sensorDetails={mockUndefinedSensorData}
-        index={index}
-      />
+      <SensorCard sensorDetails={mockUndefinedSensorData} index={index} />
     );
     expect(screen.getByText(SENSOR_MESSAGE.NO_NAME)).toBeInTheDocument();
     expect(

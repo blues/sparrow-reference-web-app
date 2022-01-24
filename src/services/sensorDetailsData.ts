@@ -1,11 +1,12 @@
 import axios from "axios";
 import { uniqBy } from "lodash";
-import NotehubLatestEvents from "../models/NotehubLatestEvents";
-import NotehubEvent from "../models/NotehubEvent";
+import NotehubLatestEvents from "./notehub/models/NotehubLatestEvents";
+import NotehubEvent from "./notehub/models/NotehubEvent";
 import config from "../../config";
-import NotehubSensorConfig from "../models/NotehubSensorConfig";
+import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
 import { SENSOR_MESSAGE } from "../constants/ui";
 
+//todo refactor in future story
 export default async function getSensorDetailsData(
   gatewayUID: string,
   sensorUID: string
@@ -37,7 +38,7 @@ export default async function getSensorDetailsData(
 
     // combine the sensor data objs into one
     const latestSensorDataObj = uniqBy(
-      filteredSensorData.map((event) => ({
+      filteredSensorData.map((event: NotehubEvent) => ({
         gatewayUID: `${gatewayUID}`,
         macAddress: `${sensorUID}`,
         name: sensorNameInfo?.body?.name

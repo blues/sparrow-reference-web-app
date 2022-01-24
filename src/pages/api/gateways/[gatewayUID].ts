@@ -44,6 +44,7 @@ export default async function gatewaysHandler(
         // Return 404 error
         res.status(404).json({ err: HTTP_STATUS.NOT_FOUND_GATEWAY });
       }
+      // todo handle this if the error's not a 404
     } else {
       // Return 500 error
       res.status(500).json({ err: HTTP_STATUS.INTERNAL_ERR_GATEWAY });

@@ -2,12 +2,13 @@ import axios from "axios";
 import { flattenDeep, uniqBy } from "lodash";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
-import NotehubLatestEvents from "../models/NotehubLatestEvents";
-import NotehubEvent from "../models/NotehubEvent";
+import NotehubLatestEvents from "./notehub/models/NotehubLatestEvents";
+import NotehubEvent from "./notehub/models/NotehubEvent";
 import config from "../../config";
 import { HTTP_STATUS } from "../constants/http";
-import NotehubSensorConfig from "../models/NotehubSensorConfig";
+import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
 
+// todo refactor in future story
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   // get latest sensor data from API
   const getLatestSensorDataByGateway = async (gateway: Gateway) => {

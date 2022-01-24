@@ -1,0 +1,13 @@
+{
+  "successfulNotehubDeviceResponse": {
+    "uid": "dev:5678",
+    "serial_number": "9101112",
+    "provisioned": "2021-12-01T11:34:56Z",
+    "last_activity": "2021-12-14T07:47:29Z",
+    "contact": "Test User 1",
+    "product_uid": "net.test:sparrow",
+    "fleet_uids": [],
+    "voltage": 3.8,
+    "temperature": 15
+  }
+}

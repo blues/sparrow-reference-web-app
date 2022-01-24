@@ -1,8 +1,8 @@
 import { GetServerSideProps, NextPage } from "next";
 import SensorCard from "../components/elements/SensorCard";
 import GatewayCard from "../components/elements/GatewayCard";
-import { getGateways } from "../lib/gateways";
-import getLatestSensorData from "../lib/latestSensorData";
+import { services } from "../services/ServiceLocator";
+import getLatestSensorData from "../services/latestSensorData";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import { ERROR_MESSAGE } from "../constants/ui";
@@ -53,7 +53,8 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   let gateways: Gateway[] = [];
   let latestSensorDataList: Sensor[] = [];
   try {
-    gateways = await getGateways();
+    gateways = await services().getAppService().getGateways();
+    // todo refactor this in a future story
     latestSensorDataList = await getLatestSensorData(gateways);
 
     return {

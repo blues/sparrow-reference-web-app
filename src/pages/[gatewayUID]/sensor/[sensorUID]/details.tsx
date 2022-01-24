@@ -5,15 +5,15 @@ import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import Form, { FormProps } from "../../../../components/elements/Form";
-import getSensorDetailsData from "../../../../lib/sensorDetailsData";
+import getSensorDetailsData from "../../../../services/sensorDetailsData";
 import Sensor from "../../../../components/models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
-import NotehubEvent from "../../../../models/NotehubEvent";
+import NotehubEvent from "../../../../services/notehub/models/NotehubEvent";
 import {
   HISTORICAL_SENSOR_DATA_MESSAGE,
   SENSOR_MESSAGE,
 } from "../../../../constants/ui";
-import SparrowQueryInterface from "../../../../lib/interfaces/SparrowQueryInterface";
+import SparrowQueryInterface from "../../../../interfaces/SparrowQueryInterface";
 import {
   getFormattedChartData,
   getFormattedTemperatureData,

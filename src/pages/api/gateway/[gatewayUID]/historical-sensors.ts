@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../constants/http";
-import NotehubEvent from "../../../../models/NotehubEvent";
+import NotehubEvent from "../../../../services/notehub/models/NotehubEvent";
 import config from "../../../../../config";
 
 export default async function historicalSensorsHandler(

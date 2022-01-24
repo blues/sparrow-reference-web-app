@@ -3,8 +3,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../../../constants/http";
 import config from "../../../../../../../config";
-import type NotehubErr from "../../../../../../models/NotehubErr";
-import type NoteSensorConfigBody from "../../../../../../models/NoteSensorConfigBody";
+import type NotehubErr from "../../../../../../services/notehub/models/NotehubErr";
+import type NoteSensorConfigBody from "../../../../../../services/notehub/models/NoteSensorConfigBody";
 
 export default async function sensorConfigHandler(
   req: NextApiRequest,
