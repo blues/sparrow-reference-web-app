@@ -8,12 +8,11 @@ class ServiceLocator {
   appService: AppServiceInterface;
 
   constructor() {
-    const notehubAccessor = new AxiosHttpNotehubAccessor(
-      Config.hubBaseURL,
-      Config.hubAppUID,
-      Config.hubDeviceUID,
-      Config.hubAuthToken
-    );
+    const notehubAccessor = new AxiosHttpNotehubAccessor();
+    // Config.hubBaseURL,
+    // Config.hubAppUID,
+    // Config.hubDeviceUID,
+    // Config.hubAuthToken
     const notehubDataProvider = new NotehubDataProvider(notehubAccessor);
     this.appService = new AppService(notehubDataProvider);
   }
