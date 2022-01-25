@@ -9,6 +9,7 @@ const debugLog = console.log; // eslint-disable-line no-console
 const env = {
   APP_BASE_URL: process.env.APP_BASE_URL,
   DEBUG_CONFIG: process.env.DEBUG_CONFIG,
+  DEPLOY_URL: process.env.DEPLOY_URL, // Netlify URL for an individual deploy
   HUB_APP_UID: process.env.HUB_APP_UID,
   HUB_AUTH_TOKEN: process.env.HUB_AUTH_TOKEN,
   HUB_BASE_URL: process.env.HUB_BASE_URL,
@@ -19,10 +20,7 @@ const env = {
   HUB_HISTORICAL_DATA_START_DATE: process.env.HUB_HISTORICAL_DATA_START_DATE,
 };
 
-const optionalEnvVar = (
-  varName: keyof typeof env,
-  defaultValue: string | number
-) => {
+const optionalEnvVar = (varName: keyof typeof env, defaultValue: string) => {
   const val = env[varName];
   if (val === undefined) {
     return defaultValue;
@@ -43,7 +41,7 @@ const requiredEnvVar = (varName: keyof typeof env) => {
 const Config = {
   // These are getters so undefined required variables do not throw errors at build time.
   get appBaseUrl() {
-    return requiredEnvVar("APP_BASE_URL");
+    return optionalEnvVar("DEPLOY_URL", "") || requiredEnvVar("APP_BASE_URL");
   },
   get companyName() {
     return optionalEnvVar("NEXT_PUBLIC_COMPANY_NAME", "Nada Company");
@@ -67,7 +65,7 @@ const Config = {
     return requiredEnvVar("HUB_PRODUCT_UID");
   },
   get hubHistoricalDataStartDate() {
-    return optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", 7);
+    return parseInt(optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", "7"), 10);
   },
 };
 

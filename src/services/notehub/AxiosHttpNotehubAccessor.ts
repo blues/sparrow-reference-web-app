@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
+import Config from "../../../config";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -8,7 +9,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   appBaseUrl: string;
 
   constructor() {
-    this.appBaseUrl = "http://localhost:4000";
+    this.appBaseUrl = Config.appBaseUrl;
   }
 
   async getGateway(hubDeviceUID: string) {
