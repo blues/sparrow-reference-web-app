@@ -17,14 +17,9 @@ class ServiceLocator {
   }
 }
 
-let Services: ServiceLocator | null = null;
+const Services = new ServiceLocator();
 
 function services() {
-  // Don’t create a ServiceLocator until it’s needed. This prevents all service
-  // initialization steps from happening as soon as you import this module.
-  if (!Services) {
-    Services = new ServiceLocator();
-  }
   return Services;
 }
 
