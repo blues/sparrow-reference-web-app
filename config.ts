@@ -20,7 +20,10 @@ const env = {
   HUB_HISTORICAL_DATA_START_DATE: process.env.HUB_HISTORICAL_DATA_START_DATE,
 };
 
-const optionalEnvVar = (varName: keyof typeof env, defaultValue: string) => {
+const optionalEnvVar = (
+  varName: keyof typeof env,
+  defaultValue: string | number
+) => {
   const val = env[varName];
   if (val === undefined) {
     return defaultValue;
@@ -65,7 +68,7 @@ const Config = {
     return requiredEnvVar("HUB_PRODUCT_UID");
   },
   get hubHistoricalDataStartDate() {
-    return parseInt(optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", "7"), 10);
+    return optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", 7);
   },
 };
 
