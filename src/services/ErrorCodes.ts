@@ -1,8 +1,0 @@
-const ERROR_CODES = {
-  UNAUTHORIZED: "1",
-  FORBIDDEN: "2",
-  GATEWAY_NOT_FOUND: "3",
-  INTERNAL_ERROR: "4",
-};
-
-export default ERROR_CODES;

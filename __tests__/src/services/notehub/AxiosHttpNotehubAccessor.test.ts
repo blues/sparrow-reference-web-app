@@ -1,6 +1,6 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import ERROR_CODES from "../../../../src/services/ErrorCodes";
+import { ERROR_CODES } from "../../../../src/services/Errors";
 import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
 import notehubData from "../__serviceMocks__/notehubData.json";
 

@@ -1,5 +1,4 @@
-import { assert } from "console";
-import ERROR_CODES from "../services/ErrorCodes";
+import { ERROR_CODES } from "../services/Errors";
 
 // Sensor data fallbacks for empty data fields
 const SENSOR_MESSAGE = {
@@ -46,7 +45,9 @@ const getErrorMessage = (errorCode: string) => {
     case ERROR_CODES.INTERNAL_ERROR:
       return ERROR_MESSAGE.INTERNAL_ERROR;
     default:
-    // can we assert here?
+      // eslint-disable-next-line no-console
+      console.error(`Unknown error message code: ${errorCode}`);
+      return ERROR_MESSAGE.INTERNAL_ERROR;
   }
 };
 
