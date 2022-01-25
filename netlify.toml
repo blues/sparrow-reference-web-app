@@ -10,4 +10,5 @@
   HUB_APP_UID = "App UID of your Notehub Project"
   HUB_AUTH_TOKEN = "Notehub API Authentication Token"
   HUB_BASE_URL = "Base URL representing the Notehub API (optional)"
+  HUB_PRODUCT_UID = "Product UID for Notehub Project"
   NEXT_PUBLIC_COMPANY_NAME = "Company Name for Header"
