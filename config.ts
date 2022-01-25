@@ -20,10 +20,7 @@ const env = {
   HUB_HISTORICAL_DATA_START_DATE: process.env.HUB_HISTORICAL_DATA_START_DATE,
 };
 
-const optionalEnvVar = (
-  varName: keyof typeof env,
-  defaultValue: string | number
-) => {
+const optionalEnvVar = (varName: keyof typeof env, defaultValue: string) => {
   const val = env[varName];
   if (val === undefined) {
     return defaultValue;
@@ -44,7 +41,7 @@ const requiredEnvVar = (varName: keyof typeof env) => {
 const Config = {
   // These are getters so undefined required variables do not throw errors at build time.
   get appBaseUrl() {
-    return optionalEnvVar("DEPLOY_URL", "") || requiredEnvVar("APP_BASE_URL");
+    return requiredEnvVar("APP_BASE_URL");
   },
   get companyName() {
     return optionalEnvVar("NEXT_PUBLIC_COMPANY_NAME", "Nada Company");
@@ -68,7 +65,7 @@ const Config = {
     return requiredEnvVar("HUB_PRODUCT_UID");
   },
   get hubHistoricalDataStartDate() {
-    return optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", 7);
+    return parseInt(optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", "7"), 10);
   },
 };
 
