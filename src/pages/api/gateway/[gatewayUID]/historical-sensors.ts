@@ -26,11 +26,12 @@ export default async function historicalSensorsHandler(
   const { hubBaseURL, hubAuthToken, hubAppUID, hubHistoricalDataStartDate } =
     config;
   const currentDate = new Date();
-  const startDate = Math.round(
-    (currentDate.getTime() -
-      Number(hubHistoricalDataStartDate) * 24 * 60 * 60 * 1000) /
-      1000
-  );
+  const startDate = 1638022884;
+  // Math.round(
+  //   (currentDate.getTime() -
+  //     Number(hubHistoricalDataStartDate) * 24 * 60 * 60 * 1000) /
+  //     1000
+  // );
   // API path for first event call
   const initialEndpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/events?startDate=${startDate}`;
   // API headers
