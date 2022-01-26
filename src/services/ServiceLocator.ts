@@ -30,8 +30,8 @@ function services() {
   // initialization steps from happening as soon as you import this module.
   if (!Services) {
     Services = new ServiceLocator();
-    return Services;
   }
+  return Services;
 }
 
 // eslint-disable-next-line import/prefer-default-export

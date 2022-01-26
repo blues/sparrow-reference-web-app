@@ -12,10 +12,6 @@ import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   // get latest sensor data from API
   const getLatestSensorDataByGateway = async (gateway: Gateway) => {
-    console.log(
-      "Get latest sensor data endpoint ",
-      `${Config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
-    );
     const resp = await axios.get(
       `${Config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
     );
