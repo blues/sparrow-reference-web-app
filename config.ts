@@ -76,8 +76,8 @@ const toString = (c: typeof Config | typeof env) => {
 
 if (Config.debugConfig) {
   try {
-    debugLog(`Derived config: ${toString(Config)}`);
     debugLog(`Environment: ${toString(env)}`);
+    debugLog(`Derived config: ${toString(Config)}`);
   } catch (error) {
     debugLog(error);
     debugLog(
