@@ -5,6 +5,12 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+[[plugins]]
+  package = "netlify-plugin-inline-functions-env-typescript"
+  [plugins.inputs]
+    verbose = "true"
+    inlineAll = "true"
+
 [template.environment]
   DEBUG_CONFIG = "Unsafe, if true, print out all environment variables, including tokens, to server log."
   HUB_APP_UID = "App UID of your Notehub Project"
