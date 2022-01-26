@@ -1,18 +1,13 @@
 [build]
-  command = "yarn build"
+  command = "sed -i \"s|DEPLOY_URL_PLACEHOLDER|${DEPLOY_URL}|g\" netlify.toml && yarn build"
   publish = ".next"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[[plugins]]
-  package = "netlify-plugin-inline-functions-env-typescript"
-  [plugins.inputs]
-    verbose = "true"
-    inlineAll = "true"
-
 [template.environment]
   DEBUG_CONFIG = "Unsafe, if true, print out all environment variables, including tokens, to server log."
+  DEPLOY_URL = "DEPLOY_URL_PLACEHOLDER"
   HUB_APP_UID = "App UID of your Notehub Project"
   HUB_AUTH_TOKEN = "Notehub API Authentication Token"
   HUB_BASE_URL = "Base URL representing the Notehub API (optional)"
