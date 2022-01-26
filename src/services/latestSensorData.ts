@@ -4,7 +4,7 @@ import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import NotehubLatestEvents from "./notehub/models/NotehubLatestEvents";
 import NotehubEvent from "./notehub/models/NotehubEvent";
-import config from "../../config";
+import Config from "../../config";
 import { HTTP_STATUS } from "../constants/http";
 import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
 
@@ -12,8 +12,12 @@ import NotehubSensorConfig from "./notehub/models/NotehubSensorConfig";
 export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   // get latest sensor data from API
   const getLatestSensorDataByGateway = async (gateway: Gateway) => {
+    console.log(
+      "Get latest sensor data endpoint ",
+      `${Config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
+    );
     const resp = await axios.get(
-      `${config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
+      `${Config.appBaseUrl}/api/gateway/${gateway.uid}/sensors`
     );
 
     const latestSensorEvents = resp.data as NotehubLatestEvents;
@@ -70,7 +74,7 @@ export default async function getLatestSensorData(gatewaysList: Gateway[]) {
   const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
     try {
       const resp = await axios.get(
-        `${config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
+        `${Config.appBaseUrl}/api/gateway/${gatewaySensorInfo.gatewayUID}/sensor/${gatewaySensorInfo.macAddress}/config`
       );
       const sensorNameInfo = resp?.data as NotehubSensorConfig;
       // put it all together in one object
