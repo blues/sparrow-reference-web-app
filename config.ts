@@ -79,6 +79,7 @@ if (Config.debugConfig) {
     debugLog(`Derived config: ${toString(Config)}`);
     debugLog(`Environment: ${toString(env)}`);
   } catch (error) {
+    debugLog(error);
     debugLog(
       `Program isn't configured fully and likely won't work until it is.`
     );
