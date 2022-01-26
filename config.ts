@@ -18,7 +18,7 @@ const env = {
   // TODO - delete when we're not making calls to the api from the server
   APP_BASE_URL: process.env.APP_BASE_URL,
   // TODO - delete when we're not making calls to the api from the server
-  DEPLOY_URL: process.env.DEPLOY_URL, // Netlify URL for an individual deploy
+  DEPLOY_URL: "DEPLOY_URL_PLACEHOLDER", // Netlify URL for an individual deploy
   // todo delete in future - these values only exists so we can configure how far in the past we're pulling Notehub data
   HUB_HISTORICAL_DATA_START_DATE: process.env.HUB_HISTORICAL_DATA_START_DATE,
 };
