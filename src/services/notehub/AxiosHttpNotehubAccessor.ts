@@ -5,6 +5,23 @@ import { HTTP_HEADER } from "../../constants/http";
 import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
+import NotehubErr from "./models/NotehubErr";
+
+function handleAPIErrors(e: Error) {
+  let errorCode = ERROR_CODES.INTERNAL_ERROR;
+  if (axios.isAxiosError(e)) {
+    if (e.response?.status === 401) {
+      errorCode = ERROR_CODES.UNAUTHORIZED;
+    }
+    if (e.response?.status === 403) {
+      errorCode = ERROR_CODES.FORBIDDEN;
+    }
+    if (e.response?.status === 404) {
+      errorCode = ERROR_CODES.DEVICE_NOT_FOUND;
+    }
+  }
+  throw getError(errorCode, { cause: e });
+}
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -49,19 +66,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubDevice;
     } catch (e) {
-      let errorCode = ERROR_CODES.INTERNAL_ERROR;
-      if (axios.isAxiosError(e)) {
-        if (e.response?.status === 401) {
-          errorCode = ERROR_CODES.UNAUTHORIZED;
-        }
-        if (e.response?.status === 403) {
-          errorCode = ERROR_CODES.FORBIDDEN;
-        }
-        if (e.response?.status === 404) {
-          errorCode = ERROR_CODES.GATEWAY_NOT_FOUND;
-        }
-      }
-      throw getError(errorCode, { cause: e as Error });
+      handleAPIErrors(e as Error);
     }
   }
 
@@ -71,20 +76,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubLatestEvents;
     } catch (e) {
-      let errorCode = ERROR_CODES.INTERNAL_ERROR;
-      if (axios.isAxiosError(e)) {
-        if (e.response?.status === 401) {
-          errorCode = ERROR_CODES.UNAUTHORIZED;
-        }
-        if (e.response?.status === 403) {
-          errorCode = ERROR_CODES.FORBIDDEN;
-        }
-        if (e.response?.status === 404) {
-          // TODO: This needs to be something about events or sensors.
-          errorCode = ERROR_CODES.GATEWAY_NOT_FOUND;
-        }
-      }
-      throw getError(errorCode, { cause: e as Error });
+      handleAPIErrors(e as Error);
     }
   }
 
@@ -95,26 +87,27 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       file: "config.db",
       note: macAddress,
     };
+    let resp;
     try {
-      const resp = await axios.post(endpoint, body, {
+      resp = await axios.post(endpoint, body, {
         headers: this.commonHeaders,
       });
-      return resp.data as NotehubSensorConfig;
     } catch (e) {
-      let errorCode = ERROR_CODES.INTERNAL_ERROR;
-      if (axios.isAxiosError(e)) {
-        if (e.response?.status === 401) {
-          errorCode = ERROR_CODES.UNAUTHORIZED;
-        }
-        if (e.response?.status === 403) {
-          errorCode = ERROR_CODES.FORBIDDEN;
-        }
-        if (e.response?.status === 404) {
-          // TODO: This needs to be something about sensors.
-          errorCode = ERROR_CODES.GATEWAY_NOT_FOUND;
-        }
-      }
-      throw getError(errorCode, { cause: e as Error });
+      throw getError(ERROR_CODES.INTERNAL_ERROR, { cause: e as Error });
     }
+    if ("err" in resp.data) {
+      const { err } = resp.data as NotehubErr;
+
+      // If the mac address cannot be found the API will return a
+      // “note-noexist” error, which we ignore because that just means
+      // the sensor does not have a name / location yet.
+      if (err.includes("device-noexist")) {
+        throw getError(ERROR_CODES.DEVICE_NOT_FOUND);
+      }
+      if (err.includes("insufficient permissions")) {
+        throw getError(ERROR_CODES.FORBIDDEN);
+      }
+    }
+    return resp.data as NotehubSensorConfig;
   }
 }

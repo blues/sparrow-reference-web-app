@@ -13,7 +13,6 @@ export default async function getSensorDetailsData(
 ) {
   // Get all latest sensor data from API
   const getLatestSensorData = async () => {
-    console.log("about to try", config.appBaseUrl);
     const resp = await axios.get(
       `${config.appBaseUrl}/api/gateway/${gatewayUID}/sensors`
     );
