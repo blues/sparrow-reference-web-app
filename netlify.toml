@@ -1,5 +1,5 @@
 [build]
-  command = "sed -i \"s|DEPLOY_URL_PLACEHOLDER|${DEPLOY_URL}|g\" config.ts && yarn build"
+  command = "sed -i \"s|process.env.DEPLOY_URL|${DEPLOY_URL}|g\" config.ts && yarn build"
   publish = ".next"
 
 [[plugins]]
