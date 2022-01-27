@@ -23,3 +23,9 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+import * as detailsCommands from "./commands/details_commands";
+
+Cypress.Commands.add("selectTab", detailsCommands.selectTab);
+
+Cypress.Commands.add("selectTabByText", detailsCommands.selectTab);
