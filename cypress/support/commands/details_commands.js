@@ -7,3 +7,7 @@ export const selectTab = (tabsNumber, tabNumber) => {
 export const selectTabByText = (tabText) => {
   cy.contains(`${tabText}`).click();
 };
+
+export const selectSensorCard = (cardTestIdNumber) => {
+  cy.get(`[data-testid="sensor[${cardTestIdNumber}]-summary"]`).click();
+};
