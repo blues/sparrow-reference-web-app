@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../constants/http";
 import NotehubEvent from "../../../../services/notehub/models/NotehubEvent";
-import config from "../../../../../config";
+import Config from "../../../../../config";
 
 export default async function historicalSensorsHandler(
   req: NextApiRequest,
@@ -24,7 +24,7 @@ export default async function historicalSensorsHandler(
   // todo come up with a better way to make this start date configurable
   // Notehub values
   const { hubBaseURL, hubAuthToken, hubAppUID, hubHistoricalDataStartDate } =
-    config;
+    Config;
   const currentDate = new Date();
   const startDate = Math.round(
     (currentDate.getTime() -

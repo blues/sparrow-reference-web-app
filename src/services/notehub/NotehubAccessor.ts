@@ -2,7 +2,7 @@ import NotehubDevice from "./models/NotehubDevice";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
 
-// this interface overlays the HttpNotehubApiService file
+// An interface for accessing Notehub APIs
 interface NotehubAccessor {
   getGateways: () => Promise<NotehubDevice[]>;
   getGateway: (hubDeviceUID: string) => Promise<NotehubDevice>;
