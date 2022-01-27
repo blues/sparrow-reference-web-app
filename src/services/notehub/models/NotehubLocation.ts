@@ -1,5 +1,5 @@
 interface NotehubLocation {
-  when: string;
+  when: number;
   name: string;
   country: string;
   timezone: string;
