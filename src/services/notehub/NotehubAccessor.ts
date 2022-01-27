@@ -4,8 +4,8 @@ import NotehubSensorConfig from "./models/NotehubSensorConfig";
 
 // An interface for accessing Notehub APIs
 interface NotehubAccessor {
-  getGateways: () => Promise<NotehubDevice[]>;
-  getGateway: (hubDeviceUID: string) => Promise<NotehubDevice>;
+  getDevices: () => Promise<NotehubDevice[]>;
+  getDevice: (hubDeviceUID: string) => Promise<NotehubDevice>;
   getLatestEvents: (hubDeviceUID: string) => Promise<NotehubLatestEvents>;
   getConfig: (
     hubDeviceUID: string,

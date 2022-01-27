@@ -38,12 +38,12 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   // Eventually we’ll want to find all valid gateways in a Notehub project.
   // For now, just take the hardcoded gateway UID from the starter’s
   // environment variables and use that.
-  async getGateways() {
-    const gateway = await this.getGateway(this.hubDeviceUID);
-    return [gateway];
+  async getDevices() {
+    const device = await this.getDevice(this.hubDeviceUID);
+    return [device];
   }
 
-  async getGateway(hubDeviceUID: string) {
+  async getDevice(hubDeviceUID: string) {
     const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/devices/${hubDeviceUID}`;
     try {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });

@@ -52,7 +52,7 @@ export default async function sensorConfigHandler(
     },
   };
 
-  // Construct body based on HTTP method
+  // Costruct body based on HTTP method
   let postBody;
   switch (req.method) {
     case "GET":

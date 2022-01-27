@@ -31,15 +31,15 @@ export default class NotehubDataProvider implements DataProvider {
   // eventually this projectUID will need to be passed in - just not yet
   async getGateways() {
     const gateways: Gateway[] = [];
-    const rawGateways = await this.notehubAccessor.getGateways();
-    rawGateways.forEach((gateway) => {
-      gateways.push(notehubDeviceToSparrowGateway(gateway));
+    const rawDevices = await this.notehubAccessor.getDevices();
+    rawDevices.forEach((device) => {
+      gateways.push(notehubDeviceToSparrowGateway(device));
     });
     return gateways;
   }
 
   async getGateway(gatewayUID: string) {
-    const singleGatewayJson = await this.notehubAccessor.getGateway(gatewayUID);
+    const singleGatewayJson = await this.notehubAccessor.getDevice(gatewayUID);
 
     const singleGateway = notehubDeviceToSparrowGateway(singleGatewayJson);
 
