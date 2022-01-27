@@ -21,7 +21,7 @@
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.27.0",
     "lodash": "^4.17.21",
-    "next": "12.0.4",
+    "next": "^12.0.8",
     "next-plugin-antd-less": "^1.5.2",
     "rc-field-form": "^1.22.0",
     "react": "17.0.2",

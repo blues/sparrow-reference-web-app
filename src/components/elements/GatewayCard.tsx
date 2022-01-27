@@ -7,12 +7,14 @@ import {
 } from "../helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Card.module.scss";
+import SensorDetails from "../../pages/[gatewayUID]/sensor/[sensorUID]/details";
 
 interface GatewayProps {
   gatewayDetails: Gateway;
   index: number;
 }
 
+const { Meta } = Card;
 const GatewayCardComponent = (props: GatewayProps) => {
   // in the future perhaps try to make dynamic items based on model props
   const { gatewayDetails, index } = props;
@@ -20,23 +22,36 @@ const GatewayCardComponent = (props: GatewayProps) => {
 
   return (
     <Card
+      headStyle={{ padding: "0" }}
+      bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
-      title={gatewayDetails.serialNumber}
+      title={
+        <>
+          <div>{gatewayDetails.serialNumber}</div>
+          <span className={styles.timestamp}>
+            Last seen {getFormattedLastSeen(gatewayDetails.lastActivity)}
+          </span>
+        </>
+      }
       extra={
         <Link href={`/${gatewayDetails.uid}/details`}>
-          <a data-testid={`gateway[${index}]-details`}>&#5171;</a>
+          <a data-testid={`gateway[${index}]-details`}>Details</a>
         </Link>
       }
     >
       <ul className={styles.cardContents}>
         <li>
-          Location:&nbsp;
-          {gatewayDetails.location || GATEWAY_MESSAGE.NO_LOCATION}
+          Location
+          <br />
+          <span className="dataNumber">
+            {gatewayDetails.location || GATEWAY_MESSAGE.NO_LOCATION}
+          </span>
         </li>
         <li>
-          Last seen:&nbsp;{getFormattedLastSeen(gatewayDetails.lastActivity)}
+          Voltage
+          <br />
+          <span className="dataNumber">{formattedGatewayVoltage}</span>
         </li>
-        <li>Voltage:&nbsp;{formattedGatewayVoltage}</li>
       </ul>
     </Card>
   );

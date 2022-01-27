@@ -37,7 +37,7 @@ export const getFormattedChartData = <C extends keyof NotehubEvent["body"]>(
 
 export const getFormattedTemperatureData = (sensorData: Sensor) => {
   if (sensorData.temperature) {
-    const formattedData = `${sensorData.temperature}°C`;
+    const formattedData = `${parseFloat(sensorData.temperature).toFixed(2)}°C`;
     return formattedData;
   }
   return null;
@@ -45,7 +45,7 @@ export const getFormattedTemperatureData = (sensorData: Sensor) => {
 
 export const getFormattedHumidityData = (sensorData: Sensor) => {
   if (sensorData.humidity) {
-    const formattedData = `${sensorData.humidity}%`;
+    const formattedData = `${parseFloat(sensorData.humidity).toFixed(2)}%`;
     return formattedData;
   }
   return null;
@@ -53,7 +53,9 @@ export const getFormattedHumidityData = (sensorData: Sensor) => {
 
 export const getFormattedPressureData = (sensorData: Sensor) => {
   if (sensorData.pressure) {
-    const formattedData = `${sensorData.pressure / 1000} kPa`;
+    const formattedData = `${parseFloat(sensorData.pressure / 1000).toFixed(
+      2
+    )} kPa`;
     return formattedData;
   }
   return null;
@@ -61,7 +63,7 @@ export const getFormattedPressureData = (sensorData: Sensor) => {
 
 export const getFormattedVoltageData = (data: Sensor | Gateway) => {
   if (data.voltage) {
-    const formattedData = `${data.voltage}V`;
+    const formattedData = `${parseFloat(data.voltage).toFixed(2)}V`;
     return formattedData;
   }
   return null;

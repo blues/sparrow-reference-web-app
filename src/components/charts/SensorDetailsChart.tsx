@@ -1,4 +1,4 @@
-import { ChartData, ChartOptions } from "chart.js";
+import { ChartData, Chart, ChartOptions, Filler } from "chart.js";
 import { CHART_DATE_FORMAT } from "./chartHelper";
 import LineChart from "./LineChart";
 
@@ -6,6 +6,7 @@ type SensorDetailsChartProps = {
   label: string;
   yAxisMin: number;
   yAxisMax: number;
+  chartColor: string;
   data: {
     when: string;
     value: number;
@@ -17,9 +18,11 @@ const SensorDetailsChart = ({
   label,
   yAxisMin,
   yAxisMax,
+  chartColor,
 }: SensorDetailsChartProps) => {
   const labels = data.map((obj) => obj.when);
   const values = data.map((obj) => obj.value);
+  Chart.register(Filler);
 
   const chartData: ChartData<"line"> = {
     labels,
@@ -27,8 +30,11 @@ const SensorDetailsChart = ({
       {
         label,
         data: values,
-        borderColor: "#416681",
-        pointRadius: 5,
+        backgroundColor: `${chartColor}66`,
+        borderColor: `${chartColor}`,
+        pointBackgroundColor: `${chartColor}`,
+        pointRadius: 2,
+        fill: true,
       },
     ],
   };
@@ -50,19 +56,21 @@ const SensorDetailsChart = ({
             year: CHART_DATE_FORMAT,
           },
         },
+        display: false,
+        borderWidth: 2,
       },
       yAxis: {
         min: yAxisMin,
         max: yAxisMax,
         ticks: {
-          stepSize: 1,
+          stepSize: 0,
         },
       },
     },
   };
 
   return (
-    <div style={{ width: "870px" }}>
+    <div style={{ width: "395px" }}>
       <LineChart data={chartData} options={options} />
     </div>
   );

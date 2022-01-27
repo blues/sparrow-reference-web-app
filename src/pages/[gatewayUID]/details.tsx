@@ -30,7 +30,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
           <ul>
             <li>Device Name: {gateway.serialNumber}</li>
             {gateway.location && <li>Location: {gateway.location}</li>}
-            <li>Last Seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
+            <li>Last Seen {getFormattedLastSeen(gateway.lastActivity)}</li>
           </ul>
 
           {sensors?.length > 0 && (
@@ -59,22 +59,23 @@ interface GatewayDetailsQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
 }
 
-export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
-  async ({ query }) => {
-    const { gatewayUID } = query as GatewayDetailsQueryInterface;
-    let gateway: Gateway | null = null;
-    let sensors: Sensor[] = [];
-    try {
-      gateway = await services().getAppService().getGateway(gatewayUID);
-      sensors = await getLatestSensorData([gateway]);
+export const getServerSideProps: GetServerSideProps<
+  GatewayDetailsData
+> = async ({ query }) => {
+  const { gatewayUID } = query as GatewayDetailsQueryInterface;
+  let gateway: Gateway | null = null;
+  let sensors: Sensor[] = [];
+  try {
+    gateway = await services().getAppService().getGateway(gatewayUID);
+    sensors = await getLatestSensorData([gateway]);
 
-      return {
-        props: { gateway, sensors },
-      };
-    } catch (err) {
-      if (err instanceof Error) {
-        return { props: { gateway, sensors, err: err.message } };
-      }
-      return { props: { gateway, sensors } };
+    return {
+      props: { gateway, sensors },
+    };
+  } catch (err) {
+    if (err instanceof Error) {
+      return { props: { gateway, sensors, err: err.message } };
     }
-  };
+    return { props: { gateway, sensors } };
+  }
+};

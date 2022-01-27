@@ -16,6 +16,7 @@ interface SensorProps {
   index: number;
 }
 
+const { Meta } = Card;
 const SensorCardComponent = (props: SensorProps) => {
   // in the future perhaps try to make dynamic items based on model props
   const { sensorDetails, index } = props;
@@ -26,34 +27,56 @@ const SensorCardComponent = (props: SensorProps) => {
 
   return (
     <Card
+      headStyle={{ padding: "0" }}
+      bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
-      title={sensorDetails.name || SENSOR_MESSAGE.NO_NAME}
+      title={
+        (
+          <>
+            <div>{sensorDetails.name}</div>
+            <span className={styles.timestamp}>
+              Last seen {getFormattedLastSeen(sensorDetails.lastActivity)}
+            </span>
+          </>
+        ) || SENSOR_MESSAGE.NO_NAME
+      }
       extra={
         <Link
           href={`/${sensorDetails.gatewayUID}/sensor/${sensorDetails.macAddress}/details`}
         >
-          <a data-testid={`sensor[${index}]-summary`}>&#5171;</a>
+          <a data-testid={`sensor[${index}]-summary`}>Details</a>
         </Link>
       }
     >
       <ul className={styles.cardContents}>
         <li>
-          Humidity:&nbsp;
-          {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
+          Humidity
+          <br />
+          <span className="dataNumber">
+            {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
+          </span>
         </li>
         <li>
-          Pressure:&nbsp;
-          {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
+          Pressure
+          <br />
+          <span className="dataNumber">
+            {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
+          </span>
         </li>
         <li>
-          Temperature:&nbsp;
-          {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
+          Temperature
+          <br />
+          <span className="dataNumber">
+            {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
+          </span>
         </li>
         <li>
-          Voltage:&nbsp;
-          {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
+          Voltage
+          <br />
+          <span className="dataNumber">
+            {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
+          </span>
         </li>
-        <li>Last seen: {getFormattedLastSeen(sensorDetails.lastActivity)}</li>
       </ul>
     </Card>
   );

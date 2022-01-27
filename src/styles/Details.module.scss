@@ -1,0 +1,29 @@
+@import "_variables.scss";
+
+.currentReadings {
+  list-style-type: none;
+  display: flex;
+  padding: 20px 0;
+  margin-bottom: 0;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 100%;
+
+  li {
+    display: inline-block;
+    text-align: center;
+    width: auto;
+  }
+}
+
+.timestamp {
+  color: $bw-color--grey4;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 60px;
+}
+
+.dataNumber {
+  font-size: 28px;
+  font-weight: 600;
+}
