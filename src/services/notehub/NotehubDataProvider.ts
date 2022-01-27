@@ -3,7 +3,6 @@ import Sensor from "../../components/models/Sensor";
 import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
-import config from "../../../config";
 
 // this file connects to Notehub API endpoints to fetch data
 export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
@@ -30,14 +29,10 @@ export default class NotehubDataProvider implements DataProvider {
   // eventually this projectUID will need to be passed in - just not yet
   async getGateways() {
     const gateways: Gateway[] = [];
-
-    const gatewayJson = await this.notehubAccessor.getGateway(
-      config.hubDeviceUID
-    );
-
-    const gateway = notehubDeviceToSparrowGateway(gatewayJson);
-    gateways.push(gateway);
-
+    const rawGateways = await this.notehubAccessor.getGateways();
+    rawGateways.forEach((gateway) => {
+      gateways.push(notehubDeviceToSparrowGateway(gateway));
+    });
     return gateways;
   }
 

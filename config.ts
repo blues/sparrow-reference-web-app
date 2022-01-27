@@ -7,16 +7,19 @@ const debugLog = console.log; // eslint-disable-line no-console
   process.env.NEXT_PUBLIC_PUBLISHABLE_KEY, not const { NEXT_PUBLIC_PUBLISHABLE_KEY } = process.env.
 */
 const env = {
-  APP_BASE_URL: process.env.APP_BASE_URL,
   DEBUG_CONFIG: process.env.DEBUG_CONFIG,
-  DEPLOY_URL: process.env.DEPLOY_URL, // Netlify URL for an individual deploy
   HUB_APP_UID: process.env.HUB_APP_UID,
   HUB_AUTH_TOKEN: process.env.HUB_AUTH_TOKEN,
   HUB_BASE_URL: process.env.HUB_BASE_URL,
   HUB_DEVICE_UID: process.env.HUB_DEVICE_UID,
   HUB_PRODUCT_UID: process.env.HUB_PRODUCT_UID,
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
-  // todo delete in future - this value only exists so we can configure how far in the past we're pulling Notehub data
+
+  // TODO - delete when we're not making calls to the api from the server
+  APP_BASE_URL: process.env.APP_BASE_URL,
+  // TODO - delete when we're not making calls to the api from the server
+  DEPLOY_URL: "DEPLOY_URL_PLACEHOLDER", // Netlify URL for an individual deploy
+  // todo delete in future - these values only exists so we can configure how far in the past we're pulling Notehub data
   HUB_HISTORICAL_DATA_START_DATE: process.env.HUB_HISTORICAL_DATA_START_DATE,
 };
 
@@ -76,9 +79,10 @@ const toString = (c: typeof Config | typeof env) => {
 
 if (Config.debugConfig) {
   try {
-    debugLog(`Derived config: ${toString(Config)}`);
     debugLog(`Environment: ${toString(env)}`);
+    debugLog(`Derived config: ${toString(Config)}`);
   } catch (error) {
+    debugLog(error);
     debugLog(
       `Program isn't configured fully and likely won't work until it is.`
     );
