@@ -20,14 +20,14 @@ const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
   ""
 );
 
-describe("Gateway handling", () => {
+describe("Device handling", () => {
   beforeEach(() => {
     mock = new MockAdapter(axios);
   });
 
   const mockNotehubDeviceData = notehubData.successfulNotehubDeviceResponse;
 
-  it("should return a valid response when a device UID is passed to the getGateway endpoint", async () => {
+  it("should return a valid response when a device UID is passed to the getDevice endpoint", async () => {
     mock.onGet(API_DEVICE_URL).reply(200, mockNotehubDeviceData);
 
     const res = await axiosHttpNotehubAccessorMock.getDevice(mockDeviceUID);
@@ -66,7 +66,7 @@ describe("Gateway handling", () => {
     ).rejects.toThrow(ERROR_CODES.INTERNAL_ERROR);
   });
 
-  it("should return a valid response when getting all gateways", async () => {
+  it("should return a valid response when getting all devices", async () => {
     mock.onGet(API_DEVICE_URL).reply(200, mockNotehubDeviceData);
 
     const res = await axiosHttpNotehubAccessorMock.getDevices();
@@ -104,7 +104,7 @@ describe("Config handling", () => {
     expect(res).toEqual(notehubData.notehubConfigSensorNotFound);
   });
 
-  it("should throw a device-not-found error if the gateway does not exist", async () => {
+  it("should throw a device-not-found error if the device does not exist", async () => {
     mock
       .onPost(API_CONFIG_URL)
       .reply(200, notehubData.notehubConfigDeviceNotFound);
