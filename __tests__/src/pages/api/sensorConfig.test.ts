@@ -60,7 +60,7 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.INVALID_GATEWAY });
   });
 
-  it("should return a 405 if method notPOST is passed", async () => {
+  it("should return a 405 if method not POST is passed", async () => {
     const { req, res } = mockRequestResponse("PUT");
     req.body = { loc: "FAILING_TEST_LOCATION", name: "FAILING_TEST_NAME" };
     await sensorConfigHandler(req, res);
