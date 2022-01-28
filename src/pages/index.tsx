@@ -21,7 +21,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
       <h2 className={styles.errorMessage}>{ERROR_MESSAGE.UNAUTHORIZED}</h2>
     ) : (
       <>
-        <h2>Gateways</h2>
+        <h2 data-testid="gateway-header">Gateways</h2>
         <div className={styles.groupedCards}>
           {gateways.map((gateway, index) => (
             <GatewayCard
@@ -32,7 +32,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
           ))}
         </div>
 
-        <h2>Sensors</h2>
+        <h2 data-testid="sensor-header">Sensors</h2>
         <div className={styles.groupedCards}>
           {latestSensorDataList.map((sensor, index) => (
             <SensorCard
