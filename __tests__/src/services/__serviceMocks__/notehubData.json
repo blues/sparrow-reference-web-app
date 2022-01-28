@@ -25,5 +25,19 @@
     "timezone": "Asia/Tokyo",
     "latitude": 35.412762500000014,
     "longitude": 138.884734375
+  },
+  "successfulNotehubConfigResponse": {
+    "note": "20323746323650050028000a",
+    "body": { "loc": "TEST_LOCATION", "name": "TEST_NAME" },
+    "time": 1643309030
+  },
+  "notehubConfigSensorNotFound": {
+    "err": "'error getting note: {note-noexist} note not found: fjdsidiojfdsojf'"
+  },
+  "notehubConfigDeviceNotFound": {
+    "err": "'device not registered on this service: dev:fjdsoifjs {device-noexist}'"
+  },
+  "notehubConfigBadPermissions": {
+    "err": "'error getting note: {insufficient permissions}'"
   }
 }

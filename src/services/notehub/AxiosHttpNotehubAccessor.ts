@@ -7,22 +7,6 @@ import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
 import NotehubErr from "./models/NotehubErr";
 
-function handleAPIErrors(e: Error) {
-  let errorCode = ERROR_CODES.INTERNAL_ERROR;
-  if (axios.isAxiosError(e)) {
-    if (e.response?.status === 401) {
-      errorCode = ERROR_CODES.UNAUTHORIZED;
-    }
-    if (e.response?.status === 403) {
-      errorCode = ERROR_CODES.FORBIDDEN;
-    }
-    if (e.response?.status === 404) {
-      errorCode = ERROR_CODES.DEVICE_NOT_FOUND;
-    }
-  }
-  throw getError(errorCode, { cause: e });
-}
-
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   hubBaseURL: string;
@@ -39,8 +23,8 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     hubBaseURL: string,
     hubAppUID: string,
     hubDeviceUID: string,
-    hubAuthToken: string,
-    hubProductUID: string
+    hubProductUID: string,
+    hubAuthToken: string
   ) {
     this.hubBaseURL = hubBaseURL;
     this.hubAppUID = hubAppUID;
@@ -66,7 +50,19 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubDevice;
     } catch (e) {
-      handleAPIErrors(e as Error);
+      let errorCode = ERROR_CODES.INTERNAL_ERROR;
+      if (axios.isAxiosError(e)) {
+        if (e.response?.status === 401) {
+          errorCode = ERROR_CODES.UNAUTHORIZED;
+        }
+        if (e.response?.status === 403) {
+          errorCode = ERROR_CODES.FORBIDDEN;
+        }
+        if (e.response?.status === 404) {
+          errorCode = ERROR_CODES.DEVICE_NOT_FOUND;
+        }
+      }
+      throw getError(errorCode, { cause: e as Error });
     }
   }
 
@@ -76,7 +72,19 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubLatestEvents;
     } catch (e) {
-      handleAPIErrors(e as Error);
+      let errorCode = ERROR_CODES.INTERNAL_ERROR;
+      if (axios.isAxiosError(e)) {
+        if (e.response?.status === 401) {
+          errorCode = ERROR_CODES.UNAUTHORIZED;
+        }
+        if (e.response?.status === 403) {
+          errorCode = ERROR_CODES.FORBIDDEN;
+        }
+        if (e.response?.status === 404) {
+          errorCode = ERROR_CODES.DEVICE_NOT_FOUND;
+        }
+      }
+      throw getError(errorCode, { cause: e as Error });
     }
   }
 

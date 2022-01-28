@@ -12,8 +12,8 @@ class ServiceLocator {
       Config.hubBaseURL,
       Config.hubAppUID,
       Config.hubDeviceUID,
-      Config.hubAuthToken,
-      Config.hubProductUID
+      Config.hubProductUID,
+      Config.hubAuthToken
     );
     const notehubDataProvider = new NotehubDataProvider(notehubAccessor);
     this.appService = new AppService(notehubDataProvider);
