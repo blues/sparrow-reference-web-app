@@ -5,20 +5,19 @@ import { services } from "../services/ServiceLocator";
 import getLatestSensorData from "../services/latestSensorData";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
-import { ERROR_MESSAGE } from "../constants/ui";
-import { HTTP_STATUS } from "../constants/http";
 import styles from "../styles/Home.module.scss";
+import { getErrorMessage } from "../constants/ui";
 
 type HomeData = {
   gateways: Gateway[];
   latestSensorDataList: Sensor[];
-  err?: typeof HTTP_STATUS.UNAUTHORIZED;
+  err?: string;
 };
 
 const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
   <div className={styles.container}>
-    {err === HTTP_STATUS.UNAUTHORIZED ? (
-      <h2 className={styles.errorMessage}>{ERROR_MESSAGE.UNAUTHORIZED}</h2>
+    {err ? (
+      <h2 className={styles.errorMessage}>{err}</h2>
     ) : (
       <>
         <h2 data-testid="gateway-header">Gateways</h2>
@@ -62,7 +61,13 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
     };
   } catch (err) {
     if (err instanceof Error) {
-      return { props: { gateways, latestSensorDataList, err: err.message } };
+      return {
+        props: {
+          gateways,
+          latestSensorDataList,
+          err: getErrorMessage(err.message),
+        },
+      };
     }
     return { props: { gateways, latestSensorDataList } };
   }
