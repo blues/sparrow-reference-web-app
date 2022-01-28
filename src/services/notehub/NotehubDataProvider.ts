@@ -6,8 +6,7 @@ import { DataProvider } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
 
-// this file connects to Notehub API endpoints to fetch data
-export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
+function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
     lastActivity: device.last_activity,
     ...((device?.triangulated_location || device?.tower_location) && {
