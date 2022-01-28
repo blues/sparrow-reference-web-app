@@ -9,5 +9,21 @@
     "fleet_uids": [],
     "voltage": 3.8,
     "temperature": 15
+  },
+  "exampleNotehubLocation1": {
+    "when": 1642795378,
+    "name": "Philadelphia, Pennsylvania",
+    "country": "US",
+    "timezone": "America/New_York",
+    "latitude": 40.020737,
+    "longitude": -75.152794
+  },
+  "exampleNotehubLocation2": {
+    "when": 1636969856,
+    "name": "Fujiyoshida",
+    "country": "JP",
+    "timezone": "Asia/Tokyo",
+    "latitude": 35.412762500000014,
+    "longitude": 138.884734375
   }
 }
