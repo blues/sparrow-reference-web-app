@@ -6,6 +6,7 @@ import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
 import NotehubErr from "./models/NotehubErr";
+import { WrappedBuildError } from "next/dist/server/next-server";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -50,20 +51,29 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubDevice;
     } catch (e) {
-      let errorCode = ERROR_CODES.INTERNAL_ERROR;
-      if (axios.isAxiosError(e)) {
-        if (e.response?.status === 401) {
-          errorCode = ERROR_CODES.UNAUTHORIZED;
-        }
-        if (e.response?.status === 403) {
-          errorCode = ERROR_CODES.FORBIDDEN;
-        }
-        if (e.response?.status === 404) {
-          errorCode = ERROR_CODES.DEVICE_NOT_FOUND;
-        }
-      }
-      throw getError(errorCode, { cause: e as Error });
+      throw this.errorWithCode(e);
     }
+  }
+
+  httpErrorToErrorCode(e: any) : ERROR_CODES {
+    let errorCode = ERROR_CODES.INTERNAL_ERROR;
+    if (axios.isAxiosError(e)) {
+      if (e.response?.status === 401) {
+        errorCode = ERROR_CODES.UNAUTHORIZED;
+      }
+      if (e.response?.status === 403) {
+        errorCode = ERROR_CODES.FORBIDDEN;
+      }
+      if (e.response?.status === 404) {
+        errorCode = ERROR_CODES.DEVICE_NOT_FOUND;
+      }
+    }
+    return errorCode;
+  }
+
+  errorWithCode(e: any) : Error {
+    const errorCode = this.httpErrorToErrorCode(e);
+    return getError(errorCode, { cause: e as Error });
   }
 
   async getLatestEvents(hubDeviceUID: string) {
@@ -72,19 +82,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubLatestEvents;
     } catch (e) {
-      let errorCode = ERROR_CODES.INTERNAL_ERROR;
-      if (axios.isAxiosError(e)) {
-        if (e.response?.status === 401) {
-          errorCode = ERROR_CODES.UNAUTHORIZED;
-        }
-        if (e.response?.status === 403) {
-          errorCode = ERROR_CODES.FORBIDDEN;
-        }
-        if (e.response?.status === 404) {
-          errorCode = ERROR_CODES.DEVICE_NOT_FOUND;
-        }
-      }
-      throw getError(errorCode, { cause: e as Error });
+      throw this.errorWithCode(e);
     }
   }
 
