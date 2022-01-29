@@ -72,7 +72,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     },
     {
       label: "Gateway",
-      contents: <div className={styles.formData}>2nd Floor Gateway</div>,
+      contents: <div data-testid="sensor-gateway-name" className={styles.formData}>2nd Floor Gateway</div>,
     },
     {
       contents: (
@@ -112,26 +112,26 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
 
   return (
     <div>
-      <h1>{latestSensorData.name}</h1>
+      <h1 data-testid="sensor-name">{latestSensorData.name}</h1>
       <Tabs defaultActiveKey="1">
         <TabPane tab="Summary" key="1">
-          <h2>Current Readings</h2>
+          <h2 data-testid="current-readings">Current Readings</h2>
           {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
-          <p>Last Seen: {latestSensorData.lastActivity}</p>
+          <p data-testid="last-seen">Last Seen: {latestSensorData.lastActivity}</p>
           <ul>
-            <li>
+            <li data-testid="temperature">
               Temperature:&nbsp;
               {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
             </li>
-            <li>
+            <li data-testid="humidity">
               Humidity:&nbsp;
               {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
             </li>
-            <li>
+            <li data-testid="pressure">
               Pressure:&nbsp;
               {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
             </li>
-            <li>
+            <li data-testid="voltage">
               Voltage:&nbsp;
               {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
             </li>

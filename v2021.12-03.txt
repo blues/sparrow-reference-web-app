@@ -1,0 +1,60 @@
+commit 1324345dbb2820f55a82e7893d394b6c4668560c
+Author: Will Fleming <wfleming77@gmail.com>
+Date:   Wed Dec 15 10:22:17 2021 -0500
+
+    Move logging back to it's own Go package (#2734)
+
+commit 0516163b30d485db90c967468667a9aed7cf235a
+Author: Sean Taylor <38770443+sdt99@users.noreply.github.com>
+Date:   Tue Dec 14 11:42:30 2021 -0500
+
+    Explicitly clear FactoryResetID in Notecard before test. (#2733)
+    
+    This change fixes an issue whereby if a Notecard has a non-zero
+    FactoryResetID due to a prior card.restore,connected:true, it would
+    cause the TestArrayEnvVars to fail because the "provisioned" environment
+    variables would be erased by Notehub upon reception of the non-zero
+    FactoryResetID.
+    
+    Further, the notecard's FactoryResetID is not erased by
+    card.restore,delete:true, and there is no obvious user feedback in the
+    test artifacts that the notecard has a non-zero FactoryResetID, so the
+    cause of the test failure was not obvious.
+    
+    Issuing a card.restore,reset:true sets the FactoryResetID to "" to
+    prevent the Notehub from re-provisioning the Notecard and erasing any
+    environment variables.  This command is only used if the test is not
+    specifically exercising card.restore,connected:true.  This is tested by
+    the TestCardHubRestore test.
+    
+    https://www.pivotaltracker.com/n/projects/2534180/stories/180600563
+    
+    Co-authored-by: Sean Taylor <sean.taylor@blues.com>
+
+commit d93659e522ca11a83544ca14a45d8eed3c0c2a74
+Author: Stefan VanBuren <stefan@vanburen.xyz>
+Date:   Tue Dec 14 08:06:18 2021 -0500
+
+    test: Add tests for account recovery (#2725)
+    
+    Also known as 'forgot password'. This confirms that we're able to
+    recover an account via the Kratos flow. It currently focuses on the
+    happy path, as we're probably going to rework the flow down the road.
+    
+    Relates to:
+    
+    https://www.pivotaltracker.com/story/show/180559777
+
+commit f90e19e6884bb7918c8908c36717cc2a5c1eec87
+Author: Ray Ozzie <ray@ozzie.net>
+Date:   Mon Dec 13 09:08:50 2021 -0500
+
+    remove auto-coercion of env vars into jsonata numbers (#2732)
+
+commit e378f95582a8a31d4dcfb9c1691673d6dcdac6ab
+Author: Ray Ozzie <ray@ozzie.net>
+Date:   Fri Dec 10 17:31:35 2021 -0500
+
+    Bugfix: HTTP device provisioning APIs were clearing FactoryResetID, c… (#2730)
+    
+    Co-authored-by: Stefan VanBuren <stefan@vanburen.xyz>

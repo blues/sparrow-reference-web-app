@@ -1,0 +1,9 @@
+{
+  "env": {
+    "host": "staging.blues.tools"
+  },
+  "chromeWebSecurity": false,
+  "experimentalStudio": true,
+  "viewportWidth": 1400,
+  "viewportHeight": 800
+}
