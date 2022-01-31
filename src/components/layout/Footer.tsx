@@ -14,7 +14,9 @@ const FooterComponent = () => {
             Notecard
           </a>
         </div>
-        <div>version: {Config.buildVersion}</div>
+        <div>
+          <small>version: {Config.buildVersion}</small>
+        </div>
         <div>
           Developed by&nbsp;
           <a target="_blank" href="https://blues.io" rel="noreferrer">
