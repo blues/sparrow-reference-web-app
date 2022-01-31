@@ -3,9 +3,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 4000",
-    "build": "next build",
-    "start": "next start",
+    "dev": "NEXT_PUBLIC_BUILD_VERSION=\"$(./find-version.sh)\" next dev -p 4000",
+    "build": "NEXT_PUBLIC_BUILD_VERSION=\"$(./find-version.sh)\" next build",
+    "start": "NEXT_PUBLIC_BUILD_VERSION=\"$(./find-version.sh)\" next start",
     "lint": "next lint",
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest --watch",

@@ -1,4 +1,5 @@
 import { Layout } from "antd";
+import Config from "../../../config";
 import styles from "../../styles/Footer.module.scss";
 
 const FooterComponent = () => {
@@ -13,6 +14,7 @@ const FooterComponent = () => {
             Notecard
           </a>
         </div>
+        <div>version: {Config.buildVersion}</div>
         <div>
           Developed by&nbsp;
           <a target="_blank" href="https://blues.io" rel="noreferrer">
