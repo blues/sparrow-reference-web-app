@@ -9,10 +9,10 @@
     "start": "yarn genv; next start",
     "lint": "next lint",
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",
-    "test": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "test": "yarn genv; jest --watch",
+    "test:coverage": "yarn genv; jest --coverage",
+    "cypress:open": "yarn genv; cypress open",
+    "cypress:run": "yarn genv; cypress run"
   },
   "dependencies": {
     "@types/lodash": "^4.14.178",
