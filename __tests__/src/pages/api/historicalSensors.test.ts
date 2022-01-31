@@ -30,7 +30,7 @@ describe("/api/gateway/[gatewayUID]/historical-sensors API Endpoint", () => {
       "content-type": HTTP_HEADER.CONTENT_TYPE_JSON,
     });
     expect(res.statusMessage).toEqual("OK");
-  }, 30000);
+  }, 60000);
 
   it("should return a 405 if method is not GET", async () => {
     const { req, res } = mockRequestResponse("POST");
