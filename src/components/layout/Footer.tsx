@@ -15,7 +15,7 @@ const FooterComponent = () => {
           </a>
         </div>
         <div>
-          <small>version: {Config.buildVersion}</small>
+          <small>{Config.buildVersion}</small>
         </div>
         <div>
           Developed by&nbsp;
