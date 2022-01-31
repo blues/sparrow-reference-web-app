@@ -23,6 +23,7 @@
     "lodash": "^4.17.21",
     "next": "^12.0.8",
     "next-plugin-antd-less": "^1.5.2",
+    "pony-cause": "^1.1.1",
     "rc-field-form": "^1.22.0",
     "react": "17.0.2",
     "react-chartjs-2": "^4.0.0",
@@ -30,7 +31,7 @@
     "sass": "^1.43.4"
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^4.1.0",
+    "@netlify/plugin-nextjs": "^4.2.1",
     "@testing-library/dom": "^8.11.1",
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^12.1.2",
