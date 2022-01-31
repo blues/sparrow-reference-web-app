@@ -3,9 +3,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "NEXT_PUBLIC_BUILD_VERSION=\"$(./find-version.sh)\" next dev -p 4000",
-    "build": "NEXT_PUBLIC_BUILD_VERSION=\"$(./find-version.sh)\" next build",
-    "start": "NEXT_PUBLIC_BUILD_VERSION=\"$(./find-version.sh)\" next start",
+    "genv": "./generate-dotenv.sh | tee .env.development.local | tee .env.production.local | tee .env.test.local",
+    "dev": "yarn genv; next dev -p 4000",
+    "build": "yarn genv; next build",
+    "start": "yarn genv; next start",
     "lint": "next lint",
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest --watch",
