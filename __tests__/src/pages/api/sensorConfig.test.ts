@@ -22,17 +22,6 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     return { req, res };
   }
 
-  it("GET should return a successful response from Notehub", async () => {
-    const { req, res } = mockRequestResponse();
-    await sensorConfigHandler(req, res);
-
-    expect(res.statusCode).toBe(200);
-    expect(res.getHeaders()).toEqual({
-      "content-type": HTTP_HEADER.CONTENT_TYPE_JSON,
-    });
-    expect(res.statusMessage).toEqual("OK");
-  });
-
   it("POST should return a successful response from Notehub", async () => {
     const { req, res } = mockRequestResponse("POST");
     req.body = { loc: "TEST_LOCATION", name: "TEST_NAME" };
@@ -60,27 +49,6 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     });
   });
 
-  it("should return a 204 if Sensor Config cannot be found", async () => {
-    const { req, res } = mockRequestResponse();
-    // Pass a MAC address string that almost certainly won't exist
-    req.query.macAddress = "not_a_real_sensor_mac";
-
-    await sensorConfigHandler(req, res);
-
-    expect(res.statusCode).toBe(204);
-  });
-
-  it("should return a 400 if Sensor MAC is missing", async () => {
-    const { req, res } = mockRequestResponse();
-    req.query = { gatewayUID }; // Equivalent to a null sensor MAC
-
-    await sensorConfigHandler(req, res);
-
-    expect(res.statusCode).toBe(400);
-    // eslint-disable-next-line no-underscore-dangle
-    expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.INVALID_SENSOR_MAC });
-  });
-
   it("should return a 400 if Gateway UID is not a string", async () => {
     const { req, res } = mockRequestResponse();
     req.query.gatewayUID = 11; // Pass gateway UID of the incorrect type
@@ -92,7 +60,7 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.INVALID_GATEWAY });
   });
 
-  it("should return a 405 if method not GET or POST is passed", async () => {
+  it("should return a 405 if method not POST is passed", async () => {
     const { req, res } = mockRequestResponse("PUT");
     req.body = { loc: "FAILING_TEST_LOCATION", name: "FAILING_TEST_NAME" };
     await sensorConfigHandler(req, res);
