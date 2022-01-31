@@ -48,7 +48,7 @@ const Config = {
     return optionalEnvVar("DEPLOY_URL", "") || requiredEnvVar("APP_BASE_URL");
   },
   get buildVersion() {
-    return requiredEnvVar("NEXT_PUBLIC_BUILD_VERSION");
+    return optionalEnvVar("NEXT_PUBLIC_BUILD_VERSION", "ver n/a");
   },
   get companyName() {
     return optionalEnvVar("NEXT_PUBLIC_COMPANY_NAME", "Nada Company");
