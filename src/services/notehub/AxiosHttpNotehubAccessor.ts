@@ -6,7 +6,6 @@ import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
 import NotehubErr from "./models/NotehubErr";
-import { WrappedBuildError } from "next/dist/server/next-server";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -55,7 +54,8 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }
   }
 
-  httpErrorToErrorCode(e: any) : ERROR_CODES {
+  // eslint-disable-next-line class-methods-use-this
+  httpErrorToErrorCode(e: unknown): ERROR_CODES {
     let errorCode = ERROR_CODES.INTERNAL_ERROR;
     if (axios.isAxiosError(e)) {
       if (e.response?.status === 401) {
@@ -71,7 +71,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     return errorCode;
   }
 
-  errorWithCode(e: any) : Error {
+  errorWithCode(e: unknown): Error {
     const errorCode = this.httpErrorToErrorCode(e);
     return getError(errorCode, { cause: e as Error });
   }
