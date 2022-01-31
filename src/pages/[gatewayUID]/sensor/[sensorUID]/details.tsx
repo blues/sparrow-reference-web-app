@@ -118,7 +118,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
       <h1>{latestSensorData.name}</h1>
       <Tabs defaultActiveKey="1">
         <TabPane tab="Summary" key="1">
-          <h2>Current Readings</h2>
+          <h2 className={detailsStyles.tabSectionTitle}>Current Readings</h2>
           {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
           <p className={detailsStyles.timestamp}>
             Last Seen {latestSensorData.lastActivity}

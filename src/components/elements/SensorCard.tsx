@@ -4,6 +4,7 @@ import Sensor from "../models/Sensor";
 import { SENSOR_MESSAGE } from "../../constants/ui";
 import {
   getFormattedLastSeen,
+  getFormattedLocation,
   getFormattedTemperatureData,
   getFormattedPressureData,
   getFormattedHumidityData,

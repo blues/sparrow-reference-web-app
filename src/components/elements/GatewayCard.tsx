@@ -3,12 +3,11 @@ import { Card } from "antd";
 import Gateway from "../models/Gateway";
 import {
   getFormattedLastSeen,
+  getFormattedLocation,
   getFormattedVoltageData,
 } from "../helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Card.module.scss";
-import SensorDetails from "../../pages/[gatewayUID]/sensor/[sensorUID]/details";
-
 interface GatewayProps {
   gatewayDetails: Gateway;
   index: number;
@@ -19,6 +18,14 @@ const GatewayCardComponent = (props: GatewayProps) => {
   // in the future perhaps try to make dynamic items based on model props
   const { gatewayDetails, index } = props;
   const formattedGatewayVoltage = getFormattedVoltageData(gatewayDetails);
+
+  let formattedLocation = "";
+
+  if (gatewayDetails.location) {
+    formattedLocation = getFormattedLocation(gatewayDetails.location);
+  } else {
+    formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
+  }
 
   return (
     <Card
@@ -43,9 +50,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
         <li>
           Location
           <br />
-          <span className="dataNumber">
-            {gatewayDetails.location || GATEWAY_MESSAGE.NO_LOCATION}
-          </span>
+          <span className="dataNumber">{formattedLocation}</span>
         </li>
         <li>
           Voltage

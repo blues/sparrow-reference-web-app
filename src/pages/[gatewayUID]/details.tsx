@@ -2,12 +2,18 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
 import SensorCard from "../../components/elements/SensorCard";
+import { Card, Row, Col } from "antd";
 import { services } from "../../services/ServiceLocator";
-import { getFormattedLastSeen } from "../../components/helpers/helperFunctions";
 import getLatestSensorData from "../../services/latestSensorData";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
+import {
+  getFormattedLastSeen,
+  getFormattedLocation,
+} from "../../components/helpers/helperFunctions";
+import { GATEWAY_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
+import cardStyles from "../../styles/Card.module.scss";
 
 type GatewayDetailsData = {
   gateway: Gateway | null;
@@ -19,39 +25,67 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
   gateway,
   sensors,
   err,
-}) => (
-  <>
-    {err && <h2 className={styles.errorMessage}>{err}</h2>}
+}) => {
+  let formattedLocation = "";
 
-    {gateway && (
-      <div>
-        <h1>Gateway Details</h1>
-        <div className={styles.container}>
-          <ul>
-            <li>Device Name: {gateway.serialNumber}</li>
-            {gateway.location && <li>Location: {gateway.location}</li>}
-            <li>Last Seen {getFormattedLastSeen(gateway.lastActivity)}</li>
-          </ul>
+  if (gateway && gateway.location) {
+    formattedLocation = getFormattedLocation(gateway.location);
+  } else {
+    formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
+  }
 
-          {sensors?.length > 0 && (
-            <>
-              <h2>Sensors</h2>
-              <div className={styles.groupedCards}>
-                {sensors.map((sensor, index) => (
-                  <SensorCard
-                    key={sensor.macAddress}
-                    index={index}
-                    sensorDetails={sensor}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+  return (
+    <>
+      {err && <h2 className={styles.errorMessage}>{err}</h2>}
+
+      {gateway && (
+        <div>
+          <h1>Gateway Details</h1>
+          <div className={styles.container}>
+            <div className={styles.groupedCards}>
+              <Card
+                headStyle={{ padding: "0" }}
+                bodyStyle={{ padding: "0" }}
+                className={cardStyles.cardStyle}
+                title={
+                  <>
+                    <div>{gateway.serialNumber}</div>
+                    <span className={cardStyles.timestamp}>
+                      Last seen {getFormattedLastSeen(gateway.lastActivity)}
+                    </span>
+                  </>
+                }
+              >
+                <ul className={cardStyles.cardContents}>
+                  <li>
+                    Location
+                    <br />
+                    <span className="dataNumber">{formattedLocation}</span>
+                  </li>
+                </ul>
+              </Card>
+            </div>
+
+            {sensors?.length > 0 && (
+              <>
+                <h2>Sensors</h2>
+                <div className={styles.groupedCards}>
+                  {sensors.map((sensor, index) => (
+                    <SensorCard
+                      key={sensor.macAddress}
+                      index={index}
+                      sensorDetails={sensor}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    )}
-  </>
-);
+      )}
+    </>
+  );
+};
 
 export default GatewayDetails;
 

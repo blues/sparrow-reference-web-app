@@ -57,7 +57,6 @@ const SensorDetailsChart = ({
           },
         },
         display: false,
-        borderWidth: 2,
       },
       yAxis: {
         min: yAxisMin,
