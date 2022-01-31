@@ -15,7 +15,10 @@ const FooterComponent = () => {
           </a>
         </div>
         <div>
-          <small>{Config.buildVersion}</small>
+          <details>
+            <summary style={{ listStyle: "none" }}>About</summary>
+            {Config.buildVersion}
+          </details>
         </div>
         <div>
           Developed by&nbsp;
