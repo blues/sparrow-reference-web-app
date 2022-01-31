@@ -3,7 +3,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "genv": "./generate-dotenv.sh | tee .env.development.local | tee .env.production.local | tee .env.test.local",
+    "genv": "./generate-dotenv.sh | tee .env.production.local",
     "dev": "yarn genv; next dev -p 4000",
     "build": "yarn genv; next build",
     "start": "yarn genv; next start",
