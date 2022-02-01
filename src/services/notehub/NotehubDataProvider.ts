@@ -5,6 +5,8 @@ import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
+import SensorReading from "../../components/models/SensorReading";
+import { ERROR_CODES, getError } from "../Errors";
 
 function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
@@ -138,32 +140,42 @@ export default class NotehubDataProvider implements DataProvider {
 
   async getSensor(gatewayUID: string, sensorUID: string) {
     const sensors = await this.getSensors([gatewayUID]);
-    let match = null;
-    sensors.forEach((sensor) => {
-      if (sensor.macAddress === sensorUID) {
-        match = sensor;
-      }
-    });
+    const match = sensors.filter(
+      (sensor) => sensor.macAddress === sensorUID
+    )[0];
+    if (!match) {
+      throw getError(ERROR_CODES.SENSOR_NOT_FOUND);
+    }
     return match;
   }
 
-  async getHistoricalSensorData(gatewayUID: string, sensorUID: string) {
-    const sensorEvents = await this.notehubAccessor.getHistoricalEvents();
-
-    // filter out all events that do not match sensorUID and gatewayUID
-    const filteredHistoricalSensorEvents = sensorEvents.filter(
-      (event: NotehubEvent) => {
-        if (
-          event.file &&
-          event.file.includes(`${sensorUID}`) &&
-          event.device_uid === gatewayUID
-        ) {
-          return true;
-        }
-        return false;
-      }
+  async getSensorData(
+    gatewayUID: string,
+    sensorUID: string,
+    options?: { startDate?: Date }
+  ) {
+    const sensorEvents = await this.notehubAccessor.getEvents(
+      options?.startDate
     );
+    const filteredEvents = sensorEvents.filter(
+      (event: NotehubEvent) =>
+        event.file &&
+        event.file.includes(`${sensorUID}`) &&
+        event.file.includes("#air.qo") &&
+        event.device_uid === gatewayUID
+    );
+    const readingsToReturn: SensorReading[] = [];
+    filteredEvents.forEach((event) => {
+      ["humidity", "pressure", "temperature", "voltage"].forEach((key) => {
+        readingsToReturn.push({
+          key,
+          value: event.body[key],
+          location: event.tower_location.name,
+          captured: event.captured,
+        });
+      });
+    });
 
-    return filteredHistoricalSensorEvents;
+    return readingsToReturn;
   }
 }

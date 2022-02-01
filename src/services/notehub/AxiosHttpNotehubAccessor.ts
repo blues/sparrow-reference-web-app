@@ -7,12 +7,7 @@ import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
 import NotehubErr from "./models/NotehubErr";
 import NotehubEvent from "./models/NotehubEvent";
-
-interface NotehubResponse {
-  events: NotehubEvent[];
-  has_more: boolean;
-  through: string;
-}
+import NotehubResponse from "./models/NotehubResponse";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -24,7 +19,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   hubProductUID: string;
 
-  hubHistoricalStartDate: number;
+  hubHistoricalDataStartDate: Date;
 
   commonHeaders;
 
@@ -40,7 +35,11 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     this.hubAppUID = hubAppUID;
     this.hubDeviceUID = hubDeviceUID;
     this.hubProductUID = hubProductUID;
-    this.hubHistoricalStartDate = hubHistoricalDataStartDate;
+
+    const date = new Date();
+    date.setDate(date.getDate() - hubHistoricalDataStartDate);
+    this.hubHistoricalDataStartDate = date;
+
     this.commonHeaders = {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
       [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
@@ -97,16 +96,14 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }
   }
 
-  async getHistoricalEvents(hubHistoricalDataStartDate?: number) {
-    const startDateToUse =
-      hubHistoricalDataStartDate || this.hubHistoricalStartDate;
+  async getEvents(startDate?: Date) {
+    // Take the start date from the argument first, but fall back to the environment
+    // variable.
+    const startDateToUse = startDate || this.hubHistoricalDataStartDate;
+    const startDateValue = Math.round(startDateToUse.getTime() / 1000);
+
     let events: NotehubEvent[] = [];
-    const currentDate = new Date();
-    const startDate = Math.round(
-      (currentDate.getTime() - Number(startDateToUse) * 24 * 60 * 60 * 1000) /
-        1000
-    );
-    const initialEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/events?startDate=${startDate}`;
+    const initialEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/events?startDate=${startDateValue}`;
     try {
       const resp: AxiosResponse<NotehubResponse> = await axios.get(
         initialEndpoint,

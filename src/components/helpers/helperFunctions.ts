@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
-import NotehubEvent from "../../services/notehub/models/NotehubEvent";
 import Sensor from "../models/Sensor";
 import Gateway from "../models/Gateway";
+import SensorReading from "../models/SensorReading";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
@@ -9,23 +9,22 @@ export const getFormattedLastSeen = (date: string) =>
     addSuffix: true,
   });
 
-export const getFormattedChartData = <C extends keyof NotehubEvent["body"]>(
-  sensorEvents: NotehubEvent[],
-  chartValue: C
+export const getFormattedChartData = (
+  sensorReadings: SensorReading[],
+  chartKey: string
 ) => {
-  if (sensorEvents.length) {
-    const formattedData = sensorEvents
+  if (sensorReadings.length) {
+    const formattedData = sensorReadings
       .filter((event) => {
-        // currently only formatting `air.qo` events because I'm not sure how to display data from `motion.qo` events yet
-        if (event.file && event.file.includes("#air.qo")) {
+        if (event.key === chartKey) {
           return event;
         }
         return false;
       })
       .map((filteredEvents) => {
         const chartDataObj = {
-          when: filteredEvents.captured,
-          value: filteredEvents.body[chartValue],
+          when: filteredEvents.captured.toString(),
+          value: Number(filteredEvents.value),
         };
         return chartDataObj;
       })
