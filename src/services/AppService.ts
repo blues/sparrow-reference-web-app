@@ -6,7 +6,12 @@ import { DataProvider } from "./DataProvider";
 interface AppServiceInterface {
   getGateways: () => Promise<Gateway[]>;
   getGateway: (gatewayUID: string) => Promise<Gateway>;
-  getLatestSensorData: (gateways: Gateway[]) => Promise<Sensor[]>;
+  getSensors: (gatewayUIDs: string[]) => Promise<Sensor[]>;
+  getSensor: (gatewayUID: string, sensorUID: string) => Promise<Sensor>;
+  getHistoricalSensorData: (
+    gatewayUID: string,
+    sensorUID: string
+  ) => Promise<any>;
 }
 
 export type { AppServiceInterface };
@@ -26,7 +31,15 @@ export default class AppService implements AppServiceInterface {
     return this.dataProvider.getGateway(gatewayUID);
   }
 
-  async getLatestSensorData(gateways: Gateway[]) {
-    return this.dataProvider.getLatestSensorData(gateways);
+  async getSensors(gatewayUIDs: string[]) {
+    return this.dataProvider.getSensors(gatewayUIDs);
+  }
+
+  async getSensor(gatewayUID: string, sensorUID: string) {
+    return this.dataProvider.getSensor(gatewayUID, sensorUID);
+  }
+
+  async getHistoricalSensorData(gatewayUID: string, sensorUID: string) {
+    return this.dataProvider.getHistoricalSensorData(gatewayUID, sensorUID);
   }
 }

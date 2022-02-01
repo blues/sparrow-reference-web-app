@@ -53,7 +53,9 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   try {
     const appService = services().getAppService();
     gateways = await appService.getGateways();
-    latestSensorDataList = await appService.getLatestSensorData(gateways);
+    latestSensorDataList = await appService.getSensors(
+      gateways.map((gateway) => gateway.uid)
+    );
 
     return {
       props: { gateways, latestSensorDataList },

@@ -45,11 +45,11 @@ export default class NotehubDataProvider implements DataProvider {
     return singleGateway;
   }
 
-  async getLatestSensorData(gateways: Gateway[]) {
+  async getSensors(gatewayUIDs: string[]) {
     // get latest sensor data from API
-    const getLatestSensorDataByGateway = async (gateway: Gateway) => {
+    const getLatestSensorDataByGateway = async (gatewayUID: string) => {
       const latestSensorEvents = await this.notehubAccessor.getLatestEvents(
-        gateway.uid
+        gatewayUID
       );
 
       // filter out all latest_events that are not `motion.qo` or `air.qo` files - those indicate they are sensor files
@@ -66,7 +66,7 @@ export default class NotehubDataProvider implements DataProvider {
       );
 
       const latestSensorData = filteredSensorData.map((event) => ({
-        gatewayUID: `${gateway.uid}`,
+        gatewayUID,
         macAddress: event.file,
         humidity: event.body.humidity,
         pressure: event.body.pressure,
@@ -80,7 +80,7 @@ export default class NotehubDataProvider implements DataProvider {
     // If we have more than one gateway to get events for,
     // loop through all the gateway UIDs and collect the events back
     const getAllLatestSensorEvents = async () =>
-      Promise.all(gateways.map(getLatestSensorDataByGateway));
+      Promise.all(gatewayUIDs.map(getLatestSensorDataByGateway));
 
     const latestSensorEvents = await getAllLatestSensorEvents();
 
@@ -134,5 +134,36 @@ export default class NotehubDataProvider implements DataProvider {
     const allLatestSensorData = await getAllSensorData(simplifiedSensorEvents);
 
     return allLatestSensorData;
+  }
+
+  async getSensor(gatewayUID: string, sensorUID: string) {
+    const sensors = await this.getSensors([gatewayUID]);
+    let match = null;
+    sensors.forEach((sensor) => {
+      if (sensor.macAddress === sensorUID) {
+        match = sensor;
+      }
+    });
+    return match;
+  }
+
+  async getHistoricalSensorData(gatewayUID: string, sensorUID: string) {
+    const sensorEvents = await this.notehubAccessor.getHistoricalEvents();
+
+    // filter out all events that do not match sensorUID and gatewayUID
+    const filteredHistoricalSensorEvents = sensorEvents.filter(
+      (event: NotehubEvent) => {
+        if (
+          event.file &&
+          event.file.includes(`${sensorUID}`) &&
+          event.device_uid === gatewayUID
+        ) {
+          return true;
+        }
+        return false;
+      }
+    );
+
+    return filteredHistoricalSensorEvents;
   }
 }

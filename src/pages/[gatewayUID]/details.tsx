@@ -7,6 +7,7 @@ import { getFormattedLastSeen } from "../../components/helpers/helperFunctions";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import styles from "../../styles/Home.module.scss";
+import { getErrorMessage } from "../../constants/ui";
 
 type GatewayDetailsData = {
   gateway: Gateway | null;
@@ -66,14 +67,16 @@ export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
     try {
       const appService = services().getAppService();
       gateway = await appService.getGateway(gatewayUID);
-      sensors = await appService.getLatestSensorData([gateway]);
+      sensors = await appService.getSensors([gatewayUID]);
 
       return {
         props: { gateway, sensors },
       };
     } catch (err) {
       if (err instanceof Error) {
-        return { props: { gateway, sensors, err: err.message } };
+        return {
+          props: { gateway, sensors, err: getErrorMessage(err.message) },
+        };
       }
       return { props: { gateway, sensors } };
     }

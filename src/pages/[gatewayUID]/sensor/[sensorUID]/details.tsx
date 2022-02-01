@@ -4,16 +4,16 @@ import { Input, Button, Tabs } from "antd";
 import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
+import { ParsedUrlQuery } from "querystring";
 import Form, { FormProps } from "../../../../components/elements/Form";
-import getSensorDetailsData from "../../../../services/sensorDetailsData";
 import Sensor from "../../../../components/models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
 import NotehubEvent from "../../../../services/notehub/models/NotehubEvent";
 import {
+  getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
   SENSOR_MESSAGE,
 } from "../../../../constants/ui";
-import SparrowQueryInterface from "../../../../interfaces/SparrowQueryInterface";
 import {
   getFormattedChartData,
   getFormattedTemperatureData,
@@ -22,15 +22,18 @@ import {
   getFormattedVoltageData,
 } from "../../../../components/helpers/helperFunctions";
 import styles from "../../../../styles/Form.module.scss";
+import { services } from "../../../../services/ServiceLocator";
 
 type SensorDetailsData = {
-  latestSensorData: Sensor;
+  sensorData: Sensor;
   historicalSensorData: NotehubEvent[];
+  err?: string;
 };
 
 const SensorDetails: NextPage<SensorDetailsData> = ({
-  latestSensorData,
+  sensorData,
   historicalSensorData,
+  err,
 }) => {
   const { TabPane } = Tabs;
   const { query } = useRouter();
@@ -39,7 +42,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     {
       label: "Last Updated",
       contents: (
-        <div className={styles.formData}>{latestSensorData?.lastActivity}</div>
+        <div className={styles.formData}>{sensorData?.lastActivity}</div>
       ),
     },
     {
@@ -96,11 +99,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     console.log("Failed:", errorInfo);
   };
 
-  const formattedTemperatureData =
-    getFormattedTemperatureData(latestSensorData);
-  const formattedHumidityData = getFormattedHumidityData(latestSensorData);
-  const formattedPressureData = getFormattedPressureData(latestSensorData);
-  const formattedVoltageData = getFormattedVoltageData(latestSensorData);
+  const formattedTemperatureData = getFormattedTemperatureData(sensorData);
+  const formattedHumidityData = getFormattedHumidityData(sensorData);
+  const formattedPressureData = getFormattedPressureData(sensorData);
+  const formattedVoltageData = getFormattedVoltageData(sensorData);
 
   const temperatureData = getFormattedChartData(
     historicalSensorData,
@@ -111,100 +113,126 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   const voltageData = getFormattedChartData(historicalSensorData, "voltage");
 
   return (
-    <div>
-      <h1>{latestSensorData.name}</h1>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Summary" key="1">
-          <h2>Current Readings</h2>
-          {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
-          <p>Last Seen: {latestSensorData.lastActivity}</p>
-          <ul>
-            <li>
-              Temperature:&nbsp;
-              {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
-            </li>
-            <li>
-              Humidity:&nbsp;
-              {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
-            </li>
-            <li>
-              Pressure:&nbsp;
-              {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
-            </li>
-            <li>
-              Voltage:&nbsp;
-              {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
-            </li>
-          </ul>
-          <h3>Voltage</h3>
-          {voltageData.length ? (
-            <SensorDetailsChart
-              label="Voltage"
-              yAxisMin={1}
-              yAxisMax={4}
-              data={voltageData}
+    <>
+      {err && <h2 className={styles.errorMessage}>{err}</h2>}
+      <div>
+        <h1>{sensorData.name}</h1>
+        <Tabs defaultActiveKey="1">
+          <TabPane tab="Summary" key="1">
+            <h2>Current Readings</h2>
+            {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
+            <p>Last Seen: {sensorData.lastActivity}</p>
+            <ul>
+              <li>
+                Temperature:&nbsp;
+                {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
+              </li>
+              <li>
+                Humidity:&nbsp;
+                {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
+              </li>
+              <li>
+                Pressure:&nbsp;
+                {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
+              </li>
+              <li>
+                Voltage:&nbsp;
+                {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
+              </li>
+            </ul>
+            <h3>Voltage</h3>
+            {voltageData.length ? (
+              <SensorDetailsChart
+                label="Voltage"
+                yAxisMin={1}
+                yAxisMax={4}
+                data={voltageData}
+              />
+            ) : (
+              HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
+            )}
+            <h3>Temperature</h3>
+            {temperatureData.length ? (
+              <SensorDetailsChart
+                label="Temperature"
+                yAxisMin={0}
+                yAxisMax={30}
+                data={temperatureData}
+              />
+            ) : (
+              HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
+            )}
+            <h3>Humidity</h3>
+            {humidityData.length ? (
+              <SensorDetailsChart
+                label="Humidity"
+                yAxisMin={25}
+                yAxisMax={100}
+                data={humidityData}
+              />
+            ) : (
+              HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
+            )}
+            <h3>Pressure</h3>
+            {pressureData.length ? (
+              <SensorDetailsChart
+                label="Pressure"
+                yAxisMin={99000}
+                yAxisMax={105000}
+                data={pressureData}
+              />
+            ) : (
+              HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
+            )}
+          </TabPane>
+          <TabPane tab="Device Details" key="2">
+            <Form
+              formItems={formItems}
+              onFinish={formOnFinish}
+              onFinishFailed={formOnFinishFailed}
             />
-          ) : (
-            HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
-          )}
-          <h3>Temperature</h3>
-          {temperatureData.length ? (
-            <SensorDetailsChart
-              label="Temperature"
-              yAxisMin={0}
-              yAxisMax={30}
-              data={temperatureData}
-            />
-          ) : (
-            HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
-          )}
-          <h3>Humidity</h3>
-          {humidityData.length ? (
-            <SensorDetailsChart
-              label="Humidity"
-              yAxisMin={25}
-              yAxisMax={100}
-              data={humidityData}
-            />
-          ) : (
-            HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
-          )}
-          <h3>Pressure</h3>
-          {pressureData.length ? (
-            <SensorDetailsChart
-              label="Pressure"
-              yAxisMin={99000}
-              yAxisMax={105000}
-              data={pressureData}
-            />
-          ) : (
-            HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
-          )}
-        </TabPane>
-        <TabPane tab="Device Details" key="2">
-          <Form
-            formItems={formItems}
-            onFinish={formOnFinish}
-            onFinishFailed={formOnFinishFailed}
-          />
-        </TabPane>
-      </Tabs>
-    </div>
+          </TabPane>
+        </Tabs>
+      </div>
+    </>
   );
 };
 
 export default SensorDetails;
 
+// custom interface to avoid UI believing query params can be undefined when they can't be
+interface SparrowQueryInterface extends ParsedUrlQuery {
+  gatewayUID: string;
+  sensorUID: string;
+}
+
 export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
   async ({ query }) => {
-    // extended interface needed to eliminate TS error of possible undefined string values
-    // the query string values will never be undefined in this situation
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
+    const appService = services().getAppService();
+    let historicalSensorData: NotehubEvent[] = [];
+    let sensorData: Sensor | null = null;
 
-    const { latestSensorData, historicalSensorData } =
-      await getSensorDetailsData(gatewayUID, sensorUID);
+    try {
+      sensorData = await appService.getSensor(gatewayUID, sensorUID);
+      historicalSensorData = await appService.getHistoricalSensorData(
+        gatewayUID,
+        sensorUID
+      );
 
-    return {
-      props: { latestSensorData, historicalSensorData },
-    };
+      return {
+        props: { sensorData, historicalSensorData },
+      };
+    } catch (err) {
+      if (err instanceof Error) {
+        return {
+          props: {
+            sensorData,
+            historicalSensorData,
+            err: getErrorMessage(err.message),
+          },
+        };
+      }
+      return { props: { sensorData, historicalSensorData } };
+    }
   };
