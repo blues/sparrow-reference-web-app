@@ -23,7 +23,7 @@ export const getFormattedChartData = (
       })
       .map((filteredEvents) => {
         const chartDataObj = {
-          when: filteredEvents.captured.toString(),
+          when: filteredEvents.captured,
           value: Number(filteredEvents.value),
         };
         return chartDataObj;

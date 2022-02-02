@@ -154,10 +154,10 @@ export default class NotehubDataProvider implements DataProvider {
     sensorUID: string,
     options?: { startDate?: Date }
   ) {
-    const sensorEvents = await this.notehubAccessor.getEvents(
+    const sensorEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
       options?.startDate
     );
-    const filteredEvents = sensorEvents.filter(
+    const filteredEvents: NotehubEvent[] = sensorEvents.filter(
       (event: NotehubEvent) =>
         event.file &&
         event.file.includes(`${sensorUID}`) &&
@@ -165,14 +165,32 @@ export default class NotehubDataProvider implements DataProvider {
         event.device_uid === gatewayUID
     );
     const readingsToReturn: SensorReading[] = [];
-    filteredEvents.forEach((event) => {
-      ["humidity", "pressure", "temperature", "voltage"].forEach((key) => {
-        readingsToReturn.push({
-          key,
-          value: event.body[key],
-          location: event.tower_location.name,
-          captured: event.captured,
-        });
+    filteredEvents.forEach((event: NotehubEvent) => {
+      // TODO: apply location logic
+      const location = event?.tower_location?.name || "";
+      readingsToReturn.push({
+        key: "humidity",
+        value: event.body.humidity.toString(),
+        location,
+        captured: event.captured,
+      });
+      readingsToReturn.push({
+        key: "pressure",
+        value: event.body.pressure.toString(),
+        location,
+        captured: event.captured,
+      });
+      readingsToReturn.push({
+        key: "temperature",
+        value: event.body.temperature.toString(),
+        location,
+        captured: event.captured,
+      });
+      readingsToReturn.push({
+        key: "voltage",
+        value: event.body.voltage.toString(),
+        location,
+        captured: event.captured,
       });
     });
 
