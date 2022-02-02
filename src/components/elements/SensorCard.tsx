@@ -4,7 +4,6 @@ import Sensor from "../models/Sensor";
 import { SENSOR_MESSAGE } from "../../constants/ui";
 import {
   getFormattedLastSeen,
-  getFormattedLocation,
   getFormattedTemperatureData,
   getFormattedPressureData,
   getFormattedHumidityData,
@@ -17,7 +16,6 @@ interface SensorProps {
   index: number;
 }
 
-const { Meta } = Card;
 const SensorCardComponent = (props: SensorProps) => {
   // in the future perhaps try to make dynamic items based on model props
   const { sensorDetails, index } = props;
@@ -32,14 +30,14 @@ const SensorCardComponent = (props: SensorProps) => {
       bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
       title={
-        (
-          <>
-            <div>{sensorDetails.name}</div>
-            <span className={styles.timestamp}>
-              Last seen {getFormattedLastSeen(sensorDetails.lastActivity)}
-            </span>
-          </>
-        ) || SENSOR_MESSAGE.NO_NAME
+        <>
+          <div>
+            {sensorDetails.name ? sensorDetails.name : SENSOR_MESSAGE.NO_NAME}
+          </div>
+          <span className={styles.timestamp}>
+            Last seen {getFormattedLastSeen(sensorDetails.lastActivity)}
+          </span>
+        </>
       }
       extra={
         <Link

@@ -13,7 +13,6 @@ interface GatewayProps {
   index: number;
 }
 
-const { Meta } = Card;
 const GatewayCardComponent = (props: GatewayProps) => {
   // in the future perhaps try to make dynamic items based on model props
   const { gatewayDetails, index } = props;

@@ -11,7 +11,7 @@ import {
   getFormattedLocation,
 } from "../../components/helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
-import styles from "../../styles/Home.modules.scss";
+import styles from "../../styles/Home.module.scss";
 import cardStyles from "../../styles/Card.module.scss";
 
 type GatewayDetailsData = {
