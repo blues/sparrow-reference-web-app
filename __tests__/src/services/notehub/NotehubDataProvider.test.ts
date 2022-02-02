@@ -1,7 +1,5 @@
 import { NotehubAccessor } from "../../../../src/services/notehub/NotehubAccessor";
-import NotehubDataProvider, {
-  notehubDeviceToSparrowGateway,
-} from "../../../../src/services/notehub/NotehubDataProvider";
+import NotehubDataProvider from "../../../../src/services/notehub/NotehubDataProvider";
 import sparrowData from "../__serviceMocks__/sparrowData.json"; // mocked data to do with Sparrow portion of app goes here (i.e. gateways and sensors)
 import notehubData from "../__serviceMocks__/notehubData.json"; // mocked data to do with Notehub portion of app goes here (i.e. devices and events)
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
@@ -12,22 +10,24 @@ describe("Notehub data provider service functions", () => {
   let notehubAccessorMock: NotehubAccessor;
   let notehubDataProviderMock: NotehubDataProvider;
 
+  const getMockDevice = () =>
+    ({ ...notehubData.successfulNotehubDeviceResponse } as NotehubDevice);
+
   beforeEach(() => {
     notehubAccessorMock = {
-      getGateway: jest.fn().mockResolvedValueOnce(mockedGatewayJson),
-      getGateways: jest.fn().mockResolvedValueOnce([mockedGatewayJson]),
+      getDevice: jest.fn().mockResolvedValueOnce(mockedGatewayJson),
+      getDevices: jest.fn().mockResolvedValueOnce([mockedGatewayJson]),
+      getLatestEvents: jest.fn().mockResolvedValueOnce({}),
+      getConfig: jest.fn().mockResolvedValueOnce({}),
     };
     notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock);
   });
 
-  it("should return a single sparrow gateway instance when getGateway is called", async () => {
-    const mockGatewayUID = "dev:5678";
-
-    const mockedGatewaySparrowData =
+  it("should convert a Notehub device to a Sparrow gateway", async () => {
+    const mockedGatewaysSparrowData =
       sparrowData.successfulGatewaySparrowDataResponse;
-
-    const res = await notehubDataProviderMock.getGateway(mockGatewayUID);
-    expect(res).toEqual(mockedGatewaySparrowData);
+    const res = await notehubDataProviderMock.getGateway(mockedGatewayJson.uid);
+    expect(res).toEqual(mockedGatewaysSparrowData);
   });
 
   it("should return a list sparrow gateway instances when getGateways is called", async () => {
@@ -38,30 +38,25 @@ describe("Notehub data provider service functions", () => {
     const res = await notehubDataProviderMock.getGateways();
     expect(res).toEqual(mockedGatewaysSparrowData);
   });
-});
 
-describe("Notehub data parsing", () => {
-  // Clone the mock device
-  const getMockDevice = () =>
-    ({ ...notehubData.successfulNotehubDeviceResponse } as NotehubDevice);
-
-  it("should not produce a location property when none exist", () => {
-    const data = notehubDeviceToSparrowGateway(getMockDevice());
-    expect(data.location).toBe(undefined);
+  it("should not produce a location property when none exist", async () => {
+    const device = getMockDevice();
+    const res = await notehubDataProviderMock.getGateway(device.uid);
+    expect(res.location).toBe(undefined);
   });
 
-  it("should choose triangulated location over tower", () => {
+  it("should choose triangulated location over tower", async () => {
     const device = getMockDevice();
     device.tower_location = notehubData.exampleNotehubLocation1;
     device.triangulated_location = notehubData.exampleNotehubLocation2;
-    const data = notehubDeviceToSparrowGateway(device);
-    expect(data.location).toBe(notehubData.exampleNotehubLocation2.name);
+    const res = await notehubDataProviderMock.getGateway(device.uid);
+    expect(res.location).toBe(undefined);
   });
 
-  it("should use tower location if it's the only one available", () => {
+  it("should use tower location if it's the only one available", async () => {
     const device = getMockDevice();
     device.tower_location = notehubData.exampleNotehubLocation1;
-    const data = notehubDeviceToSparrowGateway(device);
-    expect(data.location).toBe(notehubData.exampleNotehubLocation1.name);
+    const res = await notehubDataProviderMock.getGateway(device.uid);
+    expect(res.location).toBe(undefined);
   });
 });
