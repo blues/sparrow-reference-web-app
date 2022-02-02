@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Card } from "antd";
 import Gateway from "../models/Gateway";
 import {
@@ -8,6 +9,7 @@ import {
 } from "../helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Card.module.scss";
+
 interface GatewayProps {
   gatewayDetails: Gateway;
   index: number;
@@ -18,8 +20,15 @@ const GatewayCardComponent = (props: GatewayProps) => {
   const { gatewayDetails, index } = props;
   const formattedGatewayVoltage = getFormattedVoltageData(gatewayDetails);
 
-  let formattedLocation = "";
+  const router = useRouter();
+  const gatewayUrl = `/${gatewayDetails.uid}/details`;
+  const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    router.push(gatewayUrl);
+  };
 
+  let formattedLocation = "";
   if (gatewayDetails.location) {
     formattedLocation = getFormattedLocation(gatewayDetails.location);
   } else {
@@ -31,18 +40,17 @@ const GatewayCardComponent = (props: GatewayProps) => {
       headStyle={{ padding: "0" }}
       bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
+      hoverable
+      onClick={handleCardClick}
       title={
         <>
-          <div>{gatewayDetails.serialNumber}</div>
+          <div data-testid={`gateway[${index}]-details`}>
+            {gatewayDetails.serialNumber}
+          </div>
           <span className={styles.timestamp}>
             Last seen {getFormattedLastSeen(gatewayDetails.lastActivity)}
           </span>
         </>
-      }
-      extra={
-        <Link href={`/${gatewayDetails.uid}/details`}>
-          <a data-testid={`gateway[${index}]-details`}>Details</a>
-        </Link>
       }
     >
       <ul className={styles.cardContents}>

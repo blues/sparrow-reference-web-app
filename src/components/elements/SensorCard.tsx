@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { Card } from "antd";
 import Sensor from "../models/Sensor";
 import { SENSOR_MESSAGE } from "../../constants/ui";
@@ -24,27 +24,30 @@ const SensorCardComponent = (props: SensorProps) => {
   const formattedPressureData = getFormattedPressureData(sensorDetails);
   const formattedVoltageData = getFormattedVoltageData(sensorDetails);
 
+  const router = useRouter();
+  const sensorUrl = `/${sensorDetails.gatewayUID}/sensor/${sensorDetails.macAddress}/details`;
+  const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    router.push(sensorUrl);
+  };
+
   return (
     <Card
       headStyle={{ padding: "0" }}
       bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
+      onClick={handleCardClick}
+      hoverable
       title={
         <>
-          <div>
+          <div data-testid={`sensor[${index}]-summary`}>
             {sensorDetails.name ? sensorDetails.name : SENSOR_MESSAGE.NO_NAME}
           </div>
           <span className={styles.timestamp}>
             Last seen {getFormattedLastSeen(sensorDetails.lastActivity)}
           </span>
         </>
-      }
-      extra={
-        <Link
-          href={`/${sensorDetails.gatewayUID}/sensor/${sensorDetails.macAddress}/details`}
-        >
-          <a data-testid={`sensor[${index}]-summary`}>Details</a>
-        </Link>
       }
     >
       <ul className={styles.cardContents}>
