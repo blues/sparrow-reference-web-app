@@ -3,8 +3,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "genv": "./generate-dotenv.sh | tee .env.production.local",
     "dev": "next dev -p 4000",
-    "build": "next build",
+    "build": "yarn genv; next build",
     "start": "next start",
     "lint": "next lint",
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",

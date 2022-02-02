@@ -1,10 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
+import { Card } from "antd";
 import SensorCard from "../../components/elements/SensorCard";
-import { Card, Row, Col } from "antd";
 import { services } from "../../services/ServiceLocator";
-import getLatestSensorData from "../../services/latestSensorData";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import {
@@ -12,7 +11,7 @@ import {
   getFormattedLocation,
 } from "../../components/helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
-import styles from "../../styles/Home.module.scss";
+import styles from "../../styles/Home.modules.scss";
 import cardStyles from "../../styles/Card.module.scss";
 
 type GatewayDetailsData = {
@@ -93,23 +92,23 @@ interface GatewayDetailsQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
 }
 
-export const getServerSideProps: GetServerSideProps<
-  GatewayDetailsData
-> = async ({ query }) => {
-  const { gatewayUID } = query as GatewayDetailsQueryInterface;
-  let gateway: Gateway | null = null;
-  let sensors: Sensor[] = [];
-  try {
-    gateway = await services().getAppService().getGateway(gatewayUID);
-    sensors = await getLatestSensorData([gateway]);
+export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
+  async ({ query }) => {
+    const { gatewayUID } = query as GatewayDetailsQueryInterface;
+    let gateway: Gateway | null = null;
+    let sensors: Sensor[] = [];
+    try {
+      const appService = services().getAppService();
+      gateway = await appService.getGateway(gatewayUID);
+      sensors = await appService.getLatestSensorData([gateway]);
 
-    return {
-      props: { gateway, sensors },
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      return { props: { gateway, sensors, err: err.message } };
+      return {
+        props: { gateway, sensors },
+      };
+    } catch (err) {
+      if (err instanceof Error) {
+        return { props: { gateway, sensors, err: err.message } };
+      }
+      return { props: { gateway, sensors } };
     }
-    return { props: { gateway, sensors } };
-  }
-};
+  };

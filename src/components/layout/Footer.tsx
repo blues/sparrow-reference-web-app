@@ -1,4 +1,5 @@
 import { Layout } from "antd";
+import Config from "../../../config";
 import styles from "../../styles/Footer.module.scss";
 
 const FooterComponent = () => {
@@ -12,6 +13,12 @@ const FooterComponent = () => {
           <a target="_blank" href="https://blues.io/products" rel="noreferrer">
             Notecard
           </a>
+        </div>
+        <div>
+          <details>
+            <summary style={{ listStyle: "none" }}>About</summary>
+            {Config.buildVersion}
+          </details>
         </div>
         <div>
           Developed by&nbsp;
