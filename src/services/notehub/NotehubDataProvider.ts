@@ -7,14 +7,29 @@ import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
 import SensorReading from "../../components/models/SensorReading";
 import { ERROR_CODES, getError } from "../Errors";
+import NotehubLocation from "./models/NotehubLocation";
 
-function notehubDeviceToSparrowGateway(device: NotehubDevice) {
+interface HasNotehubLocation {
+  gps_location?: NotehubLocation;
+  triangulated_location?: NotehubLocation;
+  tower_location?: NotehubLocation;
+}
+
+function getBestLocation(object: HasNotehubLocation) {
+  if (object.triangulated_location) {
+    return object.triangulated_location;
+  }
+  if (object.gps_location) {
+    return object.gps_location;
+  }
+  return object.tower_location;
+}
+
+export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
     lastActivity: device.last_activity,
-    ...((device?.triangulated_location || device?.tower_location) && {
-      location: device?.triangulated_location?.name
-        ? device.triangulated_location.name
-        : device.tower_location?.name,
+    ...(getBestLocation(device) && {
+      location: getBestLocation(device)?.name,
     }),
     serialNumber: device.serial_number,
     uid: device.uid,
@@ -166,8 +181,7 @@ export default class NotehubDataProvider implements DataProvider {
     );
     const readingsToReturn: SensorReading[] = [];
     filteredEvents.forEach((event: NotehubEvent) => {
-      // TODO: apply location logic
-      const location = event?.tower_location?.name || "";
+      const location = getBestLocation(event)?.name || "";
       readingsToReturn.push({
         key: "humidity",
         value: event.body.humidity.toString(),
