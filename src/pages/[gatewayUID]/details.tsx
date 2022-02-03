@@ -47,6 +47,10 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
             Gateway: {gateway.serialNumber}
           </h1>
           <div className={styles.container}>
+            <div className={detailsStyles.timestamp}>
+              Last seen {getFormattedLastSeen(gateway.lastActivity)}
+            </div>
+
             <Row gutter={[16, 16]}>
               <Col span={6}>
                 <Card>
