@@ -13,7 +13,6 @@ import {
 } from "../../components/helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
-import cardStyles from "../../styles/Card.module.scss";
 import detailsStyles from "../../styles/Details.module.scss";
 
 type GatewayDetailsData = {
@@ -28,6 +27,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
   err,
 }) => {
   let formattedLocation = "";
+  let formattedGatewayVoltage;
 
   if (gateway && gateway.location) {
     formattedLocation = getFormattedLocation(gateway.location);
@@ -35,7 +35,11 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
     formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
   }
 
-  const formattedGatewayVoltage = getFormattedVoltageData(gateway);
+  if (gateway) {
+    formattedGatewayVoltage = getFormattedVoltageData(gateway);
+  } else {
+    formattedGatewayVoltage = GATEWAY_MESSAGE.NO_VOLTAGE;
+  }
 
   return (
     <>
@@ -66,7 +70,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                   Voltage
                   <br />
                   <span className={detailsStyles.dataNumber}>
-                    {formattedGatewayVoltage || GATEWAY_MESSAGE.NO_VOLTAGE}
+                    {formattedGatewayVoltage}
                   </span>
                 </Card>
               </Col>
@@ -99,24 +103,23 @@ interface GatewayDetailsQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
 }
 
-export const getServerSideProps: GetServerSideProps<
-  GatewayDetailsData
-> = async ({ query }) => {
-  const { gatewayUID } = query as GatewayDetailsQueryInterface;
-  let gateway: Gateway | null = null;
-  let sensors: Sensor[] = [];
-  try {
-    const appService = services().getAppService();
-    gateway = await appService.getGateway(gatewayUID);
-    sensors = await appService.getLatestSensorData([gateway]);
+export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
+  async ({ query }) => {
+    const { gatewayUID } = query as GatewayDetailsQueryInterface;
+    let gateway: Gateway | null = null;
+    let sensors: Sensor[] = [];
+    try {
+      const appService = services().getAppService();
+      gateway = await appService.getGateway(gatewayUID);
+      sensors = await appService.getLatestSensorData([gateway]);
 
-    return {
-      props: { gateway, sensors },
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      return { props: { gateway, sensors, err: err.message } };
+      return {
+        props: { gateway, sensors },
+      };
+    } catch (err) {
+      if (err instanceof Error) {
+        return { props: { gateway, sensors, err: err.message } };
+      }
+      return { props: { gateway, sensors } };
     }
-    return { props: { gateway, sensors } };
-  }
-};
+  };

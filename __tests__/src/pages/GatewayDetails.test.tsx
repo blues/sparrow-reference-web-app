@@ -1,6 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+// eslint-disable-next-line jest/no-mocks-import
+import "../../../__mocks__/matchMediaMock"; // needed to avoid error due to JSDOM not implemetning method yet: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import GatewayDetails from "../../../src/pages/[gatewayUID]/details";
 import Gateway from "../../../src/components/models/Gateway";
 import Sensor from "../../../src/components/models/Sensor";
