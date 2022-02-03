@@ -20,6 +20,7 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
 // Gateway data fallbacks for empty data fields
 const GATEWAY_MESSAGE = {
   NO_LOCATION: "No gateway location currently available.",
+  NO_VOLTAGE: "N/A",
 };
 
 // Error messages when the project fails to display for some reason

@@ -56,7 +56,6 @@ const SensorDetailsChart = ({
             year: CHART_DATE_FORMAT,
           },
         },
-        display: false,
       },
       yAxis: {
         min: yAxisMin,

@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { Card } from "antd";
+import { Row, Col, Card } from "antd";
 import SensorCard from "../../components/elements/SensorCard";
 import { services } from "../../services/ServiceLocator";
 import Gateway from "../../components/models/Gateway";
@@ -9,10 +9,12 @@ import Sensor from "../../components/models/Sensor";
 import {
   getFormattedLastSeen,
   getFormattedLocation,
+  getFormattedVoltageData,
 } from "../../components/helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
 import cardStyles from "../../styles/Card.module.scss";
+import detailsStyles from "../../styles/Details.module.scss";
 
 type GatewayDetailsData = {
   gateway: Gateway | null;
@@ -33,41 +35,46 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
     formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
   }
 
+  const formattedGatewayVoltage = getFormattedVoltageData(gateway);
+
   return (
     <>
       {err && <h2 className={styles.errorMessage}>{err}</h2>}
 
       {gateway && (
         <div>
-          <h1>Gateway Details</h1>
+          <h1 className={styles.sectionTitle}>
+            Gateway: {gateway.serialNumber}
+          </h1>
           <div className={styles.container}>
-            <div className={styles.groupedCards}>
-              <Card
-                headStyle={{ padding: "0" }}
-                bodyStyle={{ padding: "0" }}
-                className={cardStyles.cardStyle}
-                title={
-                  <>
-                    <div>{gateway.serialNumber}</div>
-                    <span className={cardStyles.timestamp}>
-                      Last seen {getFormattedLastSeen(gateway.lastActivity)}
-                    </span>
-                  </>
-                }
-              >
-                <ul className={cardStyles.cardContents}>
-                  <li>
-                    Location
-                    <br />
-                    <span className="dataNumber">{formattedLocation}</span>
-                  </li>
-                </ul>
-              </Card>
+            <div className={detailsStyles.timestamp}>
+              Last seen {getFormattedLastSeen(gateway.lastActivity)}
             </div>
+
+            <Row gutter={[16, 16]}>
+              <Col span={6}>
+                <Card>
+                  Location
+                  <br />
+                  <span className={detailsStyles.dataNumber}>
+                    {formattedLocation}
+                  </span>
+                </Card>
+              </Col>
+              <Col span={6}>
+                <Card>
+                  Voltage
+                  <br />
+                  <span className={detailsStyles.dataNumber}>
+                    {formattedGatewayVoltage || GATEWAY_MESSAGE.NO_VOLTAGE}
+                  </span>
+                </Card>
+              </Col>
+            </Row>
 
             {sensors?.length > 0 && (
               <>
-                <h2>Sensors</h2>
+                <h3 className={styles.sectionSubTitle}>Sensors</h3>
                 <div className={styles.groupedCards}>
                   {sensors.map((sensor, index) => (
                     <SensorCard
@@ -92,23 +99,24 @@ interface GatewayDetailsQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
 }
 
-export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
-  async ({ query }) => {
-    const { gatewayUID } = query as GatewayDetailsQueryInterface;
-    let gateway: Gateway | null = null;
-    let sensors: Sensor[] = [];
-    try {
-      const appService = services().getAppService();
-      gateway = await appService.getGateway(gatewayUID);
-      sensors = await appService.getLatestSensorData([gateway]);
+export const getServerSideProps: GetServerSideProps<
+  GatewayDetailsData
+> = async ({ query }) => {
+  const { gatewayUID } = query as GatewayDetailsQueryInterface;
+  let gateway: Gateway | null = null;
+  let sensors: Sensor[] = [];
+  try {
+    const appService = services().getAppService();
+    gateway = await appService.getGateway(gatewayUID);
+    sensors = await appService.getLatestSensorData([gateway]);
 
-      return {
-        props: { gateway, sensors },
-      };
-    } catch (err) {
-      if (err instanceof Error) {
-        return { props: { gateway, sensors, err: err.message } };
-      }
-      return { props: { gateway, sensors } };
+    return {
+      props: { gateway, sensors },
+    };
+  } catch (err) {
+    if (err instanceof Error) {
+      return { props: { gateway, sensors, err: err.message } };
     }
-  };
+    return { props: { gateway, sensors } };
+  }
+};

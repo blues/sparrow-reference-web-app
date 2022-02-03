@@ -22,7 +22,8 @@ import {
   getFormattedVoltageData,
   getFormattedLastSeen,
 } from "../../../../components/helpers/helperFunctions";
-import styles from "../../../../styles/Form.module.scss";
+import styles from "../../../../styles/Home.module.scss";
+import formStyles from "../../../../styles/Form.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 
 type SensorDetailsData = {
@@ -76,7 +77,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     },
     {
       label: "Gateway",
-      contents: <div className={styles.formData}>2nd Floor Gateway</div>,
+      contents: <div className={formStyles.formData}>2nd Floor Gateway</div>,
     },
     {
       contents: (
@@ -116,7 +117,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
 
   return (
     <div>
-      <h1>{latestSensorData.name}</h1>
+      <h1 className={styles.sectionTitle}>Sensor: {latestSensorData.name}</h1>
       <Tabs defaultActiveKey="1">
         <TabPane tab="Summary" key="1">
           <h2 className={detailsStyles.tabSectionTitle}>Current Readings</h2>
@@ -245,16 +246,19 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
 
 export default SensorDetails;
 
-export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
-  async ({ query }) => {
-    // extended interface needed to eliminate TS error of possible undefined string values
-    // the query string values will never be undefined in this situation
-    const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
+export const getServerSideProps: GetServerSideProps<
+  SensorDetailsData
+> = async ({ query }) => {
+  // extended interface needed to eliminate TS error of possible undefined string values
+  // the query string values will never be undefined in this situation
+  const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
 
-    const { latestSensorData, historicalSensorData } =
-      await getSensorDetailsData(gatewayUID, sensorUID);
+  const { latestSensorData, historicalSensorData } = await getSensorDetailsData(
+    gatewayUID,
+    sensorUID
+  );
 
-    return {
-      props: { latestSensorData, historicalSensorData },
-    };
+  return {
+    props: { latestSensorData, historicalSensorData },
   };
+};
