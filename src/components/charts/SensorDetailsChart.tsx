@@ -1,4 +1,4 @@
-import { ChartData, Chart, ChartOptions, Filler } from "chart.js";
+import { ChartData, ChartOptions } from "chart.js";
 import { CHART_DATE_FORMAT } from "./chartHelper";
 import LineChart from "./LineChart";
 
@@ -22,7 +22,6 @@ const SensorDetailsChart = ({
 }: SensorDetailsChartProps) => {
   const labels = data.map((obj) => obj.when);
   const values = data.map((obj) => obj.value);
-  Chart.register(Filler);
 
   const chartData: ChartData<"line"> = {
     labels,
