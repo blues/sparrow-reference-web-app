@@ -177,13 +177,11 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
   async ({ query }) => {
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
     const appService = services().getAppService();
-    let sensor: Sensor | null = null;
-    let readings: SensorReading<unknown>[] = [];
     let viewModel: SensorDetailViewModel = {};
 
     try {
-      sensor = await appService.getSensor(gatewayUID, sensorUID);
-      readings = await appService.getSensorData(gatewayUID, sensorUID);
+      const sensor = await appService.getSensor(gatewayUID, sensorUID);
+      const readings = await appService.getSensorData(gatewayUID, sensorUID);
       viewModel = getSensorDetailsPresentation(sensor, readings);
 
       return {
