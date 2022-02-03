@@ -8,6 +8,7 @@ import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import styles from "../../styles/Home.module.scss";
 import { getErrorMessage } from "../../constants/ui";
+import { ERROR_CODES } from "../../services/Errors";
 
 type GatewayDetailsData = {
   gateway: Gateway | null;
@@ -78,6 +79,12 @@ export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
           props: { gateway, sensors, err: getErrorMessage(err.message) },
         };
       }
-      return { props: { gateway, sensors } };
+      return {
+        props: {
+          gateway,
+          sensors,
+          err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
+        },
+      };
     }
   };
