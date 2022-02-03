@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { Card } from "antd";
 import Gateway from "../models/Gateway";
@@ -48,7 +47,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
             {gatewayDetails.serialNumber}
           </div>
           <span className={styles.timestamp}>
-            Last seen {getFormattedLastSeen(gatewayDetails.lastActivity)}
+            Last updated {getFormattedLastSeen(gatewayDetails.lastActivity)}
           </span>
         </>
       }

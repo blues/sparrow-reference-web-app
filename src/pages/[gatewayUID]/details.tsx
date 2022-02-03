@@ -50,7 +50,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                   <>
                     <div>{gateway.serialNumber}</div>
                     <span className={cardStyles.timestamp}>
-                      Last seen {getFormattedLastSeen(gateway.lastActivity)}
+                      Last updated {getFormattedLastSeen(gateway.lastActivity)}
                     </span>
                   </>
                 }
