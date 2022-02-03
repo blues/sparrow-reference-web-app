@@ -11,18 +11,13 @@ import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
-  SENSOR_MESSAGE,
 } from "../../../../constants/ui";
-import {
-  getFormattedChartData,
-  getFormattedTemperatureData,
-  getFormattedHumidityData,
-  getFormattedPressureData,
-  getFormattedVoltageData,
-} from "../../../../components/helpers/helperFunctions";
 import styles from "../../../../styles/Form.module.scss";
 import { services } from "../../../../services/ServiceLocator";
 import SensorReading from "../../../../components/models/SensorReading";
+import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
+import { getSensorDetailsPresentation } from "../../../../components/presentation/sensorDetails";
+import { ERROR_CODES } from "../../../../services/Errors";
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
 interface SparrowQueryInterface extends ParsedUrlQuery {
@@ -31,16 +26,11 @@ interface SparrowQueryInterface extends ParsedUrlQuery {
 }
 
 type SensorDetailsData = {
-  sensorData: Sensor | null;
-  sensorReadings: SensorReading[];
+  viewModel: SensorDetailViewModel;
   err?: string;
 };
 
-const SensorDetails: NextPage<SensorDetailsData> = ({
-  sensorData,
-  sensorReadings,
-  err,
-}) => {
+const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { query } = useRouter();
 
@@ -48,7 +38,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     {
       label: "Last Updated",
       contents: (
-        <div className={styles.formData}>{sensorData?.lastActivity}</div>
+        <div className={styles.formData}>{viewModel.sensor?.lastActivity}</div>
       ),
     },
     {
@@ -106,85 +96,62 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     console.log("Failed:", errorInfo);
   };
 
-  const temperatureData = getFormattedChartData(sensorReadings, "temperature");
-  const humidityData = getFormattedChartData(sensorReadings, "humidity");
-  const pressureData = getFormattedChartData(sensorReadings, "pressure");
-  const voltageData = getFormattedChartData(sensorReadings, "voltage");
-
   return (
     <>
       {err && <h2 className={styles.errorMessage}>{err}</h2>}
-
-      {sensorData && (
+      {viewModel.sensor && (
         <div>
-          <h1>{sensorData.name}</h1>
+          <h1>{viewModel.sensor.name}</h1>
           <Tabs defaultActiveKey="1">
             <TabPane tab="Summary" key="1">
               <h2>Current Readings</h2>
-              {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
-              <p>Last Seen: {sensorData.lastActivity}</p>
+              <p>Last Seen: {viewModel.sensor.lastActivity}</p>
               <ul>
-                <li>
-                  Temperature:&nbsp;
-                  {getFormattedTemperatureData(sensorData) ||
-                    SENSOR_MESSAGE.NO_TEMPERATURE}
-                </li>
-                <li>
-                  Humidity:&nbsp;
-                  {getFormattedHumidityData(sensorData) ||
-                    SENSOR_MESSAGE.NO_HUMIDITY}
-                </li>
-                <li>
-                  Pressure:&nbsp;
-                  {getFormattedPressureData(sensorData) ||
-                    SENSOR_MESSAGE.NO_PRESSURE}
-                </li>
-                <li>
-                  Voltage:&nbsp;
-                  {getFormattedVoltageData(sensorData) ||
-                    SENSOR_MESSAGE.NO_VOLTAGE}
-                </li>
+                <li>Temperature: {viewModel.sensor.temperature}</li>
+                <li>Humidity: {viewModel.sensor.humidity}</li>
+                <li>Pressure: {viewModel.sensor.pressure}</li>
+                <li>Voltage: {viewModel.sensor.voltage}</li>
               </ul>
               <h3>Voltage</h3>
-              {voltageData.length ? (
+              {viewModel.readings?.voltage.length ? (
                 <SensorDetailsChart
                   label="Voltage"
                   yAxisMin={1}
                   yAxisMax={4}
-                  data={voltageData}
+                  data={viewModel.readings.voltage}
                 />
               ) : (
                 HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
               )}
               <h3>Temperature</h3>
-              {temperatureData.length ? (
+              {viewModel.readings?.temperature.length ? (
                 <SensorDetailsChart
                   label="Temperature"
                   yAxisMin={0}
                   yAxisMax={30}
-                  data={temperatureData}
+                  data={viewModel.readings.temperature}
                 />
               ) : (
                 HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
               )}
               <h3>Humidity</h3>
-              {humidityData.length ? (
+              {viewModel.readings?.humidity.length ? (
                 <SensorDetailsChart
                   label="Humidity"
                   yAxisMin={25}
                   yAxisMax={100}
-                  data={humidityData}
+                  data={viewModel.readings.humidity}
                 />
               ) : (
                 HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
               )}
               <h3>Pressure</h3>
-              {pressureData.length ? (
+              {viewModel.readings?.pressure.length ? (
                 <SensorDetailsChart
                   label="Pressure"
                   yAxisMin={99000}
                   yAxisMax={105000}
-                  data={pressureData}
+                  data={viewModel.readings.pressure}
                 />
               ) : (
                 HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
@@ -210,26 +177,32 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
   async ({ query }) => {
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
     const appService = services().getAppService();
-    let sensorData: Sensor | null = null;
-    let sensorReadings: SensorReading[] = [];
+    let sensor: Sensor | null = null;
+    let readings: SensorReading<unknown>[] = [];
+    let viewModel: SensorDetailViewModel = {};
 
     try {
-      sensorData = await appService.getSensor(gatewayUID, sensorUID);
-      sensorReadings = await appService.getSensorData(gatewayUID, sensorUID);
+      sensor = await appService.getSensor(gatewayUID, sensorUID);
+      readings = await appService.getSensorData(gatewayUID, sensorUID);
+      viewModel = getSensorDetailsPresentation(sensor, readings);
 
       return {
-        props: { sensorData, sensorReadings },
+        props: { viewModel },
       };
     } catch (err) {
       if (err instanceof Error) {
         return {
           props: {
-            sensorData,
-            sensorReadings,
+            viewModel,
             err: getErrorMessage(err.message),
           },
         };
       }
-      return { props: { sensorData, sensorReadings } };
+      return {
+        props: {
+          viewModel,
+          err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
+        },
+      };
     }
   };

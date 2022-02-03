@@ -1,8 +1,10 @@
-interface SensorReading {
-  key: string; // ("temperature")
-  value: string; // ("32");
-  location: string; // ("Detroit")
-  captured: string; // (2022-01-30 8:03Z)
+// eslint-disable-next-line import/no-cycle
+import SensorReadingSchema from "./SensorSchema";
+
+interface SensorReading<ReadingType> {
+  value: ReadingType;
+  captured: string;
+  schema: SensorReadingSchema<ReadingType>;
 }
 
 export default SensorReading;

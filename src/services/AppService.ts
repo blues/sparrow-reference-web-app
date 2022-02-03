@@ -12,7 +12,7 @@ interface AppServiceInterface {
   getSensorData: (
     gatewayUID: string,
     sensorUID: string
-  ) => Promise<SensorReading[]>;
+  ) => Promise<SensorReading<unknown>[]>;
 }
 
 export type { AppServiceInterface };

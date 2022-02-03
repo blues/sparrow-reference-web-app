@@ -8,6 +8,10 @@ import NotehubEvent from "./models/NotehubEvent";
 import SensorReading from "../../components/models/SensorReading";
 import { ERROR_CODES, getError } from "../Errors";
 import NotehubLocation from "./models/NotehubLocation";
+import TemperatureSensorReading from "../../components/models/TemperatureSensorReading";
+import HumiditySensorReading from "../../components/models/HumiditySensorReading";
+import PressureSensorReading from "../../components/models/PressureSensorReading";
+import VoltageSensorReading from "../../components/models/VoltageSensorReading";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
@@ -179,33 +183,26 @@ export default class NotehubDataProvider implements DataProvider {
         event.file.includes("#air.qo") &&
         event.device_uid === gatewayUID
     );
-    const readingsToReturn: SensorReading[] = [];
+    const readingsToReturn: SensorReading<unknown>[] = [];
     filteredEvents.forEach((event: NotehubEvent) => {
-      const location = getBestLocation(event)?.name || "";
-      readingsToReturn.push({
-        key: "humidity",
-        value: event.body.humidity.toString(),
-        location,
-        captured: event.captured,
-      });
-      readingsToReturn.push({
-        key: "pressure",
-        value: event.body.pressure.toString(),
-        location,
-        captured: event.captured,
-      });
-      readingsToReturn.push({
-        key: "temperature",
-        value: event.body.temperature.toString(),
-        location,
-        captured: event.captured,
-      });
-      readingsToReturn.push({
-        key: "voltage",
-        value: event.body.voltage.toString(),
-        location,
-        captured: event.captured,
-      });
+      readingsToReturn.push(
+        new TemperatureSensorReading({
+          value: event.body.temperature,
+          captured: event.captured,
+        }),
+        new HumiditySensorReading({
+          value: event.body.humidity,
+          captured: event.captured,
+        }),
+        new PressureSensorReading({
+          value: event.body.pressure,
+          captured: event.captured,
+        }),
+        new VoltageSensorReading({
+          value: event.body.voltage,
+          captured: event.captured,
+        })
+      );
     });
 
     return readingsToReturn;

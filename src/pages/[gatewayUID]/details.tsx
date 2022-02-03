@@ -3,7 +3,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
 import SensorCard from "../../components/elements/SensorCard";
 import { services } from "../../services/ServiceLocator";
-import { getFormattedLastSeen } from "../../components/helpers/helperFunctions";
+import { getFormattedLastSeen } from "../../components/presentation/uiHelpers";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import styles from "../../styles/Home.module.scss";
