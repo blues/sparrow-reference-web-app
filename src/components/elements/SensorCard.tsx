@@ -45,7 +45,7 @@ const SensorCardComponent = (props: SensorProps) => {
             {sensorDetails.name ? sensorDetails.name : SENSOR_MESSAGE.NO_NAME}
           </div>
           <span className={styles.timestamp}>
-            Last seen {getFormattedLastSeen(sensorDetails.lastActivity)}
+            Last updated {getFormattedLastSeen(sensorDetails.lastActivity)}
           </span>
         </>
       }
