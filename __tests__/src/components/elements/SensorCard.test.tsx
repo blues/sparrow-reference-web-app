@@ -45,16 +45,16 @@ describe("Sensor details card component", () => {
     );
     expect(screen.getByText(SENSOR_MESSAGE.NO_NAME)).toBeInTheDocument();
     expect(
-      screen.getByText(SENSOR_MESSAGE.NO_HUMIDITY, { exact: false })
+      screen.getAllByText(SENSOR_MESSAGE.NO_HUMIDITY, { exact: false })[0]
     ).toBeInTheDocument();
     expect(
-      screen.getByText(SENSOR_MESSAGE.NO_PRESSURE, { exact: false })
+      screen.getAllByText(SENSOR_MESSAGE.NO_PRESSURE, { exact: false })[1]
     ).toBeInTheDocument();
     expect(
-      screen.getByText(SENSOR_MESSAGE.NO_TEMPERATURE, { exact: false })
+      screen.getAllByText(SENSOR_MESSAGE.NO_TEMPERATURE, { exact: false })[2]
     ).toBeInTheDocument();
     expect(
-      screen.getByText(SENSOR_MESSAGE.NO_VOLTAGE, { exact: false })
+      screen.getAllByText(SENSOR_MESSAGE.NO_VOLTAGE, { exact: false })[3]
     ).toBeInTheDocument();
   });
 });

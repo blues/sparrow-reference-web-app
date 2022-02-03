@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { Input, Button, Tabs } from "antd";
+import { Card, Input, Button, Tabs, Row, Col } from "antd";
 import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
@@ -20,8 +20,11 @@ import {
   getFormattedHumidityData,
   getFormattedPressureData,
   getFormattedVoltageData,
+  getFormattedLastSeen,
 } from "../../../../components/helpers/helperFunctions";
-import styles from "../../../../styles/Form.module.scss";
+import styles from "../../../../styles/Home.module.scss";
+import formStyles from "../../../../styles/Form.module.scss";
+import detailsStyles from "../../../../styles/Details.module.scss";
 
 type SensorDetailsData = {
   latestSensorData: Sensor;
@@ -39,7 +42,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     {
       label: "Last Updated",
       contents: (
-        <div className={styles.formData}>{latestSensorData?.lastActivity}</div>
+        <div className={detailsStyles.timestamp}>
+          {getFormattedLastSeen(latestSensorData?.lastActivity)}
+        </div>
       ),
     },
     {
@@ -72,7 +77,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     },
     {
       label: "Gateway",
-      contents: <div className={styles.formData}>2nd Floor Gateway</div>,
+      contents: <div className={formStyles.formData}>2nd Floor Gateway</div>,
     },
     {
       contents: (
@@ -112,74 +117,120 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
 
   return (
     <div>
-      <h1>{latestSensorData.name}</h1>
+      <h1 className={styles.sectionTitle}>Sensor: {latestSensorData.name}</h1>
       <Tabs defaultActiveKey="1">
         <TabPane tab="Summary" key="1">
-          <h2>Current Readings</h2>
+          <h2 className={detailsStyles.tabSectionTitle}>Current Readings</h2>
           {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
-          <p>Last Seen: {latestSensorData.lastActivity}</p>
-          <ul>
-            <li>
-              Temperature:&nbsp;
-              {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
-            </li>
-            <li>
-              Humidity:&nbsp;
-              {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
-            </li>
-            <li>
-              Pressure:&nbsp;
-              {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
-            </li>
-            <li>
-              Voltage:&nbsp;
-              {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
-            </li>
-          </ul>
-          <h3>Voltage</h3>
-          {voltageData.length ? (
-            <SensorDetailsChart
-              label="Voltage"
-              yAxisMin={1}
-              yAxisMax={4}
-              data={voltageData}
-            />
-          ) : (
-            HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
-          )}
-          <h3>Temperature</h3>
-          {temperatureData.length ? (
-            <SensorDetailsChart
-              label="Temperature"
-              yAxisMin={0}
-              yAxisMax={30}
-              data={temperatureData}
-            />
-          ) : (
-            HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
-          )}
-          <h3>Humidity</h3>
-          {humidityData.length ? (
-            <SensorDetailsChart
-              label="Humidity"
-              yAxisMin={25}
-              yAxisMax={100}
-              data={humidityData}
-            />
-          ) : (
-            HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
-          )}
-          <h3>Pressure</h3>
-          {pressureData.length ? (
-            <SensorDetailsChart
-              label="Pressure"
-              yAxisMin={99000}
-              yAxisMax={105000}
-              data={pressureData}
-            />
-          ) : (
-            HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
-          )}
+          <p className={detailsStyles.timestamp}>
+            Last updated {getFormattedLastSeen(latestSensorData.lastActivity)}
+          </p>
+
+          <Row gutter={[16, 16]}>
+            <Col span={6}>
+              <Card>
+                Temperature
+                <br />
+                <span className={detailsStyles.dataNumber}>
+                  {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
+                </span>
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card>
+                Humidity
+                <br />
+                <span className={detailsStyles.dataNumber}>
+                  {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
+                </span>
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card>
+                Voltage
+                <br />
+                <span className={detailsStyles.dataNumber}>
+                  {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
+                </span>
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card>
+                <li>
+                  Pressure
+                  <br />
+                  <span className={detailsStyles.dataNumber}>
+                    {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
+                  </span>
+                </li>
+              </Card>
+            </Col>
+
+            <Col span={12}>
+              <Card>
+                <h3>Temperature</h3>
+                {temperatureData.length ? (
+                  <SensorDetailsChart
+                    label="Temperature"
+                    yAxisMin={0}
+                    yAxisMax={30}
+                    data={temperatureData}
+                    chartColor="#59d2ff"
+                  />
+                ) : (
+                  HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
+                )}
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card>
+                <h3>Humidity</h3>
+                {humidityData.length ? (
+                  <SensorDetailsChart
+                    label="Humidity"
+                    yAxisMin={25}
+                    yAxisMax={100}
+                    data={humidityData}
+                    chartColor="#ba68c8"
+                  />
+                ) : (
+                  HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
+                )}
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card>
+                <h3>Voltage</h3>
+                {voltageData.length ? (
+                  <SensorDetailsChart
+                    label="Voltage"
+                    yAxisMin={1}
+                    yAxisMax={4}
+                    data={voltageData}
+                    chartColor="#9ccc65"
+                  />
+                ) : (
+                  HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
+                )}
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card>
+                <h3>Pressure</h3>
+                {pressureData.length ? (
+                  <SensorDetailsChart
+                    label="Pressure"
+                    yAxisMin={99000}
+                    yAxisMax={105000}
+                    data={pressureData}
+                    chartColor="#ffd54f"
+                  />
+                ) : (
+                  HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
+                )}
+              </Card>
+            </Col>
+          </Row>
         </TabPane>
         <TabPane tab="Device Details" key="2">
           <Form
@@ -195,16 +246,19 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
 
 export default SensorDetails;
 
-export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
-  async ({ query }) => {
-    // extended interface needed to eliminate TS error of possible undefined string values
-    // the query string values will never be undefined in this situation
-    const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
+export const getServerSideProps: GetServerSideProps<
+  SensorDetailsData
+> = async ({ query }) => {
+  // extended interface needed to eliminate TS error of possible undefined string values
+  // the query string values will never be undefined in this situation
+  const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
 
-    const { latestSensorData, historicalSensorData } =
-      await getSensorDetailsData(gatewayUID, sensorUID);
+  const { latestSensorData, historicalSensorData } = await getSensorDetailsData(
+    gatewayUID,
+    sensorUID
+  );
 
-    return {
-      props: { latestSensorData, historicalSensorData },
-    };
+  return {
+    props: { latestSensorData, historicalSensorData },
   };
+};
