@@ -59,7 +59,7 @@ HUB_AUTH_TOKEN=BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD
 
 ### HUB_PRODUCT_UID
 
-This variable should be set to the product UID of the notehub project that your Sparrow devices are associated with. You can find the product UID along with the project summary on the [project dashboard](https://notehub.io), for example
+This variable should be set to the product UID of the Notehub project that your Sparrow devices are associated with. You can find the product UID along with the project summary on your [project dashboard](https://notehub.io), for example
 
 ```
 HUB_PRODUCT_UID=com.example.name:sparrow
