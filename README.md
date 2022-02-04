@@ -72,7 +72,7 @@ This is the unique identifier for your project in Notehub, and has the prefix `a
 
 #### HUB_DEVICE_UID
 
-This is the unique identifier for the notecard device in your project that is connected to the Sparrow Gateway. You can find the device ID in the devices page on notehub. 
+This is the unique identifier for your Sparrow Gateway’s Notecard device. You can find this by going to your Notehub project, clicking the **Devices** menu, and then double clicking your gateway in the list of devices.
 
 ```
 HUB_DEVICE_UID=dev:038050040065363
