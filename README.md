@@ -22,7 +22,7 @@ To get started with running the Sparrow starter you need to
 * [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
 * [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices.
 * Set up a Sparrow Gateway and one or more Sensors (TODO: link)
-* Configure the app notehub settings via environment variables 
+* Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
 * Install the project’s development [dependencies](#dependencies).
 * Launch the Sparrow Starter app in [development mode](#development)
 
