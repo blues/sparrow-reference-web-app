@@ -24,7 +24,7 @@ To get started with running the Sparrow starter you need to
 * Set up a Sparrow Gateway and one or more Sensors (TODO: link)
 * Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
 * Install the project’s development [dependencies](#dependencies).
-* Launch the Sparrow Starter app in [development mode](#development)
+* Launch the Sparrow Starter app in [development mode](#development).
 
 
 ### Environment Variables
