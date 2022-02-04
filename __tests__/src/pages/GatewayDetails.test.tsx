@@ -1,9 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+// eslint-disable-next-line jest/no-mocks-import
+import "../../../__mocks__/matchMediaMock"; // needed to avoid error due to JSDOM not implemetning method yet: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import GatewayDetails from "../../../src/pages/[gatewayUID]/details";
 import Gateway from "../../../src/components/models/Gateway";
 import Sensor from "../../../src/components/models/Sensor";
+import { GATEWAY_MESSAGE } from "../../../src/constants/ui";
 
 function getMockGateway(): Gateway {
   return {
@@ -67,9 +70,7 @@ describe("Gateway details page", () => {
     const gateway = getMockGateway();
     delete gateway.location;
     render(<GatewayDetails gateway={gateway} sensors={mockSensors} />);
-    expect(
-      screen.queryByText("Location", { exact: false })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(GATEWAY_MESSAGE.NO_LOCATION)).toBeInTheDocument();
   });
 
   it("should render an error when present", () => {

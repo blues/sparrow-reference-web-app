@@ -1,23 +1,23 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { Input, Button, Tabs } from "antd";
+import { Card, Input, Button, Tabs, Row, Col } from "antd";
 import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import { ParsedUrlQuery } from "querystring";
 import Form, { FormProps } from "../../../../components/elements/Form";
-import Sensor from "../../../../components/models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
 } from "../../../../constants/ui";
-import styles from "../../../../styles/Form.module.scss";
 import { services } from "../../../../services/ServiceLocator";
-import SensorReading from "../../../../components/models/SensorReading";
 import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
 import { getSensorDetailsPresentation } from "../../../../components/presentation/sensorDetails";
 import { ERROR_CODES } from "../../../../services/Errors";
+import styles from "../../../../styles/Home.module.scss";
+import formStyles from "../../../../styles/Form.module.scss";
+import detailsStyles from "../../../../styles/Details.module.scss";
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
 interface SparrowQueryInterface extends ParsedUrlQuery {
@@ -38,7 +38,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
     {
       label: "Last Updated",
       contents: (
-        <div className={styles.formData}>{viewModel.sensor?.lastActivity}</div>
+        <div className={detailsStyles.timestamp}>
+          {viewModel.sensor?.lastActivity}
+        </div>
       ),
     },
     {
@@ -71,7 +73,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
     },
     {
       label: "Gateway",
-      contents: <div className={styles.formData}>2nd Floor Gateway</div>,
+      contents: <div className={formStyles.formData}>2nd Floor Gateway</div>,
     },
     {
       contents: (
@@ -101,61 +103,122 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       {err && <h2 className={styles.errorMessage}>{err}</h2>}
       {viewModel.sensor && (
         <div>
-          <h1>{viewModel.sensor.name}</h1>
+          <h1 className={styles.sectionTitle}>
+            Sensor: {viewModel.sensor.name}
+          </h1>
           <Tabs defaultActiveKey="1">
             <TabPane tab="Summary" key="1">
-              <h2>Current Readings</h2>
-              <p>Last Seen: {viewModel.sensor.lastActivity}</p>
-              <ul>
-                <li>Temperature: {viewModel.sensor.temperature}</li>
-                <li>Humidity: {viewModel.sensor.humidity}</li>
-                <li>Pressure: {viewModel.sensor.pressure}</li>
-                <li>Voltage: {viewModel.sensor.voltage}</li>
-              </ul>
-              <h3>Voltage</h3>
-              {viewModel.readings?.voltage.length ? (
-                <SensorDetailsChart
-                  label="Voltage"
-                  yAxisMin={1}
-                  yAxisMax={4}
-                  data={viewModel.readings.voltage}
-                />
-              ) : (
-                HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
-              )}
-              <h3>Temperature</h3>
-              {viewModel.readings?.temperature.length ? (
-                <SensorDetailsChart
-                  label="Temperature"
-                  yAxisMin={0}
-                  yAxisMax={30}
-                  data={viewModel.readings.temperature}
-                />
-              ) : (
-                HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
-              )}
-              <h3>Humidity</h3>
-              {viewModel.readings?.humidity.length ? (
-                <SensorDetailsChart
-                  label="Humidity"
-                  yAxisMin={25}
-                  yAxisMax={100}
-                  data={viewModel.readings.humidity}
-                />
-              ) : (
-                HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
-              )}
-              <h3>Pressure</h3>
-              {viewModel.readings?.pressure.length ? (
-                <SensorDetailsChart
-                  label="Pressure"
-                  yAxisMin={99000}
-                  yAxisMax={105000}
-                  data={viewModel.readings.pressure}
-                />
-              ) : (
-                HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
-              )}
+              <h2 className={detailsStyles.tabSectionTitle}>
+                Current Readings
+              </h2>
+              <p className={detailsStyles.timestamp}>
+                Last updated {viewModel.sensor.lastActivity}
+              </p>
+
+              <Row gutter={[16, 16]}>
+                <Col span={6}>
+                  <Card>
+                    Temperature
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.sensor.temperature}
+                    </span>
+                  </Card>
+                </Col>
+                <Col span={6}>
+                  <Card>
+                    Humidity
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.sensor.humidity}
+                    </span>
+                  </Card>
+                </Col>
+                <Col span={6}>
+                  <Card>
+                    Voltage
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.sensor.voltage}
+                    </span>
+                  </Card>
+                </Col>
+                <Col span={6}>
+                  <Card>
+                    <li>
+                      Pressure
+                      <br />
+                      <span className={detailsStyles.dataNumber}>
+                        {viewModel.sensor.pressure}
+                      </span>
+                    </li>
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card>
+                    <h3>Temperature</h3>
+                    {viewModel.readings?.temperature.length ? (
+                      <SensorDetailsChart
+                        label="Temperature"
+                        yAxisMin={0}
+                        yAxisMax={30}
+                        data={viewModel.readings.temperature}
+                        chartColor="#59d2ff"
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
+                    )}
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card>
+                    <h3>Humidity</h3>
+                    {viewModel.readings?.humidity.length ? (
+                      <SensorDetailsChart
+                        label="Humidity"
+                        yAxisMin={25}
+                        yAxisMax={100}
+                        data={viewModel.readings.humidity}
+                        chartColor="#ba68c8"
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
+                    )}
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card>
+                    <h3>Voltage</h3>
+                    {viewModel.readings?.voltage.length ? (
+                      <SensorDetailsChart
+                        label="Voltage"
+                        yAxisMin={1}
+                        yAxisMax={4}
+                        data={viewModel.readings.voltage}
+                        chartColor="#9ccc65"
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
+                    )}
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card>
+                    <h3>Pressure</h3>
+                    {viewModel.readings?.pressure.length ? (
+                      <SensorDetailsChart
+                        label="Pressure"
+                        yAxisMin={99000}
+                        yAxisMax={105000}
+                        data={viewModel.readings.pressure}
+                        chartColor="#ffd54f"
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
+                    )}
+                  </Card>
+                </Col>
+              </Row>
             </TabPane>
             <TabPane tab="Device Details" key="2">
               <Form
