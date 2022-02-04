@@ -11,6 +11,8 @@ cy.visit('http://localhost:4000');
 cy.get('[data-testid="logo"]').should('exist');
 cy.get('[data-testid="company-name"]').should('exist');
 cy.get('[data-testid="gateway-header"]').contains("Gateway");
+ //Check for the Gateway Name label
+ cy.get(".ant-card-head-title").should('exist');
 cy.get('[data-testid="sensor-header"]').contains("Sensors");
 cy.get('[data-testid="notecard-link"]').should('exist');
 cy.get('[data-testid="blues-link"]').should('exist');
@@ -31,7 +33,8 @@ it('can-visit-gateway-UID', function() {
     //Verify the Sensors header
     cy.get('[data-testid="gateway-sensor-header"]').contains("Sensors");
     //Click the first Sensor arrow
-    cy.get('[data-testid="sensor[0]-summary"]').click();
+    //cy.get('[data-testid="sensor[0]-summary"]').click();
+    cy.selectSensorCard("0");
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click();
 });
@@ -39,7 +42,8 @@ it('can-visit-gateway-UID', function() {
 it('can-visit-sensor-UID', function() {
     cy.visit('http://localhost:4000');
     //Click the first Sensor arrow
-    cy.get('[data-testid="sensor[0]-summary"]').click();
+    cy.selectSensorCard("0");
+    //cy.get('[data-testid="sensor[0]-summary"]').click();
     //Verify the Sensor Name header
     cy.get('[data-testid="sensor-name"]').should('exist');
     //Verify the Current Readings header
@@ -54,14 +58,18 @@ it('can-visit-sensor-UID', function() {
       cy.get('[data-testid="pressure"]').contains("Pressure");
       //Verify the Voltage header
     cy.get('[data-testid="voltage"]').contains("Voltage");
-    //Verify the Name field in the Details tab
     //Click the Details tab 
-    cy.get('[data-testid="device-details"]').click();
-    cy.get('[data-testid="form-input-sensor-name"]').contains("Name");
-    //Verify the Location field in the Details tab
-    cy.get('[data-testid="form-input-sensor-location"]').contains("Location");
+    cy.selectTabByText("Device Details");
+    //Check for the Name label
+    cy.get(".ant-form-item-required").contains("Name");
+    //Verify the Name field exists in the Details tab
+    cy.get('[data-testid="form-input-sensor-name"]').should('exist');
+     //Check for the lOcation label
+     cy.get(".ant-form-item-required").contains("Location");
+    //Verify the Location field exists in the Details tab
+    cy.get('[data-testid="form-input-sensor-location"]').should('exist');
       //Verify the Location field in the Details tab
-      cy.get('[data-testid="sensor-gateway"]').contains("Gateway");
+      cy.get('[data-testid="sensor-gateway-name"]').contains("Gateway");
       //Click the Submit button 
     cy.get('[data-testid="form-submit"]').should('exist');
     //Click the sparrow Logo to return to the homepage
