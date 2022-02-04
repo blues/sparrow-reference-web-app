@@ -19,7 +19,7 @@ An example web application to configure and view sensor data from Blues Wireless
 
 To get started with running the Sparrow starter you need to
 
-* [create a notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one
+* [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
 * [create a notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices
 * Set up a Sparrow Gateway and one or more Sensors (TODO: link)
 * Configure the app notehub settings via environment variables 
