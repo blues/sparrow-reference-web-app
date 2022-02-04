@@ -1,27 +1,32 @@
-import AxiosHttpNotehubAccessor from "./notehub/AxiosHttpNotehubAccessor";
+import AxiosHttpNotehubAccessor, { Context } from "./notehub/AxiosHttpNotehubAccessor";
 import AppService, { AppServiceInterface } from "./AppService";
 import NotehubDataProvider from "./notehub/NotehubDataProvider";
 import Config from "../../config";
+import { CLSStore } from "./contextualize";
 
 // this class provides whatever service is needed to the React view component that needs it
 class ServiceLocator {
   appService: AppServiceInterface;
+  notehubAccessor: AxiosHttpNotehubAccessor;
 
   constructor() {
-    const notehubAccessor = new AxiosHttpNotehubAccessor(
+    this.notehubAccessor = new AxiosHttpNotehubAccessor(
       Config.hubBaseURL,
-      Config.hubAppUID,
-      Config.hubDeviceUID,
-      Config.hubProductUID,
-      Config.hubAuthToken
+      new CLSStore('AxiosHttpNotehubAccessor')
     );
-    const notehubDataProvider = new NotehubDataProvider(notehubAccessor);
+    const notehubDataProvider = new NotehubDataProvider(this.notehubAccessor);
     this.appService = new AppService(notehubDataProvider);
   }
 
   getAppService(): AppServiceInterface {
     return this.appService;
   }
+
+  async sessionContext(context: any) {
+    // for now, we're just using the global config. But later we'll pull values from the session.
+    await this.notehubAccessor.setContext(Config);
+  }
+
 }
 
 let Services: ServiceLocator | null = null;

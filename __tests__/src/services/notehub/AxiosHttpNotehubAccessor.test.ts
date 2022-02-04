@@ -1,7 +1,8 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
+import { SimpleStore } from "../../../../src/services/contextualize";
 import { ERROR_CODES } from "../../../../src/services/Errors";
-import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
+import AxiosHttpNotehubAccessor, { Context } from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
 import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
 import notehubData from "../__serviceMocks__/notehubData.json";
 
@@ -12,13 +13,15 @@ const mockDeviceUID = "dev:1234";
 const mockProductUID = "test.blues.io";
 const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/devices/${mockDeviceUID}`;
 const API_CONFIG_URL = `${mockBaseURL}/req?product=${mockProductUID}&device=${mockDeviceUID}`;
-const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
-  mockBaseURL,
-  mockAppUID,
-  mockDeviceUID,
-  mockProductUID,
-  ""
-);
+
+const context: Context = {
+  hubAppUID: mockAppUID,
+  hubDeviceUID: mockDeviceUID,
+  hubProductUID: mockProductUID,
+  hubAuthToken: ""
+};
+
+const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(mockBaseURL, new SimpleStore(context));
 
 describe("Device handling", () => {
   beforeEach(() => {

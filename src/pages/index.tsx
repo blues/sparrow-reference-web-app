@@ -6,6 +6,7 @@ import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import styles from "../styles/Home.module.scss";
 import { getErrorMessage } from "../constants/ui";
+import { contextualize } from "../services/contextualize";
 
 type HomeData = {
   gateways: Gateway[];
@@ -47,7 +48,8 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
 
 export default Home;
 
-export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
+export const getServerSideProps: GetServerSideProps<HomeData> = contextualize(async () => {
+  
   let gateways: Gateway[] = [];
   let latestSensorDataList: Sensor[] = [];
   try {
@@ -70,4 +72,4 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
     }
     return { props: { gateways, latestSensorDataList } };
   }
-};
+});

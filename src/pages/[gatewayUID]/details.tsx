@@ -14,6 +14,8 @@ import {
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
 import detailsStyles from "../../styles/Details.module.scss";
+import { contextualize } from "../../services/contextualize";
+
 
 type GatewayDetailsData = {
   gateway: Gateway | null;
@@ -103,9 +105,8 @@ interface GatewayDetailsQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
 }
 
-export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
-  async ({ query }) => {
-    const { gatewayUID } = query as GatewayDetailsQueryInterface;
+export const getServerSideProps: GetServerSideProps<GatewayDetailsData> = contextualize(async (context) => {
+    const { gatewayUID } = context.query as GatewayDetailsQueryInterface;
     let gateway: Gateway | null = null;
     let sensors: Sensor[] = [];
     try {
@@ -122,4 +123,4 @@ export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
       }
       return { props: { gateway, sensors } };
     }
-  };
+  });

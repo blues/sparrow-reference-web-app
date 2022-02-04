@@ -6,48 +6,61 @@ import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
 import NotehubErr from "./models/NotehubErr";
+import { Store } from "../contextualize";
+
+
+export interface Context {
+  hubAppUID: string;
+  hubDeviceUID: string;
+  hubProductUID: string;
+  hubAuthToken: string;
+}
+
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
+
+  store: Store<Context>;
   hubBaseURL: string;
-
-  hubAppUID: string;
-
-  hubDeviceUID: string;
-
-  hubProductUID: string;
 
   commonHeaders;
 
-  constructor(
-    hubBaseURL: string,
-    hubAppUID: string,
-    hubDeviceUID: string,
-    hubProductUID: string,
-    hubAuthToken: string
-  ) {
+  constructor(hubBaseURL: string, store:Store<Context>) {
     this.hubBaseURL = hubBaseURL;
-    this.hubAppUID = hubAppUID;
-    this.hubDeviceUID = hubDeviceUID;
-    this.hubProductUID = hubProductUID;
     this.commonHeaders = {
-      [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
-      [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
+      [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON
     };
+    this.store = store;
+  }
+
+  /**
+   * Set parameters from the origin request that provide authentication and other details needed to access notehub.
+   * @param context The context for the calling
+   */
+  async setContext(context: Context) {
+    this.store.set(context);
+  }
+
+  context() : Context {
+    return this.store.get();
   }
 
   // Eventually we’ll want to find all valid gateways in a Notehub project.
   // For now, just take the hardcoded gateway UID from the starter’s
   // environment variables and use that.
   async getDevices() {
-    const device = await this.getDevice(this.hubDeviceUID);
+    const device = await this.getDevice(this.context().hubDeviceUID);
     return [device];
   }
 
   async getDevice(hubDeviceUID: string) {
-    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/devices/${hubDeviceUID}`;
+    const context: Context = this.context();
+
+    const endpoint = `${this.hubBaseURL}/v1/projects/${context.hubAppUID}/devices/${context.hubDeviceUID}`;
+    const headers = Object.assign({[HTTP_HEADER.SESSION_TOKEN]: context.hubAuthToken}, this.commonHeaders);
+    
     try {
-      const resp = await axios.get(endpoint, { headers: this.commonHeaders });
+      const resp = await axios.get(endpoint, { headers });
       return resp.data as NotehubDevice;
     } catch (e) {
       throw this.errorWithCode(e);
@@ -77,9 +90,11 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   }
 
   async getLatestEvents(hubDeviceUID: string) {
-    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/devices/${hubDeviceUID}/latest`;
+    const context = this.context();
+    const endpoint = `${this.hubBaseURL}/v1/projects/${context.hubAppUID}/devices/${hubDeviceUID}/latest`;
+    const headers = Object.assign({[HTTP_HEADER.SESSION_TOKEN]: context.hubAuthToken}, this.commonHeaders);
     try {
-      const resp = await axios.get(endpoint, { headers: this.commonHeaders });
+      const resp = await axios.get(endpoint, { headers });
       return resp.data as NotehubLatestEvents;
     } catch (e) {
       throw this.errorWithCode(e);
@@ -87,17 +102,17 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   }
 
   async getConfig(hubDeviceUID: string, macAddress: string) {
-    const endpoint = `${this.hubBaseURL}/req?product=${this.hubProductUID}&device=${hubDeviceUID}`;
+    const context = this.context();
+    const endpoint = `${this.hubBaseURL}/req?product=${context.hubProductUID}&device=${hubDeviceUID}`;
     const body = {
       req: "note.get",
       file: "config.db",
       note: macAddress,
     };
     let resp;
+    const headers = Object.assign({[HTTP_HEADER.SESSION_TOKEN]: context.hubAuthToken}, this.commonHeaders);
     try {
-      resp = await axios.post(endpoint, body, {
-        headers: this.commonHeaders,
-      });
+      resp = await axios.post(endpoint, body, { headers });
     } catch (e) {
       throw getError(ERROR_CODES.INTERNAL_ERROR, { cause: e as Error });
     }

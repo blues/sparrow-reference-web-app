@@ -25,6 +25,8 @@ import {
 import styles from "../../../../styles/Home.module.scss";
 import formStyles from "../../../../styles/Form.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
+import { contextualize } from "../../../../services/contextualize";
+
 
 type SensorDetailsData = {
   latestSensorData: Sensor;
@@ -246,12 +248,11 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
 
 export default SensorDetails;
 
-export const getServerSideProps: GetServerSideProps<
-  SensorDetailsData
-> = async ({ query }) => {
-  // extended interface needed to eliminate TS error of possible undefined string values
-  // the query string values will never be undefined in this situation
-  const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
+export const getServerSideProps: GetServerSideProps<SensorDetailsData> = contextualize(async (context) => {
+    const { query } = context;
+    // extended interface needed to eliminate TS error of possible undefined string values
+    // the query string values will never be undefined in this situation
+    const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
 
   const { latestSensorData, historicalSensorData } = await getSensorDetailsData(
     gatewayUID,
@@ -261,4 +262,4 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: { latestSensorData, historicalSensorData },
   };
-};
+});
