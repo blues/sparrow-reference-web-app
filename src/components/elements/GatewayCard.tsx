@@ -1,8 +1,9 @@
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { Card } from "antd";
 import Gateway from "../models/Gateway";
 import {
   getFormattedLastSeen,
+  getFormattedLocation,
   getFormattedVoltageData,
 } from "../helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
@@ -18,25 +19,50 @@ const GatewayCardComponent = (props: GatewayProps) => {
   const { gatewayDetails, index } = props;
   const formattedGatewayVoltage = getFormattedVoltageData(gatewayDetails);
 
+  const router = useRouter();
+  const gatewayUrl = `/${gatewayDetails.uid}/details`;
+  const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    router.push(gatewayUrl);
+  };
+
+  let formattedLocation = "";
+  if (gatewayDetails.location) {
+    formattedLocation = getFormattedLocation(gatewayDetails.location);
+  } else {
+    formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
+  }
+
   return (
     <Card
+      headStyle={{ padding: "0" }}
+      bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
-      title={gatewayDetails.serialNumber}
-      extra={
-        <Link href={`/${gatewayDetails.uid}/details`}>
-          <a data-testid={`gateway[${index}]-details`}>&#5171;</a>
-        </Link>
+      hoverable
+      onClick={handleCardClick}
+      title={
+        <>
+          <div data-testid={`gateway[${index}]-details`}>
+            {gatewayDetails.serialNumber}
+          </div>
+          <span className={styles.timestamp}>
+            Last updated {getFormattedLastSeen(gatewayDetails.lastActivity)}
+          </span>
+        </>
       }
     >
       <ul className={styles.cardContents}>
         <li>
-          Location:&nbsp;
-          {gatewayDetails.location || GATEWAY_MESSAGE.NO_LOCATION}
+          Location
+          <br />
+          <span className="dataNumber">{formattedLocation}</span>
         </li>
         <li>
-          Last seen:&nbsp;{getFormattedLastSeen(gatewayDetails.lastActivity)}
+          Voltage
+          <br />
+          <span className="dataNumber">{formattedGatewayVoltage}</span>
         </li>
-        <li>Voltage:&nbsp;{formattedGatewayVoltage}</li>
       </ul>
     </Card>
   );

@@ -9,9 +9,19 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    margin-bottom: 30px;
   }
+}
 
-  h2 {
-    margin-top: 40px;
-  }
+.sectionTitle,
+.sectionSubTitle {
+  font-weight: 600;
+}
+
+.sectionTitle {
+  margin-bottom: 0;
+}
+
+.sectionSubTitle {
+  margin-top: 30px;
 }

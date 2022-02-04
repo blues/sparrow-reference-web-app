@@ -6,6 +6,7 @@ type SensorDetailsChartProps = {
   label: string;
   yAxisMin: number;
   yAxisMax: number;
+  chartColor: string;
   data: {
     when: string;
     value: number;
@@ -17,6 +18,7 @@ const SensorDetailsChart = ({
   label,
   yAxisMin,
   yAxisMax,
+  chartColor,
 }: SensorDetailsChartProps) => {
   const labels = data.map((obj) => obj.when);
   const values = data.map((obj) => obj.value);
@@ -27,8 +29,11 @@ const SensorDetailsChart = ({
       {
         label,
         data: values,
-        borderColor: "#416681",
-        pointRadius: 5,
+        backgroundColor: `${chartColor}66`,
+        borderColor: `${chartColor}`,
+        pointBackgroundColor: `${chartColor}`,
+        pointRadius: 2,
+        fill: true,
       },
     ],
   };
@@ -55,14 +60,14 @@ const SensorDetailsChart = ({
         min: yAxisMin,
         max: yAxisMax,
         ticks: {
-          stepSize: 1,
+          stepSize: 0,
         },
       },
     },
   };
 
   return (
-    <div style={{ width: "870px" }}>
+    <div style={{ width: "395px" }}>
       <LineChart data={chartData} options={options} />
     </div>
   );

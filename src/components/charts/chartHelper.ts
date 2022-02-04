@@ -2,6 +2,7 @@ import {
   Chart as ChartJS,
   ChartOptions,
   CategoryScale,
+  Filler,
   LinearScale,
   PointElement,
   LineElement,
@@ -14,13 +15,14 @@ import "chartjs-adapter-date-fns";
 
 ChartJS.register(
   CategoryScale,
+  Filler,
   LinearScale,
   PointElement,
   LineElement,
   TimeScale,
   Title,
   Tooltip,
-  Legend,
+  Legend
 );
 
 // See https://date-fns.org/v2.27.0/docs/format
@@ -35,13 +37,13 @@ export const GLOBAL_CHART_OPTIONS: ChartOptions = {
   plugins: {
     legend: {
       display: false,
-    }
-  }
+    },
+  },
 };
 
 export function getChartOptions(overrides?: ChartOptions): ChartOptions {
   return {
     ...GLOBAL_CHART_OPTIONS,
     ...overrides,
-  }
+  };
 }
