@@ -67,7 +67,7 @@ HUB_PRODUCT_UID=com.example.name:sparrow
 
 #### HUB_APP_UID
 
-This is the unique identifier for your Project in notehub, and has the prefix `app:`. This can be retrieved from the project settings page at the bottom of the page under the *Project UID* heading.
+This is the unique identifier for your project in Notehub, and has the prefix `app:`. You can find this by going to your Notehub project, clicking the **Settings** menu, and then scrolling down to the **Project UID** heading.
 
 
 #### HUB_DEVICE_UID
