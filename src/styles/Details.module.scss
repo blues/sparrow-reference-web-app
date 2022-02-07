@@ -1,0 +1,18 @@
+@import "_variables.scss";
+
+.timestamp {
+  color: $bw-color--grey4;
+  font-size: 13px;
+  font-weight: 400;
+  margin-bottom: 30px;
+}
+
+.dataNumber {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.tabSectionTitle {
+  font-weight: 600;
+  margin-bottom: 0;
+}

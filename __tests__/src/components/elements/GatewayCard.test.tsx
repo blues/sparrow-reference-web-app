@@ -2,12 +2,13 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import GatewayCard from "../../../../src/components/elements/GatewayCard";
+import { getFormattedLocation } from "../../../../src/components/helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 
 const mockGatewayData = {
   uid: "My Mocked Gatway",
   serialNumber: "67890",
-  location: "Dining Room",
+  location: "Gainesville FL",
   voltage: 3.7,
   lastActivity: "2022-01-05T07:36:55Z",
 };
@@ -27,7 +28,9 @@ describe("Gateway card component", () => {
 
     expect(screen.getByText(mockGatewayData.serialNumber)).toBeInTheDocument();
     expect(
-      screen.getByText(mockGatewayData.location, { exact: false })
+      screen.getByText(getFormattedLocation(mockGatewayData.location), {
+        exact: false,
+      })
     ).toBeInTheDocument();
     expect(
       screen.getByText(mockGatewayData.voltage, { exact: false })
