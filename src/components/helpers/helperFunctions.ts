@@ -34,9 +34,16 @@ export const getFormattedChartData = (
   return [];
 };
 
+export const getFormattedLocation = (location: string) => {
+  const locationCity = location.trim().split(" ").slice(0, -1).join(" ");
+  const locationState = location.trim().split(" ").slice(-1)[0];
+  const formattedLocation = `${locationCity}, ${locationState}`;
+  return formattedLocation;
+};
+
 export const getFormattedTemperatureData = (sensorData: Sensor) => {
   if (sensorData.temperature) {
-    const formattedData = `${sensorData.temperature}°C`;
+    const formattedData = `${sensorData.temperature.toFixed(2)}°C`;
     return formattedData;
   }
   return null;
@@ -44,7 +51,7 @@ export const getFormattedTemperatureData = (sensorData: Sensor) => {
 
 export const getFormattedHumidityData = (sensorData: Sensor) => {
   if (sensorData.humidity) {
-    const formattedData = `${sensorData.humidity}%`;
+    const formattedData = `${sensorData.humidity.toFixed(2)}%`;
     return formattedData;
   }
   return null;
@@ -52,7 +59,7 @@ export const getFormattedHumidityData = (sensorData: Sensor) => {
 
 export const getFormattedPressureData = (sensorData: Sensor) => {
   if (sensorData.pressure) {
-    const formattedData = `${sensorData.pressure / 1000} kPa`;
+    const formattedData = `${(sensorData.pressure / 1000).toFixed(2)} kPa`;
     return formattedData;
   }
   return null;
@@ -60,7 +67,7 @@ export const getFormattedPressureData = (sensorData: Sensor) => {
 
 export const getFormattedVoltageData = (data: Sensor | Gateway) => {
   if (data.voltage) {
-    const formattedData = `${data.voltage}V`;
+    const formattedData = `${data.voltage.toFixed(2)}V`;
     return formattedData;
   }
   return null;

@@ -1,13 +1,19 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
+import { Row, Col, Card } from "antd";
 import SensorCard from "../../components/elements/SensorCard";
 import { services } from "../../services/ServiceLocator";
-import { getFormattedLastSeen } from "../../components/helpers/helperFunctions";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
+import {
+  getFormattedLastSeen,
+  getFormattedLocation,
+  getFormattedVoltageData,
+} from "../../components/helpers/helperFunctions";
+import { GATEWAY_MESSAGE, getErrorMessage } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
-import { getErrorMessage } from "../../constants/ui";
+import detailsStyles from "../../styles/Details.module.scss";
 
 type GatewayDetailsData = {
   gateway: Gateway | null;
@@ -19,39 +25,77 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
   gateway,
   sensors,
   err,
-}) => (
-  <>
-    {err && <h2 className={styles.errorMessage}>{err}</h2>}
+}) => {
+  let formattedLocation = "";
+  let formattedGatewayVoltage;
 
-    {gateway && (
-      <div>
-        <h1>Gateway Details</h1>
-        <div className={styles.container}>
-          <ul>
-            <li>Device Name: {gateway.serialNumber}</li>
-            {gateway.location && <li>Location: {gateway.location}</li>}
-            <li>Last Seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
-          </ul>
+  if (gateway && gateway.location) {
+    formattedLocation = getFormattedLocation(gateway.location);
+  } else {
+    formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
+  }
 
-          {sensors?.length > 0 && (
-            <>
-              <h2>Sensors</h2>
-              <div className={styles.groupedCards}>
-                {sensors.map((sensor, index) => (
-                  <SensorCard
-                    key={sensor.macAddress}
-                    index={index}
-                    sensorDetails={sensor}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+  if (gateway) {
+    formattedGatewayVoltage = getFormattedVoltageData(gateway);
+  } else {
+    formattedGatewayVoltage = GATEWAY_MESSAGE.NO_VOLTAGE;
+  }
+
+  return (
+    <>
+      {err && <h2 className={styles.errorMessage}>{err}</h2>}
+
+      {gateway && (
+        <div>
+          <h1 className={styles.sectionTitle}>
+            Gateway: {gateway.serialNumber}
+          </h1>
+          <div className={styles.container}>
+            <div className={detailsStyles.timestamp}>
+              Last seen {getFormattedLastSeen(gateway.lastActivity)}
+            </div>
+
+            <Row gutter={[16, 16]}>
+              <Col span={6}>
+                <Card>
+                  Location
+                  <br />
+                  <span className={detailsStyles.dataNumber}>
+                    {formattedLocation}
+                  </span>
+                </Card>
+              </Col>
+              <Col span={6}>
+                <Card>
+                  Voltage
+                  <br />
+                  <span className={detailsStyles.dataNumber}>
+                    {formattedGatewayVoltage}
+                  </span>
+                </Card>
+              </Col>
+            </Row>
+
+            {sensors?.length > 0 && (
+              <>
+                <h3 className={styles.sectionSubTitle}>Sensors</h3>
+                <div className={styles.groupedCards}>
+                  {sensors.map((sensor, index) => (
+                    <SensorCard
+                      key={sensor.macAddress}
+                      index={index}
+                      sensorDetails={sensor}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    )}
-  </>
-);
+      )}
+    </>
+  );
+};
 
 export default GatewayDetails;
 
