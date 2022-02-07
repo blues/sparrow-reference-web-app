@@ -10,10 +10,14 @@ const mockBaseURL = "http://blues.io";
 const mockAppUID = "app:1234";
 const mockDeviceUID = "dev:1234";
 const mockProductUID = "test.blues.io";
-const mockHubHistoricalDataStartDate = 3;
+const mockHubHistoricalDataStartDate = 4;
+const mockedStartDate = new Date();
+const mockedEpochTimeValue = Math.round(mockedStartDate.getTime() / 1000);
+
 const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/devices/${mockDeviceUID}`;
 const API_CONFIG_URL = `${mockBaseURL}/req?product=${mockProductUID}&device=${mockDeviceUID}`;
 const API_LATEST_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/devices/${mockDeviceUID}/latest`;
+const API_INITIAL_ALL_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/events?startDate=${mockedEpochTimeValue}`;
 const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
   mockBaseURL,
   mockAppUID,
@@ -84,6 +88,7 @@ describe("Event handling", () => {
 
   const mockNotehubLatestEventData =
     notehubData.successfulNotehubLatestEventsResponse;
+  const mockNotehubEventData = notehubData.successfulNotehubEventResponse;
 
   it("should return a list of latest events when getLatestEvents is called with a valid hub device UID", async () => {
     mock.onGet(API_LATEST_EVENTS_URL).reply(200, mockNotehubLatestEventData);
@@ -102,8 +107,11 @@ describe("Event handling", () => {
     ).rejects.toThrow(ERROR_CODES.DEVICE_NOT_FOUND);
   });
 
-  it("should handle get events testing next", () => {
-    // todo
+  it("should return a list of events when getEvents is called with a valid hub app UID and date range", async () => {
+    mock.onGet(API_INITIAL_ALL_EVENTS_URL).reply(200, mockNotehubEventData);
+    const res = await axiosHttpNotehubAccessorMock.getEvents(mockedStartDate);
+
+    expect(res).toEqual(mockNotehubEventData.events);
   });
 });
 

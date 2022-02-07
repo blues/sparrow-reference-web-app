@@ -101,6 +101,70 @@
       }
     ]
   },
+  "successfulNotehubEventResponse": {
+    "events": [
+      {
+        "uid": "7ae718af-dad1-4834-9e16-6bca7b3ebdda",
+        "device_uid": "dev:1234",
+        "file": "20323746323650050042000d#motion.qo",
+        "captured": "2022-02-05T16:05:55Z",
+        "received": "2022-02-05T16:06:05Z",
+        "body": { "count": 1, "total": 1164 },
+        "tower_location": null,
+        "gps_location": null
+      },
+      {
+        "uid": "52bbb7ff-c1ca-438f-8487-93d542552db6",
+        "device_uid": "dev:1234",
+        "file": "20323746323650050042000d#motion.qo",
+        "captured": "2022-02-05T16:06:10Z",
+        "received": "2022-02-05T16:06:26Z",
+        "body": { "count": 2, "total": 1166 },
+        "tower_location": null,
+        "gps_location": null
+      },
+      {
+        "uid": "74eab638-3256-4eea-8617-0d117a14133b",
+        "device_uid": "dev:1234",
+        "file": "20323746323650050042000d#motion.qo",
+        "captured": "2022-02-05T16:07:01Z",
+        "received": "2022-02-05T16:07:05Z",
+        "body": { "count": 1, "total": 1168 },
+        "tower_location": null,
+        "gps_location": null
+      },
+      {
+        "uid": "2cace884-5dc2-4653-b286-273ed41c85b5",
+        "device_uid": "dev:1234",
+        "file": "20323746323650050042000d#air.qo",
+        "captured": "2022-02-05T16:08:37Z",
+        "received": "2022-02-05T16:09:45Z",
+        "body": {
+          "humidity": 15.9921875,
+          "pressure": 98247.56,
+          "temperature": 21.703125,
+          "voltage": 3.222
+        },
+        "tower_location": null,
+        "gps_location": null
+      },
+      {
+        "uid": "ab525a4a-072a-4ce5-a126-09e5a037101d",
+        "device_uid": "dev:1234",
+        "file": "20323746323650050042000d#air.qo",
+        "captured": "2022-02-04T17:02:01Z",
+        "received": "2022-02-04T17:02:10Z",
+        "body": {
+          "humidity": 18.21875,
+          "pressure": 98283.82,
+          "temperature": 22.578125,
+          "voltage": 3.252
+        },
+        "tower_location": null,
+        "gps_location": null
+      }
+    ]
+  },
   "successfulNotehubConfigResponse": {
     "note": "20323746323650050028000a",
     "body": { "loc": "TEST_LOCATION", "name": "TEST_NAME" },
