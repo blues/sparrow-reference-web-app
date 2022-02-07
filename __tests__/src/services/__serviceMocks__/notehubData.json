@@ -49,19 +49,19 @@
         }
       },
       {
-        "file": "20323746323650050028000a#air.qo",
+        "file": "123456a#air.qo",
         "captured": "2021-11-30T20:30:19Z",
         "received": "2021-11-30T20:30:45Z",
         "event_uid": "1961a1cd-6c10-4f70-a242-291838f4f125",
         "body": {
-          "humidity": 27.234375,
+          "humidity": 27.2,
           "pressure": 101152,
-          "temperature": 22.6875,
-          "voltage": 2.733
+          "temperature": 22.6,
+          "voltage": 2.7
         }
       },
       {
-        "file": "20323746323650050028000a#motion.qo",
+        "file": "123456a#motion.qo",
         "captured": "2021-11-30T14:31:24Z",
         "received": "2021-11-30T14:31:42Z",
         "event_uid": "55cfc7d3-2987-43b9-9fb7-33173edb5949",
@@ -71,18 +71,18 @@
         }
       },
       {
-        "file": "20323746323650050029000b#air.qo",
+        "file": "456789b#air.qo",
         "captured": "2021-10-01T18:52:41Z",
         "received": "2021-10-01T19:07:13Z",
         "event_uid": "8fd30b3b-766a-4a90-9dbc-9e0a21ae73bf",
         "body": {
-          "humidity": 38.15625,
+          "humidity": 38.1,
           "pressure": 101950,
-          "temperature": 24.265625
+          "temperature": 24.3
         }
       },
       {
-        "file": "20323746323650050029000b#motion.qo",
+        "file": "456789b#motion.qo",
         "captured": "2021-10-01T17:57:26Z",
         "received": "2021-10-01T18:07:12Z",
         "event_uid": "f3bbd770-40ee-4526-aeda-a560f069528a",
@@ -126,7 +126,7 @@
       {
         "uid": "74eab638-3256-4eea-8617-0d117a14133b",
         "device_uid": "dev:1234",
-        "file": "20323746323650050042000d#motion.qo",
+        "file": "456789b#motion.qo",
         "captured": "2022-02-05T16:07:01Z",
         "received": "2022-02-05T16:07:05Z",
         "body": { "count": 1, "total": 1168 },
@@ -136,7 +136,7 @@
       {
         "uid": "2cace884-5dc2-4653-b286-273ed41c85b5",
         "device_uid": "dev:1234",
-        "file": "20323746323650050042000d#air.qo",
+        "file": "456789b#air.qo",
         "captured": "2022-02-05T16:08:37Z",
         "received": "2022-02-05T16:09:45Z",
         "body": {
@@ -169,6 +169,11 @@
     "note": "20323746323650050028000a",
     "body": { "loc": "TEST_LOCATION", "name": "TEST_NAME" },
     "time": 1643309030
+  },
+  "successfulNotehubConfigResponse2": {
+    "note": "123456a",
+    "body": { "loc": "Kitchen", "name": "My Mocked Sensor 1" },
+    "time": 164380907
   },
   "notehubConfigSensorNotFound": {
     "err": "'error getting note: {note-noexist} note not found: fjdsidiojfdsojf'"

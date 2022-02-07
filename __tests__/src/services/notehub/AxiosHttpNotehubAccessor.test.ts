@@ -113,6 +113,14 @@ describe("Event handling", () => {
 
     expect(res).toEqual(mockNotehubEventData.events);
   });
+
+  it("should throw a device-not-found error when an invalid hub app UID is used", async () => {
+    mock.onGet(API_INITIAL_ALL_EVENTS_URL).reply(404, mockNotehubEventData);
+
+    await expect(axiosHttpNotehubAccessorMock.getEvents()).rejects.toThrow(
+      ERROR_CODES.DEVICE_NOT_FOUND
+    );
+  });
 });
 
 describe("Config handling", () => {
