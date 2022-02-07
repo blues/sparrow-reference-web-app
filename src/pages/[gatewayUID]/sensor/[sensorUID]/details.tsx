@@ -238,8 +238,6 @@ export default SensorDetails;
 
 export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
   async ({ query }) => {
-    // extended interface needed to eliminate TS error of possible undefined string values
-    // the query string values will never be undefined in this situation
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
     const appService = services().getAppService();
     let viewModel: SensorDetailViewModel = {};
