@@ -2,6 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import Sensor from "../models/Sensor";
 import Gateway from "../models/Gateway";
 import SensorReading from "../models/SensorReading";
+import SensorReadingSchema from "../models/SensorSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
@@ -10,17 +11,12 @@ export const getFormattedLastSeen = (date: string) =>
   });
 
 export const getFormattedChartData = (
-  sensorReadings: SensorReading[],
-  chartKey: string
+  sensorReadings: SensorReading<unknown>[],
+  sensorSchema: SensorReadingSchema<unknown>
 ) => {
   if (sensorReadings.length) {
     const formattedData = sensorReadings
-      .filter((event) => {
-        if (event.key === chartKey) {
-          return event;
-        }
-        return false;
-      })
+      .filter((reading) => reading.schema === sensorSchema)
       .map((filteredEvents) => {
         const chartDataObj = {
           when: filteredEvents.captured,

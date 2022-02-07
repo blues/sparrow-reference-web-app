@@ -4,15 +4,16 @@ import { ParsedUrlQuery } from "querystring";
 import { Row, Col, Card } from "antd";
 import SensorCard from "../../components/elements/SensorCard";
 import { services } from "../../services/ServiceLocator";
-import Gateway from "../../components/models/Gateway";
-import Sensor from "../../components/models/Sensor";
 import {
   getFormattedLastSeen,
   getFormattedLocation,
   getFormattedVoltageData,
-} from "../../components/helpers/helperFunctions";
+} from "../../components/presentation/uiHelpers";
+import Gateway from "../../components/models/Gateway";
+import Sensor from "../../components/models/Sensor";
 import { GATEWAY_MESSAGE, getErrorMessage } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
+import { ERROR_CODES } from "../../services/Errors";
 import detailsStyles from "../../styles/Details.module.scss";
 
 type GatewayDetailsData = {
@@ -122,6 +123,12 @@ export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
           props: { gateway, sensors, err: getErrorMessage(err.message) },
         };
       }
-      return { props: { gateway, sensors } };
+      return {
+        props: {
+          gateway,
+          sensors,
+          err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
+        },
+      };
     }
   };

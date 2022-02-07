@@ -18,7 +18,7 @@ interface DataProvider {
     options?: {
       startDate?: Date;
     }
-  ) => Promise<SensorReading[]>;
+  ) => Promise<SensorReading<unknown>[]>;
 }
 
 // eslint-disable-next-line import/prefer-default-export

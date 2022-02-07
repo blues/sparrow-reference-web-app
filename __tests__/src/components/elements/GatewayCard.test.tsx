@@ -2,7 +2,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import GatewayCard from "../../../../src/components/elements/GatewayCard";
-import { getFormattedLocation } from "../../../../src/components/helpers/helperFunctions";
+import { getFormattedLocation } from "../../../../src/components/presentation/uiHelpers";
 import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 
 const mockGatewayData = {
