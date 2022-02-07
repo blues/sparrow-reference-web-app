@@ -10,14 +10,17 @@ const mockBaseURL = "http://blues.io";
 const mockAppUID = "app:1234";
 const mockDeviceUID = "dev:1234";
 const mockProductUID = "test.blues.io";
+const mockHubHistoricalDataStartDate = 3;
 const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/devices/${mockDeviceUID}`;
 const API_CONFIG_URL = `${mockBaseURL}/req?product=${mockProductUID}&device=${mockDeviceUID}`;
+const API_LATEST_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/devices/${mockDeviceUID}/latest`;
 const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
   mockBaseURL,
   mockAppUID,
   mockDeviceUID,
   mockProductUID,
-  ""
+  "",
+  mockHubHistoricalDataStartDate
 );
 
 describe("Device handling", () => {
@@ -71,6 +74,36 @@ describe("Device handling", () => {
 
     const res = await axiosHttpNotehubAccessorMock.getDevices();
     expect(res).toEqual([mockNotehubDeviceData]);
+  });
+});
+
+describe("Event handling", () => {
+  beforeEach(() => {
+    mock = new MockAdapter(axios);
+  });
+
+  const mockNotehubLatestEventData =
+    notehubData.successfulNotehubLatestEventsResponse;
+
+  it("should return a list of latest events when getLatestEvents is called with a valid hub device UID", async () => {
+    mock.onGet(API_LATEST_EVENTS_URL).reply(200, mockNotehubLatestEventData);
+
+    const res = await axiosHttpNotehubAccessorMock.getLatestEvents(
+      mockDeviceUID
+    );
+    expect(res).toEqual(mockNotehubLatestEventData);
+  });
+
+  it("should throw a device-not-found error when an invalid device UID is passed in", async () => {
+    mock.onGet(API_LATEST_EVENTS_URL).reply(404, mockNotehubLatestEventData);
+
+    await expect(
+      axiosHttpNotehubAccessorMock.getLatestEvents(mockDeviceUID)
+    ).rejects.toThrow(ERROR_CODES.DEVICE_NOT_FOUND);
+  });
+
+  it("should handle get events testing next", () => {
+    // todo
   });
 });
 
