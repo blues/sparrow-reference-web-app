@@ -12,9 +12,9 @@ import {
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import { GATEWAY_MESSAGE, getErrorMessage } from "../../constants/ui";
-import styles from "../../styles/Home.module.scss";
 import { ERROR_CODES } from "../../services/Errors";
 import detailsStyles from "../../styles/Details.module.scss";
+import styles from "../../styles/Home.module.scss";
 
 type GatewayDetailsData = {
   gateway: Gateway | null;

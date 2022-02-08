@@ -9,11 +9,11 @@ import {
   getFormattedVoltageData,
 } from "./uiHelpers";
 import Sensor from "../models/Sensor";
-import SensorReading from "../models/SensorReading";
-import TemperatureSensorSchema from "../models/TemperatureSensorSchema";
-import HumiditySensorSchema from "../models/HumiditySensorSchema";
-import PressureSensorSchema from "../models/PressureSensorSchema";
-import VoltageSensorSchema from "../models/VoltageSensorSchema";
+import SensorReading from "../models/readings/SensorReading";
+import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
+import PressureSensorSchema from "../models/readings/PressureSensorSchema";
+import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export function getSensorDetailsPresentation(

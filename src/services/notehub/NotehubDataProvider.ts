@@ -5,13 +5,13 @@ import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
-import SensorReading from "../../components/models/SensorReading";
+import SensorReading from "../../components/models/readings/SensorReading";
 import { ERROR_CODES, getError } from "../Errors";
 import NotehubLocation from "./models/NotehubLocation";
-import TemperatureSensorReading from "../../components/models/TemperatureSensorReading";
-import HumiditySensorReading from "../../components/models/HumiditySensorReading";
-import PressureSensorReading from "../../components/models/PressureSensorReading";
-import VoltageSensorReading from "../../components/models/VoltageSensorReading";
+import TemperatureSensorReading from "../../components/models/readings/TemperatureSensorReading";
+import HumiditySensorReading from "../../components/models/readings/HumiditySensorReading";
+import PressureSensorReading from "../../components/models/readings/PressureSensorReading";
+import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
