@@ -9,9 +9,10 @@ export function getError(message: string, options?: { cause: Error }) {
   return new ErrorWithCause(message, options);
 }
 
-export const ERROR_CODES = {
-  UNAUTHORIZED: "1",
-  FORBIDDEN: "2",
-  GATEWAY_NOT_FOUND: "3",
-  INTERNAL_ERROR: "4",
-};
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export enum ERROR_CODES {
+  UNAUTHORIZED = "UNAUTHORIZED",
+  FORBIDDEN = "FORBIDDEN",
+  DEVICE_NOT_FOUND = "DEVICE_NOT_FOUND",
+  INTERNAL_ERROR = "INTERNAL_ERROR",
+}

@@ -2,7 +2,6 @@ import { GetServerSideProps, NextPage } from "next";
 import SensorCard from "../components/elements/SensorCard";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
-import getLatestSensorData from "../services/latestSensorData";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import styles from "../styles/Home.module.scss";
@@ -20,7 +19,9 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
       <h2 className={styles.errorMessage}>{err}</h2>
     ) : (
       <>
-        <h2 data-testid="gateway-header">Gateways</h2>
+        <h3 data-testid="gateway-header" className={styles.sectionTitle}>
+          Gateways
+        </h3>
         <div className={styles.groupedCards}>
           {gateways.map((gateway, index) => (
             <GatewayCard
@@ -31,7 +32,9 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
           ))}
         </div>
 
-        <h2 data-testid="sensor-header">Sensors</h2>
+        <h3 data-testid="sensor-header" className={styles.sectionTitle}>
+          Sensors
+        </h3>
         <div className={styles.groupedCards}>
           {latestSensorDataList.map((sensor, index) => (
             <SensorCard
@@ -52,9 +55,9 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   let gateways: Gateway[] = [];
   let latestSensorDataList: Sensor[] = [];
   try {
-    gateways = await services().getAppService().getGateways();
-    // todo refactor this in a future story
-    latestSensorDataList = await getLatestSensorData(gateways);
+    const appService = services().getAppService();
+    gateways = await appService.getGateways();
+    latestSensorDataList = await appService.getLatestSensorData(gateways);
 
     return {
       props: { gateways, latestSensorDataList },

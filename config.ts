@@ -13,6 +13,7 @@ const env = {
   HUB_BASE_URL: process.env.HUB_BASE_URL,
   HUB_DEVICE_UID: process.env.HUB_DEVICE_UID,
   HUB_PRODUCT_UID: process.env.HUB_PRODUCT_UID,
+  NEXT_PUBLIC_BUILD_VERSION: process.env.NEXT_PUBLIC_BUILD_VERSION,
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
 
   // TODO - delete when we're not making calls to the api from the server
@@ -45,6 +46,9 @@ const Config = {
   // These are getters so undefined required variables do not throw errors at build time.
   get appBaseUrl() {
     return optionalEnvVar("DEPLOY_URL", "") || requiredEnvVar("APP_BASE_URL");
+  },
+  get buildVersion() {
+    return optionalEnvVar("NEXT_PUBLIC_BUILD_VERSION", "ver n/a");
   },
   get companyName() {
     return optionalEnvVar("NEXT_PUBLIC_COMPANY_NAME", "Nada Company");

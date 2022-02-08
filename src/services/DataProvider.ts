@@ -7,8 +7,7 @@ interface DataProvider {
 
   getGateway: (gatewayUID: string) => Promise<Gateway>;
 
-  // todo placeholder method for future story
-  getLatestSensorData: (gatewaysList: Gateway[]) => Promise<Sensor[]>;
+  getLatestSensorData: (gateways: Gateway[]) => Promise<Sensor[]>;
 }
 
 // eslint-disable-next-line import/prefer-default-export
