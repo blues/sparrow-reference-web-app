@@ -5,7 +5,7 @@ import {
   getFormattedLastSeen,
   getFormattedLocation,
   getFormattedVoltageData,
-} from "../helpers/helperFunctions";
+} from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Card.module.scss";
 

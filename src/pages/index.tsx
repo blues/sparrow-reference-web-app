@@ -6,6 +6,7 @@ import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import styles from "../styles/Home.module.scss";
 import { getErrorMessage } from "../constants/ui";
+import { ERROR_CODES } from "../services/Errors";
 
 type HomeData = {
   gateways: Gateway[];
@@ -53,7 +54,9 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   try {
     const appService = services().getAppService();
     gateways = await appService.getGateways();
-    latestSensorDataList = await appService.getLatestSensorData(gateways);
+    latestSensorDataList = await appService.getSensors(
+      gateways.map((gateway) => gateway.uid)
+    );
 
     return {
       props: { gateways, latestSensorDataList },
@@ -68,6 +71,12 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
         },
       };
     }
-    return { props: { gateways, latestSensorDataList } };
+    return {
+      props: {
+        gateways,
+        latestSensorDataList,
+        err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
+      },
+    };
   }
 };

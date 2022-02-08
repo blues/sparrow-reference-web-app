@@ -5,14 +5,35 @@ import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
+import SensorReading from "../../components/models/readings/SensorReading";
+import { ERROR_CODES, getError } from "../Errors";
+import NotehubLocation from "./models/NotehubLocation";
+import TemperatureSensorReading from "../../components/models/readings/TemperatureSensorReading";
+import HumiditySensorReading from "../../components/models/readings/HumiditySensorReading";
+import PressureSensorReading from "../../components/models/readings/PressureSensorReading";
+import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
 
-function notehubDeviceToSparrowGateway(device: NotehubDevice) {
+interface HasNotehubLocation {
+  gps_location?: NotehubLocation;
+  triangulated_location?: NotehubLocation;
+  tower_location?: NotehubLocation;
+}
+
+function getBestLocation(object: HasNotehubLocation) {
+  if (object.triangulated_location) {
+    return object.triangulated_location;
+  }
+  if (object.gps_location) {
+    return object.gps_location;
+  }
+  return object.tower_location;
+}
+
+export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
     lastActivity: device.last_activity,
-    ...((device?.triangulated_location || device?.tower_location) && {
-      location: device?.triangulated_location?.name
-        ? device.triangulated_location.name
-        : device.tower_location?.name,
+    ...(getBestLocation(device) && {
+      location: getBestLocation(device)?.name,
     }),
     serialNumber: device.serial_number,
     uid: device.uid,
@@ -45,11 +66,11 @@ export default class NotehubDataProvider implements DataProvider {
     return singleGateway;
   }
 
-  async getLatestSensorData(gateways: Gateway[]) {
+  async getSensors(gatewayUIDs: string[]) {
     // get latest sensor data from API
-    const getLatestSensorDataByGateway = async (gateway: Gateway) => {
+    const getLatestSensorDataByGateway = async (gatewayUID: string) => {
       const latestSensorEvents = await this.notehubAccessor.getLatestEvents(
-        gateway.uid
+        gatewayUID
       );
 
       // filter out all latest_events that are not `motion.qo` or `air.qo` files - those indicate they are sensor files
@@ -66,7 +87,7 @@ export default class NotehubDataProvider implements DataProvider {
       );
 
       const latestSensorData = filteredSensorData.map((event) => ({
-        gatewayUID: `${gateway.uid}`,
+        gatewayUID,
         macAddress: event.file,
         humidity: event.body.humidity,
         pressure: event.body.pressure,
@@ -80,7 +101,7 @@ export default class NotehubDataProvider implements DataProvider {
     // If we have more than one gateway to get events for,
     // loop through all the gateway UIDs and collect the events back
     const getAllLatestSensorEvents = async () =>
-      Promise.all(gateways.map(getLatestSensorDataByGateway));
+      Promise.all(gatewayUIDs.map(getLatestSensorDataByGateway));
 
     const latestSensorEvents = await getAllLatestSensorEvents();
 
@@ -134,5 +155,56 @@ export default class NotehubDataProvider implements DataProvider {
     const allLatestSensorData = await getAllSensorData(simplifiedSensorEvents);
 
     return allLatestSensorData;
+  }
+
+  async getSensor(gatewayUID: string, sensorUID: string) {
+    const sensors = await this.getSensors([gatewayUID]);
+    const match = sensors.filter(
+      (sensor) => sensor.macAddress === sensorUID
+    )[0];
+    if (!match) {
+      throw getError(ERROR_CODES.SENSOR_NOT_FOUND);
+    }
+    return match;
+  }
+
+  async getSensorData(
+    gatewayUID: string,
+    sensorUID: string,
+    options?: { startDate?: Date }
+  ) {
+    const sensorEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
+      options?.startDate
+    );
+    const filteredEvents: NotehubEvent[] = sensorEvents.filter(
+      (event: NotehubEvent) =>
+        event.file &&
+        event.file.includes(`${sensorUID}`) &&
+        event.file.includes("#air.qo") &&
+        event.device_uid === gatewayUID
+    );
+    const readingsToReturn: SensorReading<unknown>[] = [];
+    filteredEvents.forEach((event: NotehubEvent) => {
+      readingsToReturn.push(
+        new TemperatureSensorReading({
+          value: event.body.temperature,
+          captured: event.captured,
+        }),
+        new HumiditySensorReading({
+          value: event.body.humidity,
+          captured: event.captured,
+        }),
+        new PressureSensorReading({
+          value: event.body.pressure,
+          captured: event.captured,
+        }),
+        new VoltageSensorReading({
+          value: event.body.voltage,
+          captured: event.captured,
+        })
+      );
+    });
+
+    return readingsToReturn;
   }
 }
