@@ -2,6 +2,9 @@ import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { ERROR_CODES } from "../../../../src/services/Errors";
 import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
+import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
+import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
+import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";
 import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
 import notehubData from "../__serviceMocks__/notehubData.json";
 
@@ -32,7 +35,8 @@ describe("Device handling", () => {
     mock = new MockAdapter(axios);
   });
 
-  const mockNotehubDeviceData = notehubData.successfulNotehubDeviceResponse;
+  const mockNotehubDeviceData =
+    notehubData.successfulNotehubDeviceResponse as NotehubDevice;
 
   it("should return a valid response when a device UID is passed to the getDevice endpoint", async () => {
     mock.onGet(API_DEVICE_URL).reply(200, mockNotehubDeviceData);
@@ -87,8 +91,9 @@ describe("Event handling", () => {
   });
 
   const mockNotehubLatestEventData =
-    notehubData.successfulNotehubLatestEventsResponse;
-  const mockNotehubEventData = notehubData.successfulNotehubEventResponse;
+    notehubData.successfulNotehubLatestEventsResponse as NotehubLatestEvents;
+  const mockNotehubEventData = notehubData.successfulNotehubEventResponse
+    .events as NotehubResponse;
 
   it("should return a list of latest events when getLatestEvents is called with a valid hub device UID", async () => {
     mock.onGet(API_LATEST_EVENTS_URL).reply(200, mockNotehubLatestEventData);

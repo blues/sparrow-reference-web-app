@@ -9,13 +9,21 @@ import TemperatureSensorSchema from "../../../../src/components/models/Temperatu
 import HumiditySensorSchema from "../../../../src/components/models/HumiditySensorSchema";
 import PressureSensorSchema from "../../../../src/components/models/PressureSensorSchema";
 import VoltageSensorSchema from "../../../../src/components/models/VoltageSensorSchema";
+import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
+import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
+import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";
+import Gateway from "../../../../src/components/models/Gateway";
+import Sensor from "../../../../src/components/models/Sensor";
 
 describe("Notehub data provider service functions", () => {
-  const mockedGatewayJson = notehubData.successfulNotehubDeviceResponse;
+  const mockedGatewayJson =
+    notehubData.successfulNotehubDeviceResponse as NotehubDevice;
   const mockedNotehubLatestEventsJson =
-    notehubData.successfulNotehubLatestEventsResponse;
-  const mockedNotehubEventsJson = notehubData.successfulNotehubEventResponse;
-  const mockedNotehubConfigJson = notehubData.successfulNotehubConfigResponse2;
+    notehubData.successfulNotehubLatestEventsResponse as NotehubLatestEvents;
+  const mockedNotehubEventsJson = notehubData.successfulNotehubEventResponse
+    .events as NotehubResponse;
+  const mockedNotehubConfigJson =
+    notehubData.successfulNotehubConfigResponse2 as NotehubSensorConfig;
 
   let notehubAccessorMock: NotehubAccessor;
   let notehubDataProviderMock: NotehubDataProvider;
@@ -27,9 +35,7 @@ describe("Notehub data provider service functions", () => {
       getLatestEvents: jest
         .fn()
         .mockResolvedValueOnce(mockedNotehubLatestEventsJson),
-      getEvents: jest
-        .fn()
-        .mockResolvedValueOnce(mockedNotehubEventsJson.events),
+      getEvents: jest.fn().mockResolvedValueOnce(mockedNotehubEventsJson),
       getConfig: jest.fn().mockResolvedValueOnce(mockedNotehubConfigJson),
     };
     notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock);
@@ -37,7 +43,7 @@ describe("Notehub data provider service functions", () => {
 
   it("should convert a Notehub device to a Sparrow gateway", async () => {
     const mockedGatewaysSparrowData =
-      sparrowData.successfulGatewaySparrowDataResponse;
+      sparrowData.successfulGatewaySparrowDataResponse as Gateway;
     const res = await notehubDataProviderMock.getGateway(mockedGatewayJson.uid);
     expect(res).toEqual(mockedGatewaysSparrowData);
   });
@@ -53,7 +59,7 @@ describe("Notehub data provider service functions", () => {
 
   it("should return sparrow sensor data when a gateway UID and sensor UID is passed to getSensor", async () => {
     const mockedSensorSparrowData =
-      sparrowData.successfulSensorSparrowDataResponse;
+      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
 
     const res = await notehubDataProviderMock.getSensor(
       mockedGatewayJson.uid,
@@ -64,7 +70,7 @@ describe("Notehub data provider service functions", () => {
 
   it("should return a list of sparrow sensor data when a list of gateway UIDs is passed in to getSensors", async () => {
     const mockedSensorSparrowData =
-      sparrowData.successfulSensorSparrowDataResponse;
+      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
 
     const res = await notehubDataProviderMock.getSensors([
       mockedGatewayJson.uid,
@@ -77,10 +83,19 @@ describe("Notehub data provider service functions", () => {
       sparrowData.mockedGatewayUID2,
       sparrowData.mockedSensorUID2
     );
-    expect(res[0].schema).toEqual(TemperatureSensorSchema);
-    expect(res[1].schema).toEqual(HumiditySensorSchema);
-    expect(res[2].schema).toEqual(PressureSensorSchema);
-    expect(res[3].schema).toEqual(VoltageSensorSchema);
+
+    expect(JSON.stringify(res[0].schema)).toEqual(
+      JSON.stringify(TemperatureSensorSchema)
+    );
+    expect(JSON.stringify(res[1].schema)).toEqual(
+      JSON.stringify(HumiditySensorSchema)
+    );
+    expect(JSON.stringify(res[2].schema)).toEqual(
+      JSON.stringify(PressureSensorSchema)
+    );
+    expect(JSON.stringify(res[3].schema)).toEqual(
+      JSON.stringify(VoltageSensorSchema)
+    );
   });
 });
 
