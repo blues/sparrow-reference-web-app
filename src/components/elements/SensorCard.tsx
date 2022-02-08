@@ -8,7 +8,7 @@ import {
   getFormattedPressureData,
   getFormattedHumidityData,
   getFormattedVoltageData,
-} from "../helpers/helperFunctions";
+} from "../presentation/uiHelpers";
 import styles from "../../styles/Card.module.scss";
 
 interface SensorProps {

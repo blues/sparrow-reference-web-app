@@ -23,6 +23,7 @@ interface NotehubEvent {
     name: string;
   };
   tower_location?: NotehubLocation;
+  triangulated_location?: NotehubLocation;
   gps_location?: NotehubLocation;
 }
 
