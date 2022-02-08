@@ -30,13 +30,6 @@ export const getFormattedChartData = (
   return [];
 };
 
-export const getFormattedLocation = (location: string) => {
-  const locationCity = location.trim().split(" ").slice(0, -1).join(" ");
-  const locationState = location.trim().split(" ").slice(-1)[0];
-  const formattedLocation = `${locationCity}, ${locationState}`;
-  return formattedLocation;
-};
-
 export const getFormattedTemperatureData = (sensorData: Sensor) => {
   if (sensorData.temperature) {
     const formattedData = `${sensorData.temperature.toFixed(2)}°C`;
