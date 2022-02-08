@@ -1,6 +1,6 @@
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
-import SensorReading from "../components/models/SensorReading";
+import SensorReading from "../components/models/readings/SensorReading";
 
 // this interface shows gateway or sensor data - nothing more, nothing less
 interface DataProvider {
