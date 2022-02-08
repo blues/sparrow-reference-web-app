@@ -1,3 +1,6 @@
+import Gateway from "../../../src/components/models/Gateway";
+import Sensor from "../../../src/components/models/Sensor";
+import SensorDetailViewModel from "../../../src/models/SensorDetailViewModel";
 import AppService from "../../../src/services/AppService";
 import { DataProvider } from "../../../src/services/DataProvider";
 import sparrowData from "./__serviceMocks__/sparrowData.json";
@@ -11,21 +14,21 @@ describe("App Service", () => {
   const { mockedSensorUID } = sparrowData;
 
   const mockedGatewaySparrowData =
-    sparrowData.successfulGatewaySparrowDataResponse;
+    sparrowData.successfulGatewaySparrowDataResponse as Gateway;
 
   const mockedGatewaysSparrowData = [
-    sparrowData.successfulGatewaySparrowDataResponse,
+    sparrowData.successfulGatewaySparrowDataResponse as Gateway,
   ];
 
   const mockedSensorSparrowData =
-    sparrowData.successfulSensorSparrowDataResponse;
+    sparrowData.successfulSensorSparrowDataResponse as Sensor[];
 
   const mockedSensorsSparrowData = [
-    sparrowData.successfulSensorSparrowDataResponse,
+    sparrowData.successfulSensorSparrowDataResponse as Sensor[],
   ];
 
   const mockedSensorDataSparrowData =
-    sparrowData.successfulSensorDataSparrowDataResponse;
+    sparrowData.successfulSensorDataSparrowDataResponse as SensorDetailViewModel;
 
   beforeEach(() => {
     dataProviderMock = {
