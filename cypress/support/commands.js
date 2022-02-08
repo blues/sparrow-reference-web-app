@@ -26,6 +26,8 @@
 
 import * as detailsCommands from "./commands/details_commands";
 
-Cypress.Commands.add("selectTab", detailsCommands.selectTab);
+Cypress.Commands.add("selectTabByText", detailsCommands.selectTabByText);
 
-Cypress.Commands.add("selectTabByText", detailsCommands.selectTab);
+Cypress.Commands.add("selectSensorCard", detailsCommands.selectSensorCard);
+
+Cypress.Commands.add("selectGatewayCard", detailsCommands.selectGatewayCard);

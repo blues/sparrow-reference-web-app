@@ -25,17 +25,17 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
 
     {gateway && (
       <div>
-        <h1>Gateway Details</h1>
+        <h1 data-testid="gateway-details-header">Gateway Details</h1>
         <div className={styles.container}>
           <ul>
-            <li>Device Name: {gateway.serialNumber}</li>
-            {gateway.location && <li>Location: {gateway.location}</li>}
-            <li>Last Seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
+            <li data-testid="gateway-name" >Device Name: {gateway.serialNumber}</li>
+            {gateway.location && <li data-testid="gateway-location">Location: {gateway.location}</li>}
+            <li data-testid="gateway-last-seen">Last Seen: {getFormattedLastSeen(gateway.lastActivity)}</li>
           </ul>
 
           {sensors?.length > 0 && (
             <>
-              <h2>Sensors</h2>
+              <h2 data-testid="gateway-sensor-header">Sensors</h2>
               <div className={styles.groupedCards}>
                 {sensors.map((sensor, index) => (
                   <SensorCard
