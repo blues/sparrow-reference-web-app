@@ -6,9 +6,9 @@
   package = "@netlify/plugin-nextjs"
 
 [template.environment]
-  DEBUG_CONFIG = "Unsafe, if true, print out all environment variables, including tokens, to server log."
-  HUB_APP_UID = "App UID of your Notehub Project"
-  HUB_AUTH_TOKEN = "Notehub API Authentication Token"
-  HUB_BASE_URL = "Base URL representing the Notehub API (optional)"
-  HUB_PRODUCT_UID = "Product UID for Notehub Project"
   NEXT_PUBLIC_COMPANY_NAME = "Company Name for Header"
+  HUB_DEVICE_UID= "Device UID of the "
+  HUB_PROJECTUID = "Project UID of your Notehub Project. e.g. app:11111111-1111-1111-1111-111111111111"
+  HUB_AUTH_TOKEN = "Notehub API Authentication Token"
+  HUB_BASE_URL = "(optional) Base URL representing the Notehub API"
+  DEBUG_CONFIG = "(optional) Debug config? If not '', log environment and config on the server"

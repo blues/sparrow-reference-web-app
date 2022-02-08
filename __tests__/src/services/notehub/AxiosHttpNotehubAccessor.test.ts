@@ -11,22 +11,21 @@ import notehubData from "../__serviceMocks__/notehubData.json";
 
 let mock: MockAdapter;
 const mockBaseURL = "http://blues.io";
-const mockAppUID = "app:1234";
+const mockProjectUID = "app:1234";
 const mockDeviceUID = "dev:1234";
-const mockProductUID = "test.blues.io";
 const mockHubHistoricalDataStartDate = 4;
 const mockedStartDate = new Date();
 const mockedEpochTimeValue = Math.round(mockedStartDate.getTime() / 1000);
 
-const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/devices/${mockDeviceUID}`;
-const API_CONFIG_URL = `${mockBaseURL}/req?product=${mockProductUID}&device=${mockDeviceUID}`;
-const API_LATEST_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/devices/${mockDeviceUID}/latest`;
-const API_INITIAL_ALL_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/events?startDate=${mockedEpochTimeValue}`;
+const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}`;
+const API_CONFIG_URL = `${mockBaseURL}/req?project=${mockProjectUID}&device=${mockDeviceUID}`;
+const API_LATEST_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}/latest`;
+const API_INITIAL_ALL_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/events?startDate=${mockedEpochTimeValue}`;
+
 const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
   mockBaseURL,
-  mockAppUID,
   mockDeviceUID,
-  mockProductUID,
+  mockProjectUID,
   "",
   mockHubHistoricalDataStartDate
 );

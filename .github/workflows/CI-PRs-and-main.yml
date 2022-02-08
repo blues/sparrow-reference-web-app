@@ -31,11 +31,10 @@ jobs:
       - run: yarn build
       - name: Run unit tests
         env:
-          HUB_APP_UID: ${{ secrets.HUB_APP_UID }}
           HUB_AUTH_TOKEN: ${{ secrets.HUB_AUTH_TOKEN }}
           HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
           HUB_DEVICE_UID: ${{ secrets.HUB_DEVICE_UID }}
-          HUB_PRODUCT_UID: ${{ secrets.HUB_PRODUCT_UID }}
+          HUB_PROJECTUID: ${{ secrets.HUB_PROJECTUID }}
           TEST_SENSOR_MAC: ${{ secrets.TEST_SENSOR_MAC }}
         run: yarn test:coverage
       - run: yarn lint
