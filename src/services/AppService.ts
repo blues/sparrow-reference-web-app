@@ -1,6 +1,6 @@
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
-import SensorReading from "../components/models/SensorReading";
+import SensorReading from "../components/models/readings/SensorReading";
 import { DataProvider } from "./DataProvider";
 
 // this class / interface combo passes data and functions to the service locator file
