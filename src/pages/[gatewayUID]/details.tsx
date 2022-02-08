@@ -4,16 +4,16 @@ import { ParsedUrlQuery } from "querystring";
 import { Row, Col, Card } from "antd";
 import SensorCard from "../../components/elements/SensorCard";
 import { services } from "../../services/ServiceLocator";
-import Gateway from "../../components/models/Gateway";
-import Sensor from "../../components/models/Sensor";
 import {
   getFormattedLastSeen,
-  getFormattedLocation,
   getFormattedVoltageData,
-} from "../../components/helpers/helperFunctions";
-import { GATEWAY_MESSAGE } from "../../constants/ui";
-import styles from "../../styles/Home.module.scss";
+} from "../../components/presentation/uiHelpers";
+import Gateway from "../../components/models/Gateway";
+import Sensor from "../../components/models/Sensor";
+import { GATEWAY_MESSAGE, getErrorMessage } from "../../constants/ui";
+import { ERROR_CODES } from "../../services/Errors";
 import detailsStyles from "../../styles/Details.module.scss";
+import styles from "../../styles/Home.module.scss";
 
 type GatewayDetailsData = {
   gateway: Gateway | null;
@@ -26,20 +26,13 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
   sensors,
   err,
 }) => {
-  let formattedLocation = "";
-  let formattedGatewayVoltage;
-
-  if (gateway && gateway.location) {
-    formattedLocation = getFormattedLocation(gateway.location);
-  } else {
-    formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
-  }
-
-  if (gateway) {
-    formattedGatewayVoltage = getFormattedVoltageData(gateway);
-  } else {
-    formattedGatewayVoltage = GATEWAY_MESSAGE.NO_VOLTAGE;
-  }
+  const formattedLocation =
+    gateway && gateway?.location
+      ? gateway.location
+      : GATEWAY_MESSAGE.NO_LOCATION;
+  const formattedGatewayVoltage = gateway
+    ? getFormattedVoltageData(gateway)
+    : GATEWAY_MESSAGE.NO_VOLTAGE;
 
   return (
     <>
@@ -125,15 +118,23 @@ export const getServerSideProps: GetServerSideProps<GatewayDetailsData> =
     try {
       const appService = services().getAppService();
       gateway = await appService.getGateway(gatewayUID);
-      sensors = await appService.getLatestSensorData([gateway]);
+      sensors = await appService.getSensors([gatewayUID]);
 
       return {
         props: { gateway, sensors },
       };
     } catch (err) {
       if (err instanceof Error) {
-        return { props: { gateway, sensors, err: err.message } };
+        return {
+          props: { gateway, sensors, err: getErrorMessage(err.message) },
+        };
       }
-      return { props: { gateway, sensors } };
+      return {
+        props: {
+          gateway,
+          sensors,
+          err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
+        },
+      };
     }
   };

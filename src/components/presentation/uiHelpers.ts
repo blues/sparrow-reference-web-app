@@ -1,7 +1,8 @@
 import { formatDistanceToNow } from "date-fns";
-import NotehubEvent from "../../services/notehub/models/NotehubEvent";
 import Sensor from "../models/Sensor";
 import Gateway from "../models/Gateway";
+import SensorReading from "../models/readings/SensorReading";
+import SensorReadingSchema from "../models/readings/SensorSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
@@ -9,23 +10,17 @@ export const getFormattedLastSeen = (date: string) =>
     addSuffix: true,
   });
 
-export const getFormattedChartData = <C extends keyof NotehubEvent["body"]>(
-  sensorEvents: NotehubEvent[],
-  chartValue: C
+export const getFormattedChartData = (
+  sensorReadings: SensorReading<unknown>[],
+  sensorSchema: SensorReadingSchema<unknown>
 ) => {
-  if (sensorEvents.length) {
-    const formattedData = sensorEvents
-      .filter((event) => {
-        // currently only formatting `air.qo` events because I'm not sure how to display data from `motion.qo` events yet
-        if (event.file && event.file.includes("#air.qo")) {
-          return event;
-        }
-        return false;
-      })
+  if (sensorReadings.length) {
+    const formattedData = sensorReadings
+      .filter((reading) => reading.schema === sensorSchema)
       .map((filteredEvents) => {
         const chartDataObj = {
           when: filteredEvents.captured,
-          value: filteredEvents.body[chartValue],
+          value: Number(filteredEvents.value),
         };
         return chartDataObj;
       })
@@ -33,13 +28,6 @@ export const getFormattedChartData = <C extends keyof NotehubEvent["body"]>(
     return formattedData;
   }
   return [];
-};
-
-export const getFormattedLocation = (location: string) => {
-  const locationCity = location.trim().split(" ").slice(0, -1).join(" ");
-  const locationState = location.trim().split(" ").slice(-1)[0];
-  const formattedLocation = `${locationCity}, ${locationState}`;
-  return formattedLocation;
 };
 
 export const getFormattedTemperatureData = (sensorData: Sensor) => {

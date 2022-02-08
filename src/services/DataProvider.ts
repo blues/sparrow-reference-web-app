@@ -1,5 +1,6 @@
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
+import SensorReading from "../components/models/readings/SensorReading";
 
 // this interface shows gateway or sensor data - nothing more, nothing less
 interface DataProvider {
@@ -7,7 +8,17 @@ interface DataProvider {
 
   getGateway: (gatewayUID: string) => Promise<Gateway>;
 
-  getLatestSensorData: (gateways: Gateway[]) => Promise<Sensor[]>;
+  getSensors: (gatewayUIDs: string[]) => Promise<Sensor[]>;
+
+  getSensor: (gatewayUID: string, sensorUID: string) => Promise<Sensor>;
+
+  getSensorData: (
+    gatewayUID: string,
+    sensorUID: string,
+    options?: {
+      startDate?: Date;
+    }
+  ) => Promise<SensorReading<unknown>[]>;
 }
 
 // eslint-disable-next-line import/prefer-default-export
