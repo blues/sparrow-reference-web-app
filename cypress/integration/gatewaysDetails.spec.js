@@ -2,53 +2,28 @@
 
 describe("Gateway Details page", () => {
   it("should successfully render the gateway details page and contents", function () {
-    /* ==== Generated with Cypress Studio ==== */
     cy.visit("/");
     cy.selectGatewayCard(0);
-    // check for Gatway details header // todo cont clean up
-    cy.get("h1").should("have.text", "Gateway Details");
-    cy.get(".Home_container__CCFUG > :nth-child(1)").should(
-      "include.text",
+    // check for Gatway details header
+    cy.get('[data-testid="gateway-details-header"]').should(
+      "contain",
       "Gateway"
     );
-    cy.get(".Home_container__CCFUG > :nth-child(2) > :nth-child(1)").should(
-      "include.text",
-      "Device Name: "
-    );
-    cy.get(".Home_container__CCFUG > :nth-child(2) > :nth-child(3)").should(
-      "include.text",
-      "Location:"
-    );
-    cy.get(".Home_container__CCFUG > :nth-child(2) > :nth-child(5)").should(
-      "include.text",
-      "Last Seen:"
-    );
-    cy.get(".Home_container__CCFUG > :nth-child(3)").should(
-      "have.text",
+    // check for gateway details
+    cy.get(".ant-card-body").should("contain", "Location");
+    cy.get('[data-testid="gateway-location"]').should("be.visible");
+    cy.get(".ant-card-body").should("contain", "Voltage");
+    cy.get('[data-testid="gateway-last-seen"]').should("contain", "Last seen");
+    // check for sensors related to gateway
+    cy.get('[data-testid="gateway-sensor-header"]').should(
+      "contain",
       "Sensors"
     );
-    cy.get(
-      ":nth-child(1) > .ant-card-head > .ant-card-head-wrapper > .ant-card-head-title"
-    ).should("be.visible");
-    cy.get(":nth-child(1) > .ant-card-body > ul > :nth-child(1)").should(
-      "include.text",
-      "Temperature: "
-    );
-    cy.get(":nth-child(1) > .ant-card-body > ul > :nth-child(2)").should(
-      "include.text",
-      "Humidity:"
-    );
-    cy.get(":nth-child(1) > .ant-card-body > ul > :nth-child(4)").should(
-      "include.text",
-      "Battery:"
-    );
-    cy.get(":nth-child(1) > .ant-card-body > ul > :nth-child(5)").should(
-      "include.text",
-      "Last active:"
-    );
-
-    cy.get('[data-testid="sensor[0]-summary"]').click();
-
-    /* ==== End Cypress Studio ==== */
+    // check sensor details
+    cy.get('[data-testid="sensor[0]-summary"]').should("be.visible");
+    cy.get(".ant-card-body :nth-child(1)").should("contain", "Humidity");
+    cy.get(".ant-card-body :nth-child(2)").should("contain", "Pressure");
+    cy.get(".ant-card-body :nth-child(3)").should("contain", "Temperature");
+    cy.get(".ant-card-body :nth-child(4)").should("contain", "Voltage");
   });
 });

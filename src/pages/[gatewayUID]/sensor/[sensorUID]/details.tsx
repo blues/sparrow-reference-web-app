@@ -23,7 +23,6 @@ import {
   getFormattedLastSeen,
 } from "../../../../components/helpers/helperFunctions";
 import styles from "../../../../styles/Home.module.scss";
-import formStyles from "../../../../styles/Form.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 
 type SensorDetailsData = {
@@ -132,11 +131,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
           >
             Current Readings
           </h2>
-          {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
           <p data-testid="last-seen" className={detailsStyles.timestamp}>
             Last updated {getFormattedLastSeen(latestSensorData.lastActivity)}
           </p>
-
           <Row gutter={[16, 16]}>
             <Col span={6}>
               <Card data-testid="temperature">
@@ -176,7 +173,6 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                 </li>
               </Card>
             </Col>
-
             <Col span={12}>
               <Card>
                 <h3>Temperature</h3>
