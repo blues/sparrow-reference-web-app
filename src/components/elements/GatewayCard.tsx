@@ -3,7 +3,6 @@ import { Card } from "antd";
 import Gateway from "../models/Gateway";
 import {
   getFormattedLastSeen,
-  getFormattedLocation,
   getFormattedVoltageData,
 } from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
@@ -27,12 +26,9 @@ const GatewayCardComponent = (props: GatewayProps) => {
     router.push(gatewayUrl);
   };
 
-  let formattedLocation = "";
-  if (gatewayDetails.location) {
-    formattedLocation = getFormattedLocation(gatewayDetails.location);
-  } else {
-    formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
-  }
+  const formattedLocation = gatewayDetails?.location
+    ? gatewayDetails.location
+    : GATEWAY_MESSAGE.NO_LOCATION;
 
   return (
     <Card

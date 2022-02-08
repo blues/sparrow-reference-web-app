@@ -109,13 +109,17 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
         initialEndpoint,
         { headers: this.commonHeaders }
       );
-      events = resp.data.events;
+      if (resp.data.events) {
+        events = resp.data.events;
+      }
       while (resp.data.has_more) {
         const recurringEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/events?since=${resp.data.through}`;
         const recurringResponse: AxiosResponse<NotehubResponse> =
           // eslint-disable-next-line no-await-in-loop
           await axios.get(recurringEndpoint, { headers: this.commonHeaders });
-        events = [...events, ...recurringResponse.data.events];
+        if (recurringResponse.data.events) {
+          events = [...events, ...recurringResponse.data.events];
+        }
         if (recurringResponse.data.has_more) {
           resp.data.through = recurringResponse.data.through;
         } else {

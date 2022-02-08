@@ -22,7 +22,7 @@ export function getSensorDetailsPresentation(
 ): SensorDetailViewModel {
   return {
     sensor: {
-      name: sensor.name || "",
+      name: sensor.name || SENSOR_MESSAGE.NO_NAME,
       lastActivity: getFormattedLastSeen(sensor.lastActivity),
       temperature:
         getFormattedTemperatureData(sensor) || SENSOR_MESSAGE.NO_TEMPERATURE,

@@ -1,8 +1,82 @@
 {
+  "mockedGatewayUID": "dev:5678",
+  "mockedGatewayUID2": "dev:1234",
+  "mockedSensorUID": "123456a",
+  "mockedSensorUID2": "456789b",
   "successfulGatewaySparrowDataResponse": {
     "lastActivity": "2021-12-14T07:47:29Z",
     "serialNumber": "9101112",
     "uid": "dev:5678",
     "voltage": 3.8
-  }
+  },
+  "successfulSensorSparrowDataResponse": [
+    {
+      "macAddress": "123456a",
+      "gatewayUID": "dev:5678",
+      "name": "My Mocked Sensor 1",
+      "voltage": 2.7,
+      "lastActivity": "2021-11-30T20:30:19Z",
+      "humidity": 27.2,
+      "pressure": 101152,
+      "temperature": 22.6
+    },
+    {
+      "macAddress": "456789b",
+      "gatewayUID": "dev:5678",
+      "lastActivity": "2021-10-01T18:52:41Z",
+      "humidity": 38.1,
+      "pressure": 101950,
+      "temperature": 24.3
+    }
+  ],
+  "successfulSensorDataSparrowDataResponse": [
+    {
+      "key": "humidity",
+      "value": "26.8",
+      "location": "Smallville KS",
+      "captured": "2021-11-30T19:30:19Z"
+    },
+    {
+      "key": "pressure",
+      "value": "101171",
+      "location": "Smallville KS",
+      "captured": "2021-11-30T19:30:19Z"
+    },
+    {
+      "key": "temperature",
+      "value": "22.7",
+      "location": "Smallville KS",
+      "captured": "2021-11-30T19:30:19Z"
+    },
+    {
+      "key": "voltage",
+      "value": "2.6",
+      "location": "Smallville KS",
+      "captured": "2021-11-30T19:30:19Z"
+    },
+    {
+      "key": "humidity",
+      "value": "27.2",
+      "location": "Smallville KS",
+      "captured": "2021-11-30T20:30:19Z"
+    },
+    {
+      "key": "pressure",
+      "value": "101152",
+      "location": "Smallville KS",
+      "captured": "2021-11-30T20:30:19Z"
+    },
+    {
+      "key": "temperature",
+      "value": "22.6",
+      "location": "Smallville KS",
+      "captured": "2021-11-30T20:30:19Z"
+    },
+    {
+      "key": "voltage",
+      "value": "2.5",
+      "location": "Smallville KS",
+      "captured": "2021-11-30T20:30:19Z"
+    }
+  ]
 }

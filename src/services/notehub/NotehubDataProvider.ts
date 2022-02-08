@@ -176,6 +176,7 @@ export default class NotehubDataProvider implements DataProvider {
     const sensorEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
       options?.startDate
     );
+
     const filteredEvents: NotehubEvent[] = sensorEvents.filter(
       (event: NotehubEvent) =>
         event.file &&
@@ -185,24 +186,38 @@ export default class NotehubDataProvider implements DataProvider {
     );
     const readingsToReturn: SensorReading<unknown>[] = [];
     filteredEvents.forEach((event: NotehubEvent) => {
-      readingsToReturn.push(
-        new TemperatureSensorReading({
-          value: event.body.temperature,
-          captured: event.captured,
-        }),
-        new HumiditySensorReading({
-          value: event.body.humidity,
-          captured: event.captured,
-        }),
-        new PressureSensorReading({
-          value: event.body.pressure,
-          captured: event.captured,
-        }),
-        new VoltageSensorReading({
-          value: event.body.voltage,
-          captured: event.captured,
-        })
-      );
+      if (event.body.temperature) {
+        readingsToReturn.push(
+          new TemperatureSensorReading({
+            value: event.body.temperature,
+            captured: event.captured,
+          })
+        );
+      }
+      if (event.body.humidity) {
+        readingsToReturn.push(
+          new HumiditySensorReading({
+            value: event.body.humidity,
+            captured: event.captured,
+          })
+        );
+      }
+      if (event.body.pressure) {
+        readingsToReturn.push(
+          new PressureSensorReading({
+            value: event.body.pressure,
+            captured: event.captured,
+          })
+        );
+      }
+      if (event.body.voltage) {
+        readingsToReturn.push(
+          new VoltageSensorReading({
+            value: event.body.voltage,
+            captured: event.captured,
+          })
+        );
+      }
     });
 
     return readingsToReturn;

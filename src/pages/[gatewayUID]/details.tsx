@@ -6,7 +6,6 @@ import SensorCard from "../../components/elements/SensorCard";
 import { services } from "../../services/ServiceLocator";
 import {
   getFormattedLastSeen,
-  getFormattedLocation,
   getFormattedVoltageData,
 } from "../../components/presentation/uiHelpers";
 import Gateway from "../../components/models/Gateway";
@@ -27,20 +26,13 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
   sensors,
   err,
 }) => {
-  let formattedLocation = "";
-  let formattedGatewayVoltage;
-
-  if (gateway && gateway.location) {
-    formattedLocation = getFormattedLocation(gateway.location);
-  } else {
-    formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
-  }
-
-  if (gateway) {
-    formattedGatewayVoltage = getFormattedVoltageData(gateway);
-  } else {
-    formattedGatewayVoltage = GATEWAY_MESSAGE.NO_VOLTAGE;
-  }
+  const formattedLocation =
+    gateway && gateway?.location
+      ? gateway.location
+      : GATEWAY_MESSAGE.NO_LOCATION;
+  const formattedGatewayVoltage = gateway
+    ? getFormattedVoltageData(gateway)
+    : GATEWAY_MESSAGE.NO_VOLTAGE;
 
   return (
     <>
