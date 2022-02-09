@@ -39,7 +39,13 @@ jobs:
         run: yarn test:coverage
       - run: yarn lint
       #- run: yarn lint:all
-      #- run: yarn cypress:run
+      - name: Cypress run
+        if: ${{ 'staging' == matrix.staging_or_production }}
+        uses: cypress-io/github-action@v2
+        with:
+          env: configFile=staging
+          working-directory: wireless-dev-site
+          start: npx http-server build/export/
   docker-build:
     runs-on: ubuntu-latest
     steps:

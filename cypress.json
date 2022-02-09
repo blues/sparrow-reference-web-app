@@ -1,6 +1,3 @@
 {
-  "experimentalStudio": true,
-  "baseUrl": "http://localhost:4000",
-  "viewportWidth": 1400,
-  "viewportHeight": 1000
+  "experimentalStudio": true
 }
