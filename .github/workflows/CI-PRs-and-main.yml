@@ -41,7 +41,6 @@ jobs:
         run: yarn test:coverage
       - run: yarn lint
       - name: Cypress run
-        # if: ${{ 'staging' == matrix.staging_or_production }}
         uses: cypress-io/github-action@v2
         with:
           env: configFile=staging
