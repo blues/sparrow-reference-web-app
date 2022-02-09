@@ -16,7 +16,9 @@ const FooterComponent = () => {
         </div>
         <div>
           <details>
-            <summary style={{ listStyle: "none" }}>About</summary>
+            <summary style={{ listStyle: "none", cursor: "pointer" }}>
+              About
+            </summary>
             {Config.buildVersion}
           </details>
         </div>
