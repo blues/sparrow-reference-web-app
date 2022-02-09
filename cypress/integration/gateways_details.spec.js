@@ -3,7 +3,7 @@
 describe("Gateway Details page", () => {
   it("should successfully render the gateway details page and contents", function () {
     cy.visit("/");
-    cy.selectGatewayCard(0);
+    cy.clickGatewayCard("0");
     // check for Gatway details header
     cy.get('[data-testid="gateway-details-header"]').should(
       "contain",

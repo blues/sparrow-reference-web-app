@@ -1,11 +1,15 @@
-export const selectTabByText = (tabText) => {
+export const clickTabByText = (tabText) => {
   cy.contains(`${tabText}`).click();
 };
 
-export const selectSensorCard = (cardTextIDNumber) => {
-  cy.get(`[data-testid="sensor[${cardTextIDNumber}]-summary"]`).click();
+export const clickSensorCard = (cardTextIDNumber) => {
+  cy.get(`[data-testid="sensor[${cardTextIDNumber}]-summary"]`).click({
+    force: true,
+  });
 };
 
-export const selectGatewayCard = (cardTextIDNumber) => {
-  cy.get(`[data-testid="gateway[${cardTextIDNumber}]-details"]`).click();
+export const clickGatewayCard = (cardTextIDNumber) => {
+  cy.get(`[data-testid="gateway[${cardTextIDNumber}]-details"]`).click({
+    force: true,
+  });
 };
