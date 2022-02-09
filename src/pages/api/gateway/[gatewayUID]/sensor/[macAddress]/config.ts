@@ -26,9 +26,9 @@ export default async function sensorConfigHandler(
   // Body params
   const { loc, name } = req.body as NoteSensorConfigBody;
   // Notehub values
-  const { hubBaseURL, hubAuthToken, hubProductUID } = config;
+  const { hubBaseURL, hubAuthToken, hubProjectUID } = config;
   // API path
-  const endpoint = `${hubBaseURL}/req?product=${hubProductUID}&device=${gatewayUID}`;
+  const endpoint = `${hubBaseURL}/req?project=${hubProjectUID}&device=${gatewayUID}`;
   // API headers
   const headers = {
     [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,

@@ -30,9 +30,9 @@ export default async function environmentVariablesDeleteHandler(
   }
 
   // Notehub values
-  const { hubBaseURL, hubAuthToken, hubAppUID } = config;
+  const { hubBaseURL, hubAuthToken, hubProjectUID } = config;
   // API path
-  const endpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/devices/${gatewayUID}/environment_variables/${key}`;
+  const endpoint = `${hubBaseURL}/v1/projects/${hubProjectUID}/devices/${gatewayUID}/environment_variables/${key}`;
   // API headers
   const headers = {
     [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
