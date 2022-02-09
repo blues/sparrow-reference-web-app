@@ -45,6 +45,12 @@ jobs:
         with:
           env: configFile=staging
           start: yarn start
+          env:
+        HUB_AUTH_TOKEN: ${{ secrets.HUB_AUTH_TOKEN }}
+        HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
+        HUB_DEVICE_UID: ${{ secrets.HUB_DEVICE_UID }}
+        HUB_PROJECTUID: ${{ secrets.HUB_PROJECTUID }}
+        TEST_SENSOR_MAC: ${{ secrets.TEST_SENSOR_MAC }}
   docker-build:
     runs-on: ubuntu-latest
     steps:
