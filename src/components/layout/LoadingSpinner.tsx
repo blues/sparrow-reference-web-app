@@ -5,7 +5,8 @@ export const LoadingSpinner = ({
 }: {
   isLoading: boolean;
 }): JSX.Element => {
-  const speed = isLoading ? 0.75 : 0.001;
+  const slowSpeedThatDoesNotBreakTheSpinner = 0.001;
+  const speed = isLoading ? 0.75 : slowSpeedThatDoesNotBreakTheSpinner;
   const opacity = isLoading ? 1 : 0.2;
   return (
     <>
