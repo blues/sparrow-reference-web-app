@@ -4,8 +4,8 @@ declare global {
     interface ProcessEnv {
       HUB_BASE_URL: string;
       HUB_AUTH_TOKEN: string;
-      HUB_APP_UID: string;
-      HUB_PRODUCT_UID: string;
+      HUB_APP_UID: string; // TODO(carl) remove LOC once a-team devs shun HUB_APP_UID
+      HUB_PROJECTUID: string;
       HUB_DEVICE_UID: string;
       APP_BASE_URL: string;
       TEST_SENSOR_MAC: string;
