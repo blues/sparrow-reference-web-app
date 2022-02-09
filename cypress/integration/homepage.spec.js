@@ -41,6 +41,12 @@ describe("Sparrow Application", () => {
       "contain",
       "Sensors"
     );
+    // check sensor details
+    cy.get('[data-testid="sensor[0]-summary"]').should("be.visible");
+    cy.get(".ant-card-body :nth-child(1)").should("contain", "Humidity");
+    cy.get(".ant-card-body :nth-child(2)").should("contain", "Pressure");
+    cy.get(".ant-card-body :nth-child(3)").should("contain", "Temperature");
+    cy.get(".ant-card-body :nth-child(4)").should("contain", "Voltage");
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click();
     // verify it navigates back to the homepage
@@ -54,7 +60,7 @@ describe("Sparrow Application", () => {
     //TODO: remove once the page architexture is fixed
     //wait for the (very slow) page to load
     //Verify the Sensor Name header
-    cy.get('[data-testid="sensor-name"]', { timeout: 60000 }).should(
+    cy.get('[data-testid="sensor-name"]', { timeout: 90000 }).should(
       "be.visible"
     );
     //Verify the Current Readings header
