@@ -45,7 +45,6 @@ jobs:
         with:
           env: configFile=staging
           start: yarn start
-          wait-on: http://127.0.0.1:8080
   docker-build:
     runs-on: ubuntu-latest
     steps:
