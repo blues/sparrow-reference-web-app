@@ -2,8 +2,8 @@
 
 .mainContent {
   height: calc(100vh - $header-bar-height - $footer-bar-height);
-  max-width: 1200px;
-  width: 960px;
+  max-width: $page-content-xl;
+  width: $page-content-md;
   margin: 0 auto;
   overflow: auto;
   padding-bottom: 50px;

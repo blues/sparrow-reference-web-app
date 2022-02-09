@@ -5,12 +5,14 @@
   margin: auto;
   border: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  max-width: 960px;
+  width: $page-content-md;
   z-index: 2;
 }
 
 .footer {
   display: flex;
-  justify-content: space-evenly;
-  text-align: center;
+  justify-content: space-between;
+  width: $page-content-md;
+  margin: auto;
+  padding: 24px 0 !important;
 }

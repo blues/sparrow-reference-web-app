@@ -3,6 +3,7 @@
 .header {
   display: flex;
   justify-content: space-between;
+  padding: 0 64px !important;
 
   .logo {
     display: flex;
@@ -11,6 +12,6 @@
 
   .headerText {
     color: #fff;
-    padding-left: 20px;
+    font-size: 15px;
   }
 }
