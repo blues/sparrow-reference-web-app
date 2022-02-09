@@ -4,7 +4,6 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import Layout from "../components/layout/Layout";
 import "../styles/globals.css";
-import { LoadingSpinner } from "../components/layout/LoadingSpinner";
 
 require("../styles/antd-variables.less");
 
@@ -36,8 +35,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           href="/favicon-16x16.png"
         />
       </Head>
-      <Layout>
-        <LoadingSpinner isLoading={isLoading} />
+      <Layout isLoading={isLoading}>
         <Component {...pageProps} />
       </Layout>
     </>

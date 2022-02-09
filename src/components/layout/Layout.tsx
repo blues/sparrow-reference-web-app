@@ -4,11 +4,17 @@ import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../../styles/Layout.module.scss";
 
-const LayoutComponent = ({ children }: { children: ReactNode }) => {
+const LayoutComponent = ({
+  children,
+  isLoading,
+}: {
+  children: ReactNode;
+  isLoading: boolean;
+}) => {
   const { Content } = Layout;
   return (
     <Layout>
-      <Header />
+      <Header isLoading={isLoading} />
       <Content className={styles.mainContent}>{children}</Content>
       <Footer />
     </Layout>

@@ -15,10 +15,8 @@ export const LoadingSpinner = ({
       </div>
       <style jsx>{`
         .loadingSpinner {
-          position: absolute;
-          top: 32px;
-          left: 50%;
-          transform: translate(-50%, -50%);
+          display: flex;
+          align-items: center;
         }
       `}</style>
     </>
