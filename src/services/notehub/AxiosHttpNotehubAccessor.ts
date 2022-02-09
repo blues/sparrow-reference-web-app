@@ -13,11 +13,9 @@ import NotehubResponse from "./models/NotehubResponse";
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   hubBaseURL: string;
 
-  hubAppUID: string;
-
   hubDeviceUID: string;
 
-  hubProductUID: string;
+  hubProjectUID: string;
 
   hubHistoricalDataStartDate: Date;
 
@@ -25,16 +23,14 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   constructor(
     hubBaseURL: string,
-    hubAppUID: string,
     hubDeviceUID: string,
-    hubProductUID: string,
+    hubProjectUID: string,
     hubAuthToken: string,
     hubHistoricalDataStartDate: number
   ) {
     this.hubBaseURL = hubBaseURL;
-    this.hubAppUID = hubAppUID;
     this.hubDeviceUID = hubDeviceUID;
-    this.hubProductUID = hubProductUID;
+    this.hubProjectUID = hubProjectUID;
 
     const date = new Date();
     date.setDate(date.getDate() - hubHistoricalDataStartDate);
@@ -55,7 +51,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   }
 
   async getDevice(hubDeviceUID: string) {
-    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/devices/${hubDeviceUID}`;
+    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}`;
     try {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubDevice;
@@ -87,7 +83,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   }
 
   async getLatestEvents(hubDeviceUID: string) {
-    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/devices/${hubDeviceUID}/latest`;
+    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}/latest`;
     try {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubLatestEvents;
@@ -103,7 +99,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     const startDateValue = Math.round(startDateToUse.getTime() / 1000);
 
     let events: NotehubEvent[] = [];
-    const initialEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/events?startDate=${startDateValue}`;
+    const initialEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?startDate=${startDateValue}`;
     try {
       const resp: AxiosResponse<NotehubResponse> = await axios.get(
         initialEndpoint,
@@ -113,7 +109,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
         events = resp.data.events;
       }
       while (resp.data.has_more) {
-        const recurringEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubAppUID}/events?since=${resp.data.through}`;
+        const recurringEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?since=${resp.data.through}`;
         const recurringResponse: AxiosResponse<NotehubResponse> =
           // eslint-disable-next-line no-await-in-loop
           await axios.get(recurringEndpoint, { headers: this.commonHeaders });
@@ -133,7 +129,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   }
 
   async getConfig(hubDeviceUID: string, macAddress: string) {
-    const endpoint = `${this.hubBaseURL}/req?product=${this.hubProductUID}&device=${hubDeviceUID}`;
+    const endpoint = `${this.hubBaseURL}/req?project=${this.hubProjectUID}&device=${hubDeviceUID}`;
     const body = {
       req: "note.get",
       file: "config.db",

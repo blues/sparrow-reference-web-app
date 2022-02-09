@@ -2,30 +2,33 @@
 
 An example web application to configure and view sensor data from Blues Wireless Sparrow devices.
 
-- [Setup](#setup)
-  - [Environment Variables](#environment-variables)
-  - [Dependencies](#dependencies)
-- [Development](#development)
-- [Testing](#testing)
-  - [Testing with Jest](#testing-with-jest)
-  - [Testing with Cypress](#testing-with-cypress)
-- [Deploying](#deploying)
-  - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
-  - [Deploy on Vercel](#deploy-on-vercel)
-  - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
-- [Support](#support)
+- [🐦 Sparrow Starter](#-sparrow-starter)
+  - [Setup](#setup)
+    - [Environment Variables](#environment-variables)
+      - [HUB_AUTH_TOKEN](#hub_auth_token)
+      - [HUB_PROJECTUID](#HUB_PROJECTUID)
+      - [HUB_DEVICE_UID](#hub_device_uid)
+    - [Dependencies](#dependencies)
+  - [Development](#development)
+  - [Testing](#testing)
+    - [Testing with Jest](#testing-with-jest)
+    - [Testing with Cypress](#testing-with-cypress)
+  - [Deploying](#deploying)
+    - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
+    - [Deploy on Vercel](#deploy-on-vercel)
+    - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
+  - [Support](#support)
 
 ## Setup
 
 To get started with running the Sparrow starter you need to:
 
-* [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
-* [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices.
-* Set up a Sparrow Gateway and one or more Sensors (TODO: link)
-* Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
-* Install the project’s development [dependencies](#dependencies).
-* Launch the Sparrow Starter app in [development mode](#development).
-
+- [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
+- [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices.
+- Set up a Sparrow Gateway and one or more Sensors (TODO: link)
+- Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
+- Install the project’s development [dependencies](#dependencies).
+- Launch the Sparrow Starter app in [development mode](#development).
 
 ### Environment Variables
 
@@ -43,7 +46,7 @@ To find retrieve an authentication token, put this in your command line, replaci
 
 ```
 curl -X POST -L 'https://api.notefile.net/auth/login' \
-    -d '{"username":"YOUR_NOTEHUB_EMAIL", "password": "NOTEHUB_PASSWORD"} 
+    -d '{"username":"YOUR_NOTEHUB_EMAIL", "password": "NOTEHUB_PASSWORD"}
 ```
 
 When succesful, you will see a response like
@@ -51,24 +54,16 @@ When succesful, you will see a response like
 ```
 {"session_token":"BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD"}
 ```
+
 Copy the value after the colon to set the environment variable in `.env.local`, e.g.
 
 ```
 HUB_AUTH_TOKEN=BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD
 ```
 
-#### HUB_PRODUCT_UID
-
-This variable should be set to the product UID of the Notehub project that your Sparrow devices are associated with. You can find the product UID along with the project summary on your [project dashboard](https://notehub.io), for example
-
-```
-HUB_PRODUCT_UID=com.example.name:sparrow
-```
-
-#### HUB_APP_UID
+#### HUB_PROJECTUID
 
 This is the unique identifier for your project in Notehub, and has the prefix `app:`. You can find this by going to your Notehub project, clicking the **Settings** menu, and then scrolling down to the **Project UID** heading.
-
 
 #### HUB_DEVICE_UID
 

@@ -28,7 +28,7 @@ const ERROR_MESSAGE = {
   FORBIDDEN:
     "User is unauthorized to access this project. Please contact the Notehub project owner to be invited to the project.",
   GATEWAY_NOT_FOUND:
-    "We were unable to locate any gateways. Ensure your HUB_APP_UID and HUB_DEVICE_UID environment variables are configured correctly.",
+    "We were unable to locate any gateways. Ensure your environment variables are configured correctly.",
   INTERNAL_ERROR:
     "An internal error occurred. If this problem persists please contact Blues support.",
   UNAUTHORIZED:
