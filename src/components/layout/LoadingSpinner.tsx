@@ -11,7 +11,7 @@ export const LoadingSpinner = ({
   return (
     <>
       <div className="loadingSpinner">
-        <BallTriangle speed={speed} height="40px" opacity={opacity} />
+        <BallTriangle speed={speed} height="60%" opacity={opacity} />
       </div>
       <style jsx>{`
         .loadingSpinner {
