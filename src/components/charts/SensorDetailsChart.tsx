@@ -1,24 +1,35 @@
+/* eslint-disable react/require-default-props */
 import { ChartData, ChartOptions } from "chart.js";
 import { CHART_DATE_FORMAT } from "./chartHelper";
 import LineChart from "./LineChart";
 
 type SensorDetailsChartProps = {
   label: string;
-  yAxisMin: number;
-  yAxisMax: number;
+  yAxisMin?: number;
+  yAxisMax?: number;
   chartColor: string;
   data: {
     when: string;
     value: number;
   }[];
+  unitDisplay?: string;
 };
 
+export function getTooltipDisplayText(
+  label: string,
+  unitDisplay: string,
+  value: number
+) {
+  return `${label}: ${value.toFixed(2)}${unitDisplay}`;
+}
+
 const SensorDetailsChart = ({
-  data,
   label,
   yAxisMin,
   yAxisMax,
   chartColor,
+  data,
+  unitDisplay,
 }: SensorDetailsChartProps) => {
   const labels = data.map((obj) => obj.when);
   const values = data.map((obj) => obj.value);
@@ -41,6 +52,9 @@ const SensorDetailsChart = ({
   const options: ChartOptions<"line"> = {
     scales: {
       xAxis: {
+        grid: {
+          display: false,
+        },
         type: "time",
         time: {
           displayFormats: {
@@ -57,11 +71,29 @@ const SensorDetailsChart = ({
         },
       },
       yAxis: {
-        min: yAxisMin,
-        max: yAxisMax,
+        grid: {
+          drawBorder: false,
+        },
+        ...(typeof yAxisMin === "number" && { min: yAxisMin }),
+        ...(typeof yAxisMax === "number" && { max: yAxisMax }),
         ticks: {
           stepSize: 0,
         },
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context) =>
+            getTooltipDisplayText(
+              context.dataset.label || "",
+              unitDisplay || "",
+              context.parsed.y
+            ),
+        },
+      },
+      legend: {
+        display: false,
       },
     },
   };

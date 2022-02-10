@@ -3,6 +3,7 @@ import Sensor from "../models/Sensor";
 import Gateway from "../models/Gateway";
 import SensorReading from "../models/readings/SensorReading";
 import SensorReadingSchema from "../models/readings/SensorSchema";
+import PressureSensorSchema from "../models/readings/PressureSensorSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
@@ -17,10 +18,14 @@ export const getFormattedChartData = (
   if (sensorReadings.length) {
     const formattedData = sensorReadings
       .filter((reading) => reading.schema === sensorSchema)
-      .map((filteredEvents) => {
+      .map((filteredEvent) => {
         const chartDataObj = {
-          when: filteredEvents.captured,
-          value: Number(filteredEvents.value),
+          when: filteredEvent.captured,
+          value:
+            // Convert pressure from Pa to kPa
+            filteredEvent.schema === PressureSensorSchema
+              ? Number(filteredEvent.value) / 1000
+              : Number(filteredEvent.value),
         };
         return chartDataObj;
       })
