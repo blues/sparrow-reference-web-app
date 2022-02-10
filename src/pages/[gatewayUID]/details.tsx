@@ -40,12 +40,12 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
 
       {gateway && (
         <div>
-          <h1
+          <h2
             data-testid="gateway-details-header"
             className={styles.sectionTitle}
           >
             Gateway: {gateway.serialNumber}
-          </h1>
+          </h2>
           <div className={styles.container}>
             <div
               data-testid="gateway-last-seen"

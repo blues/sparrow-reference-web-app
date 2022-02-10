@@ -1,20 +1,32 @@
 @import "_variables.scss";
 
-.timestamp {
+.timestamp,
+.sensorTimestamp,
+.sensorChartTimestamp {
   color: $bw-color--grey4;
   font-size: 16px;
   font-weight: 400;
   margin-bottom: 30px;
-  margin-left: 7px;
+  // margin-left: 7px;
   margin-top: -7px;
 }
 
+.sensorTimestamp {
+  font-size: 13px;
+  margin-top: -3px;
+}
+
+.sensorChartTimestamp {
+  font-size: 12px;
+  margin-top: -10px;
+}
+
 .card:first-child {
-  margin-left: 7px;
+  // margin-left: 7px;
 }
 
 .card {
-  padding: 20px 15px;
+  padding: 10px 15px;
 
   :global .ant-card-body {
     padding: 0 !important;

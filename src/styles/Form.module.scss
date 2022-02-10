@@ -4,6 +4,10 @@
   font-weight: 600;
 }
 
+.formLabel:first-child {
+  margin-bottom: 0 !important;
+}
+
 .formData {
   font-weight: 400;
 }

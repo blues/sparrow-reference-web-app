@@ -1,8 +1,9 @@
 @import "_variables.scss";
 
 .mainContent {
-  max-width: $page-content-md;
+  min-height: calc(100vh - $header-bar-height - $footer-bar-height) !important;
+  width: $page-content-md;
   margin: 0 auto;
   padding-bottom: 50px;
-  padding-top: 50px;
+  padding-top: 20px;
 }

@@ -10,9 +10,11 @@ import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
+  GATEWAY_MESSAGE,
 } from "../../../../constants/ui";
 import { services } from "../../../../services/ServiceLocator";
 import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
+import Gateway from "../../../../components/models/Gateway";
 import { getSensorDetailsPresentation } from "../../../../components/presentation/sensorDetails";
 import { ERROR_CODES } from "../../../../services/Errors";
 import styles from "../../../../styles/Home.module.scss";
@@ -25,20 +27,37 @@ interface SparrowQueryInterface extends ParsedUrlQuery {
 }
 
 type SensorDetailsData = {
+  gateway?: Gateway;
   viewModel: SensorDetailViewModel;
   err?: string;
 };
 
-const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
+const SensorDetails: NextPage<SensorDetailsData> = ({
+  gateway,
+  viewModel,
+  err,
+}) => {
+  const formattedLocation =
+    gateway && gateway?.location
+      ? gateway.location
+      : GATEWAY_MESSAGE.NO_LOCATION;
+
   const { TabPane } = Tabs;
   const { query } = useRouter();
 
   const formItems: FormProps[] = [
     {
-      label: "Last Updated",
+      label: (
+        <h3
+          data-testid="current-readings"
+          className={detailsStyles.tabSectionTitle}
+        >
+          Current Readings
+        </h3>
+      ),
       contents: (
-        <div className={detailsStyles.timestamp}>
-          {viewModel.sensor?.lastActivity}
+        <div className={detailsStyles.sensorChartTimestamp}>
+          Last updated&nbsp;{viewModel.sensor?.lastActivity}
         </div>
       ),
     },
@@ -71,10 +90,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       ),
     },
     {
-      label: "Gateway",
+      label: "Gateway Location",
       contents: (
         <div data-testid="sensor-gateway-name" className={styles.formData}>
-          2nd Floor Gateway
+          {formattedLocation}
         </div>
       ),
     },
@@ -94,7 +113,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       `/api/gateway/${gatewayUID}/sensor/${sensorUID}/config`,
       values
     );
-    console.log(`Success: ${response}`);
+    console.log(`Success`);
+    console.log(response);
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
@@ -106,24 +126,33 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       {err && <h2 className={styles.errorMessage}>{err}</h2>}
       {viewModel.sensor && (
         <div>
-          <h1 data-testid="sensor-name" className={styles.sectionTitle}>
-            Sensor: {viewModel.sensor.name}
-          </h1>
+          <h2 data-testid="sensor-name" className={styles.sectionTitle}>
+            Sensor:&nbsp;{viewModel.sensor.name}
+          </h2>
+          <h3 className={styles.sectionSubHeader}>
+            Gateway:&nbsp;{gateway?.serialNumber && gateway.serialNumber}
+          </h3>
           <Tabs defaultActiveKey="1">
             <TabPane tab="Summary" key="1">
-              <h2
+              <h3
                 data-testid="current-readings"
                 className={detailsStyles.tabSectionTitle}
               >
                 Current Readings
-              </h2>
-              <p data-testid="last-seen" className={detailsStyles.timestamp}>
+              </h3>
+              <p
+                data-testid="last-seen"
+                className={detailsStyles.sensorTimestamp}
+              >
                 Last updated {viewModel.sensor.lastActivity}
               </p>
 
-              <Row gutter={[16, 16]}>
+              <Row gutter={[8, 16]}>
                 <Col span={6}>
-                  <Card data-testid="temperature">
+                  <Card
+                    className={detailsStyles.card}
+                    data-testid="temperature"
+                  >
                     Temperature
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -132,7 +161,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col span={6}>
-                  <Card data-testid="humidity">
+                  <Card className={detailsStyles.card} data-testid="humidity">
                     Humidity
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -141,7 +170,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col span={6}>
-                  <Card data-testid="voltage">
+                  <Card className={detailsStyles.card} data-testid="voltage">
                     Voltage
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -150,7 +179,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col span={6}>
-                  <Card data-testid="pressure">
+                  <Card className={detailsStyles.card} data-testid="pressure">
                     <li>
                       Pressure
                       <br />
@@ -163,6 +192,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                 <Col span={12}>
                   <Card>
                     <h3>Temperature</h3>
+                    <p
+                      data-testid="last-seen-temperature"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
                     {viewModel.readings?.temperature.length ? (
                       <SensorDetailsChart
                         label="Temperature"
@@ -179,6 +214,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                 <Col span={12}>
                   <Card>
                     <h3>Humidity</h3>
+                    <p
+                      data-testid="last-seen-humidity"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
                     {viewModel.readings?.humidity.length ? (
                       <SensorDetailsChart
                         label="Humidity"
@@ -195,6 +236,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                 <Col span={12}>
                   <Card>
                     <h3>Voltage</h3>
+                    <p
+                      data-testid="last-seen-voltage"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
                     {viewModel.readings?.voltage.length ? (
                       <SensorDetailsChart
                         label="Voltage"
@@ -211,6 +258,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                 <Col span={12}>
                   <Card>
                     <h3>Pressure</h3>
+                    <p
+                      data-testid="last-seen-pressure"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
                     {viewModel.readings?.pressure.length ? (
                       <SensorDetailsChart
                         label="Pressure"
@@ -247,19 +300,22 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
     const appService = services().getAppService();
     let viewModel: SensorDetailViewModel = {};
+    let gateway: Gateway | null = null;
 
     try {
+      gateway = await appService.getGateway(gatewayUID);
       const sensor = await appService.getSensor(gatewayUID, sensorUID);
       const readings = await appService.getSensorData(gatewayUID, sensorUID);
       viewModel = getSensorDetailsPresentation(sensor, readings);
 
       return {
-        props: { viewModel },
+        props: { gateway, viewModel },
       };
     } catch (err) {
       if (err instanceof Error) {
         return {
           props: {
+            gateway,
             viewModel,
             err: getErrorMessage(err.message),
           },
@@ -267,6 +323,7 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
       }
       return {
         props: {
+          gateway,
           viewModel,
           err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
         },

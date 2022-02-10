@@ -43,8 +43,11 @@ const GatewayCardComponent = (props: GatewayProps) => {
             {gatewayDetails.serialNumber}
           </div>
           <span className={styles.timestamp}>
-            Last updated {getFormattedLastSeen(gatewayDetails.lastActivity)}
+            Last updated&nbsp;
+            {getFormattedLastSeen(gatewayDetails.lastActivity)}
           </span>
+          <br />
+          <br />
         </>
       }
     >

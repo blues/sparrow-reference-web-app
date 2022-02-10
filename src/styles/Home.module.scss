@@ -16,13 +16,19 @@
 .sectionTitle,
 .sectionSubTitle {
   font-weight: 600;
-  margin-left: 7px;
+  // margin-left: 7px;
 }
 
 .sectionTitle {
   margin-bottom: 0;
+  font-size: 20px;
 }
 
 .sectionSubTitle {
   margin-top: 20px;
+  font-size: 18px;
+}
+
+.sectionSubHeader {
+  color: $bw-color--grey4;
 }
