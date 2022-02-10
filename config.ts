@@ -1,5 +1,3 @@
-import { toUnicode } from "punycode";
-
 const debugLog = console.log; // eslint-disable-line no-console
 
 /*
