@@ -2,7 +2,8 @@
 
 .timestamp,
 .sensorTimestamp,
-.sensorChartTimestamp {
+.sensorChartTimestamp,
+.sensorFormTimestamp {
   color: $bw-color--grey4;
   font-size: 16px;
   font-weight: 400;
@@ -18,6 +19,11 @@
 
 .sensorChartTimestamp {
   font-size: 12px;
+  margin-top: -10px;
+}
+
+.sensorFormTimestamp {
+  font-size: 13px;
   margin-top: -10px;
 }
 

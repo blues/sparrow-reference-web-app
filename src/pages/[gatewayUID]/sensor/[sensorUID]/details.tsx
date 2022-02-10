@@ -56,7 +56,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
         </h3>
       ),
       contents: (
-        <div className={detailsStyles.sensorChartTimestamp}>
+        <div className={detailsStyles.sensorFormTimestamp}>
           Last updated&nbsp;{viewModel.sensor?.lastActivity}
         </div>
       ),
