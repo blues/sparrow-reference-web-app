@@ -17,6 +17,10 @@ import { getSensorDetailsPresentation } from "../../../../components/presentatio
 import { ERROR_CODES } from "../../../../services/Errors";
 import styles from "../../../../styles/Home.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
+import TemperatureSensorSchema from "../../../../components/models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
+import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
+import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
 interface SparrowQueryInterface extends ParsedUrlQuery {
@@ -168,7 +172,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                         label="Temperature"
                         data={viewModel.readings.temperature}
                         chartColor="#59d2ff"
-                        unitDisplay="°C"
+                        schema={TemperatureSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
@@ -183,7 +187,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                         label="Humidity"
                         data={viewModel.readings.humidity}
                         chartColor="#ba68c8"
-                        unitDisplay="%"
+                        schema={HumiditySensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
@@ -200,7 +204,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                         yAxisMax={5}
                         data={viewModel.readings.voltage}
                         chartColor="#9ccc65"
-                        unitDisplay="V"
+                        schema={VoltageSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
@@ -215,7 +219,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                         label="Pressure"
                         data={viewModel.readings.pressure}
                         chartColor="#ffd54f"
-                        unitDisplay=" kPa"
+                        schema={PressureSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
