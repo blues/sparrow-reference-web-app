@@ -40,11 +40,17 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
 
       {gateway && (
         <div>
-          <h1 className={styles.sectionTitle}>
+          <h1
+            data-testid="gateway-details-header"
+            className={styles.sectionTitle}
+          >
             Gateway: {gateway.serialNumber}
           </h1>
           <div className={styles.container}>
-            <div className={detailsStyles.timestamp}>
+            <div
+              data-testid="gateway-last-seen"
+              className={detailsStyles.timestamp}
+            >
               Last seen {getFormattedLastSeen(gateway.lastActivity)}
             </div>
 
@@ -53,7 +59,10 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                 <Card>
                   Location
                   <br />
-                  <span className={detailsStyles.dataNumber}>
+                  <span
+                    data-testid="gateway-location"
+                    className={detailsStyles.dataNumber}
+                  >
                     {formattedLocation}
                   </span>
                 </Card>
@@ -71,7 +80,12 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
 
             {sensors?.length > 0 && (
               <>
-                <h3 className={styles.sectionSubTitle}>Sensors</h3>
+                <h3
+                  data-testid="gateway-sensor-header"
+                  className={styles.sectionSubTitle}
+                >
+                  Sensors
+                </h3>
                 <div className={styles.groupedCards}>
                   {sensors.map((sensor, index) => (
                     <SensorCard

@@ -23,3 +23,11 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+import * as detailsCommands from "./commands/details_commands";
+
+Cypress.Commands.add("clickTabByText", detailsCommands.clickTabByText);
+
+Cypress.Commands.add("clickSensorCard", detailsCommands.clickSensorCard);
+
+Cypress.Commands.add("clickGatewayCard", detailsCommands.clickGatewayCard);

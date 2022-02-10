@@ -16,7 +16,6 @@ import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
 import { getSensorDetailsPresentation } from "../../../../components/presentation/sensorDetails";
 import { ERROR_CODES } from "../../../../services/Errors";
 import styles from "../../../../styles/Home.module.scss";
-import formStyles from "../../../../styles/Form.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
@@ -73,7 +72,11 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
     },
     {
       label: "Gateway",
-      contents: <div className={formStyles.formData}>2nd Floor Gateway</div>,
+      contents: (
+        <div data-testid="sensor-gateway-name" className={styles.formData}>
+          2nd Floor Gateway
+        </div>
+      ),
     },
     {
       contents: (
@@ -103,21 +106,24 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       {err && <h2 className={styles.errorMessage}>{err}</h2>}
       {viewModel.sensor && (
         <div>
-          <h1 className={styles.sectionTitle}>
+          <h1 data-testid="sensor-name" className={styles.sectionTitle}>
             Sensor: {viewModel.sensor.name}
           </h1>
           <Tabs defaultActiveKey="1">
             <TabPane tab="Summary" key="1">
-              <h2 className={detailsStyles.tabSectionTitle}>
+              <h2
+                data-testid="current-readings"
+                className={detailsStyles.tabSectionTitle}
+              >
                 Current Readings
               </h2>
-              <p className={detailsStyles.timestamp}>
+              <p data-testid="last-seen" className={detailsStyles.timestamp}>
                 Last updated {viewModel.sensor.lastActivity}
               </p>
 
               <Row gutter={[16, 16]}>
                 <Col span={6}>
-                  <Card>
+                  <Card data-testid="temperature">
                     Temperature
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -126,7 +132,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col span={6}>
-                  <Card>
+                  <Card data-testid="humidity">
                     Humidity
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -135,7 +141,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col span={6}>
-                  <Card>
+                  <Card data-testid="voltage">
                     Voltage
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -144,7 +150,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col span={6}>
-                  <Card>
+                  <Card data-testid="pressure">
                     <li>
                       Pressure
                       <br />

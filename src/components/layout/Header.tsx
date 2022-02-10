@@ -17,7 +17,7 @@ const HeaderComponent = ({ isLoading }: { isLoading: boolean }) => {
         </a>
       </Link>
       <LoadingSpinner isLoading={isLoading} />
-      <h1 className={styles.headerText}>{config.companyName}</h1>
+      <h1 data-testid="company-name" className={styles.headerText}>{config.companyName}</h1>
     </Header>
   );
 };
