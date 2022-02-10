@@ -121,9 +121,9 @@ export default class NotehubDataProvider implements DataProvider {
       "macAddress"
     );
 
-    // get the names of the sensors from the API via config.db
+    // get the names and locations of the sensors from the API via config.db
     const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
-      const sensorNameInfo = await this.notehubAccessor.getConfig(
+      const sensorDetailsInfo = await this.notehubAccessor.getConfig(
         gatewaySensorInfo.gatewayUID,
         gatewaySensorInfo.macAddress
       );
@@ -132,7 +132,12 @@ export default class NotehubDataProvider implements DataProvider {
       return {
         macAddress: gatewaySensorInfo.macAddress,
         gatewayUID: gatewaySensorInfo.gatewayUID,
-        ...(sensorNameInfo?.body?.name && { name: sensorNameInfo.body.name }),
+        ...(sensorDetailsInfo?.body?.name && {
+          name: sensorDetailsInfo.body.name,
+        }),
+        ...(sensorDetailsInfo?.body?.loc && {
+          location: sensorDetailsInfo.body.loc,
+        }),
         ...(gatewaySensorInfo.voltage && {
           voltage: gatewaySensorInfo.voltage,
         }),

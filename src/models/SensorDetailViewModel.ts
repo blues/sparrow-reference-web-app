@@ -1,6 +1,7 @@
 interface SensorDetailViewModel {
   sensor?: {
     name: string;
+    location: string;
     lastActivity: string;
     temperature: string;
     humidity: string;
