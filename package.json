@@ -11,8 +11,8 @@
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:open": "cypress open --env configFile=development",
+    "cypress:run": "cypress run --env configFile=development"
   },
   "dependencies": {
     "@types/lodash": "^4.14.178",

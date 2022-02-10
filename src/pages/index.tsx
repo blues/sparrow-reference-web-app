@@ -20,7 +20,9 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
       <h2 className={styles.errorMessage}>{err}</h2>
     ) : (
       <>
-        <h3 className={styles.sectionTitle}>Gateways</h3>
+        <h3 data-testid="gateway-header" className={styles.sectionTitle}>
+          Gateways
+        </h3>
         <div className={styles.groupedCards}>
           {gateways.map((gateway, index) => (
             <GatewayCard
@@ -31,7 +33,9 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
           ))}
         </div>
 
-        <h3 className={styles.sectionTitle}>Sensors</h3>
+        <h3 data-testid="sensor-header" className={styles.sectionTitle}>
+          Sensors
+        </h3>
         <div className={styles.groupedCards}>
           {latestSensorDataList.map((sensor, index) => (
             <SensorCard
