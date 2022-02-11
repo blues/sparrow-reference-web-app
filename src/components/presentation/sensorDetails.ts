@@ -9,16 +9,19 @@ import {
   getFormattedVoltageData,
 } from "./uiHelpers";
 import Sensor from "../models/Sensor";
+import Gateway from "../models/Gateway";
 import SensorReading from "../models/readings/SensorReading";
 import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
 import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
 import PressureSensorSchema from "../models/readings/PressureSensorSchema";
 import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
 
+
 // eslint-disable-next-line import/prefer-default-export
 export function getSensorDetailsPresentation(
   sensor: Sensor,
-  readings: SensorReading<unknown>[]
+  readings: SensorReading<unknown>[],
+  gateway: Gateway
 ): SensorDetailViewModel {
   return {
     sensor: {
@@ -36,5 +39,6 @@ export function getSensorDetailsPresentation(
       pressure: getFormattedChartData(readings, PressureSensorSchema),
       voltage: getFormattedChartData(readings, VoltageSensorSchema),
     },
+    gateway
   };
 }

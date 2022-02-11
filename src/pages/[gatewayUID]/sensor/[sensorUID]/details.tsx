@@ -74,7 +74,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       label: "Gateway",
       contents: (
         <div data-testid="sensor-gateway-name" className={styles.formData}>
-          2nd Floor Gateway
+          {viewModel.gateway?.serialNumber}
         </div>
       ),
     },
@@ -251,7 +251,8 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
     try {
       const sensor = await appService.getSensor(gatewayUID, sensorUID);
       const readings = await appService.getSensorData(gatewayUID, sensorUID);
-      viewModel = getSensorDetailsPresentation(sensor, readings);
+      const gateway = await appService.getGateway(gatewayUID);
+      viewModel = getSensorDetailsPresentation(sensor, readings, gateway);
 
       return {
         props: { viewModel },
