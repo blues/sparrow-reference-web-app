@@ -55,7 +55,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
             </div>
 
             <Row gutter={[16, 16]}>
-              <Col span={6}>
+              <Col sm={8} span={6}>
                 <Card className={detailsStyles.card}>
                   <div className={detailsStyles.cardTitle}>Location</div>
                   <span
@@ -66,7 +66,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                   </span>
                 </Card>
               </Col>
-              <Col span={6}>
+              <Col sm={8} span={6}>
                 <Card className={detailsStyles.card}>
                   <div className={detailsStyles.cardTitle}>Voltage</div>
                   <span className={detailsStyles.dataNumber}>

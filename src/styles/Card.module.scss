@@ -2,7 +2,6 @@
 
 .cardStyle {
   width: 47.5%;
-  width: clamp($page-content-xs, 47.5%, 100%);
   margin: 5px 10px 5px 0;
   padding: 0 14px;
 
@@ -21,6 +20,7 @@
 
     .locationTitle {
       font-size: 12px;
+      padding-right: 8px;
     }
 
     .location {
@@ -39,7 +39,8 @@
     top: -5px;
   }
 
-  .cardContents {
+  .cardContents,
+  .cardContentsSensor {
     list-style-type: none;
     display: flex;
     padding: 10px 0 20px 0;
@@ -64,6 +65,27 @@
 
 @media screen and (max-width: $breakpoints-md) {
   .cardStyle {
-    width: clamp($page-content-xs, $page-content-md, 100%);
+    width: clamp($page-content-xs, $page-content-sm, 100%);
+
+    :global .ant-card-head-title {
+      line-height: 15px;
+      font-size: 18px;
+    }
+
+    .timestamp {
+      font-size: 13px;
+    }
+
+    .cardContents {
+      justify-content: space-evenly;
+
+      li {
+        font-size: 16px;
+
+        span {
+          font-size: 18px;
+        }
+      }
+    }
   }
 }

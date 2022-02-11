@@ -59,7 +59,7 @@ const SensorCardComponent = (props: SensorProps) => {
         </>
       }
     >
-      <ul className={styles.cardContents}>
+      <ul className={styles.cardContentsSensor}>
         <li>
           Humidity
           <br />
