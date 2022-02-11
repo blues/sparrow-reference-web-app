@@ -80,6 +80,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
         <Input
           data-testid="form-input-sensor-name"
           placeholder="Name of sensor"
+          maxLength={49}
         />
       ),
     },
@@ -94,6 +95,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
         <Input
           data-testid="form-input-sensor-location"
           placeholder="Sensor location"
+          maxLength={15}
         />
       ),
     },
