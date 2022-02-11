@@ -84,7 +84,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                 >
                   Sensors
                 </h3>
-                <Row>
+                <Row gutter={[16, 16]}>
                   {sensors.map((sensor, index) => (
                     <Col sm={24} lg={12}>
                       <SensorCard

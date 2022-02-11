@@ -24,7 +24,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
         <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
           Gateways
         </h2>
-        <Row>
+        <Row gutter={[16, 16]}>
           {gateways.map((gateway, index) => (
             <Col sm={24} lg={12}>
               <GatewayCard
@@ -39,7 +39,7 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
         <h2 data-testid="sensor-header" className={styles.sectionSubTitle}>
           Sensors
         </h2>
-        <Row>
+        <Row gutter={[16, 16]}>
           {latestSensorDataList.map((sensor, index) => (
             <Col sm={24} lg={12}>
               <SensorCard
