@@ -100,14 +100,6 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
       ),
     },
     {
-      label: "Gateway Location",
-      contents: (
-        <div data-testid="sensor-gateway-name" className={styles.formData}>
-          {formattedLocation}
-        </div>
-      ),
-    },
-    {
       contents: (
         <Button data-testid="form-submit" htmlType="submit" type="primary">
           Save Changes
