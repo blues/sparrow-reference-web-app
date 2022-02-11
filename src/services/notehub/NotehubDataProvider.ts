@@ -90,7 +90,8 @@ export default class NotehubDataProvider implements DataProvider {
         gatewayUID,
         macAddress: event.file,
         humidity: event.body.humidity,
-        pressure: event.body.pressure,
+        // Convert from Pa to kPa
+        pressure: event.body.pressure ? event.body.pressure / 1000 : undefined,
         temperature: event.body.temperature,
         voltage: event.body.voltage,
         lastActivity: event.captured,
@@ -210,7 +211,8 @@ export default class NotehubDataProvider implements DataProvider {
       if (event.body.pressure) {
         readingsToReturn.push(
           new PressureSensorReading({
-            value: event.body.pressure,
+            // Convert from Pa to kPa
+            value: event.body.pressure / 1000,
             captured: event.captured,
           })
         );

@@ -19,10 +19,16 @@ interface SensorProps {
 const SensorCardComponent = (props: SensorProps) => {
   // in the future perhaps try to make dynamic items based on model props
   const { sensorDetails, index } = props;
-  const formattedTemperatureData = getFormattedTemperatureData(sensorDetails);
-  const formattedHumidityData = getFormattedHumidityData(sensorDetails);
-  const formattedPressureData = getFormattedPressureData(sensorDetails);
-  const formattedVoltageData = getFormattedVoltageData(sensorDetails);
+  const formattedTemperatureData = getFormattedTemperatureData(
+    sensorDetails.temperature
+  );
+  const formattedHumidityData = getFormattedHumidityData(
+    sensorDetails.humidity
+  );
+  const formattedPressureData = getFormattedPressureData(
+    sensorDetails.pressure
+  );
+  const formattedVoltageData = getFormattedVoltageData(sensorDetails.voltage);
 
   const router = useRouter();
   const sensorUrl = `/${sensorDetails.gatewayUID}/sensor/${sensorDetails.macAddress}/details`;

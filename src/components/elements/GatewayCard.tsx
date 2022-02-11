@@ -16,7 +16,9 @@ interface GatewayProps {
 const GatewayCardComponent = (props: GatewayProps) => {
   // in the future perhaps try to make dynamic items based on model props
   const { gatewayDetails, index } = props;
-  const formattedGatewayVoltage = getFormattedVoltageData(gatewayDetails);
+  const formattedGatewayVoltage = getFormattedVoltageData(
+    gatewayDetails.voltage
+  );
 
   const router = useRouter();
   const gatewayUrl = `/${gatewayDetails.uid}/details`;

@@ -28,20 +28,17 @@ ChartJS.register(
 // See https://date-fns.org/v2.27.0/docs/format
 export const CHART_DATE_FORMAT = "MMM do hh:mm";
 
-export const GLOBAL_CHART_OPTIONS: ChartOptions = {
+export const GLOBAL_CHART_OPTIONS: ChartOptions<"line"> = {
   responsive: true,
   interaction: {
     mode: "index",
     intersect: false,
   },
-  plugins: {
-    legend: {
-      display: false,
-    },
-  },
 };
 
-export function getChartOptions(overrides?: ChartOptions): ChartOptions {
+export function getChartOptions(
+  overrides?: ChartOptions<"line">
+): ChartOptions<"line"> {
   return {
     ...GLOBAL_CHART_OPTIONS,
     ...overrides,

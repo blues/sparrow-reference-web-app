@@ -31,7 +31,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
       ? gateway.location
       : GATEWAY_MESSAGE.NO_LOCATION;
   const formattedGatewayVoltage = gateway
-    ? getFormattedVoltageData(gateway)
+    ? getFormattedVoltageData(gateway.voltage)
     : GATEWAY_MESSAGE.NO_VOLTAGE;
 
   return (

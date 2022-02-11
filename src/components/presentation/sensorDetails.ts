@@ -26,10 +26,14 @@ export function getSensorDetailsPresentation(
       lastActivity: getFormattedLastSeen(sensor.lastActivity),
       location: sensor.location || SENSOR_MESSAGE.NO_LOCATION,
       temperature:
-        getFormattedTemperatureData(sensor) || SENSOR_MESSAGE.NO_TEMPERATURE,
-      humidity: getFormattedHumidityData(sensor) || SENSOR_MESSAGE.NO_HUMIDITY,
-      pressure: getFormattedPressureData(sensor) || SENSOR_MESSAGE.NO_PRESSURE,
-      voltage: getFormattedVoltageData(sensor) || SENSOR_MESSAGE.NO_VOLTAGE,
+        getFormattedTemperatureData(sensor.temperature) ||
+        SENSOR_MESSAGE.NO_TEMPERATURE,
+      humidity:
+        getFormattedHumidityData(sensor.humidity) || SENSOR_MESSAGE.NO_HUMIDITY,
+      pressure:
+        getFormattedPressureData(sensor.pressure) || SENSOR_MESSAGE.NO_PRESSURE,
+      voltage:
+        getFormattedVoltageData(sensor.voltage) || SENSOR_MESSAGE.NO_VOLTAGE,
     },
     readings: {
       temperature: getFormattedChartData(readings, TemperatureSensorSchema),
