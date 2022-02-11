@@ -88,8 +88,6 @@ describe("Sparrow Application", () => {
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
     cy.get('[data-testid="form-input-sensor-location"]').should("be.visible");
-    //Verify the Location field in the Details tab
-    cy.get('[data-testid="sensor-gateway-name"]').should("contain", "Gateway");
     //Click the Submit button
     cy.get('[data-testid="form-submit"]').should("be.visible");
     //Click the sparrow Logo to return to the homepage
