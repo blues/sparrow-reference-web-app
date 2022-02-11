@@ -33,6 +33,13 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { query } = useRouter();
 
+  const router = useRouter();
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = () => {
+    router.replace(router.asPath);
+  }
+
   const formItems: FormProps[] = [
     {
       label: "Last Updated",
@@ -97,6 +104,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       values
     );
     console.log(`Success: ${response}`);
+
+    if (response.status < 300) {
+      refreshData();
+    }
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
