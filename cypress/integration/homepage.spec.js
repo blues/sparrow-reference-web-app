@@ -22,7 +22,7 @@ describe("Sparrow Application", () => {
       .and("include", "https://blues.io");
   });
 
-  it("should be able to click on a gateway UID and see the details of that gateway and it's related sensors", function () {
+  it("should be able to click on a gateway UID and see the details of that gateway and its related sensors", function () {
     cy.visit("/");
     //Click the Gateway Details arrow
     cy.clickGatewayCard("0");
@@ -89,7 +89,7 @@ describe("Sparrow Application", () => {
     //Verify the Location field exists in the Details tab
     cy.get('[data-testid="form-input-sensor-location"]').should("be.visible");
     //Verify the Location field in the Details tab
-    cy.get('[data-testid="sensor-gateway-name"]').should("contain", "Gateway");
+    cy.get('[data-testid="sensor-gateway-name"]').should("be.visible");
     //Click the Submit button
     cy.get('[data-testid="form-submit"]').should("be.visible");
     //Click the sparrow Logo to return to the homepage
