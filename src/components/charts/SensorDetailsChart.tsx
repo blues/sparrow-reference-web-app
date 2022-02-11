@@ -16,8 +16,6 @@ import LineChart from "./LineChart";
 
 type SensorDetailsChartProps = {
   label: string;
-  yAxisMin?: number;
-  yAxisMax?: number;
   chartColor: string;
   data: {
     when: string;
@@ -54,8 +52,6 @@ export function getTooltipDisplayText(
 
 const SensorDetailsChart = ({
   label,
-  yAxisMin,
-  yAxisMax,
   chartColor,
   data,
   schema,
@@ -103,8 +99,7 @@ const SensorDetailsChart = ({
         grid: {
           drawBorder: false,
         },
-        ...(typeof yAxisMin === "number" && { min: yAxisMin }),
-        ...(typeof yAxisMax === "number" && { max: yAxisMax }),
+        ...(schema === VoltageSensorSchema && { min: 0, max: 5 }),
         ticks: {
           stepSize: 0,
         },

@@ -42,7 +42,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   // refresh props!
   const refreshData = () => {
     router.replace(router.asPath);
-  }
+  };
 
   const formItems: FormProps[] = [
     {
@@ -213,8 +213,6 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     {viewModel.readings?.voltage.length ? (
                       <SensorDetailsChart
                         label="Voltage"
-                        yAxisMin={0}
-                        yAxisMax={5}
                         data={viewModel.readings.voltage}
                         chartColor="#9ccc65"
                         schema={VoltageSensorSchema}
