@@ -24,6 +24,7 @@ export function getSensorDetailsPresentation(
     sensor: {
       name: sensor.name || SENSOR_MESSAGE.NO_NAME,
       lastActivity: getFormattedLastSeen(sensor.lastActivity),
+      location: sensor.location || SENSOR_MESSAGE.NO_LOCATION,
       temperature:
         getFormattedTemperatureData(sensor) || SENSOR_MESSAGE.NO_TEMPERATURE,
       humidity: getFormattedHumidityData(sensor) || SENSOR_MESSAGE.NO_HUMIDITY,
