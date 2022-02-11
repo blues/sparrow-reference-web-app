@@ -16,7 +16,6 @@
 .sectionTitle,
 .sectionSubTitle {
   font-weight: 600;
-  // margin-left: 7px;
 }
 
 .sectionTitle {
@@ -32,4 +31,15 @@
 .sectionSubHeader {
   color: $bw-color--grey4;
   font-size: 16px;
+}
+
+@media screen and (max-width: $breakpoints-md) {
+  .container {
+    .groupedCards {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+  }
 }

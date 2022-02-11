@@ -2,7 +2,7 @@
 
 .mainContent {
   min-height: calc(100vh - $header-bar-height - $footer-bar-height) !important;
-  width: $page-content-md;
+  width: clamp($page-content-xs, $page-content-md, calc(100vw - 15%));
   margin: 0 auto;
   padding-bottom: 50px;
   padding-top: 20px;

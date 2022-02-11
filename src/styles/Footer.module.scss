@@ -1,18 +1,17 @@
 @import "_variables.scss";
 
 .footerDivider {
-  width: 100%;
   margin: auto;
   border: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  width: $page-content-md;
+  width: clamp($page-content-xs, $page-content-md, calc(100vw - 20%));
   z-index: 2;
 }
 
 .footer {
   display: flex;
   justify-content: space-between;
-  width: $page-content-md;
+  width: clamp($page-content-xs, $page-content-md, calc(100vw - 20%));
   margin: auto;
   padding: 24px 0 !important;
 }
