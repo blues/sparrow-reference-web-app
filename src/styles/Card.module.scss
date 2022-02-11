@@ -1,7 +1,6 @@
 @import "_variables.scss";
 
 .cardStyle {
-  width: 47.5%;
   margin: 5px 10px 5px 0;
   padding: 0 14px;
 
@@ -65,8 +64,6 @@
 
 @media screen and (max-width: $breakpoints-md) {
   .cardStyle {
-    width: clamp($page-content-xs, $page-content-sm, 100%);
-
     :global .ant-card-head-title {
       line-height: 15px;
       font-size: 18px;

@@ -49,8 +49,21 @@
     font-size: 18px;
   }
 
-  .sensorTimestamp {
+  .sensorTimestamp,
+  .sensorFormTimestamp {
     font-size: 16px;
+  }
+
+  .sensorChartTimestamp {
+    font-size: 15px;
+    margin-top: -15px;
+    margin-bottom: 15px;
+  }
+
+  .sensorChart {
+    :global .ant-card-body {
+      padding: 10px 20px !important;
+    }
   }
 
   .tabSectionTitle {

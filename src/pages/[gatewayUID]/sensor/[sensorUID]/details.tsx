@@ -181,7 +181,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     </span>
                   </Card>
                 </Col>
-                <Col span={6}>
+                <Col sm={5} lg={6}>
                   <Card className={detailsStyles.card} data-testid="voltage">
                     Voltage
                     <br />
@@ -190,7 +190,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     </span>
                   </Card>
                 </Col>
-                <Col span={6}>
+                <Col sm={7} lg={6}>
                   <Card className={detailsStyles.card} data-testid="pressure">
                     <li>
                       Pressure
@@ -201,8 +201,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     </li>
                   </Card>
                 </Col>
-                <Col sm={24} span={12}>
-                  <Card>
+                <Col sm={24} lg={12}>
+                  <Card className={styles.sensorChart}>
                     <h3>Temperature</h3>
                     <p
                       data-testid="last-seen-temperature"
@@ -223,8 +223,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     )}
                   </Card>
                 </Col>
-                <Col sm={24} span={12}>
-                  <Card>
+                <Col sm={24} lg={12}>
+                  <Card className={styles.sensorChart}>
                     <h3>Humidity</h3>
                     <p
                       data-testid="last-seen-humidity"
@@ -245,8 +245,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     )}
                   </Card>
                 </Col>
-                <Col sm={24} span={12}>
-                  <Card>
+                <Col sm={24} lg={12}>
+                  <Card className={styles.sensorChart}>
                     <h3>Voltage</h3>
                     <p
                       data-testid="last-seen-voltage"
@@ -267,8 +267,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     )}
                   </Card>
                 </Col>
-                <Col sm={24} span={12}>
-                  <Card>
+                <Col sm={24} lg={12}>
+                  <Card className={styles.sensorChart}>
                     <h3>Pressure</h3>
                     <p
                       data-testid="last-seen-pressure"

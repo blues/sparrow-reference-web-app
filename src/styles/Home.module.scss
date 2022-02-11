@@ -4,13 +4,6 @@
   .errorMessage {
     text-align: center;
   }
-
-  .groupedCards {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom: 30px;
-  }
 }
 
 .sectionTitle,
@@ -34,20 +27,15 @@
 }
 
 @media screen and (max-width: $breakpoints-md) {
-  .container {
-    .groupedCards {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-  }
-
   .sectionTitle {
     font-size: 22px;
   }
 
   .sectionSubTitle {
     font-size: 20px;
+  }
+
+  .sectionSubHeader {
+    margin-top: -5px;
   }
 }

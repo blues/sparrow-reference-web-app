@@ -55,7 +55,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
             </div>
 
             <Row gutter={[16, 16]}>
-              <Col sm={8} span={6}>
+              <Col sm={8} lg={6}>
                 <Card className={detailsStyles.card}>
                   <div className={detailsStyles.cardTitle}>Location</div>
                   <span
@@ -66,7 +66,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                   </span>
                 </Card>
               </Col>
-              <Col sm={8} span={6}>
+              <Col sm={8} lg={6}>
                 <Card className={detailsStyles.card}>
                   <div className={detailsStyles.cardTitle}>Voltage</div>
                   <span className={detailsStyles.dataNumber}>
@@ -84,15 +84,17 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                 >
                   Sensors
                 </h3>
-                <div className={styles.groupedCards}>
+                <Row>
                   {sensors.map((sensor, index) => (
-                    <SensorCard
-                      key={sensor.macAddress}
-                      index={index}
-                      sensorDetails={sensor}
-                    />
+                    <Col sm={24} lg={12}>
+                      <SensorCard
+                        key={sensor.macAddress}
+                        index={index}
+                        sensorDetails={sensor}
+                      />
+                    </Col>
                   ))}
-                </div>
+                </Row>
               </>
             )}
           </div>
