@@ -86,12 +86,8 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                 </h3>
                 <Row gutter={[16, 16]}>
                   {sensors.map((sensor, index) => (
-                    <Col sm={24} lg={12}>
-                      <SensorCard
-                        key={sensor.macAddress}
-                        index={index}
-                        sensorDetails={sensor}
-                      />
+                    <Col sm={24} lg={12} key={sensor.macAddress}>
+                      <SensorCard index={index} sensorDetails={sensor} />
                     </Col>
                   ))}
                 </Row>

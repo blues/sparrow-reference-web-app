@@ -10,7 +10,6 @@ import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
-  GATEWAY_MESSAGE,
 } from "../../../../constants/ui";
 import { services } from "../../../../services/ServiceLocator";
 import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
@@ -41,11 +40,6 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   viewModel,
   err,
 }) => {
-  const formattedLocation =
-    gateway && gateway?.location
-      ? gateway.location
-      : GATEWAY_MESSAGE.NO_LOCATION;
-
   const { TabPane } = Tabs;
   const { query } = useRouter();
 

@@ -26,12 +26,8 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
         </h2>
         <Row gutter={[16, 16]}>
           {gateways.map((gateway, index) => (
-            <Col sm={24} lg={12}>
-              <GatewayCard
-                key={gateway.uid}
-                index={index}
-                gatewayDetails={gateway}
-              />
+            <Col sm={24} lg={12} key={gateway.uid}>
+              <GatewayCard index={index} gatewayDetails={gateway} />
             </Col>
           ))}
         </Row>
@@ -41,12 +37,8 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
         </h2>
         <Row gutter={[16, 16]}>
           {latestSensorDataList.map((sensor, index) => (
-            <Col sm={24} lg={12}>
-              <SensorCard
-                key={sensor.macAddress}
-                index={index}
-                sensorDetails={sensor}
-              />
+            <Col sm={24} lg={12} key={sensor.macAddress}>
+              <SensorCard index={index} sensorDetails={sensor} />
             </Col>
           ))}
         </Row>
