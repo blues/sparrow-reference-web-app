@@ -189,7 +189,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     </li>
                   </Card>
                 </Col>
-                <Col span={12}>
+                <Col sm={24} span={12}>
                   <Card>
                     <h3>Temperature</h3>
                     <p
@@ -211,7 +211,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     )}
                   </Card>
                 </Col>
-                <Col span={12}>
+                <Col sm={24} span={12}>
                   <Card>
                     <h3>Humidity</h3>
                     <p
@@ -233,7 +233,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     )}
                   </Card>
                 </Col>
-                <Col span={12}>
+                <Col sm={24} span={12}>
                   <Card>
                     <h3>Voltage</h3>
                     <p
@@ -255,7 +255,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
                     )}
                   </Card>
                 </Col>
-                <Col span={12}>
+                <Col sm={24} span={12}>
                   <Card>
                     <h3>Pressure</h3>
                     <p
