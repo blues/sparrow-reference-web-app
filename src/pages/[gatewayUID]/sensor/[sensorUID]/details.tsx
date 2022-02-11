@@ -45,6 +45,14 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
   const { TabPane } = Tabs;
   const { query } = useRouter();
 
+  const router = useRouter();
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = () => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    router.replace(router.asPath);
+  };
+
   const formItems: FormProps[] = [
     {
       label: (
@@ -115,6 +123,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
     );
     console.log(`Success`);
     console.log(response);
+
+    if (response.status < 300) {
+      refreshData();
+    }
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
@@ -300,7 +312,7 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
     const appService = services().getAppService();
     let viewModel: SensorDetailViewModel = {};
-    let gateway: Gateway | null = null;
+    let gateway: Gateway | undefined;
 
     try {
       gateway = await appService.getGateway(gatewayUID);
