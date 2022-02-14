@@ -133,7 +133,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
           <h2 data-testid="sensor-name" className={styles.sectionTitle}>
             Sensor:&nbsp;{viewModel.sensor.name}
           </h2>
-          <h3 className={styles.sectionSubHeader}>
+          <h3
+            data-testid="sensor-gateway-name"
+            className={styles.sectionSubHeader}
+          >
             Gateway:&nbsp;{gateway?.serialNumber && gateway.serialNumber}
           </h3>
           <Tabs defaultActiveKey="1">

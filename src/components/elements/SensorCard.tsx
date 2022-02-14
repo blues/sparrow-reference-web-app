@@ -50,11 +50,11 @@ const SensorCardComponent = (props: SensorProps) => {
           <div data-testid={`sensor[${index}]-summary`}>
             {sensorDetails.name ? sensorDetails.name : SENSOR_MESSAGE.NO_NAME}
           </div>
-          <span className={styles.timestamp}>
+          <span data-testid="sensor-timestamp" className={styles.timestamp}>
             Last updated &nbsp;
             {getFormattedLastSeen(sensorDetails.lastActivity)}
           </span>
-          <div className={styles.locationWrapper}>
+          <div data-testid="sensor-location" className={styles.locationWrapper}>
             <span className={styles.locationTitle}>Location&nbsp;</span>
             <span className={styles.location}>
               {sensorDetails.location
