@@ -55,8 +55,8 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
             </div>
 
             <Row gutter={[16, 16]}>
-              <Col sm={8} lg={6}>
-                <Card className={detailsStyles.card}>
+              <Col xs={12} sm={8} lg={6}>
+                <Card id={detailsStyles.card}>
                   <div className={detailsStyles.cardTitle}>Location</div>
                   <span
                     data-testid="gateway-location"
@@ -66,8 +66,8 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                   </span>
                 </Card>
               </Col>
-              <Col sm={8} lg={6}>
-                <Card className={detailsStyles.card}>
+              <Col xs={12} sm={8} lg={6}>
+                <Card id={detailsStyles.card}>
                   <div className={detailsStyles.cardTitle}>Voltage</div>
                   <span className={detailsStyles.dataNumber}>
                     {formattedGatewayVoltage}
@@ -86,7 +86,7 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                 </h3>
                 <Row gutter={[16, 16]}>
                   {sensors.map((sensor, index) => (
-                    <Col sm={24} lg={12} key={sensor.macAddress}>
+                    <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
                       <SensorCard index={index} sensorDetails={sensor} />
                     </Col>
                   ))}
