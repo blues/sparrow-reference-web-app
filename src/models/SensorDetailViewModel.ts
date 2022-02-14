@@ -1,4 +1,7 @@
 interface SensorDetailViewModel {
+  gateway?: {
+    serialNumber: string;
+  };
   sensor?: {
     name: string;
     location: string;

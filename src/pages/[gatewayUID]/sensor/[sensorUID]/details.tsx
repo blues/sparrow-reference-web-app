@@ -13,7 +13,6 @@ import {
 } from "../../../../constants/ui";
 import { services } from "../../../../services/ServiceLocator";
 import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
-import Gateway from "../../../../components/models/Gateway";
 import { getSensorDetailsPresentation } from "../../../../components/presentation/sensorDetails";
 import { ERROR_CODES } from "../../../../services/Errors";
 import styles from "../../../../styles/Home.module.scss";
@@ -30,16 +29,11 @@ interface SparrowQueryInterface extends ParsedUrlQuery {
 }
 
 type SensorDetailsData = {
-  gateway?: Gateway;
   viewModel: SensorDetailViewModel;
   err?: string;
 };
 
-const SensorDetails: NextPage<SensorDetailsData> = ({
-  gateway,
-  viewModel,
-  err,
-}) => {
+const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { query } = useRouter();
 
@@ -137,7 +131,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
             data-testid="sensor-gateway-name"
             className={styles.sectionSubHeader}
           >
-            Gateway:&nbsp;{gateway?.serialNumber && gateway.serialNumber}
+            Gateway:&nbsp;
+            {viewModel.gateway?.serialNumber && viewModel.gateway.serialNumber}
           </h3>
           <Tabs defaultActiveKey="1">
             <TabPane tab="Summary" key="1">
@@ -303,22 +298,20 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
     const appService = services().getAppService();
     let viewModel: SensorDetailViewModel = {};
-    let gateway: Gateway | undefined;
 
     try {
-      gateway = await appService.getGateway(gatewayUID);
+      const gateway = await appService.getGateway(gatewayUID);
       const sensor = await appService.getSensor(gatewayUID, sensorUID);
       const readings = await appService.getSensorData(gatewayUID, sensorUID);
-      viewModel = getSensorDetailsPresentation(sensor, readings);
+      viewModel = getSensorDetailsPresentation(sensor, gateway, readings);
 
       return {
-        props: { gateway, viewModel },
+        props: { viewModel },
       };
     } catch (err) {
       if (err instanceof Error) {
         return {
           props: {
-            gateway,
             viewModel,
             err: getErrorMessage(err.message),
           },
@@ -326,7 +319,6 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
       }
       return {
         props: {
-          gateway,
           viewModel,
           err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
         },

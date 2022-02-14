@@ -9,6 +9,7 @@ import {
   getFormattedVoltageData,
 } from "./uiHelpers";
 import Sensor from "../models/Sensor";
+import Gateway from "../models/Gateway";
 import SensorReading from "../models/readings/SensorReading";
 import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
 import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
@@ -18,9 +19,13 @@ import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
 // eslint-disable-next-line import/prefer-default-export
 export function getSensorDetailsPresentation(
   sensor: Sensor,
+  gateway: Gateway,
   readings: SensorReading<unknown>[]
 ): SensorDetailViewModel {
   return {
+    gateway: {
+      serialNumber: gateway.serialNumber,
+    },
     sensor: {
       name: sensor.name || SENSOR_MESSAGE.NO_NAME,
       lastActivity: getFormattedLastSeen(sensor.lastActivity),
