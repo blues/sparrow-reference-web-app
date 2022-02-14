@@ -1,7 +1,8 @@
 @import "_variables.scss";
 
-#mainContent {
-  min-height: calc(100vh - $header-bar-height - $footer-bar-height);
+.mainContent {
+  // required to override default Ant Design component styling
+  min-height: calc(100vh - $header-bar-height - $footer-bar-height) !important;
   width: clamp($page-content-sm, $page-content-md, calc(100vw - 15%));
   margin: 0 auto;
   padding-bottom: 50px;
@@ -9,7 +10,7 @@
 }
 
 @media screen and (max-width: $breakpoints-md) {
-  #mainContent {
+  .mainContent {
     width: clamp($page-content-xs, $page-content-sm, calc(100vw - 15%));
   }
 }

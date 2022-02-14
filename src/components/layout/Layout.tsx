@@ -9,7 +9,7 @@ const LayoutComponent = ({ children }: { children: ReactNode }) => {
   return (
     <Layout>
       <Header />
-      <Content id={styles.mainContent}>{children}</Content>
+      <Content className={styles.mainContent}>{children}</Content>
       <Footer />
     </Layout>
   );

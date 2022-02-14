@@ -9,7 +9,7 @@ import config from "../../../config";
 const HeaderComponent = () => {
   const { Header } = Layout;
   return (
-    <Header id={styles.header}>
+    <Header className={styles.header}>
       <Link href="/">
         <a data-testid="logo">
           <Image src={Logo} height={70} width={100} alt="Sparrow Logo" />

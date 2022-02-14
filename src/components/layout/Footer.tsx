@@ -5,9 +5,9 @@ import styles from "../../styles/Footer.module.scss";
 const FooterComponent = () => {
   const { Footer } = Layout;
   return (
-    <>
+    <div className={styles.footerWrapper}>
       <hr className={styles.footerDivider} />
-      <Footer id={styles.footer}>
+      <Footer className={styles.footer}>
         <div>
           Cloud-connected by&nbsp;
           <a
@@ -37,7 +37,7 @@ const FooterComponent = () => {
           </a>
         </div>
       </Footer>
-    </>
+    </div>
   );
 };
 

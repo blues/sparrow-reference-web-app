@@ -1,9 +1,10 @@
 @import "_variables.scss";
 
-#header {
+.header {
   display: flex;
   justify-content: space-between;
-  padding: 0 64px;
+  // required to override default Ant Design component styling
+  padding: 0 64px !important;
 
   .logo {
     display: flex;
