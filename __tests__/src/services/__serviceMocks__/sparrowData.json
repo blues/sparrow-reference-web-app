@@ -17,7 +17,7 @@
       "voltage": 2.7,
       "lastActivity": "2021-11-30T20:30:19Z",
       "humidity": 27.2,
-      "pressure": 101152,
+      "pressure": 101.152,
       "temperature": 22.6
     },
     {
@@ -25,7 +25,7 @@
       "gatewayUID": "dev:5678",
       "lastActivity": "2021-10-01T18:52:41Z",
       "humidity": 38.1,
-      "pressure": 101950,
+      "pressure": 101.95,
       "temperature": 24.3
     }
   ],

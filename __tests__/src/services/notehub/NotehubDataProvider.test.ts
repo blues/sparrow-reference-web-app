@@ -5,10 +5,10 @@ import NotehubDataProvider, {
 import sparrowData from "../__serviceMocks__/sparrowData.json"; // mocked data to do with Sparrow portion of app goes here (i.e. gateways and sensors)
 import notehubData from "../__serviceMocks__/notehubData.json"; // mocked data to do with Notehub portion of app goes here (i.e. devices and events)
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
-import TemperatureSensorSchema from "../../../../src/components/models/TemperatureSensorSchema";
-import HumiditySensorSchema from "../../../../src/components/models/HumiditySensorSchema";
-import PressureSensorSchema from "../../../../src/components/models/PressureSensorSchema";
-import VoltageSensorSchema from "../../../../src/components/models/VoltageSensorSchema";
+import TemperatureSensorSchema from "../../../../src/components/models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../src/components/models/readings/HumiditySensorSchema";
+import PressureSensorSchema from "../../../../src/components/models/readings/PressureSensorSchema";
+import VoltageSensorSchema from "../../../../src/components/models/readings/VoltageSensorSchema";
 import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
 import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
 import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";

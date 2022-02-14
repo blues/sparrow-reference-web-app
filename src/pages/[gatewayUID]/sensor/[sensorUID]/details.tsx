@@ -17,6 +17,10 @@ import { getSensorDetailsPresentation } from "../../../../components/presentatio
 import { ERROR_CODES } from "../../../../services/Errors";
 import styles from "../../../../styles/Home.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
+import TemperatureSensorSchema from "../../../../components/models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
+import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
+import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
 interface SparrowQueryInterface extends ParsedUrlQuery {
@@ -32,6 +36,13 @@ type SensorDetailsData = {
 const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { query } = useRouter();
+
+  const router = useRouter();
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
 
   const formItems: FormProps[] = [
     {
@@ -53,6 +64,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
         <Input
           data-testid="form-input-sensor-name"
           placeholder="Name of sensor"
+          maxLength={49}
         />
       ),
     },
@@ -67,6 +79,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
         <Input
           data-testid="form-input-sensor-location"
           placeholder="Sensor location"
+          maxLength={15}
         />
       ),
     },
@@ -95,6 +108,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       values
     );
     console.log(`Success: ${response}`);
+
+    if (response.status < 300) {
+      refreshData();
+    }
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
@@ -166,10 +183,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     {viewModel.readings?.temperature.length ? (
                       <SensorDetailsChart
                         label="Temperature"
-                        yAxisMin={0}
-                        yAxisMax={30}
                         data={viewModel.readings.temperature}
                         chartColor="#59d2ff"
+                        schema={TemperatureSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
@@ -182,10 +198,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     {viewModel.readings?.humidity.length ? (
                       <SensorDetailsChart
                         label="Humidity"
-                        yAxisMin={25}
-                        yAxisMax={100}
                         data={viewModel.readings.humidity}
                         chartColor="#ba68c8"
+                        schema={HumiditySensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
@@ -198,10 +213,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     {viewModel.readings?.voltage.length ? (
                       <SensorDetailsChart
                         label="Voltage"
-                        yAxisMin={1}
-                        yAxisMax={4}
                         data={viewModel.readings.voltage}
                         chartColor="#9ccc65"
+                        schema={VoltageSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
@@ -214,10 +228,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     {viewModel.readings?.pressure.length ? (
                       <SensorDetailsChart
                         label="Pressure"
-                        yAxisMin={99000}
-                        yAxisMax={105000}
                         data={viewModel.readings.pressure}
                         chartColor="#ffd54f"
+                        schema={PressureSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
