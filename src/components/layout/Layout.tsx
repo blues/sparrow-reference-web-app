@@ -3,6 +3,7 @@ import { Layout } from "antd";
 import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../../styles/Layout.module.scss";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 const LayoutComponent = ({
   children,
@@ -14,8 +15,10 @@ const LayoutComponent = ({
   const { Content } = Layout;
   return (
     <Layout>
-      <Header isLoading={isLoading} />
-      <Content className={styles.mainContent}>{children}</Content>
+      <Header />
+      <LoadingSpinner isLoading={isLoading}>
+        <Content className={styles.mainContent}>{children}</Content>
+      </LoadingSpinner>
       <Footer />
     </Layout>
   );

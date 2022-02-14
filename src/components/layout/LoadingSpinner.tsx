@@ -1,25 +1,17 @@
-import { BallTriangle } from "react-loading-icons";
+import { Spin } from "antd";
 
 export const LoadingSpinner = ({
   isLoading,
+  children,
 }: {
   isLoading: boolean;
+  children: React.ReactNode;
 }): JSX.Element => {
-  const slowSpeedThatDoesNotBreakTheSpinner = 0.001;
-  const speed = isLoading ? 0.75 : slowSpeedThatDoesNotBreakTheSpinner;
-  const opacity = isLoading ? 1 : 0.2;
+  const msDelay = 555;
   return (
-    <>
-      <div className="loadingSpinner">
-        <BallTriangle speed={speed} height="60%" opacity={opacity} />
-      </div>
-      <style jsx>{`
-        .loadingSpinner {
-          display: flex;
-          align-items: center;
-        }
-      `}</style>
-    </>
+    <Spin size="large" spinning={isLoading} delay={msDelay}>
+      {children}
+    </Spin>
   );
 };
 

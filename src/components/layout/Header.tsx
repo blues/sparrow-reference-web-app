@@ -5,9 +5,8 @@ import { Layout } from "antd";
 import Logo from "../../../public/images/sparrow_logo.svg";
 import styles from "../../styles/Header.module.scss";
 import config from "../../../config";
-import { LoadingSpinner } from "./LoadingSpinner";
 
-const HeaderComponent = ({ isLoading }: { isLoading: boolean }) => {
+const HeaderComponent = () => {
   const { Header } = Layout;
   return (
     <Header className={styles.header}>
@@ -16,8 +15,9 @@ const HeaderComponent = ({ isLoading }: { isLoading: boolean }) => {
           <Image src={Logo} height={70} width={100} alt="Sparrow Logo" />
         </a>
       </Link>
-      <LoadingSpinner isLoading={isLoading} />
-      <h1 data-testid="company-name" className={styles.headerText}>{config.companyName}</h1>
+      <h1 data-testid="company-name" className={styles.headerText}>
+        {config.companyName}
+      </h1>
     </Header>
   );
 };
