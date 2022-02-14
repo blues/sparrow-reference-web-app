@@ -22,11 +22,11 @@
   margin-top: -10px;
 }
 
-.card {
+#card {
   padding: 10px 15px;
 
   :global .ant-card-body {
-    padding: 0 !important;
+    padding: 0;
   }
 
   .dataNumber {
@@ -56,9 +56,9 @@
     margin-bottom: 15px;
   }
 
-  .sensorChart {
+  #sensorChart {
     :global .ant-card-body {
-      padding: 10px 20px !important;
+      padding: 10px 20px;
     }
   }
 

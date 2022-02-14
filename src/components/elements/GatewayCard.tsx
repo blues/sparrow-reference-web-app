@@ -34,7 +34,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
 
   return (
     <Card
-      headStyle={{ padding: "0" }}
+      headStyle={{ padding: "0", paddingBottom: "14px" }}
       bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
       hoverable
@@ -48,8 +48,6 @@ const GatewayCardComponent = (props: GatewayProps) => {
             Last updated&nbsp;
             {getFormattedLastSeen(gatewayDetails.lastActivity)}
           </span>
-          <br />
-          <br />
         </>
       }
     >

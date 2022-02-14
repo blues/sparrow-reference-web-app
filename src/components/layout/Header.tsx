@@ -9,13 +9,15 @@ import config from "../../../config";
 const HeaderComponent = () => {
   const { Header } = Layout;
   return (
-    <Header className={styles.header}>
+    <Header id={styles.header}>
       <Link href="/">
         <a data-testid="logo">
           <Image src={Logo} height={70} width={100} alt="Sparrow Logo" />
         </a>
       </Link>
-      <h1 data-testid="company-name" className={styles.headerText}>{config.companyName}</h1>
+      <h1 data-testid="company-name" className={styles.headerText}>
+        {config.companyName}
+      </h1>
     </Header>
   );
 };

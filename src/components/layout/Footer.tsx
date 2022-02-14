@@ -7,10 +7,15 @@ const FooterComponent = () => {
   return (
     <>
       <hr className={styles.footerDivider} />
-      <Footer className={styles.footer}>
+      <Footer id={styles.footer}>
         <div>
           Cloud-connected by&nbsp;
-          <a target="_blank" href="https://blues.io/products" rel="noreferrer" data-testid="notecard-link">
+          <a
+            target="_blank"
+            href="https://blues.io/products"
+            rel="noreferrer"
+            data-testid="notecard-link"
+          >
             Notecard
           </a>
         </div>
@@ -22,7 +27,12 @@ const FooterComponent = () => {
         </div>
         <div>
           Developed by&nbsp;
-          <a target="_blank" href="https://blues.io" rel="noreferrer" data-testid="blues-link">
+          <a
+            target="_blank"
+            href="https://blues.io"
+            rel="noreferrer"
+            data-testid="blues-link"
+          >
             Blues Inc.
           </a>
         </div>

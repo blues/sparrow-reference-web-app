@@ -1,9 +1,9 @@
 @import "_variables.scss";
 
-.header {
+#header {
   display: flex;
   justify-content: space-between;
-  padding: 0 64px !important;
+  padding: 0 64px;
 
   .logo {
     display: flex;

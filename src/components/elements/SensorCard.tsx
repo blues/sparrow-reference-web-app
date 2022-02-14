@@ -1,14 +1,8 @@
 import { useRouter } from "next/router";
 import { Card } from "antd";
 import Sensor from "../models/Sensor";
-import { SENSOR_MESSAGE } from "../../constants/ui";
-import {
-  getFormattedLastSeen,
-  getFormattedTemperatureData,
-  getFormattedPressureData,
-  getFormattedHumidityData,
-  getFormattedVoltageData,
-} from "../presentation/uiHelpers";
+import { getSensorDetailsPresentation } from "../presentation/sensorDetails";
+import SensorDetailViewModel from "../../models/SensorDetailViewModel";
 import styles from "../../styles/Card.module.scss";
 
 interface SensorProps {
@@ -19,16 +13,8 @@ interface SensorProps {
 const SensorCardComponent = (props: SensorProps) => {
   // in the future perhaps try to make dynamic items based on model props
   const { sensorDetails, index } = props;
-  const formattedTemperatureData = getFormattedTemperatureData(
-    sensorDetails.temperature
-  );
-  const formattedHumidityData = getFormattedHumidityData(
-    sensorDetails.humidity
-  );
-  const formattedPressureData = getFormattedPressureData(
-    sensorDetails.pressure
-  );
-  const formattedVoltageData = getFormattedVoltageData(sensorDetails.voltage);
+  const viewModel: SensorDetailViewModel =
+    getSensorDetailsPresentation(sensorDetails);
 
   const router = useRouter();
   const sensorUrl = `/${sensorDetails.gatewayUID}/sensor/${sensorDetails.macAddress}/details`;
@@ -48,18 +34,16 @@ const SensorCardComponent = (props: SensorProps) => {
       title={
         <>
           <div data-testid={`sensor[${index}]-summary`}>
-            {sensorDetails.name ? sensorDetails.name : SENSOR_MESSAGE.NO_NAME}
+            {viewModel?.sensor?.name}
           </div>
           <span data-testid="sensor-timestamp" className={styles.timestamp}>
-            Last updated &nbsp;
-            {getFormattedLastSeen(sensorDetails.lastActivity)}
+            Last updated&nbsp;
+            {viewModel?.sensor?.lastActivity}
           </span>
           <div data-testid="sensor-location" className={styles.locationWrapper}>
             <span className={styles.locationTitle}>Location&nbsp;</span>
             <span className={styles.location}>
-              {sensorDetails.location
-                ? sensorDetails.location
-                : SENSOR_MESSAGE.NO_LOCATION}
+              {viewModel?.sensor?.location}
             </span>
           </div>
         </>
@@ -69,30 +53,22 @@ const SensorCardComponent = (props: SensorProps) => {
         <li>
           Humidity
           <br />
-          <span className="dataNumber">
-            {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
-          </span>
+          <span className="dataNumber">{viewModel?.sensor?.humidity}</span>
         </li>
         <li>
           Pressure
           <br />
-          <span className="dataNumber">
-            {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
-          </span>
+          <span className="dataNumber">{viewModel?.sensor?.pressure}</span>
         </li>
         <li>
           Temperature
           <br />
-          <span className="dataNumber">
-            {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
-          </span>
+          <span className="dataNumber">{viewModel?.sensor?.temperature}</span>
         </li>
         <li>
           Voltage
           <br />
-          <span className="dataNumber">
-            {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
-          </span>
+          <span className="dataNumber">{viewModel?.sensor?.voltage}</span>
         </li>
       </ul>
     </Card>

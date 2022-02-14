@@ -5,6 +5,7 @@
 }
 
 .formLabel:first-child {
+  // the !important is needed to override default ant component styling
   margin-bottom: 0 !important;
 }
 

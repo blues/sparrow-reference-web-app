@@ -151,10 +151,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
 
               <Row gutter={[8, 16]}>
                 <Col span={6}>
-                  <Card
-                    className={detailsStyles.card}
-                    data-testid="temperature"
-                  >
+                  <Card id={detailsStyles.card} data-testid="temperature">
                     Temperature
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -163,7 +160,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col span={6}>
-                  <Card className={detailsStyles.card} data-testid="humidity">
+                  <Card id={detailsStyles.card} data-testid="humidity">
                     Humidity
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -172,7 +169,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col sm={5} lg={6}>
-                  <Card className={detailsStyles.card} data-testid="voltage">
+                  <Card id={detailsStyles.card} data-testid="voltage">
                     Voltage
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -181,7 +178,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col sm={7} lg={6}>
-                  <Card className={detailsStyles.card} data-testid="pressure">
+                  <Card id={detailsStyles.card} data-testid="pressure">
                     <li>
                       Pressure
                       <br />
@@ -192,7 +189,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col sm={24} lg={12}>
-                  <Card className={styles.sensorChart}>
+                  <Card id={detailsStyles.sensorChart}>
                     <h3>Temperature</h3>
                     <p
                       data-testid="last-seen-temperature"
@@ -213,7 +210,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col sm={24} lg={12}>
-                  <Card className={styles.sensorChart}>
+                  <Card id={detailsStyles.sensorChart}>
                     <h3>Humidity</h3>
                     <p
                       data-testid="last-seen-humidity"
@@ -234,7 +231,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col sm={24} lg={12}>
-                  <Card className={styles.sensorChart}>
+                  <Card id={detailsStyles.sensorChart}>
                     <h3>Voltage</h3>
                     <p
                       data-testid="last-seen-voltage"
@@ -255,7 +252,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col sm={24} lg={12}>
-                  <Card className={styles.sensorChart}>
+                  <Card id={detailsStyles.sensorChart}>
                     <h3>Pressure</h3>
                     <p
                       data-testid="last-seen-pressure"
