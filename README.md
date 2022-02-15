@@ -27,26 +27,26 @@ To get started with running the Sparrow starter you need to:
 - [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
 - [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices.
 - Set up a Sparrow Gateway and one or more Sensors (TODO: link)
-- [Clone this repository](#clone-this-repository) to you local development environment.
+- [Clone this repository](#clone-this-repository) to your local development environment.
 - Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
 - Install the project’s development [dependencies](#dependencies).
 - Launch the Sparrow Starter app in [development mode](#development).
 
 ### Clone This Repository
 
-To start using the Sparrow starter you first have to clone this repository to your local development machine. You can do this with `git clone`.
+To start using the Sparrow starter you must clone this repository to your local development machine. You can do this with `git clone`.
 
 ```
 git clone https://github.com/blues/sparrow-starter.git
 ```
 
-Next, change directories to the `sparrow-starter` folder, as that’s where you’ll need to run all commands during the setup.
+Next, change directories to the `sparrow-starter` folder, as that’s where you’ll need to run all subsequent commands.
 
 ```
 cd sparrow-starter
 ```
 
-With your local project downloaded, you’ll next want to open up the `sparrow-starter` folder in your text editor or IDE of choice, as you’ll need that to update your project’s environment variables.
+With your local project downloaded, you’ll next want to open up the `sparrow-starter` folder in your text editor or IDE of choice. Once you have the project open in your editor you’re ready to configure the project’s environment variables.
 
 ### Environment Variables
 
@@ -268,7 +268,7 @@ As the number of devices and readings increase, the loading time of the Sparrow 
 Currently you cannot change the name of a gateway through the Sparrow starter user interface. If you would like to update a gateway’s name complete the following steps:
 
 1. Visit [Notehub](https://notehub.io) and open your project.
-1. Click **Devices** menu in the navigation to view all devices on your project.
+1. Click **Devices** menu in the menu to view all devices on your project.
 1. Locate the device you would like to update in the device list, and double click it.
 1. Click the **Environment** tab to view the device’s environment variables.
 1. Update the value of the `_sn` environment variable to your new name.
