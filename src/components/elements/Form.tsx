@@ -14,6 +14,7 @@ export interface FormProps {
     }
   ];
   contents: JSX.Element;
+  initialValue?: string;
 }
 
 const FormComponent = ({
@@ -42,6 +43,7 @@ const FormComponent = ({
           tooltip={formItem.tooltip}
           rules={formItem.rules}
           className={styles.formLabel}
+          initialValue={formItem.initialValue}
         >
           {formItem.contents}
         </Form.Item>
