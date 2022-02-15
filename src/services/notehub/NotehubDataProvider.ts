@@ -133,12 +133,8 @@ export default class NotehubDataProvider implements DataProvider {
       return {
         macAddress: gatewaySensorInfo.macAddress,
         gatewayUID: gatewaySensorInfo.gatewayUID,
-        ...(sensorDetailsInfo?.body?.name && {
-          name: sensorDetailsInfo.body.name,
-        }),
-        ...(sensorDetailsInfo?.body?.loc && {
-          location: sensorDetailsInfo.body.loc,
-        }),
+        name: sensorDetailsInfo?.body?.name,
+        location: sensorDetailsInfo?.body?.loc,
         ...(gatewaySensorInfo.voltage && {
           voltage: gatewaySensorInfo.voltage,
         }),
