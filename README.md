@@ -209,11 +209,15 @@ This repo contains [Netlify configuration](netlify.toml) that allows you to depl
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-starter)
 
+* step by step guide to [Deploying the Sparrow Starter app to Netlify](https://www.notion.so/blueswireless/Deploy-Sparrow-Starter-using-Netlify-0fc1e6bbccd84a0d8a9542ec00ef245f)
+
 ### Deploy on Vercel
 
 The next easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out their [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+* step by step guide to [Deploying the Sparrow Starter app to Vercel](https://blueswireless.notion.site/Deploy-Sparrow-Starter-using-Vercel-c1b668dff4a24f268f3c277d8ee5e8f4)
 
 ### Deploy on Microsoft Azure Cloud
 
