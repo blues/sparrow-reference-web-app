@@ -73,7 +73,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
         <Input
           data-testid="form-input-sensor-name"
           placeholder="Name of sensor"
-          maxLength={49} value={viewModel.sensor?.name}
+          maxLength={49}
         />
       ),
     },
