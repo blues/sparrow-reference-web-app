@@ -11,6 +11,11 @@
     padding: 14px 0 6px 0;
   }
 
+  :global .ant-typography-ellipsis {
+    display: block;
+    width: 100%;
+  }
+
   .timestamp {
     color: $bw-color--grey4;
     font-size: 11px;

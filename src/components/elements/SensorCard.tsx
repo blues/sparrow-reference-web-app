@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Card } from "antd";
+import { Card, Typography } from "antd";
 import Sensor from "../models/Sensor";
 import { getSensorDetailsPresentation } from "../presentation/sensorDetails";
 import SensorDetailViewModel from "../../models/SensorDetailViewModel";
@@ -11,8 +11,9 @@ interface SensorProps {
 }
 
 const SensorCardComponent = (props: SensorProps) => {
-  // in the future perhaps try to make dynamic items based on model props
   const { sensorDetails, index } = props;
+  const { Text } = Typography;
+
   const viewModel: SensorDetailViewModel =
     getSensorDetailsPresentation(sensorDetails);
 
@@ -33,9 +34,15 @@ const SensorCardComponent = (props: SensorProps) => {
       hoverable
       title={
         <>
-          <div data-testid={`sensor[${index}]-summary`}>
+          <Text
+            ellipsis={{
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+              tooltip: `${viewModel?.sensor?.name}`,
+            }}
+            data-testid={`sensor[${index}]-summary`}
+          >
             {viewModel?.sensor?.name}
-          </div>
+          </Text>
           <span data-testid="sensor-timestamp" className={styles.timestamp}>
             Last updated{` `}
             {viewModel?.sensor?.lastActivity}
