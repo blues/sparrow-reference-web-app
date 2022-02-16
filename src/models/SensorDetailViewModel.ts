@@ -1,6 +1,10 @@
 interface SensorDetailViewModel {
+  gateway?: {
+    serialNumber: string;
+  };
   sensor?: {
     name: string;
+    location: string;
     lastActivity: string;
     temperature: string;
     humidity: string;

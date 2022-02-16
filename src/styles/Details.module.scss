@@ -1,18 +1,68 @@
 @import "_variables.scss";
 
-.timestamp {
+.timestamp,
+.sensorTimestamp,
+.sensorChartTimestamp,
+.sensorFormTimestamp {
   color: $bw-color--grey4;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 400;
   margin-bottom: 30px;
+  margin-top: -7px;
 }
 
-.dataNumber {
-  font-size: 28px;
-  font-weight: 600;
+.sensorTimestamp {
+  font-size: 13px;
+  margin-top: -3px;
+}
+
+.sensorChartTimestamp,
+.sensorFormTimestamp {
+  font-size: 13px;
+  margin-top: -10px;
+}
+
+.card {
+  padding: 10px 15px;
+
+  :global .ant-card-body {
+    padding: 0;
+  }
+
+  .dataNumber {
+    font-size: 20px;
+    font-weight: 600;
+  }
 }
 
 .tabSectionTitle {
   font-weight: 600;
   margin-bottom: 0;
+}
+
+@media screen and (max-width: $breakpoints-md) {
+  .timestamp {
+    font-size: 18px;
+  }
+
+  .sensorTimestamp,
+  .sensorFormTimestamp {
+    font-size: 16px;
+  }
+
+  .sensorChartTimestamp {
+    font-size: 15px;
+    margin-top: -12px;
+    margin-bottom: 15px;
+  }
+
+  .sensorChart {
+    :global .ant-card-body {
+      padding: 10px 20px;
+    }
+  }
+
+  .tabSectionTitle {
+    font-size: 20px;
+  }
 }

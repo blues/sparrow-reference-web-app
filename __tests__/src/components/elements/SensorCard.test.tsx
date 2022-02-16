@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+import userEvent from "@testing-library/user-event";
 import SensorCard from "../../../../src/components/elements/SensorCard";
 import { SENSOR_MESSAGE } from "../../../../src/constants/ui";
 
@@ -13,6 +14,16 @@ const mockSensorData = {
   voltage: 4.2,
   lastActivity: "2022-01-01T15:28:38Z",
   gatewayUID: "abcdef",
+};
+
+const mockedSensorDataLongName = {
+  name: "My Extra Super Dee Duper Long Sensor Name",
+  macAddress: "9101",
+  humidity: 46,
+  temperature: 29,
+  voltage: 4.2,
+  lastActivity: "2022-02-12T08:55:33Z",
+  gatewayUID: "mnopqr",
 };
 
 const mockUndefinedSensorData = {
@@ -56,5 +67,15 @@ describe("Sensor details card component", () => {
     expect(
       screen.getAllByText(SENSOR_MESSAGE.NO_VOLTAGE, { exact: false })[3]
     ).toBeInTheDocument();
+  });
+
+  it("should add an ellipsis and provide a tooltip when card name is too long to fit on card", () => {
+    render(
+      <SensorCard sensorDetails={mockedSensorDataLongName} index={index} />
+    );
+    userEvent.hover(
+      screen.getByText(mockedSensorDataLongName.name, { exact: false })
+    );
+    expect(screen.getByText(mockedSensorDataLongName.name)).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import { Row, Col } from "antd";
 import SensorCard from "../components/elements/SensorCard";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
@@ -20,31 +21,27 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
       <h2 className={styles.errorMessage}>{err}</h2>
     ) : (
       <>
-        <h3 data-testid="gateway-header" className={styles.sectionTitle}>
+        <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
           Gateways
-        </h3>
-        <div className={styles.groupedCards}>
+        </h2>
+        <Row gutter={[16, 16]}>
           {gateways.map((gateway, index) => (
-            <GatewayCard
-              key={gateway.uid}
-              index={index}
-              gatewayDetails={gateway}
-            />
+            <Col xs={24} sm={24} lg={12} key={gateway.uid}>
+              <GatewayCard index={index} gatewayDetails={gateway} />
+            </Col>
           ))}
-        </div>
+        </Row>
 
-        <h3 data-testid="sensor-header" className={styles.sectionTitle}>
+        <h2 data-testid="sensor-header" className={styles.sectionSubTitle}>
           Sensors
-        </h3>
-        <div className={styles.groupedCards}>
+        </h2>
+        <Row gutter={[16, 16]}>
           {latestSensorDataList.map((sensor, index) => (
-            <SensorCard
-              key={sensor.macAddress}
-              index={index}
-              sensorDetails={sensor}
-            />
+            <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
+              <SensorCard index={index} sensorDetails={sensor} />
+            </Col>
           ))}
-        </div>
+        </Row>
       </>
     )}
   </div>

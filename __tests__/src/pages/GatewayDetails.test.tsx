@@ -63,7 +63,7 @@ describe("Gateway details page", () => {
     gateway.location = "Michigan";
 
     render(<GatewayDetails gateway={gateway} sensors={mockSensors} />);
-    expect(screen.getByText("Location", { exact: false })).toBeInTheDocument();
+    expect(screen.getByTestId("gateway-location")).toBeInTheDocument();
   });
 
   it("should not render a gateway location if one is not present", () => {

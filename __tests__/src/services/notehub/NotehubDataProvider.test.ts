@@ -24,6 +24,8 @@ describe("Notehub data provider service functions", () => {
     .events as NotehubResponse;
   const mockedNotehubConfigJson =
     notehubData.successfulNotehubConfigResponse2 as NotehubSensorConfig;
+  const mockedNotehubConfigJsonNoSensorDetails =
+    notehubData.successfulNotehubConfigResponse3 as NotehubSensorConfig;
 
   let notehubAccessorMock: NotehubAccessor;
   let notehubDataProviderMock: NotehubDataProvider;
@@ -96,6 +98,19 @@ describe("Notehub data provider service functions", () => {
     expect(JSON.stringify(res[3].schema)).toEqual(
       JSON.stringify(VoltageSensorSchema)
     );
+  });
+
+  it("should gracefully handle when there is no additional sensor details for sparrow sensor readings and remove undefined information from the returned Sensor object", async () => {
+    jest.fn().mockResolvedValueOnce(mockedNotehubConfigJsonNoSensorDetails);
+
+    const mockedSensorSparrowData =
+      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
+
+    const res = await notehubDataProviderMock.getSensor(
+      mockedGatewayJson.uid,
+      "456789b"
+    );
+    expect(res).toEqual(mockedSensorSparrowData[1]);
   });
 });
 
