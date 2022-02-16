@@ -1,9 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
-import Sensor from "../models/Sensor";
-import Gateway from "../models/Gateway";
 import SensorReading from "../models/readings/SensorReading";
 import SensorReadingSchema from "../models/readings/SensorSchema";
-import PressureSensorSchema from "../models/readings/PressureSensorSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>

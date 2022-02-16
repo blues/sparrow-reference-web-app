@@ -68,6 +68,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
         { required: true, message: "Please add the name of your sensor" },
       ],
       tooltip: "What is the name of your sensor?",
+      initialValue: viewModel.sensor?.name,
       contents: (
         <Input
           data-testid="form-input-sensor-name"
@@ -80,6 +81,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       label: "Location",
       name: "loc",
       tooltip: "Where is your sensor located?",
+      initialValue: viewModel.sensor?.location,
       rules: [
         { required: true, message: "Please add the location of your sensor" },
       ],
