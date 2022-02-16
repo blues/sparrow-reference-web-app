@@ -3,6 +3,8 @@
 .header {
   display: flex;
   justify-content: space-between;
+  // required to override default Ant Design component styling
+  padding: 0 64px !important;
 
   .logo {
     display: flex;
@@ -11,6 +13,6 @@
 
   .headerText {
     color: #fff;
-    padding-left: 20px;
+    font-size: 15px;
   }
 }
