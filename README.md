@@ -276,6 +276,10 @@ Currently you cannot change the name of a gateway through the Sparrow starter us
 
 If you have the Sparrow starter already open you’ll have to refresh to see the name update in the UI. We are adding the ability to change a gateway’s name and environment variables for the GA release.
 
+**Incorrect “Last updated” date**
+
+Currently sensors may display an incorrect “Last updated” date or time. You can see the sensor’s correct last-updated time by looking at the most recent reading on the sensor’s detail page. We are addressing this issue for the GA release.
+
 ## Support
 
 If you run into any issues using this repo, feel free to [create an issue](/issues), or to [reach out on our developer forum](https://discuss.blues.io/).
