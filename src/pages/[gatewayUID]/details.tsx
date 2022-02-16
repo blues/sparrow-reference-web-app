@@ -40,12 +40,12 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
 
       {gateway && (
         <div>
-          <h1
+          <h2
             data-testid="gateway-details-header"
             className={styles.sectionTitle}
           >
             Gateway: {gateway.serialNumber}
-          </h1>
+          </h2>
           <div className={styles.container}>
             <div
               data-testid="gateway-last-seen"
@@ -55,10 +55,9 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
             </div>
 
             <Row gutter={[16, 16]}>
-              <Col span={6}>
-                <Card>
-                  Location
-                  <br />
+              <Col xs={12} sm={8} lg={6}>
+                <Card className={detailsStyles.card}>
+                  <div className={detailsStyles.cardTitle}>Location</div>
                   <span
                     data-testid="gateway-location"
                     className={detailsStyles.dataNumber}
@@ -67,10 +66,9 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                   </span>
                 </Card>
               </Col>
-              <Col span={6}>
-                <Card>
-                  Voltage
-                  <br />
+              <Col xs={12} sm={8} lg={6}>
+                <Card className={detailsStyles.card}>
+                  <div className={detailsStyles.cardTitle}>Voltage</div>
                   <span className={detailsStyles.dataNumber}>
                     {formattedGatewayVoltage}
                   </span>
@@ -86,15 +84,13 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
                 >
                   Sensors
                 </h3>
-                <div className={styles.groupedCards}>
+                <Row gutter={[16, 16]}>
                   {sensors.map((sensor, index) => (
-                    <SensorCard
-                      key={sensor.macAddress}
-                      index={index}
-                      sensorDetails={sensor}
-                    />
+                    <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
+                      <SensorCard index={index} sensorDetails={sensor} />
+                    </Col>
                   ))}
-                </div>
+                </Row>
               </>
             )}
           </div>

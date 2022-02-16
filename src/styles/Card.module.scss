@@ -1,20 +1,38 @@
 @import "_variables.scss";
 
 .cardStyle {
-  width: 48.5%;
-  -webkit-box-shadow: 0px 1px 4px rgb(0 0 0 / 25%);
+  margin: 5px 10px 5px 0;
+  padding: 0 14px;
   box-shadow: 0px 1px 4px rgb(0 0 0 / 25%);
   border: 0.2rem solid transparent;
-  margin: 7px;
-  padding: 0 20px;
 
   :global .ant-card-head-title {
-    line-height: 20px;
+    line-height: 17px;
+    padding: 14px 0 6px 0;
+  }
+
+  :global .ant-typography-ellipsis {
+    display: block;
+    width: 100%;
   }
 
   .timestamp {
     color: $bw-color--grey4;
-    font-size: 13px;
+    font-size: 11px;
+  }
+
+  .locationWrapper {
+    padding-top: 4px;
+
+    .locationTitle {
+      font-size: 13px;
+      padding-right: 8px;
+    }
+
+    .location {
+      font-size: 13px;
+      font-weight: 600;
+    }
   }
 
   :global .ant-card-body {
@@ -27,10 +45,11 @@
     top: -5px;
   }
 
-  .cardContents {
+  .cardContents,
+  .cardContentsSensor {
     list-style-type: none;
     display: flex;
-    padding: 20px 0;
+    padding: 10px 0 20px 0;
     margin-bottom: 0;
     align-items: stretch;
     justify-content: space-around;
@@ -40,10 +59,36 @@
       display: inline-block;
       text-align: center;
       width: auto;
+      font-size: 14px;
 
       span {
-        font-size: 20px;
         font-weight: 600;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $breakpoints-md) {
+  .cardStyle {
+    :global .ant-card-head-title {
+      line-height: 19px;
+      font-size: 18px;
+    }
+
+    .timestamp {
+      font-size: 13px;
+    }
+
+    .cardContents {
+      justify-content: space-evenly;
+
+      li {
+        font-size: 16px;
+
+        span {
+          font-size: 18px;
+        }
       }
     }
   }

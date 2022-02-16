@@ -16,6 +16,7 @@
       "name": "My Mocked Sensor 1",
       "voltage": 2.7,
       "lastActivity": "2021-11-30T20:30:19Z",
+      "location": "Kitchen",
       "humidity": 27.2,
       "pressure": 101.152,
       "temperature": 22.6
