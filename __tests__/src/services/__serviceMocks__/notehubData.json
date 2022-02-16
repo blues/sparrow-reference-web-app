@@ -175,6 +175,10 @@
     "body": { "loc": "Kitchen", "name": "My Mocked Sensor 1" },
     "time": 164380907
   },
+  "successfulNotehubConfigResponse3": {
+    "note": "123456a",
+    "time": 164380907
+  },
   "notehubConfigSensorNotFound": {
     "err": "'error getting note: {note-noexist} note not found: fjdsidiojfdsojf'"
   },
