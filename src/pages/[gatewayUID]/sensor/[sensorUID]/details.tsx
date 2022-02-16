@@ -40,9 +40,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   const router = useRouter();
   // Call this function whenever you want to
   // refresh props!
-  const refreshData = () => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    router.replace(router.asPath);
+  const refreshData = async () => {
+    await router.replace(router.asPath);
   };
 
   const formItems: FormProps[] = [
@@ -57,7 +56,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       ),
       contents: (
         <div className={detailsStyles.sensorFormTimestamp}>
-          Last updated&nbsp;{viewModel.sensor?.lastActivity}
+          Last updated{` `}
+          {viewModel.sensor?.lastActivity}
         </div>
       ),
     },
@@ -127,14 +127,15 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       {viewModel.sensor && (
         <div>
           <h2 data-testid="sensor-name" className={styles.sectionTitle}>
-            Sensor:&nbsp;{viewModel.sensor.name}
+            Sensor:{` `}
+            {viewModel.sensor.name}
           </h2>
           <h3
             data-testid="sensor-gateway-name"
             className={styles.sectionSubHeader}
           >
-            Gateway:&nbsp;
-            {viewModel.gateway?.serialNumber && viewModel.gateway.serialNumber}
+            Gateway:{` `}
+            {viewModel?.gateway?.serialNumber && viewModel.gateway.serialNumber}
           </h3>
           <Tabs defaultActiveKey="1">
             <TabPane tab="Summary" key="1">

@@ -9,7 +9,7 @@ const FooterComponent = () => {
       <hr className={styles.footerDivider} />
       <Footer className={styles.footer}>
         <div>
-          Cloud-connected by&nbsp;
+          Cloud-connected by{` `}
           <a
             target="_blank"
             href="https://blues.io/products"
@@ -28,7 +28,7 @@ const FooterComponent = () => {
           </details>
         </div>
         <div>
-          Developed by&nbsp;
+          Developed by{` `}
           <a
             target="_blank"
             href="https://blues.io"

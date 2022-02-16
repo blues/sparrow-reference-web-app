@@ -37,11 +37,11 @@ const SensorCardComponent = (props: SensorProps) => {
             {viewModel?.sensor?.name}
           </div>
           <span data-testid="sensor-timestamp" className={styles.timestamp}>
-            Last updated&nbsp;
+            Last updated{` `}
             {viewModel?.sensor?.lastActivity}
           </span>
           <div data-testid="sensor-location" className={styles.locationWrapper}>
-            <span className={styles.locationTitle}>Location&nbsp;</span>
+            <span className={styles.locationTitle}>Location{` `}</span>
             <span className={styles.location}>
               {viewModel?.sensor?.location}
             </span>

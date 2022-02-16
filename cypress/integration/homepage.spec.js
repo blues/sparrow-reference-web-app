@@ -93,7 +93,7 @@ describe("Sparrow Application", () => {
     const sensorNameInput = cy.get('[data-testid="form-input-sensor-name"]');
     sensorNameInput.should("be.visible");
     // Enter a new sensor name
-    sensorNameInput.type("Cypress Test Sensor");
+    sensorNameInput.clear().type("Cypress Test Sensor");
     //Check for the location label
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
@@ -102,7 +102,7 @@ describe("Sparrow Application", () => {
     );
     sensorLocationInput.should("be.visible");
     // Enter a new sensor location
-    sensorLocationInput.type("Cypress Runner");
+    sensorLocationInput.clear().type("Cypress Runner");
     //Click the Submit button
     const sensorSubmitButton = cy.get('[data-testid="form-submit"]');
     sensorSubmitButton.should("be.visible");
@@ -120,14 +120,14 @@ describe("Sparrow Application", () => {
     cy.get('[data-testid="form-input-sensor-location"]').clear().type("Garage");
     //Click the Submit button
     cy.get(".ant-form").submit();
-    // Verify the sensor name is now updated to "Cypress Test Sensor"
+    // Verify the sensor name is now updated to "Other Sensor Name"
     cy.get('[data-testid="sensor-name"]', { timeout: 15000 }).should(
       "contain",
       "Other Sensor Name"
     );
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click({ force: true });
-    // verify the sensor location is now updated to "Cypress Test Runner"
+    // verify the sensor location is now updated to "Garage"
     cy.get('[data-testid="sensor-location"]', { timeout: 10000 }).should(
       "contain",
       "Garage"
