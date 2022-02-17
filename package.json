@@ -21,6 +21,7 @@
     "chart.js": "^3.6.1",
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.27.0",
+    "http-status-codes": "^2.2.0",
     "lodash": "^4.17.21",
     "next": "12.1.0",
     "next-plugin-antd-less": "^1.5.2",
@@ -64,11 +65,11 @@
     "typescript": "4.5.2"
   },
   "resolutions": {
-      "nanoid" : "^3.1.31",
-      "follow-redirects" : "^1.14.9",
-      "node-fetch" : "^2.6.7",
-      "simple-get": "^3.1.1"
-  },  
+    "nanoid": "^3.1.31",
+    "follow-redirects": "^1.14.9",
+    "node-fetch": "^2.6.7",
+    "simple-get": "^3.1.1"
+  },
   "volta": {
     "node": "16.13.0",
     "yarn": "1.22.17"

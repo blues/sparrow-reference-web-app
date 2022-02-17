@@ -2,6 +2,7 @@ import NotehubDevice from "./models/NotehubDevice";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
+import NoteSensorConfigBody from "./models/NoteSensorConfigBody";
 
 // An interface for accessing Notehub APIs
 interface NotehubAccessor {
@@ -13,6 +14,11 @@ interface NotehubAccessor {
     hubDeviceUID: string,
     macAddress: string
   ) => Promise<NotehubSensorConfig>;
+  setConfig: (
+    hubDeviceUID: string,
+    macAddress: string,
+    body: NoteSensorConfigBody
+  ) => Promise<boolean>;
 }
 
 // eslint-disable-next-line import/prefer-default-export
