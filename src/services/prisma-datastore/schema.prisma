@@ -1,0 +1,84 @@
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["extendedIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now()) @map("created_at")
+  projectUID    String    @map("project_uid")
+  name          String    @db.VarChar(50)
+  gateways      Gateway[]
+}
+
+// A gateway comprises a sparrow device and a notecard. For now, the SparrowDevice itself isn't important
+model Gateway {
+  id            Int       @id @default(autoincrement())
+
+  // unique device uid in notehub
+  deviceUID    String     @unique @map("device_uid") @db.Char(64)
+
+  // device serial number (cached)
+  sn            String   @db.VarChar(50)
+
+  // the project the device belongs to
+  project       Project   @relation(fields:[project_id], references:[id])
+  project_id    Int
+
+  // the nodes paired with this gateway
+  nodes         SparrowDevice[]
+  //radio         SparrowDevice?
+
+  @@index([project_id])   // surprised that relationships aren't automatically indexed  
+
+}
+
+model SparrowDevice {
+  id              Int         @id @default(autoincrement())
+  
+  deviceEID      String       @unique @map("device_eid") @db.Char(64)
+
+  name            String?     @db.VarChar(49) // cached
+  location        String?     @db.Char(15)    // cached
+  label           String?     @db.VarChar(50) // max 50
+  description     String?     @db.VarChar(1000)  
+  lastSeenAt      DateTime?   @map("last_seen_at") // the last time an event was heard from this device
+
+  gateway         Gateway     @relation(fields:[gateway_id], references:[id])
+  gateway_id      Int         
+
+  readingSchemas  DeviceReadingSchema[]
+
+  @@index([gateway_id])   // surprised that relationships aren't automatically indexed  
+}
+
+// describes the nature of a sensor readong from a single device
+model DeviceReadingSchema {
+    id            Int                 @id @default(autoincrement())
+    name          String              @db.VarChar(32)
+    node          SparrowDevice       @relation(fields: [node_id], references: [id])
+    node_id       Int
+    eventName     String              @db.VarChar(32) @map("event_name")  // "air.qo"
+    description   String?             @db.VarChar(1000)
+    unit          String?             @db.Char(10)      // presentation unit
+    readings      Reading[]
+
+    @@index([node_id])
+}
+
+// A single reading from a sensor on a specific device
+model Reading {
+    id            Int                   @id @default(autoincrement())
+    when          DateTime       
+    schema        DeviceReadingSchema   @relation(fields: [schema_id], references: [id])
+    schema_id     Int
+
+    @@index([schema_id])
+}
+

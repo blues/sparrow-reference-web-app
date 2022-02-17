@@ -15,6 +15,7 @@
     "cypress:run": "cypress run --env configFile=development"
   },
   "dependencies": {
+    "@prisma/client": "^3.9.2",
     "@types/lodash": "^4.14.178",
     "antd": "^4.17.2",
     "axios": "^0.24.0",
@@ -25,6 +26,7 @@
     "next": "12.0.4",
     "next-plugin-antd-less": "^1.5.2",
     "pony-cause": "^1.1.1",
+    "prisma": "^3.9.2",
     "rc-field-form": "^1.22.0",
     "react": "17.0.2",
     "react-chartjs-2": "^4.0.0",
@@ -66,5 +68,8 @@
   "volta": {
     "node": "16.13.0",
     "yarn": "1.22.17"
+  },
+  "prisma": {
+    "schema": "src/services/prisma-datastore/schema.prisma"
   }
 }
