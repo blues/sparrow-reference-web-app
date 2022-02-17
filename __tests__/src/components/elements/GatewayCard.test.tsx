@@ -1,16 +1,25 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import GatewayCard from "../../../../src/components/elements/GatewayCard";
-import { getFormattedLocation } from "../../../../src/components/helpers/helperFunctions";
 import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 
 const mockGatewayData = {
   uid: "My Mocked Gatway",
   serialNumber: "67890",
-  location: "Gainesville FL",
+  location: "Gainesville, FL",
   voltage: 3.7,
   lastActivity: "2022-01-05T07:36:55Z",
+};
+
+const mockedGatewayDataLongName = {
+  uid: "Another Mocked Gateway",
+  serialNumber:
+    "My Mocked Gateway With an Unbelievably Long Serial Number, Seriously You'll be Amazed",
+  location: "San Diego, CA",
+  voltage: 4.0,
+  lastActivity: "2022-02-11T08:48:01Z",
 };
 
 const mockUndefinedGatewayData = {
@@ -28,7 +37,7 @@ describe("Gateway card component", () => {
 
     expect(screen.getByText(mockGatewayData.serialNumber)).toBeInTheDocument();
     expect(
-      screen.getByText(getFormattedLocation(mockGatewayData.location), {
+      screen.getByText(mockGatewayData.location, {
         exact: false,
       })
     ).toBeInTheDocument();
@@ -50,6 +59,18 @@ describe("Gateway card component", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(mockUndefinedGatewayData.voltage, { exact: false })
+    ).toBeInTheDocument();
+  });
+
+  it("should add an ellipsis and provide a tooltip when gateway data name is too long to fit on card", () => {
+    render(
+      <GatewayCard gatewayDetails={mockedGatewayDataLongName} index={index} />
+    );
+    userEvent.hover(
+      screen.getByText(mockedGatewayDataLongName.serialNumber, { exact: false })
+    );
+    expect(
+      screen.getByText(mockedGatewayDataLongName.serialNumber)
     ).toBeInTheDocument();
   });
 });

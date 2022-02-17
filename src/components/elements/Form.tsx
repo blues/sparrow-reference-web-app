@@ -4,7 +4,7 @@ import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import styles from "../../styles/Form.module.scss";
 
 export interface FormProps {
-  label?: string;
+  label?: JSX.Element | string;
   tooltip?: string;
   name?: string;
   rules?: [
@@ -14,6 +14,7 @@ export interface FormProps {
     }
   ];
   contents: JSX.Element;
+  initialValue?: string;
 }
 
 const FormComponent = ({
@@ -42,6 +43,7 @@ const FormComponent = ({
           tooltip={formItem.tooltip}
           rules={formItem.rules}
           className={styles.formLabel}
+          initialValue={formItem.initialValue}
         >
           {formItem.contents}
         </Form.Item>

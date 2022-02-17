@@ -4,16 +4,16 @@ import { ParsedUrlQuery } from "querystring";
 import { Row, Col, Card } from "antd";
 import SensorCard from "../../components/elements/SensorCard";
 import { services } from "../../services/ServiceLocator";
-import Gateway from "../../components/models/Gateway";
-import Sensor from "../../components/models/Sensor";
 import {
   getFormattedLastSeen,
-  getFormattedLocation,
   getFormattedVoltageData,
-} from "../../components/helpers/helperFunctions";
-import { GATEWAY_MESSAGE } from "../../constants/ui";
-import styles from "../../styles/Home.module.scss";
+} from "../../components/presentation/uiHelpers";
+import Gateway from "../../components/models/Gateway";
+import Sensor from "../../components/models/Sensor";
+import { GATEWAY_MESSAGE, getErrorMessage } from "../../constants/ui";
+import { ERROR_CODES } from "../../services/Errors";
 import detailsStyles from "../../styles/Details.module.scss";
+import styles from "../../styles/Home.module.scss";
 import { contextualize } from "../../services/contextualize";
 
 
@@ -28,20 +28,13 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
   sensors,
   err,
 }) => {
-  let formattedLocation = "";
-  let formattedGatewayVoltage;
-
-  if (gateway && gateway.location) {
-    formattedLocation = getFormattedLocation(gateway.location);
-  } else {
-    formattedLocation = GATEWAY_MESSAGE.NO_LOCATION;
-  }
-
-  if (gateway) {
-    formattedGatewayVoltage = getFormattedVoltageData(gateway);
-  } else {
-    formattedGatewayVoltage = GATEWAY_MESSAGE.NO_VOLTAGE;
-  }
+  const formattedLocation =
+    gateway && gateway?.location
+      ? gateway.location
+      : GATEWAY_MESSAGE.NO_LOCATION;
+  const formattedGatewayVoltage = gateway
+    ? getFormattedVoltageData(gateway.voltage)
+    : GATEWAY_MESSAGE.NO_VOLTAGE;
 
   return (
     <>
@@ -49,28 +42,35 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
 
       {gateway && (
         <div>
-          <h1 className={styles.sectionTitle}>
+          <h2
+            data-testid="gateway-details-header"
+            className={styles.sectionTitle}
+          >
             Gateway: {gateway.serialNumber}
-          </h1>
+          </h2>
           <div className={styles.container}>
-            <div className={detailsStyles.timestamp}>
+            <div
+              data-testid="gateway-last-seen"
+              className={detailsStyles.timestamp}
+            >
               Last seen {getFormattedLastSeen(gateway.lastActivity)}
             </div>
 
             <Row gutter={[16, 16]}>
-              <Col span={6}>
-                <Card>
-                  Location
-                  <br />
-                  <span className={detailsStyles.dataNumber}>
+              <Col xs={12} sm={8} lg={6}>
+                <Card className={detailsStyles.card}>
+                  <div className={detailsStyles.cardTitle}>Location</div>
+                  <span
+                    data-testid="gateway-location"
+                    className={detailsStyles.dataNumber}
+                  >
                     {formattedLocation}
                   </span>
                 </Card>
               </Col>
-              <Col span={6}>
-                <Card>
-                  Voltage
-                  <br />
+              <Col xs={12} sm={8} lg={6}>
+                <Card className={detailsStyles.card}>
+                  <div className={detailsStyles.cardTitle}>Voltage</div>
                   <span className={detailsStyles.dataNumber}>
                     {formattedGatewayVoltage}
                   </span>
@@ -80,16 +80,19 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
 
             {sensors?.length > 0 && (
               <>
-                <h3 className={styles.sectionSubTitle}>Sensors</h3>
-                <div className={styles.groupedCards}>
+                <h3
+                  data-testid="gateway-sensor-header"
+                  className={styles.sectionSubTitle}
+                >
+                  Sensors
+                </h3>
+                <Row gutter={[16, 16]}>
                   {sensors.map((sensor, index) => (
-                    <SensorCard
-                      key={sensor.macAddress}
-                      index={index}
-                      sensorDetails={sensor}
-                    />
+                    <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
+                      <SensorCard index={index} sensorDetails={sensor} />
+                    </Col>
                   ))}
-                </div>
+                </Row>
               </>
             )}
           </div>
@@ -112,15 +115,23 @@ export const getServerSideProps: GetServerSideProps<GatewayDetailsData> = contex
     try {
       const appService = services().getAppService();
       gateway = await appService.getGateway(gatewayUID);
-      sensors = await appService.getLatestSensorData([gateway]);
+      sensors = await appService.getSensors([gatewayUID]);
 
       return {
         props: { gateway, sensors },
       };
     } catch (err) {
       if (err instanceof Error) {
-        return { props: { gateway, sensors, err: err.message } };
+        return {
+          props: { gateway, sensors, err: getErrorMessage(err.message) },
+        };
       }
-      return { props: { gateway, sensors } };
+      return {
+        props: {
+          gateway,
+          sensors,
+          err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
+        },
+      };
     }
   });

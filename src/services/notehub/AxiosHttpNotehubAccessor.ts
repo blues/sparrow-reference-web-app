@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
 import { HTTP_HEADER } from "../../constants/http";
@@ -6,31 +6,40 @@ import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
 import NotehubErr from "./models/NotehubErr";
+import NotehubEvent from "./models/NotehubEvent";
+import NotehubResponse from "./models/NotehubResponse";
 import { Store } from "../contextualize";
 
 
 export interface Context {
-  hubAppUID: string;
   hubDeviceUID: string;
-  hubProductUID: string;
+  hubProjectUID: string;
   hubAuthToken: string;
 }
-
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   store: Store<Context>;
   hubBaseURL: string;
+  hubHistoricalDataStartDate: Date;
 
   commonHeaders;
 
-  constructor(hubBaseURL: string, store:Store<Context>) {
+  constructor(
+    hubBaseURL: string,     store:Store<Context>,
+    hubHistoricalDataStartDays: number
+  ) {
     this.hubBaseURL = hubBaseURL;
+    this.store = store;
+    const date = new Date();
+    date.setDate(date.getDate() - hubHistoricalDataStartDays);
+    this.hubHistoricalDataStartDate = date;
+
     this.commonHeaders = {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON
     };
-    this.store = store;
+    
   }
 
   /**
@@ -56,7 +65,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   async getDevice(hubDeviceUID: string) {
     const context: Context = this.context();
 
-    const endpoint = `${this.hubBaseURL}/v1/projects/${context.hubAppUID}/devices/${context.hubDeviceUID}`;
+    const endpoint = `${this.hubBaseURL}/v1/projects/${context.hubProjectUID}/devices/${context.hubDeviceUID}`;
     const headers = Object.assign({[HTTP_HEADER.SESSION_TOKEN]: context.hubAuthToken}, this.commonHeaders);
     
     try {
@@ -90,9 +99,11 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   }
 
   async getLatestEvents(hubDeviceUID: string) {
+  
     const context = this.context();
-    const endpoint = `${this.hubBaseURL}/v1/projects/${context.hubAppUID}/devices/${hubDeviceUID}/latest`;
+    const endpoint = `${this.hubBaseURL}/v1/projects/${context.hubProjectUID}/devices/${hubDeviceUID}/latest`;
     const headers = Object.assign({[HTTP_HEADER.SESSION_TOKEN]: context.hubAuthToken}, this.commonHeaders);
+    
     try {
       const resp = await axios.get(endpoint, { headers });
       return resp.data as NotehubLatestEvents;
@@ -101,9 +112,47 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }
   }
 
-  async getConfig(hubDeviceUID: string, macAddress: string) {
+  async getEvents(startDate?: Date) {
+    // Take the start date from the argument first, but fall back to the environment
+    // variable.
+    const startDateToUse = startDate || this.hubHistoricalDataStartDate;
+    const startDateValue = Math.round(startDateToUse.getTime() / 1000);
     const context = this.context();
-    const endpoint = `${this.hubBaseURL}/req?product=${context.hubProductUID}&device=${hubDeviceUID}`;
+    let events: NotehubEvent[] = [];
+    const initialEndpoint = `${this.hubBaseURL}/v1/projects/${context.hubProjectUID}/events?startDate=${startDateValue}`;
+    try {
+      const resp: AxiosResponse<NotehubResponse> = await axios.get(
+        initialEndpoint,
+        { headers: this.commonHeaders }
+      );
+      if (resp.data.events) {
+        events = resp.data.events;
+      }
+      while (resp.data.has_more) {
+        const recurringEndpoint = `${this.hubBaseURL}/v1/projects/${context.hubProjectUID}/events?since=${resp.data.through}`;
+        const recurringResponse: AxiosResponse<NotehubResponse> =
+          // eslint-disable-next-line no-await-in-loop
+          await axios.get(recurringEndpoint, { headers: this.commonHeaders });
+        if (recurringResponse.data.events) {
+          events = [...events, ...recurringResponse.data.events];
+        }
+        if (recurringResponse.data.has_more) {
+          resp.data.through = recurringResponse.data.through;
+        } else {
+          resp.data.has_more = false;
+        }
+      }
+      return events;
+    } catch (e) {
+      throw this.errorWithCode(e);
+    }
+  }
+
+  async getConfig(hubDeviceUID: string, macAddress: string) {
+    
+    const context = this.context();
+    const endpoint = `${this.hubBaseURL}/req?project=${context.hubProjectUID}&device=${hubDeviceUID}`;
+    
     const body = {
       req: "note.get",
       file: "config.db",

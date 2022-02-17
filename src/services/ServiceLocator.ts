@@ -12,7 +12,8 @@ class ServiceLocator {
   constructor() {
     this.notehubAccessor = new AxiosHttpNotehubAccessor(
       Config.hubBaseURL,
-      new CLSStore('AxiosHttpNotehubAccessor')
+      new CLSStore('AxiosHttpNotehubAccessor'),
+      Config.hubHistoricalDataStartDate
     );
     const notehubDataProvider = new NotehubDataProvider(this.notehubAccessor);
     this.appService = new AppService(notehubDataProvider);

@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import { Row, Col } from "antd";
 import SensorCard from "../components/elements/SensorCard";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
@@ -7,6 +8,7 @@ import Sensor from "../components/models/Sensor";
 import styles from "../styles/Home.module.scss";
 import { getErrorMessage } from "../constants/ui";
 import { contextualize } from "../services/contextualize";
+import { ERROR_CODES } from "../services/Errors";
 
 type HomeData = {
   gateways: Gateway[];
@@ -20,27 +22,27 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
       <h2 className={styles.errorMessage}>{err}</h2>
     ) : (
       <>
-        <h3 className={styles.sectionTitle}>Gateways</h3>
-        <div className={styles.groupedCards}>
+        <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
+          Gateways
+        </h2>
+        <Row gutter={[16, 16]}>
           {gateways.map((gateway, index) => (
-            <GatewayCard
-              key={gateway.uid}
-              index={index}
-              gatewayDetails={gateway}
-            />
+            <Col xs={24} sm={24} lg={12} key={gateway.uid}>
+              <GatewayCard index={index} gatewayDetails={gateway} />
+            </Col>
           ))}
-        </div>
+        </Row>
 
-        <h3 className={styles.sectionTitle}>Sensors</h3>
-        <div className={styles.groupedCards}>
+        <h2 data-testid="sensor-header" className={styles.sectionSubTitle}>
+          Sensors
+        </h2>
+        <Row gutter={[16, 16]}>
           {latestSensorDataList.map((sensor, index) => (
-            <SensorCard
-              key={sensor.macAddress}
-              index={index}
-              sensorDetails={sensor}
-            />
+            <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
+              <SensorCard index={index} sensorDetails={sensor} />
+            </Col>
           ))}
-        </div>
+        </Row>
       </>
     )}
   </div>
@@ -55,7 +57,9 @@ export const getServerSideProps: GetServerSideProps<HomeData> = contextualize(as
   try {
     const appService = services().getAppService();
     gateways = await appService.getGateways();
-    latestSensorDataList = await appService.getLatestSensorData(gateways);
+    latestSensorDataList = await appService.getSensors(
+      gateways.map((gateway) => gateway.uid)
+    );
 
     return {
       props: { gateways, latestSensorDataList },
@@ -70,6 +74,12 @@ export const getServerSideProps: GetServerSideProps<HomeData> = contextualize(as
         },
       };
     }
-    return { props: { gateways, latestSensorDataList } };
+    return {
+      props: {
+        gateways,
+        latestSensorDataList,
+        err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
+      },
+    };
   }
 });

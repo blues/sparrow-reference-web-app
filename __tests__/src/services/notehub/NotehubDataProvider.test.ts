@@ -1,31 +1,51 @@
 import { NotehubAccessor } from "../../../../src/services/notehub/NotehubAccessor";
-import NotehubDataProvider from "../../../../src/services/notehub/NotehubDataProvider";
+import NotehubDataProvider, {
+  notehubDeviceToSparrowGateway,
+} from "../../../../src/services/notehub/NotehubDataProvider";
 import sparrowData from "../__serviceMocks__/sparrowData.json"; // mocked data to do with Sparrow portion of app goes here (i.e. gateways and sensors)
 import notehubData from "../__serviceMocks__/notehubData.json"; // mocked data to do with Notehub portion of app goes here (i.e. devices and events)
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
+import TemperatureSensorSchema from "../../../../src/components/models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../src/components/models/readings/HumiditySensorSchema";
+import PressureSensorSchema from "../../../../src/components/models/readings/PressureSensorSchema";
+import VoltageSensorSchema from "../../../../src/components/models/readings/VoltageSensorSchema";
+import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
+import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
+import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";
+import Gateway from "../../../../src/components/models/Gateway";
+import Sensor from "../../../../src/components/models/Sensor";
 
 describe("Notehub data provider service functions", () => {
-  const mockedGatewayJson = notehubData.successfulNotehubDeviceResponse;
+  const mockedGatewayJson =
+    notehubData.successfulNotehubDeviceResponse as NotehubDevice;
+  const mockedNotehubLatestEventsJson =
+    notehubData.successfulNotehubLatestEventsResponse as NotehubLatestEvents;
+  const mockedNotehubEventsJson = notehubData.successfulNotehubEventResponse
+    .events as NotehubResponse;
+  const mockedNotehubConfigJson =
+    notehubData.successfulNotehubConfigResponse2 as NotehubSensorConfig;
+  const mockedNotehubConfigJsonNoSensorDetails =
+    notehubData.successfulNotehubConfigResponse3 as NotehubSensorConfig;
 
   let notehubAccessorMock: NotehubAccessor;
   let notehubDataProviderMock: NotehubDataProvider;
-
-  const getMockDevice = () =>
-    ({ ...notehubData.successfulNotehubDeviceResponse } as NotehubDevice);
 
   beforeEach(() => {
     notehubAccessorMock = {
       getDevice: jest.fn().mockResolvedValueOnce(mockedGatewayJson),
       getDevices: jest.fn().mockResolvedValueOnce([mockedGatewayJson]),
-      getLatestEvents: jest.fn().mockResolvedValueOnce({}),
-      getConfig: jest.fn().mockResolvedValueOnce({}),
+      getLatestEvents: jest
+        .fn()
+        .mockResolvedValueOnce(mockedNotehubLatestEventsJson),
+      getEvents: jest.fn().mockResolvedValueOnce(mockedNotehubEventsJson),
+      getConfig: jest.fn().mockResolvedValueOnce(mockedNotehubConfigJson),
     };
     notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock);
   });
 
   it("should convert a Notehub device to a Sparrow gateway", async () => {
     const mockedGatewaysSparrowData =
-      sparrowData.successfulGatewaySparrowDataResponse;
+      sparrowData.successfulGatewaySparrowDataResponse as Gateway;
     const res = await notehubDataProviderMock.getGateway(mockedGatewayJson.uid);
     expect(res).toEqual(mockedGatewaysSparrowData);
   });
@@ -39,24 +59,83 @@ describe("Notehub data provider service functions", () => {
     expect(res).toEqual(mockedGatewaysSparrowData);
   });
 
-  it("should not produce a location property when none exist", async () => {
-    const device = getMockDevice();
-    const res = await notehubDataProviderMock.getGateway(device.uid);
+  it("should return sparrow sensor data when a gateway UID and sensor UID is passed to getSensor", async () => {
+    const mockedSensorSparrowData =
+      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
+
+    const res = await notehubDataProviderMock.getSensor(
+      mockedGatewayJson.uid,
+      "456789b"
+    );
+    expect(res).toEqual(mockedSensorSparrowData[1]);
+  });
+
+  it("should return a list of sparrow sensor data when a list of gateway UIDs is passed in to getSensors", async () => {
+    const mockedSensorSparrowData =
+      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
+
+    const res = await notehubDataProviderMock.getSensors([
+      mockedGatewayJson.uid,
+    ]);
+    expect(res).toEqual(mockedSensorSparrowData);
+  });
+
+  it("should return a list of sparrow sensor readings when a gateway UID, sensor UID and optional start date is to getSensorData", async () => {
+    const res = await notehubDataProviderMock.getSensorData(
+      sparrowData.mockedGatewayUID2,
+      sparrowData.mockedSensorUID2
+    );
+
+    expect(JSON.stringify(res[0].schema)).toEqual(
+      JSON.stringify(TemperatureSensorSchema)
+    );
+    expect(JSON.stringify(res[1].schema)).toEqual(
+      JSON.stringify(HumiditySensorSchema)
+    );
+    expect(JSON.stringify(res[2].schema)).toEqual(
+      JSON.stringify(PressureSensorSchema)
+    );
+    expect(JSON.stringify(res[3].schema)).toEqual(
+      JSON.stringify(VoltageSensorSchema)
+    );
+  });
+
+  it("should gracefully handle when there is no additional sensor details for sparrow sensor readings and remove undefined information from the returned Sensor object", async () => {
+    jest.fn().mockResolvedValueOnce(mockedNotehubConfigJsonNoSensorDetails);
+
+    const mockedSensorSparrowData =
+      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
+
+    const res = await notehubDataProviderMock.getSensor(
+      mockedGatewayJson.uid,
+      "456789b"
+    );
+    expect(res).toEqual(mockedSensorSparrowData[1]);
+  });
+});
+
+describe("Location handling", () => {
+  const getMockDevice = () =>
+    ({ ...notehubData.successfulNotehubDeviceResponse } as NotehubDevice);
+
+  it("should not produce a location property when none exist", () => {
+    const mockDevice = getMockDevice();
+    const res = notehubDeviceToSparrowGateway(mockDevice);
     expect(res.location).toBe(undefined);
   });
 
-  it("should choose triangulated location over tower", async () => {
-    const device = getMockDevice();
-    device.tower_location = notehubData.exampleNotehubLocation1;
-    device.triangulated_location = notehubData.exampleNotehubLocation2;
-    const res = await notehubDataProviderMock.getGateway(device.uid);
-    expect(res.location).toBe(undefined);
+  it("should choose triangulated location over tower", () => {
+    const mockDevice = getMockDevice();
+    mockDevice.tower_location = notehubData.exampleNotehubLocation1;
+    mockDevice.triangulated_location = notehubData.exampleNotehubLocation2;
+    const res = notehubDeviceToSparrowGateway(mockDevice);
+    expect(res.location).toBe(mockDevice.triangulated_location.name);
   });
 
-  it("should use tower location if it's the only one available", async () => {
-    const device = getMockDevice();
-    device.tower_location = notehubData.exampleNotehubLocation1;
-    const res = await notehubDataProviderMock.getGateway(device.uid);
-    expect(res.location).toBe(undefined);
+  it("should use tower location if it's the only one available", () => {
+    const mockDevice = getMockDevice();
+    mockDevice.tower_location = notehubData.exampleNotehubLocation1;
+    const res = notehubDeviceToSparrowGateway(mockDevice);
+    expect(res.location).toBe(mockDevice.tower_location.name);
   });
 });

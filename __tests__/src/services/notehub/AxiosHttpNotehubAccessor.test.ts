@@ -3,32 +3,39 @@ import MockAdapter from "axios-mock-adapter";
 import { SimpleStore } from "../../../../src/services/contextualize";
 import { ERROR_CODES } from "../../../../src/services/Errors";
 import AxiosHttpNotehubAccessor, { Context } from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
+import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
+import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
 import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
 import notehubData from "../__serviceMocks__/notehubData.json";
 
 let mock: MockAdapter;
 const mockBaseURL = "http://blues.io";
-const mockAppUID = "app:1234";
+const mockProjectUID = "app:1234";
 const mockDeviceUID = "dev:1234";
-const mockProductUID = "test.blues.io";
-const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockAppUID}/devices/${mockDeviceUID}`;
-const API_CONFIG_URL = `${mockBaseURL}/req?product=${mockProductUID}&device=${mockDeviceUID}`;
+const mockHubHistoricalDataStartDate = 4;
+const mockedStartDate = new Date();
+const mockedEpochTimeValue = Math.round(mockedStartDate.getTime() / 1000);
 
 const context: Context = {
-  hubAppUID: mockAppUID,
+  hubProjectUID: mockProjectUID,
   hubDeviceUID: mockDeviceUID,
-  hubProductUID: mockProductUID,
   hubAuthToken: ""
 };
+const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}`;
+const API_CONFIG_URL = `${mockBaseURL}/req?project=${mockProjectUID}&device=${mockDeviceUID}`;
+const API_LATEST_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}/latest`;
+const API_INITIAL_ALL_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/events?startDate=${mockedEpochTimeValue}`;
 
-const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(mockBaseURL, new SimpleStore(context));
+const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(mockBaseURL, new SimpleStore(context), mockHubHistoricalDataStartDate);
+
 
 describe("Device handling", () => {
   beforeEach(() => {
     mock = new MockAdapter(axios);
   });
 
-  const mockNotehubDeviceData = notehubData.successfulNotehubDeviceResponse;
+  const mockNotehubDeviceData =
+    notehubData.successfulNotehubDeviceResponse as NotehubDevice;
 
   it("should return a valid response when a device UID is passed to the getDevice endpoint", async () => {
     mock.onGet(API_DEVICE_URL).reply(200, mockNotehubDeviceData);
@@ -74,6 +81,48 @@ describe("Device handling", () => {
 
     const res = await axiosHttpNotehubAccessorMock.getDevices();
     expect(res).toEqual([mockNotehubDeviceData]);
+  });
+});
+
+describe("Event handling", () => {
+  beforeEach(() => {
+    mock = new MockAdapter(axios);
+  });
+
+  const mockNotehubLatestEventData =
+    notehubData.successfulNotehubLatestEventsResponse as NotehubLatestEvents;
+  const mockNotehubEventData = notehubData.successfulNotehubEventResponse;
+
+  it("should return a list of latest events when getLatestEvents is called with a valid hub device UID", async () => {
+    mock.onGet(API_LATEST_EVENTS_URL).reply(200, mockNotehubLatestEventData);
+
+    const res = await axiosHttpNotehubAccessorMock.getLatestEvents(
+      mockDeviceUID
+    );
+    expect(res).toEqual(mockNotehubLatestEventData);
+  });
+
+  it("should throw a device-not-found error when an invalid device UID is passed in", async () => {
+    mock.onGet(API_LATEST_EVENTS_URL).reply(404, mockNotehubLatestEventData);
+
+    await expect(
+      axiosHttpNotehubAccessorMock.getLatestEvents(mockDeviceUID)
+    ).rejects.toThrow(ERROR_CODES.DEVICE_NOT_FOUND);
+  });
+
+  it("should return a list of events when getEvents is called with a valid hub app UID and date range", async () => {
+    mock.onGet(API_INITIAL_ALL_EVENTS_URL).reply(200, mockNotehubEventData);
+    const res = await axiosHttpNotehubAccessorMock.getEvents(mockedStartDate);
+
+    expect(res).toEqual(mockNotehubEventData.events);
+  });
+
+  it("should throw a device-not-found error when an invalid hub app UID is used", async () => {
+    mock.onGet(API_INITIAL_ALL_EVENTS_URL).reply(404, mockNotehubEventData);
+
+    await expect(axiosHttpNotehubAccessorMock.getEvents()).rejects.toThrow(
+      ERROR_CODES.DEVICE_NOT_FOUND
+    );
   });
 });
 

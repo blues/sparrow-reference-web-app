@@ -12,7 +12,7 @@ const env = {
   HUB_AUTH_TOKEN: process.env.HUB_AUTH_TOKEN,
   HUB_BASE_URL: process.env.HUB_BASE_URL,
   HUB_DEVICE_UID: process.env.HUB_DEVICE_UID,
-  HUB_PRODUCT_UID: process.env.HUB_PRODUCT_UID,
+  HUB_PROJECTUID: process.env.HUB_PROJECTUID,
   NEXT_PUBLIC_BUILD_VERSION: process.env.NEXT_PUBLIC_BUILD_VERSION,
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
 
@@ -56,8 +56,11 @@ const Config = {
   get debugConfig() {
     return Boolean(optionalEnvVar("DEBUG_CONFIG", ""));
   },
-  get hubAppUID() {
-    return requiredEnvVar("HUB_APP_UID");
+  get hubProjectUID() {
+    return (
+      optionalEnvVar("HUB_APP_UID", "") || // TODO(carl) remove LOC once a-team devs shun HUB_APP_UID
+      requiredEnvVar("HUB_PROJECTUID")
+    );
   },
   get hubAuthToken() {
     return requiredEnvVar("HUB_AUTH_TOKEN");
@@ -67,9 +70,6 @@ const Config = {
   },
   get hubDeviceUID() {
     return requiredEnvVar("HUB_DEVICE_UID");
-  },
-  get hubProductUID() {
-    return requiredEnvVar("HUB_PRODUCT_UID");
   },
   get hubHistoricalDataStartDate() {
     return parseInt(optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", "7"), 10);

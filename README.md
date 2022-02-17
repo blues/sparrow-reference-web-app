@@ -3,7 +3,11 @@
 An example web application to configure and view sensor data from Blues Wireless Sparrow devices.
 
 - [Setup](#setup)
+  - [Clone this Repository](#clone-this-respository)
   - [Environment Variables](#environment-variables)
+    - [HUB_AUTH_TOKEN](#hub_auth_token)
+    - [HUB_PROJECTUID](#HUB_PROJECTUID)
+    - [HUB_DEVICE_UID](#hub_device_uid)
   - [Dependencies](#dependencies)
 - [Development](#development)
 - [Testing](#testing)
@@ -13,19 +17,36 @@ An example web application to configure and view sensor data from Blues Wireless
   - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
   - [Deploy on Vercel](#deploy-on-vercel)
   - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
+- [Known Issues](#known-issues)
 - [Support](#support)
 
 ## Setup
 
 To get started with running the Sparrow starter you need to:
 
-* [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
-* [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices.
-* Set up a Sparrow Gateway and one or more Sensors (TODO: link)
-* Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
-* Install the project’s development [dependencies](#dependencies).
-* Launch the Sparrow Starter app in [development mode](#development).
+- [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
+- [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices.
+- [Set up a Sparrow Gateway and one or more sensors](https://blueswireless.notion.site/Sparrow-Setup-and-Run-Guide-302725d84d9642b9b274e087881134a8).
+- [Clone this repository](#clone-this-repository) to your local development environment.
+- Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
+- Install the project’s development [dependencies](#dependencies).
+- Launch the Sparrow Starter app in [development mode](#development).
 
+### Clone This Repository
+
+To start using the Sparrow starter you must clone this repository to your local development machine. You can do this with `git clone`.
+
+```
+git clone https://github.com/blues/sparrow-starter.git
+```
+
+Next, change directories to the `sparrow-starter` folder, as that’s where you’ll need to run all subsequent commands.
+
+```
+cd sparrow-starter
+```
+
+With your local project downloaded, you’ll next want to open up the `sparrow-starter` folder in your text editor or IDE of choice. Once you have the project open in your editor you’re ready to configure the project’s environment variables.
 
 ### Environment Variables
 
@@ -43,32 +64,24 @@ To find retrieve an authentication token, put this in your command line, replaci
 
 ```
 curl -X POST -L 'https://api.notefile.net/auth/login' \
-    -d '{"username":"YOUR_NOTEHUB_EMAIL", "password": "NOTEHUB_PASSWORD"} 
+    -d '{"username":"YOUR_NOTEHUB_EMAIL", "password": "NOTEHUB_PASSWORD"}
 ```
 
-When succesful, you will see a response like
+When successful, you will see a response like
 
 ```
 {"session_token":"BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD"}
 ```
+
 Copy the value after the colon to set the environment variable in `.env.local`, e.g.
 
 ```
 HUB_AUTH_TOKEN=BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD
 ```
 
-#### HUB_PRODUCT_UID
-
-This variable should be set to the product UID of the Notehub project that your Sparrow devices are associated with. You can find the product UID along with the project summary on your [project dashboard](https://notehub.io), for example
-
-```
-HUB_PRODUCT_UID=com.example.name:sparrow
-```
-
-#### HUB_APP_UID
+#### HUB_PROJECTUID
 
 This is the unique identifier for your project in Notehub, and has the prefix `app:`. You can find this by going to your Notehub project, clicking the **Settings** menu, and then scrolling down to the **Project UID** heading.
-
 
 #### HUB_DEVICE_UID
 
@@ -188,17 +201,21 @@ yarn cypress:open
 
 The Sparrow starter is a Next.js project, and is therefore easily deployable to any platform that supports Next.js applications. Below are specific instructions to deploy to a handful of common platforms.
 
+> **NOTE**: For all deployment options we recommend [creating a fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) of this repository, and performing all deployment steps on that fork.
+
 ### Deploy on Netlify (recommended)
 
 This repo contains [Netlify configuration](netlify.toml) that allows you to deploy to [Netlify](https://www.netlify.com/) with a simple button click! Click the button below to automatically fork this repo, set environment variables, and immediately to deploy to Netlify.
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-starter)
 
+Read our step-by-step guide to [deploying the Sparrow starter app on Netlify](https://blueswireless.notion.site/Deploy-Sparrow-Starter-using-Netlify-0fc1e6bbccd84a0d8a9542ec00ef245f) for more information.
+
 ### Deploy on Vercel
 
 The next easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out their [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Read our step-by-step guide to [deploying the Sparrow starter app on Vercel](https://blueswireless.notion.site/Deploy-Sparrow-Starter-using-Vercel-c1b668dff4a24f268f3c277d8ee5e8f4) for more information.
 
 ### Deploy on Microsoft Azure Cloud
 
@@ -241,6 +258,29 @@ Follow the steps below to deploy to [Microsoft Azure Cloud](https://azure.micros
 [deploy.sh] ⏰ In a few minutes the site should be visible here:
 [deploy.sh] 🔜 https://mysparrowstarer.eastus.azurecontainer.io
 ```
+
+## Known Issues
+
+**Performance**
+
+As the number of devices and readings increase, the loading time of the Sparrow starter’s pages increases as well. We are addressing this for the GA release.
+
+**Unable to change gateway name**
+
+Currently you cannot change the name of a gateway through the Sparrow starter user interface. If you would like to update a gateway’s name complete the following steps:
+
+1. Visit [Notehub](https://notehub.io) and open your project.
+1. Click **Devices** menu in the menu to view all devices on your project.
+1. Locate the device you would like to update in the device list, and double click it.
+1. Click the **Environment** tab to view the device’s environment variables.
+1. Update the value of the `_sn` environment variable to your new name.
+1. Click the **Save** button to save the name update.
+
+If you have the Sparrow starter already open you’ll have to refresh to see the name update in the UI. We are adding the ability to change a gateway’s name and environment variables for the GA release.
+
+**Incorrect “Last updated” date**
+
+Currently sensors may display an incorrect “Last updated” date or time. You can see the sensor’s correct last-updated time by looking at the most recent reading on the sensor’s detail page. We are addressing this issue for the GA release.
 
 ## Support
 

@@ -15,7 +15,9 @@ jobs:
       - uses: volta-cli/action@v1
       - uses: actions/cache@v2
         with:
-          path: node_modules
+          path: |
+            node_modules
+            /home/runner/.cache/Cypress
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
@@ -31,16 +33,24 @@ jobs:
       - run: yarn build
       - name: Run unit tests
         env:
-          HUB_APP_UID: ${{ secrets.HUB_APP_UID }}
           HUB_AUTH_TOKEN: ${{ secrets.HUB_AUTH_TOKEN }}
           HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
           HUB_DEVICE_UID: ${{ secrets.HUB_DEVICE_UID }}
-          HUB_PRODUCT_UID: ${{ secrets.HUB_PRODUCT_UID }}
+          HUB_PROJECTUID: ${{ secrets.HUB_PROJECTUID }}
           TEST_SENSOR_MAC: ${{ secrets.TEST_SENSOR_MAC }}
         run: yarn test:coverage
       - run: yarn lint
-      #- run: yarn lint:all
-      #- run: yarn cypress:run
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          env: configFile=staging
+          start: yarn start
+        env:
+          HUB_AUTH_TOKEN: ${{ secrets.HUB_AUTH_TOKEN }}
+          HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
+          HUB_DEVICE_UID: ${{ secrets.HUB_DEVICE_UID }}
+          HUB_PROJECTUID: ${{ secrets.HUB_PROJECTUID }}
+          TEST_SENSOR_MAC: ${{ secrets.TEST_SENSOR_MAC }}
   docker-build:
     runs-on: ubuntu-latest
     steps:

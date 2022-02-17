@@ -4,6 +4,11 @@
   font-weight: 600;
 }
 
+.formLabel:first-child {
+  // the !important is needed to override default ant component styling
+  margin-bottom: 0 !important;
+}
+
 .formData {
   font-weight: 400;
 }

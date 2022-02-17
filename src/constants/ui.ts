@@ -3,6 +3,7 @@ import { ERROR_CODES } from "../services/Errors";
 // Sensor data fallbacks for empty data fields
 const SENSOR_MESSAGE = {
   NO_NAME: "No sensor name currently set.",
+  NO_LOCATION: "No sensor location currently available.",
   NO_VOLTAGE: "N/A",
   NO_HUMIDITY: "N/A",
   NO_PRESSURE: "N/A",
@@ -19,6 +20,7 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
 
 // Gateway data fallbacks for empty data fields
 const GATEWAY_MESSAGE = {
+  NO_SERIAL_NUMBER: "Unknown Gateway.",
   NO_LOCATION: "No gateway location currently available.",
   NO_VOLTAGE: "N/A",
 };
@@ -28,7 +30,7 @@ const ERROR_MESSAGE = {
   FORBIDDEN:
     "User is unauthorized to access this project. Please contact the Notehub project owner to be invited to the project.",
   GATEWAY_NOT_FOUND:
-    "We were unable to locate any gateways. Ensure your HUB_APP_UID and HUB_DEVICE_UID environment variables are configured correctly.",
+    "We were unable to locate any gateways. Ensure your environment variables are configured correctly.",
   INTERNAL_ERROR:
     "An internal error occurred. If this problem persists please contact Blues support.",
   UNAUTHORIZED:

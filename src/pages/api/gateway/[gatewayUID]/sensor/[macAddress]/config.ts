@@ -26,21 +26,15 @@ export default async function sensorConfigHandler(
   // Body params
   const { loc, name } = req.body as NoteSensorConfigBody;
   // Notehub values
-  const { hubBaseURL, hubAuthToken, hubProductUID } = config;
+  const { hubBaseURL, hubAuthToken, hubProjectUID } = config;
   // API path
-  const endpoint = `${hubBaseURL}/req?product=${hubProductUID}&device=${gatewayUID}`;
+  const endpoint = `${hubBaseURL}/req?project=${hubProjectUID}&device=${gatewayUID}`;
   // API headers
   const headers = {
     [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
     [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
   };
 
-  // note.get payload
-  const noteGet = {
-    req: "note.get",
-    file: "config.db",
-    note: macAddress,
-  };
   // note.update payload
   const noteUpdate = {
     req: "note.update",
@@ -55,9 +49,6 @@ export default async function sensorConfigHandler(
   // Costruct body based on HTTP method
   let postBody;
   switch (req.method) {
-    case "GET":
-      postBody = noteGet;
-      break;
     case "POST":
       // Check config body params
       if (loc === undefined || name === undefined) {

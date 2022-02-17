@@ -18,9 +18,9 @@ export default async function environmentVariablesHandler(
   // Query params
   const { gatewayUID, environmentVariables } = req.query;
   // Notehub values
-  const { hubBaseURL, hubAuthToken, hubAppUID } = config;
+  const { hubBaseURL, hubAuthToken, hubProjectUID } = config;
   // API path
-  const endpoint = `${hubBaseURL}/v1/projects/${hubAppUID}/devices/${gatewayUID}/environment_variables`;
+  const endpoint = `${hubBaseURL}/v1/projects/${hubProjectUID}/devices/${gatewayUID}/environment_variables`;
   // API headers
   const headers = {
     [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,

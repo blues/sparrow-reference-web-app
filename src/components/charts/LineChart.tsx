@@ -5,13 +5,14 @@ import { Line } from "react-chartjs-2";
 import { getChartOptions } from "./chartHelper";
 
 type LineChartProps = {
-  data: ChartData<"line">,
-  options?: ChartOptions,
+  data: ChartData<"line">;
+  // eslint-disable-next-line react/require-default-props
+  options?: ChartOptions<"line">;
 };
 
-const LineChart = (props: LineChartProps) => {
-  const options = getChartOptions(props.options) as ChartOptions<"line">;
-  return <Line data={props.data} options={options} />;
-}
+const LineChart = ({ data, options }: LineChartProps) => {
+  const mergedOptions = getChartOptions(options);
+  return <Line data={data} options={mergedOptions} />;
+};
 
 export default LineChart;

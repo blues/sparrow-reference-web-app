@@ -4,48 +4,62 @@ import { Card, Input, Button, Tabs, Row, Col } from "antd";
 import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
+import { ParsedUrlQuery } from "querystring";
 import Form, { FormProps } from "../../../../components/elements/Form";
-import getSensorDetailsData from "../../../../services/sensorDetailsData";
-import Sensor from "../../../../components/models/Sensor";
 import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
-import NotehubEvent from "../../../../services/notehub/models/NotehubEvent";
 import {
+  getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
-  SENSOR_MESSAGE,
 } from "../../../../constants/ui";
-import SparrowQueryInterface from "../../../../interfaces/SparrowQueryInterface";
-import {
-  getFormattedChartData,
-  getFormattedTemperatureData,
-  getFormattedHumidityData,
-  getFormattedPressureData,
-  getFormattedVoltageData,
-  getFormattedLastSeen,
-} from "../../../../components/helpers/helperFunctions";
+import { services } from "../../../../services/ServiceLocator";
+import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
+import { getSensorDetailsPresentation } from "../../../../components/presentation/sensorDetails";
+import { ERROR_CODES } from "../../../../services/Errors";
 import styles from "../../../../styles/Home.module.scss";
-import formStyles from "../../../../styles/Form.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 import { contextualize } from "../../../../services/contextualize";
 
+import TemperatureSensorSchema from "../../../../components/models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
+import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
+import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
+
+// custom interface to avoid UI believing query params can be undefined when they can't be
+interface SparrowQueryInterface extends ParsedUrlQuery {
+  gatewayUID: string;
+  sensorUID: string;
+}
 
 type SensorDetailsData = {
-  latestSensorData: Sensor;
-  historicalSensorData: NotehubEvent[];
+  viewModel: SensorDetailViewModel;
+  err?: string;
 };
 
-const SensorDetails: NextPage<SensorDetailsData> = ({
-  latestSensorData,
-  historicalSensorData,
-}) => {
+const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { query } = useRouter();
 
+  const router = useRouter();
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = async () => {
+    await router.replace(router.asPath);
+  };
+
   const formItems: FormProps[] = [
     {
-      label: "Last Updated",
+      label: (
+        <h3
+          data-testid="current-readings"
+          className={detailsStyles.tabSectionTitle}
+        >
+          Current Readings
+        </h3>
+      ),
       contents: (
-        <div className={detailsStyles.timestamp}>
-          {getFormattedLastSeen(latestSensorData?.lastActivity)}
+        <div className={detailsStyles.sensorFormTimestamp}>
+          Last updated{` `}
+          {viewModel.sensor?.lastActivity}
         </div>
       ),
     },
@@ -56,10 +70,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
         { required: true, message: "Please add the name of your sensor" },
       ],
       tooltip: "What is the name of your sensor?",
+      initialValue: viewModel.sensor?.name,
       contents: (
         <Input
           data-testid="form-input-sensor-name"
           placeholder="Name of sensor"
+          maxLength={49}
         />
       ),
     },
@@ -67,6 +83,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
       label: "Location",
       name: "loc",
       tooltip: "Where is your sensor located?",
+      initialValue: viewModel.sensor?.location,
       rules: [
         { required: true, message: "Please add the location of your sensor" },
       ],
@@ -74,12 +91,9 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
         <Input
           data-testid="form-input-sensor-location"
           placeholder="Sensor location"
+          maxLength={15}
         />
       ),
-    },
-    {
-      label: "Gateway",
-      contents: <div className={formStyles.formData}>2nd Floor Gateway</div>,
     },
     {
       contents: (
@@ -92,174 +106,229 @@ const SensorDetails: NextPage<SensorDetailsData> = ({
 
   const formOnFinish = async (values: Store) => {
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
+    // TODO: Move this to the app service / data provider
     const response = await axios.post(
       `/api/gateway/${gatewayUID}/sensor/${sensorUID}/config`,
       values
     );
-    console.log(`Success: ${response}`);
+    console.log(`Success`);
+    console.log(response);
+
+    if (response.status < 300) {
+      refreshData();
+    }
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
     console.log("Failed:", errorInfo);
   };
 
-  const formattedTemperatureData =
-    getFormattedTemperatureData(latestSensorData);
-  const formattedHumidityData = getFormattedHumidityData(latestSensorData);
-  const formattedPressureData = getFormattedPressureData(latestSensorData);
-  const formattedVoltageData = getFormattedVoltageData(latestSensorData);
-
-  const temperatureData = getFormattedChartData(
-    historicalSensorData,
-    "temperature"
-  );
-  const humidityData = getFormattedChartData(historicalSensorData, "humidity");
-  const pressureData = getFormattedChartData(historicalSensorData, "pressure");
-  const voltageData = getFormattedChartData(historicalSensorData, "voltage");
-
   return (
-    <div>
-      <h1 className={styles.sectionTitle}>Sensor: {latestSensorData.name}</h1>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Summary" key="1">
-          <h2 className={detailsStyles.tabSectionTitle}>Current Readings</h2>
-          {/* none of this is styled b/c that's a separate story - just getting the api data to the client here */}
-          <p className={detailsStyles.timestamp}>
-            Last updated {getFormattedLastSeen(latestSensorData.lastActivity)}
-          </p>
+    <>
+      {err && <h2 className={styles.errorMessage}>{err}</h2>}
+      {viewModel.sensor && (
+        <div>
+          <h2 data-testid="sensor-name" className={styles.sectionTitle}>
+            Sensor:{` `}
+            {viewModel.sensor.name}
+          </h2>
+          <h3
+            data-testid="sensor-gateway-name"
+            className={styles.sectionSubHeader}
+          >
+            Gateway:{` `}
+            {viewModel?.gateway?.serialNumber && viewModel.gateway.serialNumber}
+          </h3>
+          <Tabs defaultActiveKey="1">
+            <TabPane tab="Summary" key="1">
+              <h3
+                data-testid="current-readings"
+                className={detailsStyles.tabSectionTitle}
+              >
+                Current Readings
+              </h3>
+              <p
+                data-testid="last-seen"
+                className={detailsStyles.sensorTimestamp}
+              >
+                Last updated {viewModel.sensor.lastActivity}
+              </p>
 
-          <Row gutter={[16, 16]}>
-            <Col span={6}>
-              <Card>
-                Temperature
-                <br />
-                <span className={detailsStyles.dataNumber}>
-                  {formattedTemperatureData || SENSOR_MESSAGE.NO_TEMPERATURE}
-                </span>
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                Humidity
-                <br />
-                <span className={detailsStyles.dataNumber}>
-                  {formattedHumidityData || SENSOR_MESSAGE.NO_HUMIDITY}
-                </span>
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                Voltage
-                <br />
-                <span className={detailsStyles.dataNumber}>
-                  {formattedVoltageData || SENSOR_MESSAGE.NO_VOLTAGE}
-                </span>
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <li>
-                  Pressure
-                  <br />
-                  <span className={detailsStyles.dataNumber}>
-                    {formattedPressureData || SENSOR_MESSAGE.NO_PRESSURE}
-                  </span>
-                </li>
-              </Card>
-            </Col>
-
-            <Col span={12}>
-              <Card>
-                <h3>Temperature</h3>
-                {temperatureData.length ? (
-                  <SensorDetailsChart
-                    label="Temperature"
-                    yAxisMin={0}
-                    yAxisMax={30}
-                    data={temperatureData}
-                    chartColor="#59d2ff"
-                  />
-                ) : (
-                  HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
-                )}
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card>
-                <h3>Humidity</h3>
-                {humidityData.length ? (
-                  <SensorDetailsChart
-                    label="Humidity"
-                    yAxisMin={25}
-                    yAxisMax={100}
-                    data={humidityData}
-                    chartColor="#ba68c8"
-                  />
-                ) : (
-                  HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
-                )}
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card>
-                <h3>Voltage</h3>
-                {voltageData.length ? (
-                  <SensorDetailsChart
-                    label="Voltage"
-                    yAxisMin={1}
-                    yAxisMax={4}
-                    data={voltageData}
-                    chartColor="#9ccc65"
-                  />
-                ) : (
-                  HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
-                )}
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card>
-                <h3>Pressure</h3>
-                {pressureData.length ? (
-                  <SensorDetailsChart
-                    label="Pressure"
-                    yAxisMin={99000}
-                    yAxisMax={105000}
-                    data={pressureData}
-                    chartColor="#ffd54f"
-                  />
-                ) : (
-                  HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
-                )}
-              </Card>
-            </Col>
-          </Row>
-        </TabPane>
-        <TabPane tab="Device Details" key="2">
-          <Form
-            formItems={formItems}
-            onFinish={formOnFinish}
-            onFinishFailed={formOnFinishFailed}
-          />
-        </TabPane>
-      </Tabs>
-    </div>
+              <Row gutter={[8, 16]}>
+                <Col xs={7} sm={6} lg={6}>
+                  <Card
+                    className={detailsStyles.card}
+                    data-testid="temperature"
+                  >
+                    Temperature
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.sensor.temperature}
+                    </span>
+                  </Card>
+                </Col>
+                <Col xs={5} sm={6} lg={6}>
+                  <Card className={detailsStyles.card} data-testid="humidity">
+                    Humidity
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.sensor.humidity}
+                    </span>
+                  </Card>
+                </Col>
+                <Col xs={5} sm={5} lg={6}>
+                  <Card className={detailsStyles.card} data-testid="voltage">
+                    Voltage
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.sensor.voltage}
+                    </span>
+                  </Card>
+                </Col>
+                <Col xs={7} sm={7} lg={6}>
+                  <Card className={detailsStyles.card} data-testid="pressure">
+                    <li>
+                      Pressure
+                      <br />
+                      <span className={detailsStyles.dataNumber}>
+                        {viewModel.sensor.pressure}
+                      </span>
+                    </li>
+                  </Card>
+                </Col>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
+                    <h3>Temperature</h3>
+                    <p
+                      data-testid="last-seen-temperature"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
+                    {viewModel.readings?.temperature.length ? (
+                      <SensorDetailsChart
+                        label="Temperature"
+                        data={viewModel.readings.temperature}
+                        chartColor="#59d2ff"
+                        schema={TemperatureSensorSchema}
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
+                    )}
+                  </Card>
+                </Col>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
+                    <h3>Humidity</h3>
+                    <p
+                      data-testid="last-seen-humidity"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
+                    {viewModel.readings?.humidity.length ? (
+                      <SensorDetailsChart
+                        label="Humidity"
+                        data={viewModel.readings.humidity}
+                        chartColor="#ba68c8"
+                        schema={HumiditySensorSchema}
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
+                    )}
+                  </Card>
+                </Col>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
+                    <h3>Voltage</h3>
+                    <p
+                      data-testid="last-seen-voltage"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
+                    {viewModel.readings?.voltage.length ? (
+                      <SensorDetailsChart
+                        label="Voltage"
+                        data={viewModel.readings.voltage}
+                        chartColor="#9ccc65"
+                        schema={VoltageSensorSchema}
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
+                    )}
+                  </Card>
+                </Col>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
+                    <h3>Pressure</h3>
+                    <p
+                      data-testid="last-seen-pressure"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
+                    {viewModel.readings?.pressure.length ? (
+                      <SensorDetailsChart
+                        label="Pressure"
+                        data={viewModel.readings.pressure}
+                        chartColor="#ffd54f"
+                        schema={PressureSensorSchema}
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
+                    )}
+                  </Card>
+                </Col>
+              </Row>
+            </TabPane>
+            <TabPane tab="Device Details" key="2">
+              <Form
+                formItems={formItems}
+                onFinish={formOnFinish}
+                onFinishFailed={formOnFinishFailed}
+              />
+            </TabPane>
+          </Tabs>
+        </div>
+      )}
+    </>
   );
 };
 
 export default SensorDetails;
 
-export const getServerSideProps: GetServerSideProps<SensorDetailsData> = contextualize(async (context) => {
-    const { query } = context;
-    // extended interface needed to eliminate TS error of possible undefined string values
-    // the query string values will never be undefined in this situation
+
+export const getServerSideProps: GetServerSideProps<SensorDetailsData> = contextualize(
+  async ({ query }) => {
     const { gatewayUID, sensorUID } = query as SparrowQueryInterface;
+    const appService = services().getAppService();
+    let viewModel: SensorDetailViewModel = {};
 
-  const { latestSensorData, historicalSensorData } = await getSensorDetailsData(
-    gatewayUID,
-    sensorUID
-  );
+    try {
+      const gateway = await appService.getGateway(gatewayUID);
+      const sensor = await appService.getSensor(gatewayUID, sensorUID);
+      const readings = await appService.getSensorData(gatewayUID, sensorUID);
+      viewModel = getSensorDetailsPresentation(sensor, gateway, readings);
 
-  return {
-    props: { latestSensorData, historicalSensorData },
-  };
-});
+      return {
+        props: { viewModel },
+      };
+    } catch (err) {
+      if (err instanceof Error) {
+        return {
+          props: {
+            viewModel,
+            err: getErrorMessage(err.message),
+          },
+        };
+      }
+      return {
+        props: {
+          viewModel,
+          err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
+        },
+      };
+    }
+  });
+

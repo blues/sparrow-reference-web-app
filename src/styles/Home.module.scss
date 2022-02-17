@@ -4,13 +4,6 @@
   .errorMessage {
     text-align: center;
   }
-
-  .groupedCards {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom: 30px;
-  }
 }
 
 .sectionTitle,
@@ -20,8 +13,29 @@
 
 .sectionTitle {
   margin-bottom: 0;
+  font-size: 20px;
 }
 
 .sectionSubTitle {
-  margin-top: 30px;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.sectionSubHeader {
+  color: $bw-color--grey4;
+  font-size: 16px;
+}
+
+@media screen and (max-width: $breakpoints-md) {
+  .sectionTitle {
+    font-size: 22px;
+  }
+
+  .sectionSubTitle {
+    font-size: 20px;
+  }
+
+  .sectionSubHeader {
+    margin-top: -5px;
+  }
 }
