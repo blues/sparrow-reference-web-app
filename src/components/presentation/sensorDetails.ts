@@ -1,4 +1,4 @@
-import { GATEWAY_MESSAGE, SENSOR_MESSAGE } from "../../constants/ui";
+import { GATEWAY_MESSAGE, SENSOR_MESSAGE } from "../constants/ui";
 import SensorDetailViewModel from "../../models/SensorDetailViewModel";
 import {
   getFormattedChartData,

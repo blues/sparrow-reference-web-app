@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import userEvent from "@testing-library/user-event";
 import SensorCard from "../../../../src/components/elements/SensorCard";
-import { SENSOR_MESSAGE } from "../../../../src/constants/ui";
+import { SENSOR_MESSAGE } from "../../../../src/components/constants/ui";
 
 const mockSensorData = {
   name: "My Mocked Sensor",

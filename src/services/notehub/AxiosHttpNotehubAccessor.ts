@@ -1,13 +1,15 @@
 import axios, { AxiosResponse } from "axios";
+import { ErrorWithCause } from "pony-cause";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
-import { HTTP_HEADER } from "../../constants/http";
+import { HTTP_HEADER } from "../../pages/api/http";
 import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubSensorConfig";
 import NotehubErr from "./models/NotehubErr";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubResponse from "./models/NotehubResponse";
+import NoteSensorConfigBody from "./models/NoteSensorConfigBody";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -146,16 +148,54 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     if ("err" in resp.data) {
       const { err } = resp.data as NotehubErr;
 
-      // If the mac address cannot be found the API will return a
-      // “note-noexist” error, which we ignore because that just means
-      // the sensor does not have a name / location yet.
-      if (err.includes("device-noexist")) {
+      if (err.includes("note-noexist")) {
+        // Because the mac address cannot be found the API will return a
+        // “note-noexist” error, which we ignore because that just means
+        // the sensor does not have a name / location yet.
+      } else if (err.includes("device-noexist")) {
         throw getError(ERROR_CODES.DEVICE_NOT_FOUND);
-      }
-      if (err.includes("insufficient permissions")) {
+      } else if (err.includes("insufficient permissions")) {
         throw getError(ERROR_CODES.FORBIDDEN);
+      } else {
+        throw getError(ERROR_CODES.INTERNAL_ERROR);
       }
     }
     return resp.data as NotehubSensorConfig;
+  }
+
+  async setConfig(
+    hubDeviceUID: string,
+    macAddress: string,
+    body: NoteSensorConfigBody
+  ) {
+    const endpoint = `${this.hubBaseURL}/req?project=${this.hubProjectUID}&device=${hubDeviceUID}`;
+    const req = {
+      req: "note.update",
+      file: "config.db",
+      note: macAddress,
+      body,
+    };
+    let resp;
+    try {
+      resp = await axios.post(endpoint, req, {
+        headers: this.commonHeaders,
+      });
+    } catch (cause) {
+      throw new ErrorWithCause(ERROR_CODES.INTERNAL_ERROR, { cause });
+    }
+    if ("err" in resp.data) {
+      const { err } = resp.data as NotehubErr;
+
+      if (err.includes("device-noexist")) {
+        throw getError(ERROR_CODES.DEVICE_NOT_FOUND);
+      } else if (err.includes("note-noexist")) {
+        throw getError(ERROR_CODES.SENSOR_NOT_FOUND);
+      } else if (err.includes("insufficient permissions")) {
+        throw getError(ERROR_CODES.FORBIDDEN);
+      } else {
+        throw getError(`${ERROR_CODES.INTERNAL_ERROR}: ${err}`);
+      }
+    }
+    return true;
   }
 }

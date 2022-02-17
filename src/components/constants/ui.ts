@@ -1,4 +1,4 @@
-import { ERROR_CODES } from "../services/Errors";
+import { ERROR_CODES } from "../../services/Errors";
 
 // Sensor data fallbacks for empty data fields
 const SENSOR_MESSAGE = {

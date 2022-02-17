@@ -6,7 +6,7 @@ import { services } from "../services/ServiceLocator";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import styles from "../styles/Home.module.scss";
-import { getErrorMessage } from "../constants/ui";
+import { getErrorMessage } from "../components/constants/ui";
 import { ERROR_CODES } from "../services/Errors";
 
 type HomeData = {

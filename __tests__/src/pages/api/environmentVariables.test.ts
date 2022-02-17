@@ -5,7 +5,7 @@ import { createMocks, RequestMethod } from "node-mocks-http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import environmentVariablesHandler from "../../../../src/pages/api/gateway/[gatewayUID]/environment-variables";
 import environmentVariablesDeleteHandler from "../../../../src/pages/api/gateway/[gatewayUID]/environment-variables/[key]";
-import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
+import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/pages/api/http";
 
 const authToken = process.env.HUB_AUTH_TOKEN;
 const gatewayUID = process.env.HUB_DEVICE_UID;

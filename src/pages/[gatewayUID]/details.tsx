@@ -10,7 +10,10 @@ import {
 } from "../../components/presentation/uiHelpers";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
-import { GATEWAY_MESSAGE, getErrorMessage } from "../../constants/ui";
+import {
+  GATEWAY_MESSAGE,
+  getErrorMessage,
+} from "../../components/constants/ui";
 import { ERROR_CODES } from "../../services/Errors";
 import detailsStyles from "../../styles/Details.module.scss";
 import styles from "../../styles/Home.module.scss";

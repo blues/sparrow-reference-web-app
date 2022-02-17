@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from "axios";
 import type NotehubEnvVars from "../../../../services/notehub/models/NotehubEnvVars";
-import { HTTP_STATUS, HTTP_HEADER } from "../../../../constants/http";
+import { HTTP_STATUS, HTTP_HEADER } from "../../http";
 import config from "../../../../../config";
 
 export default async function environmentVariablesHandler(

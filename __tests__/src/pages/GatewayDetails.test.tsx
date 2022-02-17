@@ -6,7 +6,7 @@ import "../../../__mocks__/matchMediaMock"; // needed to avoid error due to JSDO
 import GatewayDetails from "../../../src/pages/[gatewayUID]/details";
 import Gateway from "../../../src/components/models/Gateway";
 import Sensor from "../../../src/components/models/Sensor";
-import { GATEWAY_MESSAGE } from "../../../src/constants/ui";
+import { GATEWAY_MESSAGE } from "../../../src/components/constants/ui";
 
 function getMockGateway(): Gateway {
   return {

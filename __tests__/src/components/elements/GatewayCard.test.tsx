@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import GatewayCard from "../../../../src/components/elements/GatewayCard";
-import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
+import { GATEWAY_MESSAGE } from "../../../../src/components/constants/ui";
 
 const mockGatewayData = {
   uid: "My Mocked Gatway",

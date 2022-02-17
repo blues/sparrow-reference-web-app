@@ -5,7 +5,7 @@ import {
   getFormattedLastSeen,
   getFormattedVoltageData,
 } from "../presentation/uiHelpers";
-import { GATEWAY_MESSAGE } from "../../constants/ui";
+import { GATEWAY_MESSAGE } from "../constants/ui";
 import styles from "../../styles/Card.module.scss";
 
 interface GatewayProps {
