@@ -21,6 +21,10 @@ interface HasNotehubLocation {
   tower_location?: NotehubLocation;
 }
 
+interface HasMacAddress {
+  macAddress: string;
+}
+
 function getBestLocation(object: HasNotehubLocation) {
   if (object.triangulated_location) {
     return object.triangulated_location;
@@ -126,19 +130,27 @@ export default class NotehubDataProvider implements DataProvider {
       })
     );
 
-    console.log(simplifiedSensorEvents);
+    console.log("simplifiedEvents", simplifiedSensorEvents);
 
     // todo figure out how to merge matching macaddress objects into single objects inside array
-    // const mergeObject = (A, B) => {
-    //   let res = {};
-    //   Object.keys({ ...A, ...B }).map((key) => {
-    //     res[key] = B[key] || A[key];
-    //   });
-    //   return res;
-    // };
+    const mergeObject = <V>(A: any, B: any): V => {
+      let res:any = {};
+      Object.keys({ ...A, ...B }).map((key) => {
+        res[key] = B[key] || A[key];
+      });
+      return res as V;
+    };
 
-    // combined = mergeObject(values[0], values[1]);
-    // console.log(combined);
+    const reducer = <V extends HasMacAddress>(groups: Map<string, V>, event: V) => {
+      const key = event.macAddress;
+      const previous = groups.get(key);
+      const merged: V = mergeObject(previous || {}, event);
+      groups.set(key, merged);
+      return groups;
+    };
+    const reducedEventsIterator = simplifiedSensorEvents.reduce(reducer, new Map()).values();
+    const reducedEvents = Array.from(reducedEventsIterator);
+    console.log("reduced events", reducedEvents);
 
     // get the names and locations of the sensors from the API via config.db
     const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
@@ -182,9 +194,9 @@ export default class NotehubDataProvider implements DataProvider {
 
     const getAllSensorData = async (gatewaySensorInfo: Sensor[]) =>
       Promise.all(gatewaySensorInfo.map(getExtraSensorDetails));
-    const allLatestSensorData = await getAllSensorData(simplifiedSensorEvents);
+    const allLatestSensorData = await getAllSensorData(reducedEvents);
 
-    // console.log("LATEST SENSOR DATA----------", allLatestSensorData);
+    console.log("LATEST SENSOR DATA----------", allLatestSensorData);
     return allLatestSensorData;
   }
 

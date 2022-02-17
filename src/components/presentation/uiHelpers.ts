@@ -61,3 +61,11 @@ export const getFormattedVoltageData = (voltage: number | undefined) => {
   }
   return null;
 };
+
+export const getFormattedCountData = (count: number | undefined) => {
+  if (count!==undefined) {
+    const formattedData = `${count}`;
+    return formattedData;
+  }
+  return null;
+};

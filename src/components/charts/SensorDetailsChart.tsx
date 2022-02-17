@@ -1,5 +1,6 @@
 /* eslint-disable react/require-default-props */
 import { ChartData, ChartOptions } from "chart.js";
+import CountSensorSchema from "../models/readings/CountSensorSchema";
 import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
 import PressureSensorSchema from "../models/readings/PressureSensorSchema";
 import SensorReadingSchema from "../models/readings/SensorSchema";
@@ -10,6 +11,7 @@ import {
   getFormattedPressureData,
   getFormattedTemperatureData,
   getFormattedVoltageData,
+  getFormattedCountData
 } from "../presentation/uiHelpers";
 import { CHART_DATE_FORMAT } from "./chartHelper";
 import LineChart from "./LineChart";
@@ -42,6 +44,9 @@ export function getTooltipDisplayText(
       break;
     case PressureSensorSchema:
       valueDisplay = getFormattedPressureData(value) || "";
+      break;
+    case CountSensorSchema:
+      valueDisplay = getFormattedCountData(value) || "";
       break;
     default:
       // eslint-disable-next-line no-console

@@ -7,6 +7,7 @@ import {
   getFormattedPressureData,
   getFormattedTemperatureData,
   getFormattedVoltageData,
+  getFormattedCountData
 } from "./uiHelpers";
 import Sensor from "../models/Sensor";
 import Gateway from "../models/Gateway";
@@ -15,6 +16,7 @@ import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema"
 import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
 import PressureSensorSchema from "../models/readings/PressureSensorSchema";
 import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
+import CountSensorSchema from "../models/readings/CountSensorSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export function getSensorDetailsPresentation(
@@ -43,6 +45,9 @@ export function getSensorDetailsPresentation(
           voltage:
             getFormattedVoltageData(sensor.voltage) ||
             SENSOR_MESSAGE.NO_VOLTAGE,
+          count:
+            getFormattedCountData(sensor.count) ||
+            SENSOR_MESSAGE.NO_COUNT,
         }
       : undefined,
     readings: readings
@@ -51,6 +56,7 @@ export function getSensorDetailsPresentation(
           humidity: getFormattedChartData(readings, HumiditySensorSchema),
           pressure: getFormattedChartData(readings, PressureSensorSchema),
           voltage: getFormattedChartData(readings, VoltageSensorSchema),
+          count: getFormattedChartData(readings, CountSensorSchema)
         }
       : undefined,
   };

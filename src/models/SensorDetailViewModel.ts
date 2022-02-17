@@ -10,12 +10,14 @@ interface SensorDetailViewModel {
     humidity: string;
     pressure: string;
     voltage: string;
+    count: string;
   };
   readings?: {
     temperature: { when: string; value: number }[];
     humidity: { when: string; value: number }[];
     pressure: { when: string; value: number }[];
     voltage: { when: string; value: number }[];
+    count: { when: string; value: number }[];
   };
 }
 
