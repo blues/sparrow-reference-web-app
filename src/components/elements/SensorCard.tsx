@@ -78,7 +78,7 @@ const SensorCardComponent = (props: SensorProps) => {
           <span className="dataNumber">{viewModel?.sensor?.voltage}</span>
         </li>
         <li>
-          Count
+          Motion
           <br />
           <span className="dataNumber">{viewModel?.sensor?.count}</span>
         </li>

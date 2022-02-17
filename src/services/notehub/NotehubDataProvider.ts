@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { flattenDeep } from "lodash";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
@@ -113,7 +114,6 @@ export default class NotehubDataProvider implements DataProvider {
       Promise.all(gatewayUIDs.map(getLatestSensorDataByGateway));
 
     const latestSensorEvents = await getAllLatestSensorEvents();
-    console.log(latestSensorEvents);
 
     const simplifiedSensorEvents = flattenDeep(latestSensorEvents).map(
       (sensorEvent) => ({
@@ -130,27 +130,38 @@ export default class NotehubDataProvider implements DataProvider {
       })
     );
 
-    console.log("simplifiedEvents", simplifiedSensorEvents);
-
-    // todo figure out how to merge matching macaddress objects into single objects inside array
+    // merge objects with different defined properties into a single obj
     const mergeObject = <V>(A: any, B: any): V => {
-      let res:any = {};
+      const res: any = {};
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, array-callback-return, @typescript-eslint/no-unsafe-assignment
       Object.keys({ ...A, ...B }).map((key) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         res[key] = B[key] || A[key];
       });
       return res as V;
     };
 
-    const reducer = <V extends HasMacAddress>(groups: Map<string, V>, event: V) => {
+    // take each event, and make it into a new Map() obj where macAddress is the key
+    // regardless of if there's already a value for that key, run the merge function
+    // set the key and the new merge var as the key, value for the map
+    const reducer = <V extends HasMacAddress>(
+      groups: Map<string, V>,
+      event: V
+    ) => {
       const key = event.macAddress;
       const previous = groups.get(key);
       const merged: V = mergeObject(previous || {}, event);
       groups.set(key, merged);
       return groups;
     };
-    const reducedEventsIterator = simplifiedSensorEvents.reduce(reducer, new Map()).values();
+
+    // run the sensor events through the reducer and then pull only their values into a new Map iterator obj
+    const reducedEventsIterator = simplifiedSensorEvents
+      .reduce(reducer, new Map())
+      .values();
+
+    // transform the Map iterator obj into plain array
     const reducedEvents = Array.from(reducedEventsIterator);
-    console.log("reduced events", reducedEvents);
 
     // get the names and locations of the sensors from the API via config.db
     const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
@@ -160,7 +171,6 @@ export default class NotehubDataProvider implements DataProvider {
       );
 
       // put it all together in one object
-      // todo refactor this into a sanitatization funtion like deleteUndefined or sanitizeSensorData or something
       return {
         macAddress: gatewaySensorInfo.macAddress,
         gatewayUID: gatewaySensorInfo.gatewayUID,
@@ -194,9 +204,9 @@ export default class NotehubDataProvider implements DataProvider {
 
     const getAllSensorData = async (gatewaySensorInfo: Sensor[]) =>
       Promise.all(gatewaySensorInfo.map(getExtraSensorDetails));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const allLatestSensorData = await getAllSensorData(reducedEvents);
 
-    console.log("LATEST SENSOR DATA----------", allLatestSensorData);
     return allLatestSensorData;
   }
 

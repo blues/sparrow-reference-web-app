@@ -1,4 +1,4 @@
-import { getTooltipDisplayText } from "../../../../src/components/charts/SensorDetailsChart";
+import { getTooltipDisplayText } from "../../../../src/components/charts/SensorDetailsLineChart";
 import HumiditySensorSchema from "../../../../src/components/models/readings/HumiditySensorSchema";
 import PressureSensorSchema from "../../../../src/components/models/readings/PressureSensorSchema";
 import TemperatureSensorSchema from "../../../../src/components/models/readings/TemperatureSensorSchema";

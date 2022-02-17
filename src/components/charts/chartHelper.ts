@@ -1,5 +1,7 @@
 import {
   Chart as ChartJS,
+  BarController,
+  BarElement,
   ChartOptions,
   CategoryScale,
   Filler,
@@ -14,6 +16,8 @@ import {
 import "chartjs-adapter-date-fns";
 
 ChartJS.register(
+  BarController,
+  BarElement,
   CategoryScale,
   Filler,
   LinearScale,
@@ -28,7 +32,7 @@ ChartJS.register(
 // See https://date-fns.org/v2.27.0/docs/format
 export const CHART_DATE_FORMAT = "MMM do hh:mm";
 
-export const GLOBAL_CHART_OPTIONS: ChartOptions<"line"> = {
+export const GLOBAL_LINE_CHART_OPTIONS: ChartOptions<"line"> = {
   responsive: true,
   interaction: {
     mode: "index",
@@ -36,11 +40,28 @@ export const GLOBAL_CHART_OPTIONS: ChartOptions<"line"> = {
   },
 };
 
-export function getChartOptions(
+export const GLOBAL_BAR_CHART_OPTIONS: ChartOptions<"bar"> = {
+  responsive: true,
+  interaction: {
+    mode: "index",
+    intersect: false,
+  },
+};
+
+export function getLineChartOptions(
   overrides?: ChartOptions<"line">
 ): ChartOptions<"line"> {
   return {
-    ...GLOBAL_CHART_OPTIONS,
+    ...GLOBAL_LINE_CHART_OPTIONS,
+    ...overrides,
+  };
+}
+
+export function getBarChartOptions(
+  overrides?: ChartOptions<"bar">
+): ChartOptions<"bar"> {
+  return {
+    ...GLOBAL_BAR_CHART_OPTIONS,
     ...overrides,
   };
 }

@@ -9,6 +9,7 @@ const SENSOR_MESSAGE = {
   NO_PRESSURE: "N/A",
   NO_TEMPERATURE: "N/A",
   NO_COUNT: "N/A",
+  NO_TOTAL: "N/A",
 };
 
 // Historical sensor data fallbacks for no historical sensor data to display
@@ -18,6 +19,7 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
   NO_PRESSURE_HISTORY: "No pressure history currently available.",
   NO_TEMPERATURE_HISTORY: "No temperature history currently available.",
   NO_COUNT_HISTORY: "No count history currently available.",
+  NO_TOTAL_HISTORY: "No total history currently available.",
 };
 
 // Gateway data fallbacks for empty data fields
