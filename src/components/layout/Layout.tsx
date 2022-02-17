@@ -3,13 +3,22 @@ import { Layout } from "antd";
 import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../../styles/Layout.module.scss";
+import { LoadingSpinner } from "./LoadingSpinner";
 
-const LayoutComponent = ({ children }: { children: ReactNode }) => {
+const LayoutComponent = ({
+  children,
+  isLoading,
+}: {
+  children: ReactNode;
+  isLoading: boolean;
+}) => {
   const { Content } = Layout;
   return (
     <Layout>
       <Header />
-      <Content className={styles.mainContent}>{children}</Content>
+      <LoadingSpinner isLoading={isLoading}>
+        <Content className={styles.mainContent}>{children}</Content>
+      </LoadingSpinner>
       <Footer />
     </Layout>
   );

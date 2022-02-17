@@ -1,6 +1,4 @@
 import { formatDistanceToNow } from "date-fns";
-import Sensor from "../models/Sensor";
-import Gateway from "../models/Gateway";
 import SensorReading from "../models/readings/SensorReading";
 import SensorReadingSchema from "../models/readings/SensorSchema";
 
@@ -17,10 +15,10 @@ export const getFormattedChartData = (
   if (sensorReadings.length) {
     const formattedData = sensorReadings
       .filter((reading) => reading.schema === sensorSchema)
-      .map((filteredEvents) => {
+      .map((filteredEvent) => {
         const chartDataObj = {
-          when: filteredEvents.captured,
-          value: Number(filteredEvents.value),
+          when: filteredEvent.captured,
+          value: Number(filteredEvent.value),
         };
         return chartDataObj;
       })
@@ -30,33 +28,35 @@ export const getFormattedChartData = (
   return [];
 };
 
-export const getFormattedTemperatureData = (sensorData: Sensor) => {
-  if (sensorData.temperature) {
-    const formattedData = `${sensorData.temperature.toFixed(2)}°C`;
+export const getFormattedTemperatureData = (
+  temperature: number | undefined
+) => {
+  if (temperature) {
+    const formattedData = `${temperature.toFixed(2)}°C`;
     return formattedData;
   }
   return null;
 };
 
-export const getFormattedHumidityData = (sensorData: Sensor) => {
-  if (sensorData.humidity) {
-    const formattedData = `${sensorData.humidity.toFixed(2)}%`;
+export const getFormattedHumidityData = (humidity: number | undefined) => {
+  if (humidity) {
+    const formattedData = `${humidity.toFixed(2)}%`;
     return formattedData;
   }
   return null;
 };
 
-export const getFormattedPressureData = (sensorData: Sensor) => {
-  if (sensorData.pressure) {
-    const formattedData = `${(sensorData.pressure / 1000).toFixed(2)} kPa`;
+export const getFormattedPressureData = (pressure: number | undefined) => {
+  if (pressure) {
+    const formattedData = `${pressure.toFixed(2)} kPa`;
     return formattedData;
   }
   return null;
 };
 
-export const getFormattedVoltageData = (data: Sensor | Gateway) => {
-  if (data.voltage) {
-    const formattedData = `${data.voltage.toFixed(2)}V`;
+export const getFormattedVoltageData = (voltage: number | undefined) => {
+  if (voltage) {
+    const formattedData = `${voltage.toFixed(2)}V`;
     return formattedData;
   }
   return null;

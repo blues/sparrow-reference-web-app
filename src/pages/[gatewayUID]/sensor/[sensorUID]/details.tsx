@@ -17,6 +17,10 @@ import { getSensorDetailsPresentation } from "../../../../components/presentatio
 import { ERROR_CODES } from "../../../../services/Errors";
 import styles from "../../../../styles/Home.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
+import TemperatureSensorSchema from "../../../../components/models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
+import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
+import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
 interface SparrowQueryInterface extends ParsedUrlQuery {
@@ -33,11 +37,26 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { query } = useRouter();
 
+  const router = useRouter();
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = async () => {
+    await router.replace(router.asPath);
+  };
+
   const formItems: FormProps[] = [
     {
-      label: "Last Updated",
+      label: (
+        <h3
+          data-testid="current-readings"
+          className={detailsStyles.tabSectionTitle}
+        >
+          Current Readings
+        </h3>
+      ),
       contents: (
-        <div className={detailsStyles.timestamp}>
+        <div className={detailsStyles.sensorFormTimestamp}>
+          Last updated{` `}
           {viewModel.sensor?.lastActivity}
         </div>
       ),
@@ -49,10 +68,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
         { required: true, message: "Please add the name of your sensor" },
       ],
       tooltip: "What is the name of your sensor?",
+      initialValue: viewModel.sensor?.name,
       contents: (
         <Input
           data-testid="form-input-sensor-name"
           placeholder="Name of sensor"
+          maxLength={49}
         />
       ),
     },
@@ -60,6 +81,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       label: "Location",
       name: "loc",
       tooltip: "Where is your sensor located?",
+      initialValue: viewModel.sensor?.location,
       rules: [
         { required: true, message: "Please add the location of your sensor" },
       ],
@@ -67,15 +89,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
         <Input
           data-testid="form-input-sensor-location"
           placeholder="Sensor location"
+          maxLength={15}
         />
-      ),
-    },
-    {
-      label: "Gateway",
-      contents: (
-        <div data-testid="sensor-gateway-name" className={styles.formData}>
-          2nd Floor Gateway
-        </div>
       ),
     },
     {
@@ -94,7 +109,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       `/api/gateway/${gatewayUID}/sensor/${sensorUID}/config`,
       values
     );
-    console.log(`Success: ${response}`);
+    console.log(`Success`);
+    console.log(response);
+
+    if (response.status < 300) {
+      refreshData();
+    }
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
@@ -106,24 +126,38 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       {err && <h2 className={styles.errorMessage}>{err}</h2>}
       {viewModel.sensor && (
         <div>
-          <h1 data-testid="sensor-name" className={styles.sectionTitle}>
-            Sensor: {viewModel.sensor.name}
-          </h1>
+          <h2 data-testid="sensor-name" className={styles.sectionTitle}>
+            Sensor:{` `}
+            {viewModel.sensor.name}
+          </h2>
+          <h3
+            data-testid="sensor-gateway-name"
+            className={styles.sectionSubHeader}
+          >
+            Gateway:{` `}
+            {viewModel?.gateway?.serialNumber && viewModel.gateway.serialNumber}
+          </h3>
           <Tabs defaultActiveKey="1">
             <TabPane tab="Summary" key="1">
-              <h2
+              <h3
                 data-testid="current-readings"
                 className={detailsStyles.tabSectionTitle}
               >
                 Current Readings
-              </h2>
-              <p data-testid="last-seen" className={detailsStyles.timestamp}>
+              </h3>
+              <p
+                data-testid="last-seen"
+                className={detailsStyles.sensorTimestamp}
+              >
                 Last updated {viewModel.sensor.lastActivity}
               </p>
 
-              <Row gutter={[16, 16]}>
-                <Col span={6}>
-                  <Card data-testid="temperature">
+              <Row gutter={[8, 16]}>
+                <Col xs={7} sm={6} lg={6}>
+                  <Card
+                    className={detailsStyles.card}
+                    data-testid="temperature"
+                  >
                     Temperature
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -131,8 +165,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col span={6}>
-                  <Card data-testid="humidity">
+                <Col xs={5} sm={6} lg={6}>
+                  <Card className={detailsStyles.card} data-testid="humidity">
                     Humidity
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -140,8 +174,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col span={6}>
-                  <Card data-testid="voltage">
+                <Col xs={5} sm={5} lg={6}>
+                  <Card className={detailsStyles.card} data-testid="voltage">
                     Voltage
                     <br />
                     <span className={detailsStyles.dataNumber}>
@@ -149,8 +183,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col span={6}>
-                  <Card data-testid="pressure">
+                <Col xs={7} sm={7} lg={6}>
+                  <Card className={detailsStyles.card} data-testid="pressure">
                     <li>
                       Pressure
                       <br />
@@ -160,64 +194,84 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </li>
                   </Card>
                 </Col>
-                <Col span={12}>
-                  <Card>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
                     <h3>Temperature</h3>
+                    <p
+                      data-testid="last-seen-temperature"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
                     {viewModel.readings?.temperature.length ? (
                       <SensorDetailsChart
                         label="Temperature"
-                        yAxisMin={0}
-                        yAxisMax={30}
                         data={viewModel.readings.temperature}
                         chartColor="#59d2ff"
+                        schema={TemperatureSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_TEMPERATURE_HISTORY
                     )}
                   </Card>
                 </Col>
-                <Col span={12}>
-                  <Card>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
                     <h3>Humidity</h3>
+                    <p
+                      data-testid="last-seen-humidity"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
                     {viewModel.readings?.humidity.length ? (
                       <SensorDetailsChart
                         label="Humidity"
-                        yAxisMin={25}
-                        yAxisMax={100}
                         data={viewModel.readings.humidity}
                         chartColor="#ba68c8"
+                        schema={HumiditySensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_HUMIDITY_HISTORY
                     )}
                   </Card>
                 </Col>
-                <Col span={12}>
-                  <Card>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
                     <h3>Voltage</h3>
+                    <p
+                      data-testid="last-seen-voltage"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
                     {viewModel.readings?.voltage.length ? (
                       <SensorDetailsChart
                         label="Voltage"
-                        yAxisMin={1}
-                        yAxisMax={4}
                         data={viewModel.readings.voltage}
                         chartColor="#9ccc65"
+                        schema={VoltageSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_VOLTAGE_HISTORY
                     )}
                   </Card>
                 </Col>
-                <Col span={12}>
-                  <Card>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
                     <h3>Pressure</h3>
+                    <p
+                      data-testid="last-seen-pressure"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
                     {viewModel.readings?.pressure.length ? (
                       <SensorDetailsChart
                         label="Pressure"
-                        yAxisMin={99000}
-                        yAxisMax={105000}
                         data={viewModel.readings.pressure}
                         chartColor="#ffd54f"
+                        schema={PressureSensorSchema}
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
@@ -249,9 +303,10 @@ export const getServerSideProps: GetServerSideProps<SensorDetailsData> =
     let viewModel: SensorDetailViewModel = {};
 
     try {
+      const gateway = await appService.getGateway(gatewayUID);
       const sensor = await appService.getSensor(gatewayUID, sensorUID);
       const readings = await appService.getSensorData(gatewayUID, sensorUID);
-      viewModel = getSensorDetailsPresentation(sensor, readings);
+      viewModel = getSensorDetailsPresentation(sensor, gateway, readings);
 
       return {
         props: { viewModel },

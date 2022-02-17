@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Card } from "antd";
+import { Card, Typography } from "antd";
 import Gateway from "../models/Gateway";
 import {
   getFormattedLastSeen,
@@ -14,9 +14,11 @@ interface GatewayProps {
 }
 
 const GatewayCardComponent = (props: GatewayProps) => {
-  // in the future perhaps try to make dynamic items based on model props
   const { gatewayDetails, index } = props;
-  const formattedGatewayVoltage = getFormattedVoltageData(gatewayDetails);
+  const { Text } = Typography;
+  const formattedGatewayVoltage = getFormattedVoltageData(
+    gatewayDetails.voltage
+  );
 
   const router = useRouter();
   const gatewayUrl = `/${gatewayDetails.uid}/details`;
@@ -32,18 +34,25 @@ const GatewayCardComponent = (props: GatewayProps) => {
 
   return (
     <Card
-      headStyle={{ padding: "0" }}
+      headStyle={{ padding: "0", paddingBottom: "14px" }}
       bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
       hoverable
       onClick={handleCardClick}
       title={
         <>
-          <div data-testid={`gateway[${index}]-details`}>
+          <Text
+            ellipsis={{
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+              tooltip: `${gatewayDetails.serialNumber}`,
+            }}
+            data-testid={`gateway[${index}]-details`}
+          >
             {gatewayDetails.serialNumber}
-          </div>
+          </Text>
           <span className={styles.timestamp}>
-            Last updated {getFormattedLastSeen(gatewayDetails.lastActivity)}
+            Last updated{` `}
+            {getFormattedLastSeen(gatewayDetails.lastActivity)}
           </span>
         </>
       }

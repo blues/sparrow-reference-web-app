@@ -90,7 +90,8 @@ export default class NotehubDataProvider implements DataProvider {
         gatewayUID,
         macAddress: event.file,
         humidity: event.body.humidity,
-        pressure: event.body.pressure,
+        // Convert from Pa to kPa
+        pressure: event.body.pressure ? event.body.pressure / 1000 : undefined,
         temperature: event.body.temperature,
         voltage: event.body.voltage,
         lastActivity: event.captured,
@@ -121,9 +122,9 @@ export default class NotehubDataProvider implements DataProvider {
       "macAddress"
     );
 
-    // get the names of the sensors from the API via config.db
+    // get the names and locations of the sensors from the API via config.db
     const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
-      const sensorNameInfo = await this.notehubAccessor.getConfig(
+      const sensorDetailsInfo = await this.notehubAccessor.getConfig(
         gatewaySensorInfo.gatewayUID,
         gatewaySensorInfo.macAddress
       );
@@ -132,7 +133,12 @@ export default class NotehubDataProvider implements DataProvider {
       return {
         macAddress: gatewaySensorInfo.macAddress,
         gatewayUID: gatewaySensorInfo.gatewayUID,
-        ...(sensorNameInfo?.body?.name && { name: sensorNameInfo.body.name }),
+        ...(sensorDetailsInfo?.body?.name && {
+          name: sensorDetailsInfo.body.name,
+        }),
+        ...(sensorDetailsInfo?.body?.loc && {
+          location: sensorDetailsInfo.body.loc,
+        }),
         ...(gatewaySensorInfo.voltage && {
           voltage: gatewaySensorInfo.voltage,
         }),
@@ -205,7 +211,8 @@ export default class NotehubDataProvider implements DataProvider {
       if (event.body.pressure) {
         readingsToReturn.push(
           new PressureSensorReading({
-            value: event.body.pressure,
+            // Convert from Pa to kPa
+            value: event.body.pressure / 1000,
             captured: event.captured,
           })
         );
