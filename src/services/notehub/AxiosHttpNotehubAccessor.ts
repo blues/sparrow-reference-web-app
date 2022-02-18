@@ -42,18 +42,39 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     };
   }
 
+  async getAllDevices(deviceUIDs: string[]) {
+    // todo figure out how to pass scope of this when calling getDevice
+    return Promise.all(deviceUIDs.map(this.getDevice));
+  }
+
   // Eventually we’ll want to find all valid gateways in a Notehub project.
   // For now, just take the hardcoded gateway UID from the starter’s
   // environment variables and use that.
   async getDevices() {
+    if (this.hubDeviceUID.includes(",")) {
+      const deviceUIDs = this.hubDeviceUID.split(",");
+      const allDeviceData = await this.getAllDevices(deviceUIDs);
+      return allDeviceData;
+    }
     const device = await this.getDevice(this.hubDeviceUID);
+
     return [device];
   }
 
   async getDevice(hubDeviceUID: string) {
-    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}`;
+    // todo for some reason, when getAllDevices calls this function all `this` scope is lost
+    // console.log(this.hubBaseURL, hubDeviceUID);
+    const hubBaseURL = process.env.HUB_BASE_URL;
+    const hubProjectUID = process.env.HUB_PROJECTUID;
+    const commonHeaders = {
+      [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
+      [HTTP_HEADER.SESSION_TOKEN]: process.env.HUB_AUTH_TOKEN,
+    };
+    // todo revert back to this.XYZ once scoping working again
+    const endpoint = `${hubBaseURL}/v1/projects/${hubProjectUID}/devices/${hubDeviceUID}`;
     try {
-      const resp = await axios.get(endpoint, { headers: this.commonHeaders });
+      // todo revert commonsHeaders back to this as well
+      const resp = await axios.get(endpoint, { headers: commonHeaders });
       return resp.data as NotehubDevice;
     } catch (e) {
       throw this.errorWithCode(e);
