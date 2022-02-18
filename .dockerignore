@@ -5,7 +5,7 @@
 !public/
 !sample-data/
 !src/
-
+.prisma/
 !.bablerc.js
 !.eslintrc.json
 !config.ts
