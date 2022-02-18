@@ -48,9 +48,7 @@ const SensorDetailsBarChart = ({
       {
         label,
         data: values,
-        borderColor: `${chartColor}`,
         backgroundColor: `${chartColor}66`,
-        borderWidth: 1,
       },
     ],
   };
