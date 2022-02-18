@@ -5,7 +5,7 @@
   "scripts": {
     "genv": "./generate-dotenv.sh | tee .env.production.local",
     "dev": "next dev -p 4000",
-    "build": "yarn genv; next build",
+    "build": "yarn genv; yarn prisma:generate; next build",
     "start": "next start",
     "lint": "next lint",
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",
@@ -13,6 +13,7 @@
     "test:coverage": "jest --coverage",
     "cypress:open": "cypress open --env configFile=development",
     "cypress:run": "cypress run --env configFile=development",
+    "prisma:generate": "npx prisma generate",
     "db:update": "prisma db push",
     "db:init": "ts-node --project ./node.tsconfig.json src/services/prisma-datastore/db-init.ts"
   },
