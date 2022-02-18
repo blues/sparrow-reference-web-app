@@ -50,6 +50,7 @@ describe("Sparrow Application", () => {
     cy.get(".ant-card-body :nth-child(2)").should("contain", "Pressure");
     cy.get(".ant-card-body :nth-child(3)").should("contain", "Temperature");
     cy.get(".ant-card-body :nth-child(4)").should("contain", "Voltage");
+    cy.get(".ant-card-body :nth-child(5)").should("contain", "Motion");
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click({ force: true });
     // verify it navigates back to the homepage
@@ -85,6 +86,8 @@ describe("Sparrow Application", () => {
     cy.get('[data-testid="voltage"]').should("contain", "Voltage");
     //Verify the Pressure header
     cy.get('[data-testid="pressure"]').should("contain", "Pressure");
+    //Verify the Motion Count header
+    cy.get('[data-testid="motion-count"]').should("contain", "Motion");
     //Click the Details tab
     cy.clickTabByText("Device Details");
     //Check for the Name label

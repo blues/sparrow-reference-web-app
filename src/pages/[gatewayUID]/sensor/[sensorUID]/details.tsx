@@ -197,7 +197,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={8} sm={8} lg={5}>
-                  <Card className={detailsStyles.card} data-testid="count">
+                  <Card
+                    className={detailsStyles.card}
+                    data-testid="motion-count"
+                  >
                     <Tooltip
                       title={`Total motions detected by ${viewModel.sensor?.name}: ${viewModel.sensor.total}`}
                     >
