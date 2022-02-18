@@ -49,3 +49,24 @@ I couldn't get it to connect using the credentials from Heroku.
     1. create a new connection
     1. fill in the fields on the `connection` tab
     1. on the `Advanced` tab, add the database name to `DB Restriction` to show only our database, otherwise you'll see thousands of databases in the database list.
+
+
+#### Heroku Shared Instance
+
+The credentials for the shared instance are stored in Notion under "Sparrow Starter Heroku Database Credentials".
+
+#### Local Database via docker
+
+Launch postgres in a docker instance
+
+```
+docker run --rm --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=somePassword -d postgres
+```
+
+ - Note that the data is empheral and is not saved when the container exits. 
+
+To connect to the local instance, set the DATABASE_URL environment variable in `.env.local`
+
+```
+DATABASE_URL=postgres://postgres:somePassword@0.0.0.0:5432/postgres
+```
