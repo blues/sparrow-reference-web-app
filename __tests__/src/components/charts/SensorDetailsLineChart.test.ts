@@ -13,6 +13,7 @@ describe("Tooltip handling", () => {
     );
     expect(text).toBe("Temperature: 22.12°C");
   });
+
   it("Generates correct humidity tooltip text", () => {
     const text = getTooltipDisplayText(
       "Humidity",
@@ -21,10 +22,12 @@ describe("Tooltip handling", () => {
     );
     expect(text).toBe("Humidity: 12.35%");
   });
+
   it("Generates correct voltage tooltip text", () => {
     const text = getTooltipDisplayText("Voltage", VoltageSensorSchema, 3.98765);
     expect(text).toBe("Voltage: 3.99V");
   });
+
   it("Generates correct pressure tooltip text", () => {
     const text = getTooltipDisplayText(
       "Pressure",
