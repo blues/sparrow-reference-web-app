@@ -63,6 +63,9 @@
     "react-test-renderer": "^17.0.2",
     "typescript": "4.5.2"
   },
+  "resolutions": {
+      "nanoid" : "^3.1.31"
+  },  
   "volta": {
     "node": "16.13.0",
     "yarn": "1.22.17"
