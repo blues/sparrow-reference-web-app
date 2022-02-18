@@ -70,3 +70,15 @@ To connect to the local instance, set the DATABASE_URL environment variable in `
 ```
 DATABASE_URL=postgres://postgres:somePassword@0.0.0.0:5432/postgres
 ```
+
+To run a docker image with the database stored on your host OS filesystem so that it persists
+
+```
+docker run --rm \
+  -d \
+  --name postgresql-container \
+  -p 5432:5432 \
+  -e POSTGRES_PASSWORD=somePassword \
+  -v ~/pgdata:/var/lib/postgresql/data \
+  postgres
+```
