@@ -2,8 +2,8 @@ import { ERROR_CODES } from "../services/Errors";
 
 // Sensor data fallbacks for empty data fields
 const SENSOR_MESSAGE = {
-  NO_NAME: "No sensor name currently set.",
-  NO_LOCATION: "No sensor location currently available.",
+  NO_NAME: "(No sensor name currently set)",
+  NO_LOCATION: "N/A",
   NO_VOLTAGE: "N/A",
   NO_HUMIDITY: "N/A",
   NO_PRESSURE: "N/A",
@@ -21,7 +21,7 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
 // Gateway data fallbacks for empty data fields
 const GATEWAY_MESSAGE = {
   NO_SERIAL_NUMBER: "Unknown Gateway.",
-  NO_LOCATION: "No gateway location currently available.",
+  NO_LOCATION: "N/A",
   NO_VOLTAGE: "N/A",
 };
 
