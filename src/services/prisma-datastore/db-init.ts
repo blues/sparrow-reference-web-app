@@ -1,4 +1,4 @@
-import { PrismaClient, Project, Gateway, DeviceReadingSchema, Reading, Prisma } from '@prisma/client'
+import { PrismaClient, Project, Gateway, DeviceReadingSchema, Reading, Prisma, SparrowDevice } from '@prisma/client'
 import { loadEnvConfig } from '@next/env'
 import Config from '../../../config'
 
@@ -43,7 +43,7 @@ async function init() {
 // next.js loadEnvironment replaces process.env with a custom object. We don't want that. 
 // so just be sure the environment is setup normally. will later use dotenv 
     //    await loadEnvironment();
-    await createProject();
+    await upsertProject();
 }
 
 init().catch((e) => {

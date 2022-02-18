@@ -12,7 +12,7 @@ datasource db {
 model Project {
   id            Int       @id @default(autoincrement())
   createdAt     DateTime  @default(now()) @map("created_at")
-  projectUID    String    @map("project_uid")
+  projectUID    String    @map("project_uid") @unique
   name          String    @db.VarChar(50)
   gateways      Gateway[]
 }
