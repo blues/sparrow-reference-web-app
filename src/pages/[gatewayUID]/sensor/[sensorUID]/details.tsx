@@ -187,13 +187,11 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                 </Col>
                 <Col xs={8} sm={8} lg={5}>
                   <Card className={detailsStyles.card} data-testid="pressure">
-                    <li>
-                      Pressure
-                      <br />
-                      <span className={detailsStyles.dataNumber}>
-                        {viewModel.sensor.pressure}
-                      </span>
-                    </li>
+                    Pressure
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.sensor.pressure}
+                    </span>
                   </Card>
                 </Col>
                 <Col xs={8} sm={8} lg={5}>
@@ -204,13 +202,11 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     <Tooltip
                       title={`Total motions detected by ${viewModel.sensor?.name}: ${viewModel.sensor.total}`}
                     >
-                      <li>
-                        Motion
-                        <br />
-                        <span className={detailsStyles.dataNumber}>
-                          {viewModel.sensor.count}
-                        </span>
-                      </li>
+                      Motion
+                      <br />
+                      <span className={detailsStyles.dataNumber}>
+                        {viewModel.sensor.count}
+                      </span>
                     </Tooltip>
                   </Card>
                 </Col>

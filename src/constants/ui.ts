@@ -2,7 +2,7 @@ import { ERROR_CODES } from "../services/Errors";
 
 // Sensor data fallbacks for empty data fields
 const SENSOR_MESSAGE = {
-  NO_NAME: "No sensor name currently set.",
+  NO_NAME: "(unnamed)",
   NO_LOCATION: "—",
   NO_VOLTAGE: "—",
   NO_HUMIDITY: "—",
