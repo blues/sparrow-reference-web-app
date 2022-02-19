@@ -130,27 +130,34 @@ export default class NotehubDataProvider implements DataProvider {
       })
     );
 
-    // merge objects with different defined properties into a single obj
-    const mergeObject = <V>(A: any, B: any): V => {
+    // merge objects with different defined and undefined properties into a single obj
+    const mergeObject = <CombinedEventObj>(
+      A: any,
+      B: any
+    ): CombinedEventObj => {
       const res: any = {};
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, array-callback-return, @typescript-eslint/no-unsafe-assignment
       Object.keys({ ...A, ...B }).map((key) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         res[key] = B[key] || A[key];
       });
-      return res as V;
+      return res as CombinedEventObj;
     };
 
     // take each event, and make it into a new Map() obj where macAddress is the key
     // regardless of if there's already a value for that key, run the merge function
     // set the key and the new merge var as the key, value for the map
-    const reducer = <V extends HasMacAddress>(
-      groups: Map<string, V>,
-      event: V
+    const reducer = <CombinedEventObj extends HasMacAddress>(
+      groups: Map<string, CombinedEventObj>,
+      event: CombinedEventObj
     ) => {
+      // make macAddress the map's key
       const key = event.macAddress;
+      // fetch previous map values associated with that key
       const previous = groups.get(key);
-      const merged: V = mergeObject(previous || {}, event);
+      // combine the previous map event with new map event
+      const merged: CombinedEventObj = mergeObject(previous || {}, event);
+      // set the key and newly merged object as the value
       groups.set(key, merged);
       return groups;
     };

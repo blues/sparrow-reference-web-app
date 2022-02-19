@@ -1,42 +1,68 @@
 import {
-  GLOBAL_LINE_CHART_OPTIONS,
-  getLineChartOptions,
-  GLOBAL_BAR_CHART_OPTIONS,
-  getBarChartOptions,
+  GLOBAL_CHART_OPTIONS,
+  getChartOptions,
+  getTooltipDisplayText,
 } from "../../../../src/components/charts/chartHelper";
+import CountSensorSchema from "../../../../src/components/models/readings/CountSensorSchema";
+import HumiditySensorSchema from "../../../../src/components/models/readings/HumiditySensorSchema";
+import PressureSensorSchema from "../../../../src/components/models/readings/PressureSensorSchema";
+import TemperatureSensorSchema from "../../../../src/components/models/readings/TemperatureSensorSchema";
+import VoltageSensorSchema from "../../../../src/components/models/readings/VoltageSensorSchema";
 
 describe("Chart options handling", () => {
-  it("Returns the line chart options when they're called", () => {
-    const options = getLineChartOptions();
+  it("Returns the chart options when they're called", () => {
+    const options = getChartOptions();
     expect(options?.interaction?.mode).toBe(
-      GLOBAL_LINE_CHART_OPTIONS?.interaction?.mode
+      GLOBAL_CHART_OPTIONS?.interaction?.mode
     );
   });
 
-  it("Allows users to override the line chart defaults", () => {
+  it("Allows users to override the chart defaults", () => {
     const customValue = "y";
-    const options = getLineChartOptions({
+    const options = getChartOptions({
       interaction: {
         mode: customValue,
       },
     });
     expect(options?.interaction?.mode).toBe(customValue);
   });
+});
 
-  it("Returns the bar chart options when they're called", () => {
-    const options = getBarChartOptions();
-    expect(options?.interaction?.mode).toBe(
-      GLOBAL_BAR_CHART_OPTIONS?.interaction?.mode
+describe("Tooltip handling", () => {
+  it("Generates correct temperature tooltip text", () => {
+    const text = getTooltipDisplayText(
+      "Temperature",
+      TemperatureSensorSchema,
+      22.123456
     );
+    expect(text).toBe("Temperature: 22.12°C");
   });
 
-  it("Allows users to override the bar chart defaults", () => {
-    const customValue = "x";
-    const options = getBarChartOptions({
-      interaction: {
-        mode: customValue,
-      },
-    });
-    expect(options?.interaction?.mode).toBe(customValue);
+  it("Generates correct humidity tooltip text", () => {
+    const text = getTooltipDisplayText(
+      "Humidity",
+      HumiditySensorSchema,
+      12.3456789
+    );
+    expect(text).toBe("Humidity: 12.35%");
+  });
+
+  it("Generates correct voltage tooltip text", () => {
+    const text = getTooltipDisplayText("Voltage", VoltageSensorSchema, 3.98765);
+    expect(text).toBe("Voltage: 3.99V");
+  });
+
+  it("Generates correct pressure tooltip text", () => {
+    const text = getTooltipDisplayText(
+      "Pressure",
+      PressureSensorSchema,
+      99.999999
+    );
+    expect(text).toBe("Pressure: 100.00 kPa");
+  });
+
+  it("Generates correct motion count tooltip text", () => {
+    const text = getTooltipDisplayText("Count", CountSensorSchema, 86);
+    expect(text).toBe("Count: 86");
   });
 });

@@ -1,7 +1,7 @@
 import { ChartData, ChartOptions } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-import { getBarChartOptions } from "./chartHelper";
+import { getChartOptions } from "./chartHelper";
 
 type BarChartProps = {
   data: ChartData<"bar">;
@@ -10,7 +10,7 @@ type BarChartProps = {
 };
 
 const BarChart = ({ data, options }: BarChartProps) => {
-  const mergedOptions = getBarChartOptions(options);
+  const mergedOptions = getChartOptions(options);
   return <Bar data={data} options={mergedOptions} />;
 };
 

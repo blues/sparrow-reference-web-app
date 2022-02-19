@@ -1,7 +1,7 @@
 import { ChartData, ChartOptions } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-import { getLineChartOptions } from "./chartHelper";
+import { getChartOptions } from "./chartHelper";
 
 type LineChartProps = {
   data: ChartData<"line">;
@@ -10,7 +10,7 @@ type LineChartProps = {
 };
 
 const LineChart = ({ data, options }: LineChartProps) => {
-  const mergedOptions = getLineChartOptions(options);
+  const mergedOptions = getChartOptions(options);
   return <Line data={data} options={mergedOptions} />;
 };
 
