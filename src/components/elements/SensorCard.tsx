@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Card, Typography } from "antd";
+import { Card, Row, Col, Typography } from "antd";
 import Sensor from "../models/Sensor";
 import { getSensorDetailsPresentation } from "../presentation/sensorDetails";
 import SensorDetailViewModel from "../../models/SensorDetailViewModel";
@@ -56,33 +56,37 @@ const SensorCardComponent = (props: SensorProps) => {
         </>
       }
     >
-      <ul className={styles.cardContentsSensor}>
-        <li>
+      <Row
+        justify="start"
+        gutter={[16, 16]}
+        className={styles.cardContentsSensor}
+      >
+        <Col span={8}>
           Humidity
           <br />
           <span className="dataNumber">{viewModel?.sensor?.humidity}</span>
-        </li>
-        <li>
+        </Col>
+        <Col span={8}>
           Pressure
           <br />
           <span className="dataNumber">{viewModel?.sensor?.pressure}</span>
-        </li>
-        <li>
+        </Col>
+        <Col span={8}>
           Temperature
           <br />
           <span className="dataNumber">{viewModel?.sensor?.temperature}</span>
-        </li>
-        <li>
+        </Col>
+        <Col span={8}>
           Voltage
           <br />
           <span className="dataNumber">{viewModel?.sensor?.voltage}</span>
-        </li>
-        <li>
+        </Col>
+        <Col span={8}>
           Motion
           <br />
           <span className="dataNumber">{viewModel?.sensor?.count}</span>
-        </li>
-      </ul>
+        </Col>
+      </Row>
     </Card>
   );
 };
