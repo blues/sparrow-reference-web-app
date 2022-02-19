@@ -144,9 +144,8 @@ export default class NotehubDataProvider implements DataProvider {
       return res as CombinedEventObj;
     };
 
-    // take each event, and make it into a new Map() obj where macAddress is the key
-    // regardless of if there's already a value for that key, run the merge function
-    // set the key and the new merge var as the key, value for the map
+    // merge latest event objects with the same macAddress
+    // these are different readings from the same sensor
     const reducer = <CombinedEventObj extends HasMacAddress>(
       groups: Map<string, CombinedEventObj>,
       event: CombinedEventObj
