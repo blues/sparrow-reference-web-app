@@ -61,27 +61,27 @@ const SensorCardComponent = (props: SensorProps) => {
         gutter={[16, 16]}
         className={styles.cardContentsSensor}
       >
-        <Col span={8}>
+        <Col xs={8} sm={5} md={5} lg={8}>
           Humidity
           <br />
           <span className="dataNumber">{viewModel?.sensor?.humidity}</span>
         </Col>
-        <Col span={8}>
+        <Col xs={8} sm={5} md={5} lg={8}>
           Pressure
           <br />
           <span className="dataNumber">{viewModel?.sensor?.pressure}</span>
         </Col>
-        <Col span={8}>
+        <Col xs={8} sm={5} md={5} lg={8}>
           Temperature
           <br />
           <span className="dataNumber">{viewModel?.sensor?.temperature}</span>
         </Col>
-        <Col span={8}>
+        <Col xs={8} sm={5} md={5} lg={8}>
           Voltage
           <br />
           <span className="dataNumber">{viewModel?.sensor?.voltage}</span>
         </Col>
-        <Col span={8}>
+        <Col xs={8} sm={4} md={4} lg={8}>
           Motion
           <br />
           <span className="dataNumber">{viewModel?.sensor?.count}</span>
