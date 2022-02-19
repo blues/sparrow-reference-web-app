@@ -23,7 +23,7 @@ describe("Sparrow Application", () => {
       .and("include", "https://blues.io");
   });
 
-  it("should be able to click on a gateway UID and see the details of that gateway and it's related sensors", function () {
+  it("should be able to click on a gateway UID and see the details of that gateway and its related sensors", function () {
     cy.visit("/");
     //Click the Gateway Details arrow
     cy.clickGatewayCard("0");
