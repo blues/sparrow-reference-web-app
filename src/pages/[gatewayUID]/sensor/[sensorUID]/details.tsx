@@ -11,6 +11,7 @@ import SensorDetailsBarChart from "../../../../components/charts/SensorDetailsBa
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
+  SENSOR_MESSAGE,
 } from "../../../../constants/ui";
 import { services } from "../../../../services/ServiceLocator";
 import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
@@ -70,7 +71,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
         { required: true, message: "Please add the name of your sensor" },
       ],
       tooltip: "What is the name of your sensor?",
-      initialValue: viewModel.sensor?.name,
+      initialValue:
+        viewModel.sensor?.name !== SENSOR_MESSAGE.NO_NAME
+          ? viewModel.sensor?.name
+          : undefined,
       contents: (
         <Input
           data-testid="form-input-sensor-name"
@@ -83,7 +87,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       label: "Location",
       name: "loc",
       tooltip: "Where is your sensor located?",
-      initialValue: viewModel.sensor?.location,
+      initialValue:
+        viewModel.sensor?.location !== SENSOR_MESSAGE.NO_LOCATION
+          ? viewModel.sensor?.location
+          : undefined,
       rules: [
         { required: true, message: "Please add the location of your sensor" },
       ],
