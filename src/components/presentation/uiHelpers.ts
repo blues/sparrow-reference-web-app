@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import { sortBy, uniqBy } from "lodash";
 import SensorReading from "../models/readings/SensorReading";
 import SensorReadingSchema from "../models/readings/SensorSchema";
 
@@ -13,16 +14,21 @@ export const getFormattedChartData = (
   sensorSchema: SensorReadingSchema<unknown>
 ) => {
   if (sensorReadings.length) {
-    const formattedData = sensorReadings
-      .filter((reading) => reading.schema === sensorSchema)
-      .map((filteredEvent) => {
-        const chartDataObj = {
-          when: filteredEvent.captured,
-          value: Number(filteredEvent.value),
-        };
-        return chartDataObj;
-      })
-      .reverse();
+    const formattedData = sortBy(
+      uniqBy(
+        sensorReadings
+          .filter((reading) => reading.schema === sensorSchema)
+          .map((filteredEvent) => {
+            const chartDataObj = {
+              when: filteredEvent.captured,
+              value: Number(filteredEvent.value),
+            };
+            return chartDataObj;
+          }),
+        "when"
+      ),
+      "when"
+    );
     return formattedData;
   }
   return [];
