@@ -43,38 +43,29 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   }
 
   async getAllDevices(deviceUIDs: string[]) {
-    // todo figure out how to pass scope of this when calling getDevice
-    return Promise.all(deviceUIDs.map(this.getDevice));
+    return Promise.all(deviceUIDs.map((device) => this.getDevice(device)));
   }
 
   // Eventually we’ll want to find all valid gateways in a Notehub project.
   // For now, just take the hardcoded gateway UID from the starter’s
   // environment variables and use that.
   async getDevices() {
+    // for retrieving multiple devices
     if (this.hubDeviceUID.includes(",")) {
       const deviceUIDs = this.hubDeviceUID.split(",");
       const allDeviceData = await this.getAllDevices(deviceUIDs);
       return allDeviceData;
     }
-    const device = await this.getDevice(this.hubDeviceUID);
 
+    // for retrieving a single device
+    const device = await this.getDevice(this.hubDeviceUID);
     return [device];
   }
 
   async getDevice(hubDeviceUID: string) {
-    // todo for some reason, when getAllDevices calls this function all `this` scope is lost
-    // console.log(this.hubBaseURL, hubDeviceUID);
-    const hubBaseURL = process.env.HUB_BASE_URL;
-    const hubProjectUID = process.env.HUB_PROJECTUID;
-    const commonHeaders = {
-      [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
-      [HTTP_HEADER.SESSION_TOKEN]: process.env.HUB_AUTH_TOKEN,
-    };
-    // todo revert back to this.XYZ once scoping working again
-    const endpoint = `${hubBaseURL}/v1/projects/${hubProjectUID}/devices/${hubDeviceUID}`;
+    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}`;
     try {
-      // todo revert commonsHeaders back to this as well
-      const resp = await axios.get(endpoint, { headers: commonHeaders });
+      const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubDevice;
     } catch (e) {
       throw this.errorWithCode(e);
