@@ -1,15 +1,17 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { Card, Input, Button, Tabs, Row, Col } from "antd";
+import { Card, Input, Button, Tabs, Row, Col, Tooltip } from "antd";
 import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import { ParsedUrlQuery } from "querystring";
 import Form, { FormProps } from "../../../../components/elements/Form";
-import SensorDetailsChart from "../../../../components/charts/SensorDetailsChart";
+import SensorDetailsLineChart from "../../../../components/charts/SensorDetailsLineChart";
+import SensorDetailsBarChart from "../../../../components/charts/SensorDetailsBarChart";
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
+  SENSOR_MESSAGE,
 } from "../../../../constants/ui";
 import { services } from "../../../../services/ServiceLocator";
 import SensorDetailViewModel from "../../../../models/SensorDetailViewModel";
@@ -21,6 +23,7 @@ import TemperatureSensorSchema from "../../../../components/models/readings/Temp
 import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
 import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
 import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
+import CountSensorSchema from "../../../../components/models/readings/CountSensorSchema";
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
 interface SparrowQueryInterface extends ParsedUrlQuery {
@@ -68,7 +71,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
         { required: true, message: "Please add the name of your sensor" },
       ],
       tooltip: "What is the name of your sensor?",
-      initialValue: viewModel.sensor?.name,
+      initialValue:
+        viewModel.sensor?.name !== SENSOR_MESSAGE.NO_NAME
+          ? viewModel.sensor?.name
+          : undefined,
       contents: (
         <Input
           data-testid="form-input-sensor-name"
@@ -81,7 +87,10 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
       label: "Location",
       name: "loc",
       tooltip: "Where is your sensor located?",
-      initialValue: viewModel.sensor?.location,
+      initialValue:
+        viewModel.sensor?.location !== SENSOR_MESSAGE.NO_LOCATION
+          ? viewModel.sensor?.location
+          : undefined,
       rules: [
         { required: true, message: "Please add the location of your sensor" },
       ],
@@ -152,8 +161,12 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                 Last updated {viewModel.sensor.lastActivity}
               </p>
 
-              <Row gutter={[8, 16]}>
-                <Col xs={7} sm={6} lg={6}>
+              <Row
+                justify="start"
+                className={detailsStyles.currentReadingsRow}
+                gutter={[8, 16]}
+              >
+                <Col xs={12} sm={12} lg={5}>
                   <Card
                     className={detailsStyles.card}
                     data-testid="temperature"
@@ -165,7 +178,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col xs={5} sm={6} lg={6}>
+                <Col xs={12} sm={12} lg={5}>
                   <Card className={detailsStyles.card} data-testid="humidity">
                     Humidity
                     <br />
@@ -174,7 +187,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col xs={5} sm={5} lg={6}>
+                <Col xs={12} sm={12} lg={4}>
                   <Card className={detailsStyles.card} data-testid="voltage">
                     Voltage
                     <br />
@@ -183,17 +196,33 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col xs={7} sm={7} lg={6}>
+                <Col xs={12} sm={12} lg={5}>
                   <Card className={detailsStyles.card} data-testid="pressure">
-                    <li>
-                      Pressure
-                      <br />
-                      <span className={detailsStyles.dataNumber}>
-                        {viewModel.sensor.pressure}
-                      </span>
-                    </li>
+                    Pressure
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.sensor.pressure}
+                    </span>
                   </Card>
                 </Col>
+                <Col xs={12} sm={12} lg={5}>
+                  <Card
+                    className={detailsStyles.card}
+                    data-testid="motion-count"
+                  >
+                    <Tooltip
+                      title={`Total motions detected by ${viewModel.sensor?.name}: ${viewModel.sensor.total}`}
+                    >
+                      Motion
+                      <br />
+                      <span className={detailsStyles.dataNumber}>
+                        {viewModel.sensor.count}
+                      </span>
+                    </Tooltip>
+                  </Card>
+                </Col>
+              </Row>
+              <Row justify="start" gutter={[8, 16]}>
                 <Col xs={24} sm={24} lg={12}>
                   <Card className={detailsStyles.sensorChart}>
                     <h3>Temperature</h3>
@@ -204,7 +233,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.sensor.lastActivity}
                     </p>
                     {viewModel.readings?.temperature.length ? (
-                      <SensorDetailsChart
+                      <SensorDetailsLineChart
                         label="Temperature"
                         data={viewModel.readings.temperature}
                         chartColor="#59d2ff"
@@ -225,7 +254,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.sensor.lastActivity}
                     </p>
                     {viewModel.readings?.humidity.length ? (
-                      <SensorDetailsChart
+                      <SensorDetailsLineChart
                         label="Humidity"
                         data={viewModel.readings.humidity}
                         chartColor="#ba68c8"
@@ -246,7 +275,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.sensor.lastActivity}
                     </p>
                     {viewModel.readings?.voltage.length ? (
-                      <SensorDetailsChart
+                      <SensorDetailsLineChart
                         label="Voltage"
                         data={viewModel.readings.voltage}
                         chartColor="#9ccc65"
@@ -267,7 +296,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.sensor.lastActivity}
                     </p>
                     {viewModel.readings?.pressure.length ? (
-                      <SensorDetailsChart
+                      <SensorDetailsLineChart
                         label="Pressure"
                         data={viewModel.readings.pressure}
                         chartColor="#ffd54f"
@@ -275,6 +304,27 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                       />
                     ) : (
                       HISTORICAL_SENSOR_DATA_MESSAGE.NO_PRESSURE_HISTORY
+                    )}
+                  </Card>
+                </Col>
+                <Col xs={24} sm={24} lg={12}>
+                  <Card className={detailsStyles.sensorChart}>
+                    <h3>Motion Count</h3>
+                    <p
+                      data-testid="last-seen-count"
+                      className={detailsStyles.sensorChartTimestamp}
+                    >
+                      Last updated {viewModel.sensor.lastActivity}
+                    </p>
+                    {viewModel.readings?.count.length ? (
+                      <SensorDetailsBarChart
+                        label="Count"
+                        data={viewModel.readings.count}
+                        chartColor="#ff7e6d"
+                        schema={CountSensorSchema}
+                      />
+                    ) : (
+                      HISTORICAL_SENSOR_DATA_MESSAGE.NO_COUNT_HISTORY
                     )}
                   </Card>
                 </Col>

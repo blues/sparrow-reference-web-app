@@ -47,18 +47,11 @@
 
   .cardContents,
   .cardContentsSensor {
-    list-style-type: none;
-    display: flex;
     padding: 10px 0 20px 0;
     margin-bottom: 0;
-    align-items: stretch;
-    justify-content: space-around;
-    width: 100%;
 
-    li {
-      display: inline-block;
+    :global .ant-col {
       text-align: center;
-      width: auto;
       font-size: 14px;
 
       span {

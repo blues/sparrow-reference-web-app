@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import { sortBy, uniqBy } from "lodash";
 import SensorReading from "../models/readings/SensorReading";
 import SensorReadingSchema from "../models/readings/SensorSchema";
 
@@ -13,16 +14,21 @@ export const getFormattedChartData = (
   sensorSchema: SensorReadingSchema<unknown>
 ) => {
   if (sensorReadings.length) {
-    const formattedData = sensorReadings
-      .filter((reading) => reading.schema === sensorSchema)
-      .map((filteredEvent) => {
-        const chartDataObj = {
-          when: filteredEvent.captured,
-          value: Number(filteredEvent.value),
-        };
-        return chartDataObj;
-      })
-      .reverse();
+    const formattedData = sortBy(
+      uniqBy(
+        sensorReadings
+          .filter((reading) => reading.schema === sensorSchema)
+          .map((filteredEvent) => {
+            const chartDataObj = {
+              when: filteredEvent.captured,
+              value: Number(filteredEvent.value),
+            };
+            return chartDataObj;
+          }),
+        "when"
+      ),
+      "when"
+    );
     return formattedData;
   }
   return [];
@@ -57,6 +63,22 @@ export const getFormattedPressureData = (pressure: number | undefined) => {
 export const getFormattedVoltageData = (voltage: number | undefined) => {
   if (voltage) {
     const formattedData = `${voltage.toFixed(2)}V`;
+    return formattedData;
+  }
+  return null;
+};
+
+export const getFormattedCountData = (count: number | undefined) => {
+  if (count) {
+    const formattedData = `${count}`;
+    return formattedData;
+  }
+  return null;
+};
+
+export const getFormattedTotalData = (total: number | undefined) => {
+  if (total) {
+    const formattedData = `${total}`;
     return formattedData;
   }
   return null;

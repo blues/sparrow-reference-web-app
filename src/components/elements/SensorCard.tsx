@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Card, Typography } from "antd";
+import { Card, Row, Col, Typography } from "antd";
 import Sensor from "../models/Sensor";
 import { getSensorDetailsPresentation } from "../presentation/sensorDetails";
 import SensorDetailViewModel from "../../models/SensorDetailViewModel";
@@ -56,28 +56,37 @@ const SensorCardComponent = (props: SensorProps) => {
         </>
       }
     >
-      <ul className={styles.cardContentsSensor}>
-        <li>
+      <Row
+        justify="start"
+        gutter={[16, 16]}
+        className={styles.cardContentsSensor}
+      >
+        <Col xs={8} sm={5} md={5} lg={8}>
           Humidity
           <br />
           <span className="dataNumber">{viewModel?.sensor?.humidity}</span>
-        </li>
-        <li>
+        </Col>
+        <Col xs={8} sm={5} md={5} lg={8}>
           Pressure
           <br />
           <span className="dataNumber">{viewModel?.sensor?.pressure}</span>
-        </li>
-        <li>
+        </Col>
+        <Col xs={8} sm={5} md={5} lg={8}>
           Temperature
           <br />
           <span className="dataNumber">{viewModel?.sensor?.temperature}</span>
-        </li>
-        <li>
+        </Col>
+        <Col xs={8} sm={5} md={5} lg={8}>
           Voltage
           <br />
           <span className="dataNumber">{viewModel?.sensor?.voltage}</span>
-        </li>
-      </ul>
+        </Col>
+        <Col xs={8} sm={4} md={4} lg={8}>
+          Motion
+          <br />
+          <span className="dataNumber">{viewModel?.sensor?.count}</span>
+        </Col>
+      </Row>
     </Card>
   );
 };

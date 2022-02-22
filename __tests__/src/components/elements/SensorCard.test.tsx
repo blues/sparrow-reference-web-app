@@ -3,6 +3,8 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import userEvent from "@testing-library/user-event";
 import SensorCard from "../../../../src/components/elements/SensorCard";
+// eslint-disable-next-line jest/no-mocks-import
+import "../../../../__mocks__/matchMediaMock";
 import { SENSOR_MESSAGE } from "../../../../src/constants/ui";
 
 const mockSensorData = {
