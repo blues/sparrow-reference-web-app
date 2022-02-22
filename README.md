@@ -2,23 +2,24 @@
 
 An example web application to configure and view sensor data from Blues Wireless Sparrow devices.
 
-- [Setup](#setup)
-  - [Clone this Repository](#clone-this-respository)
-  - [Environment Variables](#environment-variables)
-    - [HUB_AUTH_TOKEN](#hub_auth_token)
-    - [HUB_PROJECTUID](#HUB_PROJECTUID)
-    - [HUB_DEVICE_UID](#hub_device_uid)
-  - [Dependencies](#dependencies)
-- [Development](#development)
-- [Testing](#testing)
-  - [Testing with Jest](#testing-with-jest)
-  - [Testing with Cypress](#testing-with-cypress)
-- [Deploying](#deploying)
-  - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
-  - [Deploy on Vercel](#deploy-on-vercel)
-  - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
-- [Known Issues](#known-issues)
-- [Support](#support)
+- [🐦 Sparrow Starter](#-sparrow-starter)
+  - [Setup](#setup)
+    - [Clone This Repository](#clone-this-repository)
+    - [Environment Variables](#environment-variables)
+      - [HUB_AUTH_TOKEN](#hub_auth_token)
+      - [HUB_DEVICE_UID](#hub_device_uid)
+      - [HUB_PROJECTUID](#hub_projectuid)
+    - [Dependencies](#dependencies)
+  - [Development](#development)
+  - [Testing](#testing)
+    - [Testing with Jest](#testing-with-jest)
+    - [Testing with Cypress](#testing-with-cypress)
+  - [Deploying](#deploying)
+    - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
+    - [Deploy on Vercel](#deploy-on-vercel)
+    - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
+  - [Known Issues](#known-issues)
+  - [Support](#support)
 
 ## Setup
 
@@ -64,7 +65,7 @@ To find retrieve an authentication token, put this in your command line, replaci
 
 ```
 curl -X POST -L 'https://api.notefile.net/auth/login' \
-    -d '{"username":"YOUR_NOTEHUB_EMAIL", "password": "NOTEHUB_PASSWORD"}
+    -d '{"username":"YOUR_NOTEHUB_EMAIL", "password": "NOTEHUB_PASSWORD"}'
 ```
 
 When successful, you will see a response like
@@ -79,16 +80,20 @@ Copy the value after the colon to set the environment variable in `.env.local`, 
 HUB_AUTH_TOKEN=BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD
 ```
 
-#### HUB_PROJECTUID
-
-This is the unique identifier for your project in Notehub, and has the prefix `app:`. You can find this by going to your Notehub project, clicking the **Settings** menu, and then scrolling down to the **Project UID** heading.
-
 #### HUB_DEVICE_UID
 
 This is the unique identifier for your Sparrow Gateway’s Notecard device. You can find this by going to your Notehub project, clicking the **Devices** menu, and then double clicking your gateway in the list of devices.
 
 ```
 HUB_DEVICE_UID=dev:038050040065363
+```
+
+#### HUB_PROJECTUID
+
+This is the unique identifier for your project in Notehub, and has the prefix `app:`. You can find this by going to your Notehub project, clicking the **Settings** menu, and then scrolling down to the **Project UID** heading.
+
+```
+HUB_PROJECTUID=app:245dc5d9-f910-433d-a8ca-c66b35475689
 ```
 
 ### Dependencies

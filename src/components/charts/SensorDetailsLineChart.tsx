@@ -1,56 +1,11 @@
 /* eslint-disable react/require-default-props */
 import { ChartData, ChartOptions } from "chart.js";
-import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
-import PressureSensorSchema from "../models/readings/PressureSensorSchema";
-import SensorReadingSchema from "../models/readings/SensorSchema";
-import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
 import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
-import {
-  getFormattedHumidityData,
-  getFormattedPressureData,
-  getFormattedTemperatureData,
-  getFormattedVoltageData,
-} from "../presentation/uiHelpers";
-import { CHART_DATE_FORMAT } from "./chartHelper";
+import { CHART_DATE_FORMAT, getTooltipDisplayText } from "./chartHelper";
+import type { SensorDetailsChartProps } from "./chartHelper";
 import LineChart from "./LineChart";
 
-type SensorDetailsChartProps = {
-  label: string;
-  chartColor: string;
-  data: {
-    when: string;
-    value: number;
-  }[];
-  schema: SensorReadingSchema<number>;
-};
-
-export function getTooltipDisplayText(
-  label: string,
-  schema: SensorReadingSchema<number>,
-  value: number
-) {
-  let valueDisplay = "";
-  switch (schema) {
-    case TemperatureSensorSchema:
-      valueDisplay = getFormattedTemperatureData(value) || "";
-      break;
-    case HumiditySensorSchema:
-      valueDisplay = getFormattedHumidityData(value) || "";
-      break;
-    case VoltageSensorSchema:
-      valueDisplay = getFormattedVoltageData(value) || "";
-      break;
-    case PressureSensorSchema:
-      valueDisplay = getFormattedPressureData(value) || "";
-      break;
-    default:
-      // eslint-disable-next-line no-console
-      console.error(`Unknown schema ${schema.toString()}`);
-  }
-  return `${label}: ${valueDisplay}`;
-}
-
-const SensorDetailsChart = ({
+const SensorDetailsLineChart = ({
   label,
   chartColor,
   data,
@@ -129,4 +84,4 @@ const SensorDetailsChart = ({
   );
 };
 
-export default SensorDetailsChart;
+export default SensorDetailsLineChart;

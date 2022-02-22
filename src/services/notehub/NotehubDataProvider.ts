@@ -1,4 +1,5 @@
-import { flattenDeep, uniqBy } from "lodash";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { flattenDeep } from "lodash";
 import Gateway from "../../components/models/Gateway";
 import Sensor from "../../components/models/Sensor";
 import NotehubDevice from "./models/NotehubDevice";
@@ -12,11 +13,17 @@ import TemperatureSensorReading from "../../components/models/readings/Temperatu
 import HumiditySensorReading from "../../components/models/readings/HumiditySensorReading";
 import PressureSensorReading from "../../components/models/readings/PressureSensorReading";
 import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
+import CountSensorReading from "../../components/models/readings/CountSensorReading";
+import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
   triangulated_location?: NotehubLocation;
   tower_location?: NotehubLocation;
+}
+
+interface HasMacAddress {
+  macAddress: string;
 }
 
 function getBestLocation(object: HasNotehubLocation) {
@@ -94,6 +101,8 @@ export default class NotehubDataProvider implements DataProvider {
         pressure: event.body.pressure ? event.body.pressure / 1000 : undefined,
         temperature: event.body.temperature,
         voltage: event.body.voltage,
+        total: event.body.total,
+        count: event.body.count,
         lastActivity: event.captured,
       }));
       return latestSensorData;
@@ -106,21 +115,59 @@ export default class NotehubDataProvider implements DataProvider {
 
     const latestSensorEvents = await getAllLatestSensorEvents();
 
-    const simplifiedSensorEvents = uniqBy(
-      flattenDeep(latestSensorEvents)
-        .map((sensorEvent) => ({
-          name: undefined,
-          gatewayUID: sensorEvent.gatewayUID,
-          macAddress: sensorEvent.macAddress.split("#")[0],
-          humidity: sensorEvent.humidity,
-          pressure: sensorEvent.pressure,
-          temperature: sensorEvent.temperature,
-          voltage: sensorEvent.voltage,
-          lastActivity: sensorEvent.lastActivity,
-        }))
-        .filter((addr) => addr !== undefined),
-      "macAddress"
+    const simplifiedSensorEvents = flattenDeep(latestSensorEvents).map(
+      (sensorEvent) => ({
+        name: undefined,
+        gatewayUID: sensorEvent.gatewayUID,
+        macAddress: sensorEvent.macAddress.split("#")[0],
+        humidity: sensorEvent.humidity,
+        pressure: sensorEvent.pressure,
+        temperature: sensorEvent.temperature,
+        voltage: sensorEvent.voltage,
+        count: sensorEvent.count,
+        total: sensorEvent.total,
+        lastActivity: sensorEvent.lastActivity,
+      })
     );
+
+    // merge objects with different defined and undefined properties into a single obj
+    const mergeObject = <CombinedEventObj>(
+      A: any,
+      B: any
+    ): CombinedEventObj => {
+      const res: any = {};
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, array-callback-return, @typescript-eslint/no-unsafe-assignment
+      Object.keys({ ...A, ...B }).map((key) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        res[key] = B[key] || A[key];
+      });
+      return res as CombinedEventObj;
+    };
+
+    // merge latest event objects with the same macAddress
+    // these are different readings from the same sensor
+    const reducer = <CombinedEventObj extends HasMacAddress>(
+      groups: Map<string, CombinedEventObj>,
+      event: CombinedEventObj
+    ) => {
+      // make macAddress the map's key
+      const key = event.macAddress;
+      // fetch previous map values associated with that key
+      const previous = groups.get(key);
+      // combine the previous map event with new map event
+      const merged: CombinedEventObj = mergeObject(previous || {}, event);
+      // set the key and newly merged object as the value
+      groups.set(key, merged);
+      return groups;
+    };
+
+    // run the sensor events through the reducer and then pull only their values into a new Map iterator obj
+    const reducedEventsIterator = simplifiedSensorEvents
+      .reduce(reducer, new Map())
+      .values();
+
+    // transform the Map iterator obj into plain array
+    const reducedEvents = Array.from(reducedEventsIterator);
 
     // get the names and locations of the sensors from the API via config.db
     const getExtraSensorDetails = async (gatewaySensorInfo: Sensor) => {
@@ -152,13 +199,19 @@ export default class NotehubDataProvider implements DataProvider {
         ...(gatewaySensorInfo.temperature && {
           temperature: gatewaySensorInfo.temperature,
         }),
+        ...(gatewaySensorInfo.count && {
+          count: gatewaySensorInfo.count,
+        }),
+        ...(gatewaySensorInfo.total && {
+          total: gatewaySensorInfo.total,
+        }),
       } as Sensor;
     };
 
     const getAllSensorData = async (gatewaySensorInfo: Sensor[]) =>
       Promise.all(gatewaySensorInfo.map(getExtraSensorDetails));
-
-    const allLatestSensorData = await getAllSensorData(simplifiedSensorEvents);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const allLatestSensorData = await getAllSensorData(reducedEvents);
 
     return allLatestSensorData;
   }
@@ -187,7 +240,7 @@ export default class NotehubDataProvider implements DataProvider {
       (event: NotehubEvent) =>
         event.file &&
         event.file.includes(`${sensorUID}`) &&
-        event.file.includes("#air.qo") &&
+        (event.file.includes("#air.qo") || event.file.includes("#motion.qo")) &&
         event.device_uid === gatewayUID
     );
     const readingsToReturn: SensorReading<unknown>[] = [];
@@ -221,6 +274,22 @@ export default class NotehubDataProvider implements DataProvider {
         readingsToReturn.push(
           new VoltageSensorReading({
             value: event.body.voltage,
+            captured: event.captured,
+          })
+        );
+      }
+      if (event.body.count) {
+        readingsToReturn.push(
+          new CountSensorReading({
+            value: event.body.count,
+            captured: event.captured,
+          })
+        );
+      }
+      if (event.body.total) {
+        readingsToReturn.push(
+          new TotalSensorReading({
+            value: event.body.total,
             captured: event.captured,
           })
         );
