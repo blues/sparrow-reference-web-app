@@ -161,8 +161,11 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                 Last updated {viewModel.sensor.lastActivity}
               </p>
 
-              <Row gutter={[8, 16]}>
-                <Col xs={8} sm={8} lg={5}>
+              <Row
+                className={detailsStyles.currentReadingsRow}
+                gutter={[8, 16]}
+              >
+                <Col xs={12} sm={12} lg={5}>
                   <Card
                     className={detailsStyles.card}
                     data-testid="temperature"
@@ -174,7 +177,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col xs={8} sm={8} lg={5}>
+                <Col xs={12} sm={12} lg={5}>
                   <Card className={detailsStyles.card} data-testid="humidity">
                     Humidity
                     <br />
@@ -183,7 +186,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col xs={8} sm={8} lg={4}>
+                <Col xs={12} sm={12} lg={4}>
                   <Card className={detailsStyles.card} data-testid="voltage">
                     Voltage
                     <br />
@@ -192,7 +195,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col xs={8} sm={8} lg={5}>
+                <Col xs={12} sm={12} lg={5}>
                   <Card className={detailsStyles.card} data-testid="pressure">
                     Pressure
                     <br />
@@ -201,7 +204,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </span>
                   </Card>
                 </Col>
-                <Col xs={8} sm={8} lg={5}>
+                <Col xs={12} sm={12} lg={5}>
                   <Card
                     className={detailsStyles.card}
                     data-testid="motion-count"
@@ -217,6 +220,8 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                     </Tooltip>
                   </Card>
                 </Col>
+              </Row>
+              <Row justify="center" gutter={[8, 16]}>
                 <Col xs={24} sm={24} lg={12}>
                   <Card className={detailsStyles.sensorChart}>
                     <h3>Temperature</h3>
