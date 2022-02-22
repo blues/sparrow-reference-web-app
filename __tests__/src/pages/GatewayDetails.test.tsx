@@ -70,7 +70,9 @@ describe("Gateway details page", () => {
     const gateway = getMockGateway();
     delete gateway.location;
     render(<GatewayDetails gateway={gateway} sensors={mockSensors} />);
-    expect(screen.queryByText(GATEWAY_MESSAGE.NO_LOCATION)).toBeInTheDocument();
+    expect(
+      screen.queryAllByText(GATEWAY_MESSAGE.NO_LOCATION)[0]
+    ).toBeInTheDocument();
   });
 
   it("should render an error when present", () => {

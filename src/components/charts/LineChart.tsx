@@ -1,4 +1,3 @@
-import React from "react";
 import { ChartData, ChartOptions } from "chart.js";
 import { Line } from "react-chartjs-2";
 

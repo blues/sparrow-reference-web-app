@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Card, Typography } from "antd";
+import { Card, Col, Row, Typography } from "antd";
 import Gateway from "../models/Gateway";
 import {
   getFormattedLastSeen,
@@ -34,7 +34,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
 
   return (
     <Card
-      headStyle={{ padding: "0", paddingBottom: "14px" }}
+      headStyle={{ padding: "0" }}
       bodyStyle={{ padding: "0" }}
       className={styles.cardStyle}
       hoverable
@@ -54,21 +54,23 @@ const GatewayCardComponent = (props: GatewayProps) => {
             Last updated{` `}
             {getFormattedLastSeen(gatewayDetails.lastActivity)}
           </span>
+          <div
+            data-testid="gateway-location"
+            className={styles.locationWrapper}
+          >
+            <span className={styles.locationTitle}>Location{` `}</span>
+            <span className={styles.location}>{formattedLocation}</span>
+          </div>
         </>
       }
     >
-      <ul className={styles.cardContents}>
-        <li>
-          Location
-          <br />
-          <span className="dataNumber">{formattedLocation}</span>
-        </li>
-        <li>
+      <Row justify="start" gutter={[16, 16]} className={styles.cardContents}>
+        <Col span={8}>
           Voltage
           <br />
           <span className="dataNumber">{formattedGatewayVoltage}</span>
-        </li>
-      </ul>
+        </Col>
+      </Row>
     </Card>
   );
 };

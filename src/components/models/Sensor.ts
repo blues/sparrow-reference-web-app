@@ -7,6 +7,8 @@ interface Sensor {
   temperature?: number;
   voltage?: number;
   lastActivity: string;
+  count?: number;
+  total?: number;
   gatewayUID: string;
 }
 

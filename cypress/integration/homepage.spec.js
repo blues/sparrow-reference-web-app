@@ -23,7 +23,7 @@ describe("Sparrow Application", () => {
       .and("include", "https://blues.io");
   });
 
-  it("should be able to click on a gateway UID and see the details of that gateway and it's related sensors", function () {
+  it("should be able to click on a gateway UID and see the details of that gateway and its related sensors", function () {
     cy.visit("/");
     //Click the Gateway Details arrow
     cy.clickGatewayCard("0");
@@ -50,6 +50,7 @@ describe("Sparrow Application", () => {
     cy.get(".ant-card-body :nth-child(2)").should("contain", "Pressure");
     cy.get(".ant-card-body :nth-child(3)").should("contain", "Temperature");
     cy.get(".ant-card-body :nth-child(4)").should("contain", "Voltage");
+    cy.get(".ant-card-body :nth-child(5)").should("contain", "Motion");
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click({ force: true });
     // verify it navigates back to the homepage
@@ -59,6 +60,11 @@ describe("Sparrow Application", () => {
   });
 
   it("should be able to click on a sensor card and see more details about that sensor and update the name and location of that sensor", function () {
+    // this keeps uncaught exceptions from failing Cypress tests
+    Cypress.on("uncaught:exception", (err, runnable) => {
+      return false;
+    });
+
     cy.visit("/");
     //Click the first Sensor arrow
     cy.clickSensorCard("0");
@@ -85,6 +91,8 @@ describe("Sparrow Application", () => {
     cy.get('[data-testid="voltage"]').should("contain", "Voltage");
     //Verify the Pressure header
     cy.get('[data-testid="pressure"]').should("contain", "Pressure");
+    //Verify the Motion Count header
+    cy.get('[data-testid="motion-count"]').should("contain", "Motion");
     //Click the Details tab
     cy.clickTabByText("Device Details");
     //Check for the Name label
@@ -108,7 +116,7 @@ describe("Sparrow Application", () => {
     sensorSubmitButton.should("be.visible");
     cy.get(".ant-form").submit();
     // Verify the sensor name is now updated to "Cypress Test Sensor"
-    cy.get('[data-testid="sensor-name"]', { timeout: 15000 }).should(
+    cy.get('[data-testid="sensor-name"]', { timeout: 20000 }).should(
       "contain",
       "Cypress Test Sensor"
     );
@@ -121,14 +129,14 @@ describe("Sparrow Application", () => {
     //Click the Submit button
     cy.get(".ant-form").submit();
     // Verify the sensor name is now updated to "Other Sensor Name"
-    cy.get('[data-testid="sensor-name"]', { timeout: 15000 }).should(
+    cy.get('[data-testid="sensor-name"]', { timeout: 20000 }).should(
       "contain",
       "Other Sensor Name"
     );
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click({ force: true });
     // verify the sensor location is now updated to "Garage"
-    cy.get('[data-testid="sensor-location"]', { timeout: 10000 }).should(
+    cy.get('[data-testid="sensor-location"]', { timeout: 15000 }).should(
       "contain",
       "Garage"
     );
