@@ -162,6 +162,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
               </p>
 
               <Row
+                justify="start"
                 className={detailsStyles.currentReadingsRow}
                 gutter={[8, 16]}
               >
@@ -221,7 +222,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
               </Row>
-              <Row justify="center" gutter={[8, 16]}>
+              <Row justify="start" gutter={[8, 16]}>
                 <Col xs={24} sm={24} lg={12}>
                   <Card className={detailsStyles.sensorChart}>
                     <h3>Temperature</h3>
