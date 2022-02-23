@@ -13,7 +13,8 @@
     "test:coverage": "jest --coverage",
     "cypress:open": "cypress open --env configFile=development",
     "cypress:run": "cypress run --env configFile=development",
-    "prisma:generate": "npx prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:reset": "prisma db push --force-reset",
     "db:update": "prisma db push",
     "db:init": "ts-node --project ./node.tsconfig.json src/services/prisma-datastore/db-init.ts"
   },
