@@ -1,5 +1,5 @@
-import { PrismaClient, Project, Gateway, DeviceReadingSchema, Reading, Prisma, SparrowDevice } from '@prisma/client'
-import { loadEnvConfig } from '@next/env'
+import { PrismaClient, Project, Gateway, DeviceReadingSchema, Reading, Prisma, Node } from '@prisma/client'
+
 import Config from '../../../config'
 
 const prisma = new PrismaClient()

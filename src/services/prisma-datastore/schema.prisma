@@ -33,18 +33,18 @@ model Gateway {
   project_id    Int
 
   // the nodes paired with this gateway
-  nodes         SparrowDevice[]
-  //radio         SparrowDevice?
+  nodes         Node[]
+  //radio         Node?
 
   @@map("gateway")
   @@index([project_id])   // surprised that relationships aren't automatically indexed  
 
 }
 
-model SparrowDevice {
+model Node {
   id              Int         @id @default(autoincrement())
   
-  deviceEID      String       @unique @map("device_eid") @db.Char(64)
+  deviceEUI      String       @unique @map("device_eui") @db.Char(64)
 
   name            String?     @db.VarChar(49) // cached
   location        String?     @db.Char(15)    // cached
@@ -57,7 +57,7 @@ model SparrowDevice {
 
   readingSchemas  DeviceReadingSchema[]
 
-  @@map("sparrow_device")
+  @@map("node")
   @@index([gateway_id])   // surprised that relationships aren't automatically indexed  
 }
 
@@ -65,7 +65,7 @@ model SparrowDevice {
 model DeviceReadingSchema {
     id            Int                 @id @default(autoincrement())
     name          String              @db.VarChar(32)
-    node          SparrowDevice       @relation(fields: [node_id], references: [id])
+    node          Node                @relation(fields: [node_id], references: [id])
     node_id       Int
     eventName     String              @db.VarChar(32) @map("event_name")  // "air.qo"
     description   String?             @db.VarChar(1000)
