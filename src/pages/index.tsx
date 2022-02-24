@@ -1,21 +1,20 @@
 import { GetServerSideProps, NextPage } from "next";
-import { Row, Col } from "antd";
-import SensorCard from "../components/elements/SensorCard";
+import { Carousel } from "antd";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
-import styles from "../styles/Home.module.scss";
 import { getErrorMessage } from "../constants/ui";
 import { ERROR_CODES } from "../services/Errors";
+import styles from "../styles/Home.module.scss";
 
 type HomeData = {
-  gateways: Gateway[];
-  latestSensorDataList: Sensor[];
+  gatewaySensorData: Gateway[];
   err?: string;
 };
 
-const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
+const Home: NextPage<HomeData> = ({ gatewaySensorData, err }) => (
   <div className={styles.container}>
     {err ? (
       <h2 className={styles.errorMessage}>{err}</h2>
@@ -24,34 +23,31 @@ const Home: NextPage<HomeData> = ({ gateways, latestSensorDataList, err }) => (
         <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
           Gateways
         </h2>
-        <Row gutter={[16, 16]}>
-          {gateways.map((gateway, index) => (
-            <Col xs={24} sm={24} lg={12} key={gateway.uid}>
-              <GatewayCard index={index} gatewayDetails={gateway} />
-            </Col>
+        {/* todo make some custom icons to stop console errors */}
+        <Carousel
+          dots
+          arrows
+          nextArrow={<RightOutlined />}
+          prevArrow={<LeftOutlined />}
+        >
+          {gatewaySensorData.map((gateway, index) => (
+            <GatewayCard
+              key={gateway.uid}
+              index={index}
+              gatewayDetails={gateway}
+            />
           ))}
-        </Row>
-
-        <h2 data-testid="sensor-header" className={styles.sectionSubTitle}>
-          Sensors
-        </h2>
-        <Row gutter={[16, 16]}>
-          {latestSensorDataList.map((sensor, index) => (
-            <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
-              <SensorCard index={index} sensorDetails={sensor} />
-            </Col>
-          ))}
-        </Row>
+        </Carousel>
       </>
     )}
   </div>
 );
-
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   let gateways: Gateway[] = [];
   let latestSensorDataList: Sensor[] = [];
+  const gatewaySensorData: Gateway[] = [];
   try {
     const appService = services().getAppService();
     gateways = await appService.getGateways();
@@ -59,23 +55,32 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
       gateways.map((gateway) => gateway.uid)
     );
 
+    const gatewaySensorData = gateways.map((gateway) => {
+      const filterSensorsByGateway = latestSensorDataList.filter(
+        (sensor) => sensor.gatewayUID === gateway.uid
+      );
+      const updatedSensorList = {
+        sensorList: filterSensorsByGateway,
+      };
+      const updatedGatewayObject = { ...gateway, ...updatedSensorList };
+      return updatedGatewayObject;
+    });
+
     return {
-      props: { gateways, latestSensorDataList },
+      props: { gatewaySensorData },
     };
   } catch (err) {
     if (err instanceof Error) {
       return {
         props: {
-          gateways,
-          latestSensorDataList,
+          gatewaySensorData,
           err: getErrorMessage(err.message),
         },
       };
     }
     return {
       props: {
-        gateways,
-        latestSensorDataList,
+        gatewaySensorData,
         err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
       },
     };

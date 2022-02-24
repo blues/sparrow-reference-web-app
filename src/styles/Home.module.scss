@@ -4,6 +4,43 @@
   .errorMessage {
     text-align: center;
   }
+
+  :global .slick-slider {
+    min-height: calc(100vh - 150px);
+
+    :global .slick-dots-bottom {
+      bottom: -25px;
+    }
+  }
+
+  :global .slick-slide {
+    padding-left: 4px;
+  }
+
+  :global .slick-dots li button {
+    border-radius: 100%;
+    background: $bw-color--blue2;
+  }
+  :global .slick-dots li.slick-active button {
+    border-radius: 100%;
+    background: $bw-color--blue3;
+  }
+
+  :global .ant-carousel .slick-prev,
+  :global .ant-carousel .slick-prev:focus,
+  :global .ant-carousel .slick-prev:hover {
+    font-size: 20px;
+    z-index: 2;
+    color: $bw-color--blue3;
+  }
+
+  :global .ant-carousel .slick-next,
+  :global .ant-carousel .slick-next:focus,
+  :global .ant-carousel .slick-next:hover {
+    font-size: 20px;
+    z-index: 2;
+    color: $bw-color--blue3;
+  }
 }
 
 .sectionTitle,
@@ -27,6 +64,12 @@
 }
 
 @media screen and (max-width: $breakpoints-md) {
+  .container {
+    :global .slick-slider {
+      min-height: calc(100vh - 305px);
+    }
+  }
+
   .sectionTitle {
     font-size: 22px;
   }
