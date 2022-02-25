@@ -5,6 +5,10 @@
     text-align: center;
   }
 
+  :global .ant-row:last-child {
+    padding-bottom: 24px;
+  }
+
   :global .slick-slider {
     min-height: calc(100vh - 200px);
 

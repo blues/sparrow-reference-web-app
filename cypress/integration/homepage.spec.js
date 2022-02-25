@@ -98,7 +98,9 @@ describe("Sparrow Application", () => {
     //Check for the Name label
     cy.get(".ant-form-item-required").should("contain", "Name");
     //Verify the Name field exists in the Details tab
-    const sensorNameInput = cy.get('[data-testid="form-input-sensor-name"]');
+    const sensorNameInput = cy.get('[data-testid="form-input-sensor-name"]', {
+      timeout: 15000,
+    });
     sensorNameInput.should("be.visible");
     // Enter a new sensor name
     sensorNameInput.clear().type("Cypress Test Sensor");
