@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
@@ -13,7 +12,20 @@ const mockGatewayData = {
   location: "Gainesville, FL",
   voltage: 3.7,
   lastActivity: "2022-01-05T07:36:55Z",
-  sensorList: [],
+  sensorList: [
+    {
+      name: "My First Mocked Sensor",
+      macAddress: "1011",
+      humidity: 29,
+      pressure: 1000,
+      temperature: 24.5,
+      voltage: 4.2,
+      total: 40,
+      count: 2,
+      lastActivity: "2022-01-07T15:28:38Z",
+      gatewayUID: "My Mocked Gatway",
+    },
+  ],
 };
 
 const mockedGatewayDataLongName = {

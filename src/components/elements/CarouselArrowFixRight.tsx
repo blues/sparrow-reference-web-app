@@ -10,7 +10,7 @@ const CarouselArrowFixRight = ({
   ...props
 }: CustomArrowProps) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
-  <span {...props}>
+  <span data-testid="right-carousel-arrow" {...props}>
     <RightOutlined />
   </span>
 );
