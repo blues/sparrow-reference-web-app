@@ -141,4 +141,18 @@ describe("Sparrow Application", () => {
       "Garage"
     );
   });
+
+  it("should be able to paginate through the carousel for multiple gateways", function () {
+    cy.visit("/");
+    // Check first gateway card is visible
+    cy.get('[data-testid="gateway[0]-details"]').should("be.visible");
+    // check 2nd gateway card is NOT visible
+    cy.get('[data-testid="gateway[1]-details"]').should("not.be.visible");
+    // click carousel button
+    cy.clickCarouselButton("right");
+    // check 2nd gateway card is visible
+    cy.get('[data-testid="gateway[1]-details"]').should("be.visible");
+    // check 1st gateway card is NOT visible
+    cy.get('[data-testid="gateway[0]-details"]').should("not.be.visible");
+  });
 });

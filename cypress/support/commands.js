@@ -31,3 +31,8 @@ Cypress.Commands.add("clickTabByText", detailsCommands.clickTabByText);
 Cypress.Commands.add("clickSensorCard", detailsCommands.clickSensorCard);
 
 Cypress.Commands.add("clickGatewayCard", detailsCommands.clickGatewayCard);
+
+Cypress.Commands.add(
+  "clickCarouselButton",
+  detailsCommands.clickCarouselButton
+);
