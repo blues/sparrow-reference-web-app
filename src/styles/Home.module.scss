@@ -6,11 +6,16 @@
   }
 
   :global .slick-slider {
-    min-height: calc(100vh - 150px);
+    min-height: calc(100vh - 200px);
 
     :global .slick-dots-bottom {
       bottom: -25px;
     }
+  }
+
+  :global .slick-prev::before,
+  :global .slick-next::before {
+    display: none;
   }
 
   :global .slick-slide {

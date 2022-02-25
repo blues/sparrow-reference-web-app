@@ -17,6 +17,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@types/lodash": "^4.14.178",
+    "@types/react-slick": "^0.23.8",
     "antd": "^4.17.2",
     "axios": "^0.24.0",
     "chart.js": "^3.6.1",
