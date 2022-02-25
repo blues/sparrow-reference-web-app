@@ -13,6 +13,7 @@ const mockGatewayData = {
   location: "Gainesville, FL",
   voltage: 3.7,
   lastActivity: "2022-01-05T07:36:55Z",
+  sensorList: [],
 };
 
 const mockedGatewayDataLongName = {
@@ -22,6 +23,7 @@ const mockedGatewayDataLongName = {
   location: "San Diego, CA",
   voltage: 4.0,
   lastActivity: "2022-02-11T08:48:01Z",
+  sensorList: [],
 };
 
 const mockUndefinedGatewayData = {
@@ -29,6 +31,7 @@ const mockUndefinedGatewayData = {
   serialNumber: "13579",
   voltage: 2.8,
   lastActivity: "2022-01-07T09:12:00Z",
+  sensorList: [],
 };
 
 const index = 1;
