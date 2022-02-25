@@ -47,7 +47,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   }
 
   // Eventually we’ll want to find all valid gateways in a Notehub project.
-  // For now, just take the hardcoded gateway UID from the starter’s
+  // For now, just take the hardcoded list of gateway UID from the starter’s
   // environment variables and use that.
   async getDevices() {
     // for retrieving multiple devices

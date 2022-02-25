@@ -3,9 +3,7 @@ import MockAdapter from "axios-mock-adapter";
 import { ERROR_CODES } from "../../../../src/services/Errors";
 import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
-import NotehubEvent from "../../../../src/services/notehub/models/NotehubEvent";
 import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
-import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";
 import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
 import notehubData from "../__serviceMocks__/notehubData.json";
 
