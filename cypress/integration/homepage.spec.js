@@ -108,7 +108,8 @@ describe("Sparrow Application", () => {
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
     const sensorLocationInput = cy.get(
-      '[data-testid="form-input-sensor-location"]'
+      '[data-testid="form-input-sensor-location"]',
+      { timeout: 15000 }
     );
     sensorLocationInput.should("be.visible");
     // Enter a new sensor location
