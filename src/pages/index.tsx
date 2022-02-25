@@ -1,12 +1,14 @@
 import { GetServerSideProps, NextPage } from "next";
 import { Carousel } from "antd";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import { getErrorMessage } from "../constants/ui";
 import { ERROR_CODES } from "../services/Errors";
+import CarouselArrowFixRight from "../components/elements/CarouselArrowFixRight";
+import CarouselArrowFixLeft from "../components/elements/CarouselArrowFixLeft";
+import { getCombinedGatewaySensorInfo } from "../components/presentation/gatewaySensorInfo";
 import styles from "../styles/Home.module.scss";
 
 type HomeData = {
@@ -23,12 +25,11 @@ const Home: NextPage<HomeData> = ({ gatewaySensorData, err }) => (
         <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
           Gateways
         </h2>
-        {/* todo make some custom icons to stop console errors */}
         <Carousel
           dots
           arrows
-          nextArrow={<RightOutlined />}
-          prevArrow={<LeftOutlined />}
+          nextArrow={<CarouselArrowFixRight />}
+          prevArrow={<CarouselArrowFixLeft />}
         >
           {gatewaySensorData.map((gateway, index) => (
             <GatewayCard
@@ -47,7 +48,7 @@ export default Home;
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   let gateways: Gateway[] = [];
   let latestSensorDataList: Sensor[] = [];
-  const gatewaySensorData: Gateway[] = [];
+  let gatewaySensorData: Gateway[] = [];
   try {
     const appService = services().getAppService();
     gateways = await appService.getGateways();
@@ -55,16 +56,10 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
       gateways.map((gateway) => gateway.uid)
     );
 
-    const gatewaySensorData = gateways.map((gateway) => {
-      const filterSensorsByGateway = latestSensorDataList.filter(
-        (sensor) => sensor.gatewayUID === gateway.uid
-      );
-      const updatedSensorList = {
-        sensorList: filterSensorsByGateway,
-      };
-      const updatedGatewayObject = { ...gateway, ...updatedSensorList };
-      return updatedGatewayObject;
-    });
+    gatewaySensorData = getCombinedGatewaySensorInfo(
+      latestSensorDataList,
+      gateways
+    );
 
     return {
       props: { gatewaySensorData },

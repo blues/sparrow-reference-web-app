@@ -8,6 +8,21 @@
   :global .slick-slider {
     min-height: calc(100vh - 200px);
 
+    :global .anticon {
+      stroke-width: 50;
+      stroke: $bw-color--brand4;
+    }
+
+    :global .anticon:hover {
+      stroke-width: 50;
+      stroke: $bw-color--blue2;
+    }
+
+    :global .anticon:active {
+      stroke-width: 50;
+      stroke: $bw-color--blue3;
+    }
+
     :global .slick-dots-bottom {
       bottom: -25px;
     }
@@ -24,27 +39,30 @@
 
   :global .slick-dots li button {
     border-radius: 100%;
-    background: $bw-color--blue2;
+    background: $bw-color--brand4;
+    opacity: 0.5;
   }
   :global .slick-dots li.slick-active button {
     border-radius: 100%;
-    background: $bw-color--blue3;
-  }
-
-  :global .ant-carousel .slick-prev,
-  :global .ant-carousel .slick-prev:focus,
-  :global .ant-carousel .slick-prev:hover {
-    font-size: 20px;
-    z-index: 2;
-    color: $bw-color--blue3;
+    background: $bw-color--brand4;
   }
 
   :global .ant-carousel .slick-next,
-  :global .ant-carousel .slick-next:focus,
-  :global .ant-carousel .slick-next:hover {
+  :global .ant-carousel .slick-prev {
     font-size: 20px;
     z-index: 2;
+    color: $bw-color--brand4;
+    opacity: 0.5;
+  }
+
+  :global .ant-carousel .slick-prev:focus,
+  :global .ant-carousel .slick-next:focus {
     color: $bw-color--blue3;
+  }
+
+  :global .ant-carousel .slick-prev:hover,
+  :global .ant-carousel .slick-next:hover {
+    color: $bw-color--blue4;
   }
 }
 

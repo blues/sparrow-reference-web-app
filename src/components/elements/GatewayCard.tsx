@@ -6,7 +6,7 @@ import {
   getFormattedLastSeen,
   getFormattedVoltageData,
 } from "../presentation/uiHelpers";
-import { GATEWAY_MESSAGE } from "../../constants/ui";
+import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
 import cardStyles from "../../styles/Card.module.scss";
 
@@ -91,13 +91,19 @@ const GatewayCardComponent = (props: GatewayProps) => {
       <h2 data-testid="sensor-header" className={styles.sectionSubTitle}>
         Sensors
       </h2>
-      <Row gutter={[16, 16]}>
-        {gatewayDetails.sensorList.map((sensor, cardIndex) => (
-          <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
-            <SensorCard index={cardIndex} sensorDetails={sensor} />
-          </Col>
-        ))}
-      </Row>
+      {gatewayDetails.sensorList.length ? (
+        <Row gutter={[16, 16]}>
+          {gatewayDetails.sensorList.map((sensor, cardIndex) => (
+            <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
+              <SensorCard index={cardIndex} sensorDetails={sensor} />
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <h4 className={styles.errorMessage}>
+          {ERROR_MESSAGE.SENSORS_NOT_FOUND}
+        </h4>
+      )}
     </>
   );
 };

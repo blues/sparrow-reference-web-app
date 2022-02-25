@@ -39,6 +39,8 @@ const ERROR_MESSAGE = {
     "An internal error occurred. If this problem persists please contact Blues support.",
   UNAUTHORIZED:
     "Authentication failed. Please ensure you have a valid HUB_AUTH_TOKEN environment variable.",
+  SENSORS_NOT_FOUND:
+    "We were unable to locate any nodes. Ensure your events are registering in Notehub.",
 };
 
 const getErrorMessage = (errorCode: string) => {
