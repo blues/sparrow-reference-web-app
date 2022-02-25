@@ -8,7 +8,8 @@ import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 
 describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
-  const gatewayUID = process.env.HUB_DEVICE_UID;
+  const gatewayUIDs = process.env.HUB_DEVICE_UID;
+  const gatewayUID = gatewayUIDs.split(",")[0];
   const macAddress = process.env.TEST_SENSOR_MAC;
 
   function mockRequestResponse(method: RequestMethod = "GET") {
