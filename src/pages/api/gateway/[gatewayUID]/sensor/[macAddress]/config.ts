@@ -62,7 +62,7 @@ function validateRequest(
   return { gatewayUID, macAddress, location, name };
 }
 
-async function performRequest({
+function performRequest({
   macAddress,
   gatewayUID,
   location,
@@ -70,14 +70,14 @@ async function performRequest({
 }: ValidRequest) {
   const app = services().getAppService();
   try {
-    if (location) await app.setSensorLocation(gatewayUID, macAddress, location);
-    if (name) await app.setSensorName(gatewayUID, macAddress, name);
+    if (location) app.setSensorLocation(gatewayUID, macAddress, location);
+    if (name) app.setSensorName(gatewayUID, macAddress, name);
   } catch (cause) {
     throw new ErrorWithCause("Could not perform request", { cause });
   }
 }
 
-export default async function sensorConfigHandler(
+export default function sensorConfigHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -90,11 +90,13 @@ export default async function sensorConfigHandler(
   }
 
   try {
-    await performRequest(validRequest);
+    performRequest(validRequest);
     res.status(StatusCodes.OK).json({});
   } catch (cause) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
     res.json({ err: ReasonPhrases.INTERNAL_SERVER_ERROR });
-    throw new ErrorWithCause("could not handle sensor config", { cause });
+    const e = new ErrorWithCause("could not handle sensor config", { cause });
+    console.error(e);
+    throw e;
   }
 }

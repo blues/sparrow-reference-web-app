@@ -6,6 +6,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { StatusCodes } from "http-status-codes";
 import sensorConfigHandler from "../../../../src/pages/api/gateway/[gatewayUID]/sensor/[macAddress]/config";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
+import { services } from "../../../../src/services/ServiceLocator";
 
 describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
@@ -23,10 +24,13 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     return { req, res };
   }
 
-  it("POST should return a successful response from Notehub", async () => {
+  it("POST should return a successful response if the sensor can be changed", () => {
+    const app = services().getAppService();
+    jest.spyOn(app, "setSensorLocation").mockImplementation(() => {});
+    jest.spyOn(app, "setSensorName").mockImplementation(() => {});
     const { req, res } = mockRequestResponse("POST");
     req.body = { location: "TEST_LOCATION", name: "TEST_NAME" };
-    await sensorConfigHandler(req, res);
+    sensorConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.OK);
     expect(res.getHeaders()).toEqual({
@@ -35,10 +39,27 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     expect(res.statusMessage).toEqual("OK");
   });
 
-  it("POST should return a 400 if Sensor config is invalid", async () => {
+  it("POST should return an error if things can't be changed", () => {
+    const app = services().getAppService();
+    jest.spyOn(app, "setSensorLocation").mockImplementation(() => {
+      throw new Error("ugh");
+    });
+
     const { req, res } = mockRequestResponse("POST");
-    req.body = {}; // Equivalent to a null Sensor MAC
-    await sensorConfigHandler(req, res);
+    req.body = { location: "TEST_LOCATION" };
+    function sut() {
+      sensorConfigHandler(req, res);
+    }
+
+    expect(sut).toThrowErrorMatchingInlineSnapshot(
+      `"could not handle sensor config"`
+    );
+  });
+
+  it("POST should return a 400 if Sensor config is invalid", () => {
+    const { req, res } = mockRequestResponse("POST");
+    req.body = {}; // no name and no location given. bad.
+    sensorConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(res.getHeaders()).toEqual({
@@ -50,21 +71,43 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     });
   });
 
-  it("should return a 400 if Gateway UID is not a string", async () => {
+  it("POST should return a BAD_REQUEST if Sensor name is not a string", () => {
+    const { req, res } = mockRequestResponse("POST");
+    req.body = { name: 40 };
+    sensorConfigHandler(req, res);
+
+    expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    expect(res._getJSONData()).toEqual({
+      err: "name should be a string or undefined",
+    });
+  });
+
+  it("POST should return a BAD_REQUEST if Sensor location is not a string", () => {
+    const { req, res } = mockRequestResponse("POST");
+    req.body = { location: 40 };
+    sensorConfigHandler(req, res);
+
+    expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
+    expect(res._getJSONData()).toEqual({
+      err: "location should be a string or undefined",
+    });
+  });
+
+  it("should return a 400 if Gateway UID is not a string", () => {
     const { req, res } = mockRequestResponse("POST");
     req.query.gatewayUID = 11; // Pass gateway UID of the incorrect type
 
-    await sensorConfigHandler(req, res);
+    sensorConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
     // eslint-disable-next-line no-underscore-dangle
     expect(res._getJSONData()).toEqual({ err: HTTP_STATUS.INVALID_GATEWAY });
   });
 
-  it("should return a 405 if method not POST is passed", async () => {
+  it("should return a 405 if method not POST is passed", () => {
     const { req, res } = mockRequestResponse("PUT");
     req.body = { location: "FAILING_TEST_LOCATION", name: "FAILING_TEST_NAME" };
-    await sensorConfigHandler(req, res);
+    sensorConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.METHOD_NOT_ALLOWED);
     // eslint-disable-next-line no-underscore-dangle

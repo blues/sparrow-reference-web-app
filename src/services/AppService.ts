@@ -15,17 +15,12 @@ interface AppServiceInterface {
     gatewayUID: string,
     sensorUID: string
   ) => Promise<SensorReading<unknown>[]>;
-  setSensorName: (
-    gatewayUID: string,
-    macAddress: string,
-    name: string
-  ) => Promise<boolean>;
-
+  setSensorName: (gatewayUID: string, macAddress: string, name: string) => void;
   setSensorLocation: (
     gatewayUID: string,
     macAddress: string,
     loc: string
-  ) => Promise<boolean>;
+  ) => void;
 }
 
 export type { AppServiceInterface };
@@ -56,24 +51,22 @@ export default class AppService implements AppServiceInterface {
     return this.dataProvider.getSensorData(gatewayUID, sensorUID);
   }
 
-  async setSensorName(gatewayUID: string, macAddress: string, name: string) {
+  setSensorName(gatewayUID: string, macAddress: string, name: string) {
+    const store = this.attributeStore;
     try {
-      const store = this.attributeStore;
-      await store.updateSensorName(gatewayUID, macAddress, name);
+      store.updateSensorName(gatewayUID, macAddress, name);
     } catch (e) {
       const e2 = new ErrorWithCause(`could not setSensorName`, { cause: e });
       throw e2;
     }
-    return true;
   }
 
-  async setSensorLocation(gatewayUID: string, macAddress: string, loc: string) {
+  setSensorLocation(gatewayUID: string, macAddress: string, loc: string) {
+    const store = this.attributeStore;
     try {
-      const store = this.attributeStore;
-      await store.updateSensorLocation(gatewayUID, macAddress, loc);
+      store.updateSensorLocation(gatewayUID, macAddress, loc);
     } catch (e) {
       throw new ErrorWithCause(`could not setSensorLocation`, { cause: e });
     }
-    return true;
   }
 }
