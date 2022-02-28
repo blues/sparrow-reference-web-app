@@ -123,26 +123,6 @@ describe("Sparrow Application", () => {
       "contain",
       "Cypress Test Sensor"
     );
-    // Enter a second new sensor name
-    cy.get('[data-testid="form-input-sensor-name"]')
-      .clear()
-      .type("Other Sensor Name");
-    // Enter a second new sensor location
-    cy.get('[data-testid="form-input-sensor-location"]').clear().type("Garage");
-    //Click the Submit button
-    cy.get(".ant-form").submit();
-    // Verify the sensor name is now updated to "Other Sensor Name"
-    cy.get('[data-testid="sensor-name"]', { timeout: 20000 }).should(
-      "contain",
-      "Other Sensor Name"
-    );
-    //Click the sparrow Logo to return to the homepage
-    cy.get('[data-testid="logo"]').click({ force: true });
-    // verify the sensor location is now updated to "Garage"
-    cy.get('[data-testid="sensor-location"]', { timeout: 15000 }).should(
-      "contain",
-      "Garage"
-    );
   });
 
   it("should be able to paginate through the carousel for multiple gateways", function () {
