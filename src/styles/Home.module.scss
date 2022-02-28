@@ -57,6 +57,7 @@
     z-index: 2;
     color: $bw-color--brand4;
     opacity: 0.5;
+    top: 12%;
   }
 
   :global .ant-carousel .slick-prev:focus,
@@ -90,6 +91,15 @@
   font-size: 16px;
 }
 
+@media screen and (max-width: $breakpoints-lg) {
+  .container {
+    :global .ant-carousel .slick-next,
+    :global .ant-carousel .slick-prev {
+      top: 9%;
+    }
+  }
+}
+
 @media screen and (max-width: $breakpoints-md) {
   .container {
     :global .slick-slider {
@@ -108,5 +118,14 @@
   .sectionSubHeader {
     margin-top: -5px;
     margin-bottom: 24px;
+  }
+}
+
+@media screen and (max-width: $breakpoints-sm) {
+  .container {
+    :global .ant-carousel .slick-next,
+    :global .ant-carousel .slick-prev {
+      top: 7%;
+    }
   }
 }
