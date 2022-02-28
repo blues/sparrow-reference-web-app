@@ -8,7 +8,7 @@ describe("Sparrow Application", () => {
     // Check company name in header is visible
     cy.get('[data-testid="company-name"]').should("be.visible");
     // Check Gateways header is visible
-    cy.get('[data-testid="gateway-header"]').should("contain", "Gateways");
+    cy.get('[data-testid="gateway-header"]').should("contain", "Gateway");
     // Check Sensors header is visible
     cy.get('[data-testid="sensor-header"]').should("contain", "Sensors");
     // Check footer elements are visible
