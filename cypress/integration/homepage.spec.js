@@ -153,8 +153,6 @@ describe("Sparrow Application", () => {
     cy.get('[data-testid="gateway[1]-details"]').should("not.be.visible");
     // click carousel button
     cy.clickCarouselButton("right");
-    // check 2nd gateway card is visible
-    cy.get('[data-testid="gateway[1]-details"]').should("be.visible");
     // check 1st gateway card is NOT visible
     cy.get('[data-testid="gateway[0]-details"]').should("not.be.visible");
   });
