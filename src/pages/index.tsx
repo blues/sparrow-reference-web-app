@@ -1,5 +1,7 @@
+import { useEffect, useRef } from "react";
 import { GetServerSideProps, NextPage } from "next";
 import { Carousel } from "antd";
+import { CarouselRef } from "antd/lib/carousel";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
 import Gateway from "../components/models/Gateway";
@@ -16,33 +18,44 @@ type HomeData = {
   err?: string;
 };
 
-const Home: NextPage<HomeData> = ({ gatewaySensorData, err }) => (
-  <div className={styles.container}>
-    {err ? (
-      <h2 className={styles.errorMessage}>{err}</h2>
-    ) : (
-      <>
-        <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
-          Gateways
-        </h2>
-        <Carousel
-          dots
-          arrows
-          nextArrow={<CarouselArrowFixRight />}
-          prevArrow={<CarouselArrowFixLeft />}
-        >
-          {gatewaySensorData.map((gateway, index) => (
-            <GatewayCard
-              key={gateway.uid}
-              index={index}
-              gatewayDetails={gateway}
-            />
-          ))}
-        </Carousel>
-      </>
-    )}
-  </div>
-);
+const Home: NextPage<HomeData> = ({ gatewaySensorData, err }) => {
+  const carouselRef = useRef<CarouselRef>(null);
+
+  useEffect(() => {
+    // auto focuses the carousel on component mount for keyboard accessibility
+    carouselRef.current?.goTo(0);
+  }, []);
+
+  return (
+    <div className={styles.container}>
+      {err ? (
+        <h2 className={styles.errorMessage}>{err}</h2>
+      ) : (
+        <>
+          <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
+            Gateway
+          </h2>
+          <Carousel
+            ref={carouselRef}
+            focusOnSelect
+            dots
+            arrows
+            nextArrow={<CarouselArrowFixRight />}
+            prevArrow={<CarouselArrowFixLeft />}
+          >
+            {gatewaySensorData.map((gateway, index) => (
+              <GatewayCard
+                key={gateway.uid}
+                index={index}
+                gatewayDetails={gateway}
+              />
+            ))}
+          </Carousel>
+        </>
+      )}
+    </div>
+  );
+};
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {

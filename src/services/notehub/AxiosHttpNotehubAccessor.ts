@@ -50,16 +50,9 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   // For now, just take the hardcoded list of gateway UID from the starter’s
   // environment variables and use that.
   async getDevices() {
-    // for retrieving multiple devices
-    if (this.hubDeviceUID.includes(",")) {
-      const deviceUIDs = this.hubDeviceUID.split(",");
-      const allDeviceData = await this.getAllDevices(deviceUIDs);
-      return allDeviceData;
-    }
-
-    // for retrieving a single device
-    const device = await this.getDevice(this.hubDeviceUID);
-    return [device];
+    const deviceUIDs = this.hubDeviceUID.split(",");
+    const allDeviceData = await this.getAllDevices(deviceUIDs);
+    return allDeviceData;
   }
 
   async getDevice(hubDeviceUID: string) {
