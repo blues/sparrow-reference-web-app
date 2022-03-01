@@ -115,7 +115,7 @@ function configure_environment() {
 function main() {
   cd "$SCRIPT_DIR"
 
-  log "Deploying Sparrow Starter to the Cloud."
+  log "Deploying Sparrow Reference Web App to the Cloud."
 
   configure_environment || {
     log "Error: Could not configure environment."
