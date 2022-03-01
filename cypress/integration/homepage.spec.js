@@ -116,7 +116,7 @@ describe("Sparrow Application", () => {
     sensorSubmitButton.should("be.visible");
     cy.get(".ant-form").submit();
     // Verify the sensor name is now updated to "Cypress Test Sensor"
-    cy.get('[data-testid="sensor-name"]', { timeout: 20000 }).should(
+    cy.get('[data-testid="sensor-name"]', { timeout: 30000 }).should(
       "contain",
       "Cypress Test Sensor"
     );
@@ -129,7 +129,7 @@ describe("Sparrow Application", () => {
     //Click the Submit button
     cy.get(".ant-form").submit();
     // Verify the sensor name is now updated to "Other Sensor Name"
-    cy.get('[data-testid="sensor-name"]', { timeout: 20000 }).should(
+    cy.get('[data-testid="sensor-name"]', { timeout: 30000 }).should(
       "contain",
       "Other Sensor Name"
     );
