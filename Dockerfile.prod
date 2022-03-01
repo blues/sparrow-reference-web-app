@@ -1,6 +1,6 @@
 # You can build and run with:
-#   docker build . -t blues:sparrow-starter-nextjs-app &&
-#   docker run --rm -p 3000:3000 blues:sparrow-starter-nextjs-app
+#   docker build . -t blues:sparrow-webapp &&
+#   docker run --rm -p 3000:3000 blues:sparrow-webapp
 
 # Sync with package.json volta config
 ARG NODE_VER=16.13.0

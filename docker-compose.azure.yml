@@ -1,24 +1,24 @@
-# sparrow-starter/docker-compose.azure.yml
-# For deploying the sparrow starter site to the Microsoft Azure cloud.
+# docker-compose.azure.yml
+# For deploying the Sparrow Reference Webapp site to the Microsoft Azure cloud.
 ##
 # To learn more about docker on Azure see here:
 # https://www.docker.com/blog/how-to-deploy-containers-to-azure-aci-using-docker-cli-and-compose/
 
 version: "3.7"
 services:
-  sparrowstartersite:
+  sparrowreferencewebapp:
     domainname: "${AZURE_SUBDOMAIN:?Please set AZURE_SUBDOMAIN}"
     build:
       context: .
       dockerfile: Dockerfile.prod
     image: "${SPARROW_SITE_DOCKER_TAG:?Please set SPARROW_SITE_DOCKER_TAG}"
-  sparrowstartersite-https-reverse-proxy:
+  sparrowreferencewebapp-https-reverse-proxy:
     domainname: "${AZURE_SUBDOMAIN:?Please set AZURE_SUBDOMAIN}"
     image: caddy
     command: >-
       caddy reverse-proxy
       --from "${STARTER_SITE_DNS:?Please set STARTER_SITE_DNS}"
-      --to sparrowstartersite:4000
+      --to sparrowreferencewebapp:4000
     ports:
       - "80:80"
       - "443:443"

@@ -18,7 +18,7 @@ const path = require("path");
 function getConfigurationByFile(file) {
   const pathToConfigFile = path.resolve(
     "..",
-    "sparrow-starter/cypress/config/",
+    "sparrow-reference-webapp/cypress/config/",
     `${file}.json`
   );
 
