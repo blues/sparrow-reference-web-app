@@ -1,7 +1,9 @@
+import { ErrorWithCause } from "pony-cause";
 import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import SensorReading from "../components/models/readings/SensorReading";
 import { DataProvider } from "./DataProvider";
+import { AttributeStore } from "./AttributeStore";
 
 // this class / interface combo passes data and functions to the service locator file
 interface AppServiceInterface {
@@ -13,16 +15,25 @@ interface AppServiceInterface {
     gatewayUID: string,
     sensorUID: string
   ) => Promise<SensorReading<unknown>[]>;
+  setSensorName: (
+    gatewayUID: string,
+    macAddress: string,
+    name: string
+  ) => Promise<void>;
+  setSensorLocation: (
+    gatewayUID: string,
+    macAddress: string,
+    loc: string
+  ) => Promise<void>;
 }
 
 export type { AppServiceInterface };
 
 export default class AppService implements AppServiceInterface {
-  dataProvider: DataProvider;
-
-  constructor(dataProvider: DataProvider) {
-    this.dataProvider = dataProvider;
-  }
+  constructor(
+    private dataProvider: DataProvider,
+    private attributeStore: AttributeStore
+  ) {}
 
   async getGateways() {
     return this.dataProvider.getGateways();
@@ -42,5 +53,24 @@ export default class AppService implements AppServiceInterface {
 
   async getSensorData(gatewayUID: string, sensorUID: string) {
     return this.dataProvider.getSensorData(gatewayUID, sensorUID);
+  }
+
+  async setSensorName(gatewayUID: string, macAddress: string, name: string) {
+    const store = this.attributeStore;
+    try {
+      await store.updateSensorName(gatewayUID, macAddress, name);
+    } catch (e) {
+      const e2 = new ErrorWithCause(`could not setSensorName`, { cause: e });
+      throw e2;
+    }
+  }
+
+  async setSensorLocation(gatewayUID: string, macAddress: string, loc: string) {
+    const store = this.attributeStore;
+    try {
+      await store.updateSensorLocation(gatewayUID, macAddress, loc);
+    } catch (e) {
+      throw new ErrorWithCause(`could not setSensorLocation`, { cause: e });
+    }
   }
 }
