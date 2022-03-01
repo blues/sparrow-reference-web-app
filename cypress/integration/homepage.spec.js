@@ -95,12 +95,12 @@ describe("Sparrow Application", () => {
     //Check for the Name label
     cy.get(".ant-form-item-required").should("contain", "Name");
     //Verify the Name field exists in the Details tab
-    const nodeNameInput = cy.get('[data-testid="form-input-node-name"]', {
+    const sensorNameInput = cy.get('[data-testid="form-input-node-name"]', {
       timeout: 15000,
     });
-    nodeNameInput.should("be.visible");
-    // Enter a new node name
-    nodeNameInput.clear().type("Cypress Test Node");
+    sensorNameInput.should("be.visible");
+    // Enter a new sensor name
+    sensorNameInput.clear().type("Cypress Test Node");
     //Check for the location label
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
@@ -116,22 +116,22 @@ describe("Sparrow Application", () => {
     sensorSubmitButton.should("be.visible");
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Cypress Test Node"
-    cy.get('[data-testid="node-name"]', { timeout: 30000 }).should(
+    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
       "contain",
       "Cypress Test Node"
     );
     // Enter a second new sensor name
     cy.get('[data-testid="form-input-node-name"]')
       .clear()
-      .type("Other Sensor Name");
-    // Enter a second new sensor location
+      .type("Other Node Name");
+    // Enter a second new node location
     cy.get('[data-testid="form-input-node-location"]').clear().type("Garage");
     //Click the Submit button
     cy.get(".ant-form").submit();
-    // Verify the sensor name is now updated to "Other Sensor Name"
-    cy.get('[data-testid="node-name"]', { timeout: 30000 }).should(
+    // Verify the node name is now updated to "Other Node Name"
+    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
       "contain",
-      "Other Sensor Name"
+      "Other Node Name"
     );
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click({ force: true });
