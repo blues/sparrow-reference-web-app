@@ -85,7 +85,7 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
     },
     {
       label: "Location",
-      name: "loc",
+      name: "location",
       tooltip: "Where is your sensor located?",
       initialValue:
         viewModel.sensor?.location !== SENSOR_MESSAGE.NO_LOCATION
