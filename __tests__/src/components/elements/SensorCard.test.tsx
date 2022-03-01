@@ -14,6 +14,8 @@ const mockSensorData = {
   pressure: 1000,
   temperature: 24.5,
   voltage: 4.2,
+  total: 40,
+  count: 2,
   lastActivity: "2022-01-01T15:28:38Z",
   gatewayUID: "abcdef",
 };
@@ -50,6 +52,7 @@ describe("Sensor details card component", () => {
     expect(
       screen.getByText(mockSensorData.voltage, { exact: false })
     ).toBeInTheDocument();
+    expect(screen.getByText(mockSensorData.count)).toBeInTheDocument();
   });
 
   it("should render fallback messages when all sensor details are not supplied", () => {

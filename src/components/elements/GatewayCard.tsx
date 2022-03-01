@@ -1,12 +1,14 @@
 import { useRouter } from "next/router";
 import { Card, Col, Row, Typography } from "antd";
 import Gateway from "../models/Gateway";
+import SensorCard from "./SensorCard";
 import {
   getFormattedLastSeen,
   getFormattedVoltageData,
 } from "../presentation/uiHelpers";
-import { GATEWAY_MESSAGE } from "../../constants/ui";
-import styles from "../../styles/Card.module.scss";
+import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
+import styles from "../../styles/Home.module.scss";
+import cardStyles from "../../styles/Card.module.scss";
 
 interface GatewayProps {
   gatewayDetails: Gateway;
@@ -33,45 +35,76 @@ const GatewayCardComponent = (props: GatewayProps) => {
     : GATEWAY_MESSAGE.NO_LOCATION;
 
   return (
-    <Card
-      headStyle={{ padding: "0" }}
-      bodyStyle={{ padding: "0" }}
-      className={styles.cardStyle}
-      hoverable
-      onClick={handleCardClick}
-      title={
-        <>
-          <Text
-            ellipsis={{
-              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-              tooltip: `${gatewayDetails.serialNumber}`,
-            }}
-            data-testid={`gateway[${index}]-details`}
+    <>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={24} lg={12}>
+          <Card
+            headStyle={{ padding: "0" }}
+            bodyStyle={{ padding: "0" }}
+            className={cardStyles.cardStyle}
+            hoverable
+            onClick={handleCardClick}
+            title={
+              <>
+                <Text
+                  ellipsis={{
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                    tooltip: `${gatewayDetails.serialNumber}`,
+                  }}
+                  data-testid={`gateway[${index}]-details`}
+                >
+                  {gatewayDetails.serialNumber}
+                </Text>
+                <span className={cardStyles.timestamp}>
+                  Last updated{` `}
+                  {getFormattedLastSeen(gatewayDetails.lastActivity)}
+                </span>
+                <div
+                  data-testid="gateway-location"
+                  className={cardStyles.locationWrapper}
+                >
+                  <span className={cardStyles.locationTitle}>
+                    Location{` `}
+                  </span>
+                  <span className={cardStyles.location}>
+                    {formattedLocation}
+                  </span>
+                </div>
+              </>
+            }
           >
-            {gatewayDetails.serialNumber}
-          </Text>
-          <span className={styles.timestamp}>
-            Last updated{` `}
-            {getFormattedLastSeen(gatewayDetails.lastActivity)}
-          </span>
-          <div
-            data-testid="gateway-location"
-            className={styles.locationWrapper}
-          >
-            <span className={styles.locationTitle}>Location{` `}</span>
-            <span className={styles.location}>{formattedLocation}</span>
-          </div>
-        </>
-      }
-    >
-      <Row justify="start" gutter={[16, 16]} className={styles.cardContents}>
-        <Col span={8}>
-          Voltage
-          <br />
-          <span className="dataNumber">{formattedGatewayVoltage}</span>
+            <Row
+              justify="start"
+              gutter={[16, 16]}
+              className={cardStyles.cardContents}
+            >
+              <Col span={8}>
+                Voltage
+                <br />
+                <span className="dataNumber">{formattedGatewayVoltage}</span>
+              </Col>
+            </Row>
+          </Card>
         </Col>
       </Row>
-    </Card>
+
+      <h2 data-testid="sensor-header" className={styles.sectionSubTitle}>
+        Sensors
+      </h2>
+      {gatewayDetails.sensorList.length ? (
+        <Row gutter={[16, 16]}>
+          {gatewayDetails.sensorList.map((sensor, cardIndex) => (
+            <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
+              <SensorCard index={cardIndex} sensorDetails={sensor} />
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <h4 className={styles.errorMessage}>
+          {ERROR_MESSAGE.SENSORS_NOT_FOUND}
+        </h4>
+      )}
+    </>
   );
 };
 

@@ -8,7 +8,8 @@ import environmentVariablesDeleteHandler from "../../../../src/pages/api/gateway
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 
 const authToken = process.env.HUB_AUTH_TOKEN;
-const gatewayUID = process.env.HUB_DEVICE_UID;
+const gatewayUIDs = process.env.HUB_DEVICE_UID;
+const gatewayUID = gatewayUIDs.split(",")[0];
 
 function mockRequestResponse(method: RequestMethod = "GET") {
   const { req, res }: { req: NextApiRequest; res: NextApiResponse } =

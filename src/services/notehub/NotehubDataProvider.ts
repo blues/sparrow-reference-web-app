@@ -45,6 +45,7 @@ export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
     serialNumber: device.serial_number,
     uid: device.uid,
     voltage: device.voltage,
+    sensorList: [],
   };
 }
 

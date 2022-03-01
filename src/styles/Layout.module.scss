@@ -5,6 +5,14 @@
   min-height: calc(100vh - $header-bar-height - $footer-bar-height) !important;
   width: clamp($page-content-xs, $page-content-md, calc(100vw - 128px));
   margin: 0 auto;
-  padding-bottom: 50px;
   padding-top: 20px;
+  padding-bottom: 50px;
+}
+
+@media screen and (max-width: $breakpoints-md) {
+  .mainContent {
+    min-height: calc(
+      100vh - $header-bar-height - $tablet-footer-bar-height
+    ) !important;
+  }
 }

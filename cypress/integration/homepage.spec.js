@@ -8,7 +8,7 @@ describe("Sparrow Application", () => {
     // Check company name in header is visible
     cy.get('[data-testid="company-name"]').should("be.visible");
     // Check Gateways header is visible
-    cy.get('[data-testid="gateway-header"]').should("contain", "Gateways");
+    cy.get('[data-testid="gateway-header"]').should("contain", "Gateway");
     // Check Sensors header is visible
     cy.get('[data-testid="sensor-header"]').should("contain", "Sensors");
     // Check footer elements are visible
@@ -98,7 +98,9 @@ describe("Sparrow Application", () => {
     //Check for the Name label
     cy.get(".ant-form-item-required").should("contain", "Name");
     //Verify the Name field exists in the Details tab
-    const sensorNameInput = cy.get('[data-testid="form-input-sensor-name"]');
+    const sensorNameInput = cy.get('[data-testid="form-input-sensor-name"]', {
+      timeout: 15000,
+    });
     sensorNameInput.should("be.visible");
     // Enter a new sensor name
     sensorNameInput.clear().type("Cypress Test Sensor");
@@ -106,7 +108,8 @@ describe("Sparrow Application", () => {
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
     const sensorLocationInput = cy.get(
-      '[data-testid="form-input-sensor-location"]'
+      '[data-testid="form-input-sensor-location"]',
+      { timeout: 15000 }
     );
     sensorLocationInput.should("be.visible");
     // Enter a new sensor location
@@ -140,5 +143,17 @@ describe("Sparrow Application", () => {
       "contain",
       "Garage"
     );
+  });
+
+  it("should be able to paginate through the carousel for multiple gateways", function () {
+    cy.visit("/");
+    // Check first gateway card is visible
+    cy.get('[data-testid="gateway[0]-details"]').should("be.visible");
+    // check 2nd gateway card is NOT visible
+    cy.get('[data-testid="gateway[1]-details"]').should("not.be.visible");
+    // click carousel button
+    cy.clickCarouselButton("right");
+    // check 1st gateway card is NOT visible
+    cy.get('[data-testid="gateway[0]-details"]').should("not.be.visible");
   });
 });
