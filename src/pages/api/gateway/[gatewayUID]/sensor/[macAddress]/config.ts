@@ -62,7 +62,7 @@ function validateRequest(
   return { gatewayUID, macAddress, location, name };
 }
 
-function performRequest({
+async function performRequest({
   macAddress,
   gatewayUID,
   location,
@@ -70,14 +70,14 @@ function performRequest({
 }: ValidRequest) {
   const app = services().getAppService();
   try {
-    if (location) app.setSensorLocation(gatewayUID, macAddress, location);
-    if (name) app.setSensorName(gatewayUID, macAddress, name);
+    if (location) await app.setSensorLocation(gatewayUID, macAddress, location);
+    if (name) await app.setSensorName(gatewayUID, macAddress, name);
   } catch (cause) {
     throw new ErrorWithCause("Could not perform request", { cause });
   }
 }
 
-export default function sensorConfigHandler(
+export default async function sensorConfigHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -90,7 +90,7 @@ export default function sensorConfigHandler(
   }
 
   try {
-    performRequest(validRequest);
+    await performRequest(validRequest);
     res.status(StatusCodes.OK).json({});
   } catch (cause) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);

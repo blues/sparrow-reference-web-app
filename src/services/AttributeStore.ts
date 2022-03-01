@@ -3,10 +3,10 @@ export interface AttributeStore {
     gatewayUID: string,
     macAddress: string,
     name: string
-  ) => void;
+  ) => Promise<void>;
   updateSensorLocation: (
     gatewayUID: string,
     macAddress: string,
     location: string
-  ) => void;
+  ) => Promise<void>;
 }

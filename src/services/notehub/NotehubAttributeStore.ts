@@ -8,7 +8,6 @@ export class NotehubAttributeStore implements AttributeStore {
     const { body } = await this.accessor.getConfig(gatewayUID, macAddress);
     body.name = name;
     await this.accessor.setConfig(gatewayUID, macAddress, body);
-    return true;
   }
 
   async updateSensorLocation(
@@ -19,7 +18,6 @@ export class NotehubAttributeStore implements AttributeStore {
     const { body } = await this.accessor.getConfig(gatewayUID, macAddress);
     body.loc = loc;
     await this.accessor.setConfig(gatewayUID, macAddress, body);
-    return true;
   }
 }
 
