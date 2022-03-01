@@ -1,20 +1,20 @@
-import Sensor from "../models/Sensor";
 import Gateway from "../models/Gateway";
+import Node from "../models/Node";
 
 // eslint-disable-next-line import/prefer-default-export
-export function getCombinedGatewaySensorInfo(
-  latestSensorDataList: Sensor[],
+export function getCombinedGatewayNodeInfo(
+  latestNodeDataList: Node[],
   gateways: Gateway[]
 ): Gateway[] {
-  const gatewaySensorInfo = gateways.map((gateway) => {
-    const filterSensorsByGateway = latestSensorDataList.filter(
+  const gatewayNodeInfo = gateways.map((gateway) => {
+    const filterNodesByGateway = latestNodeDataList.filter(
       (sensor) => sensor.gatewayUID === gateway.uid
     );
-    const updatedSensorList = {
-      sensorList: filterSensorsByGateway,
+    const updatedNodeList = {
+      nodeList: filterNodesByGateway,
     };
-    const updatedGatewayObject = { ...gateway, ...updatedSensorList };
+    const updatedGatewayObject = { ...gateway, ...updatedNodeList };
     return updatedGatewayObject;
   });
-  return gatewaySensorInfo;
+  return gatewayNodeInfo;
 }
