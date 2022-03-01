@@ -2,8 +2,8 @@ export const clickTabByText = (tabText) => {
   cy.contains(`${tabText}`).click();
 };
 
-export const clickSensorCard = (cardTextIDNumber) => {
-  cy.get(`[data-testid="sensor[${cardTextIDNumber}]-summary"]`).first().click({
+export const clickNodeCard = (cardTextIDNumber) => {
+  cy.get(`[data-testid="node[${cardTextIDNumber}]-summary"]`).first().click({
     force: true,
   });
 };

@@ -1,7 +1,7 @@
 // homepage.spec.js created with Cypress
 
 describe("Sparrow Application", () => {
-  it("should be able to see gateways and sensors on homepage dashboard", function () {
+  it("should be able to see gateways and nodes on homepage dashboard", function () {
     cy.visit("/");
     // Check logo is visible
     cy.get('[data-testid="logo"]').should("be.visible");
@@ -23,7 +23,7 @@ describe("Sparrow Application", () => {
       .and("include", "https://blues.io");
   });
 
-  it("should be able to click on a gateway UID and see the details of that gateway and its related sensors", function () {
+  it("should be able to click on a gateway UID and see the details of that gateway and its related nodes", function () {
     cy.visit("/");
     //Click the Gateway Details arrow
     cy.clickGatewayCard("0");
@@ -56,18 +56,18 @@ describe("Sparrow Application", () => {
     );
   });
 
-  it("should be able to click on a sensor card and see more details about that sensor and update the name and location of that sensor", function () {
+  it("should be able to click on a node card and see more details about that node and update the name and location of that node", function () {
     // this keeps uncaught exceptions from failing Cypress tests
     Cypress.on("uncaught:exception", (err, runnable) => {
       return false;
     });
 
     cy.visit("/");
-    //Click the first Node arrow
+    //Click the first Node card
     cy.clickNodeCard("0");
     //TODO: remove once the page architecture is fixed
     //wait for the (very slow) page to load
-    //Verify the Sensor Name header
+    //Verify the Node Name header
     cy.get('[data-testid="node-name"]', { timeout: 90000 }).should(
       "be.visible"
     );
@@ -95,32 +95,32 @@ describe("Sparrow Application", () => {
     //Check for the Name label
     cy.get(".ant-form-item-required").should("contain", "Name");
     //Verify the Name field exists in the Details tab
-    const sensorNameInput = cy.get('[data-testid="form-input-node-name"]', {
+    const nodeNameInput = cy.get('[data-testid="form-input-node-name"]', {
       timeout: 15000,
     });
-    sensorNameInput.should("be.visible");
-    // Enter a new sensor name
-    sensorNameInput.clear().type("Cypress Test Node");
+    nodeNameInput.should("be.visible");
+    // Enter a new node name
+    nodeNameInput.clear().type("Cypress Test Node");
     //Check for the location label
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
-    const sensorLocationInput = cy.get(
+    const nodeLocationInput = cy.get(
       '[data-testid="form-input-node-location"]',
       { timeout: 15000 }
     );
-    sensorLocationInput.should("be.visible");
-    // Enter a new sensor location
-    sensorLocationInput.clear().type("Cypress Runner");
+    nodeLocationInput.should("be.visible");
+    // Enter a new node location
+    nodeLocationInput.clear().type("Cypress Runner");
     //Click the Submit button
-    const sensorSubmitButton = cy.get('[data-testid="form-submit"]');
-    sensorSubmitButton.should("be.visible");
+    const nodeSubmitButton = cy.get('[data-testid="form-submit"]');
+    nodeSubmitButton.should("be.visible");
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Cypress Test Node"
     cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
       "contain",
       "Cypress Test Node"
     );
-    // Enter a second new sensor name
+    // Enter a second new node name
     cy.get('[data-testid="form-input-node-name"]')
       .clear()
       .type("Other Node Name");
