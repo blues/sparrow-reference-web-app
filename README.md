@@ -59,7 +59,7 @@ The Sparrow Reference Web App uses a series of environment variables to store pr
 
 #### HUB_AUTH_TOKEN
 
-The Sparrow starter app needs access to your Notehub project in order to show the gateway and sensor nodes in your project. An access token is used to authenticate the app.
+The Sparrow Reference Web App needs access to your Notehub project in order to show the gateway and sensor nodes in your project. An access token is used to authenticate the app.
 
 To find retrieve an authentication token, put this in your command line, replacing `YOUR_NOTEHUB_EMAIL` & `NOTEHUB_PASSWORD` with your own:
 

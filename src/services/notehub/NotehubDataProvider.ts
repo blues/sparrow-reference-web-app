@@ -146,7 +146,7 @@ export default class NotehubDataProvider implements DataProvider {
     };
 
     // merge latest event objects with the same nodeId
-    // these are different readings from the same sensor
+    // these are different readings from the same node
     const reducer = <CombinedEventObj extends HasNodeId>(
       groups: Map<string, CombinedEventObj>,
       event: CombinedEventObj
@@ -172,7 +172,7 @@ export default class NotehubDataProvider implements DataProvider {
 
     // get the names and locations of the nodes from the API via config.db
     const getExtraNodeDetails = async (gatewayNodeInfo: Node) => {
-      const sensorDetailsInfo = await this.notehubAccessor.getConfig(
+      const nodeDetailsInfo = await this.notehubAccessor.getConfig(
         gatewayNodeInfo.gatewayUID,
         gatewayNodeInfo.nodeId
       );
@@ -181,11 +181,11 @@ export default class NotehubDataProvider implements DataProvider {
       return {
         nodeId: gatewayNodeInfo.nodeId,
         gatewayUID: gatewayNodeInfo.gatewayUID,
-        ...(sensorDetailsInfo?.body?.name && {
-          name: sensorDetailsInfo.body.name,
+        ...(nodeDetailsInfo?.body?.name && {
+          name: nodeDetailsInfo.body.name,
         }),
-        ...(sensorDetailsInfo?.body?.loc && {
-          location: sensorDetailsInfo.body.loc,
+        ...(nodeDetailsInfo?.body?.loc && {
+          location: nodeDetailsInfo.body.loc,
         }),
         ...(gatewayNodeInfo.voltage && {
           voltage: gatewayNodeInfo.voltage,
@@ -209,17 +209,17 @@ export default class NotehubDataProvider implements DataProvider {
       } as Node;
     };
 
-    const getAllSensorData = async (gatewayNodeInfo: Node[]) =>
+    const getAllNodeData = async (gatewayNodeInfo: Node[]) =>
       Promise.all(gatewayNodeInfo.map(getExtraNodeDetails));
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const allLatestSensorData = await getAllSensorData(reducedEvents);
+    const allLatestNodeData = await getAllNodeData(reducedEvents);
 
-    return allLatestSensorData;
+    return allLatestNodeData;
   }
 
   async getNode(gatewayUID: string, nodeId: string) {
     const nodes = await this.getNodes([gatewayUID]);
-    const match = nodes.filter((sensor) => sensor.nodeId === nodeId)[0];
+    const match = nodes.filter((node) => node.nodeId === nodeId)[0];
     if (!match) {
       throw getError(ERROR_CODES.NODE_NOT_FOUND);
     }
@@ -228,17 +228,17 @@ export default class NotehubDataProvider implements DataProvider {
 
   async getNodeData(
     gatewayUID: string,
-    sensorUID: string,
+    nodeId: string,
     options?: { startDate?: Date }
   ) {
-    const sensorEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
+    const nodeEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
       options?.startDate
     );
 
-    const filteredEvents: NotehubEvent[] = sensorEvents.filter(
+    const filteredEvents: NotehubEvent[] = nodeEvents.filter(
       (event: NotehubEvent) =>
         event.file &&
-        event.file.includes(`${sensorUID}`) &&
+        event.file.includes(`${nodeId}`) &&
         (event.file.includes("#air.qo") || event.file.includes("#motion.qo")) &&
         event.device_uid === gatewayUID
     );
