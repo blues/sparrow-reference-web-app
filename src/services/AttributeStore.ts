@@ -1,12 +1,12 @@
 export interface AttributeStore {
-  updateSensorName: (
+  updateNodeName: (
     gatewayUID: string,
-    macAddress: string,
+    nodeId: string,
     name: string
   ) => Promise<void>;
-  updateSensorLocation: (
+  updateNodeLocation: (
     gatewayUID: string,
-    macAddress: string,
+    nodeId: string,
     location: string
   ) => Promise<void>;
 }

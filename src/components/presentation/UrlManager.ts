@@ -1,3 +1,3 @@
 export interface UrlManager {
-  sensorNameUpdate(gatewayUID: string, sensorMacAddress: string): string;
+  sensorNameUpdate(gatewayUID: string, nodeId: string): string;
 }

@@ -4,7 +4,7 @@ import { ERROR_CODES } from "../../../../src/services/Errors";
 import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
 import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
-import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
+import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubNodeConfig";
 import notehubData from "../__serviceMocks__/notehubData.json";
 
 let mock: MockAdapter;

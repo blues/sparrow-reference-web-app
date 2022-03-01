@@ -5,11 +5,11 @@ import NotehubDevice from "./models/NotehubDevice";
 import { HTTP_HEADER } from "../../constants/http";
 import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
-import NotehubSensorConfig from "./models/NotehubSensorConfig";
+import NotehubSensorConfig from "./models/NotehubNodeConfig";
 import NotehubErr from "./models/NotehubErr";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubResponse from "./models/NotehubResponse";
-import NoteSensorConfigBody from "./models/NoteSensorConfigBody";
+import NoteSensorConfigBody from "./models/NoteNodeConfigBody";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -135,12 +135,12 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }
   }
 
-  async getConfig(hubDeviceUID: string, macAddress: string) {
+  async getConfig(hubDeviceUID: string, nodeId: string) {
     const endpoint = `${this.hubBaseURL}/req?project=${this.hubProjectUID}&device=${hubDeviceUID}`;
     const body = {
       req: "note.get",
       file: "config.db",
-      note: macAddress,
+      note: nodeId,
     };
     let resp;
     try {
@@ -170,14 +170,14 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   async setConfig(
     hubDeviceUID: string,
-    macAddress: string,
+    nodeId: string,
     body: NoteSensorConfigBody
   ) {
     const endpoint = `${this.hubBaseURL}/req?project=${this.hubProjectUID}&device=${hubDeviceUID}`;
     const req = {
       req: "note.update",
       file: "config.db",
-      note: macAddress,
+      note: nodeId,
       body,
     };
     let resp;
@@ -194,7 +194,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       if (err.includes("device-noexist")) {
         throw getError(ERROR_CODES.DEVICE_NOT_FOUND);
       } else if (err.includes("note-noexist")) {
-        throw getError(ERROR_CODES.SENSOR_NOT_FOUND);
+        throw getError(ERROR_CODES.NODE_NOT_FOUND);
       } else if (err.includes("insufficient permissions")) {
         throw getError(ERROR_CODES.FORBIDDEN);
       } else {

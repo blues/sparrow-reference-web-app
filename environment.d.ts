@@ -8,7 +8,7 @@ declare global {
       HUB_PROJECTUID: string;
       HUB_DEVICE_UID: string;
       APP_BASE_URL: string;
-      TEST_SENSOR_MAC: string;
+      TEST_NODE_ID: string;
     }
   }
 }

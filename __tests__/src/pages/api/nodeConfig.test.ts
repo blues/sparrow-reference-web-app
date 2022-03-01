@@ -4,15 +4,15 @@
 import { createMocks, RequestMethod } from "node-mocks-http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { StatusCodes } from "http-status-codes";
-import sensorConfigHandler from "../../../../src/pages/api/gateway/[gatewayUID]/sensor/[macAddress]/config";
+import nodeConfigHandler from "../../../../src/pages/api/gateway/[gatewayUID]/node/[nodeId]/config";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 import { services } from "../../../../src/services/ServiceLocator";
 
-describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", () => {
+describe("/api/gateway/[gatewayUID]/node/[nodeId]/config API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
   const gatewayUIDs = process.env.HUB_DEVICE_UID;
   const gatewayUID = gatewayUIDs.split(",")[0];
-  const macAddress = process.env.TEST_SENSOR_MAC;
+  const nodeId = process.env.TEST_NODE_ID;
 
   function mockRequestResponse(method: RequestMethod = "GET") {
     const { req, res }: { req: NextApiRequest; res: NextApiResponse } =
@@ -21,17 +21,17 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
       [HTTP_HEADER.SESSION_TOKEN]: authToken,
     };
-    req.query = { gatewayUID, macAddress };
+    req.query = { gatewayUID, nodeId };
     return { req, res };
   }
 
-  it("POST should return a successful response if the sensor can be changed", async () => {
+  it("POST should return a successful response if the node can be changed", async () => {
     const app = services().getAppService();
-    jest.spyOn(app, "setSensorLocation").mockImplementation(async () => {});
-    jest.spyOn(app, "setSensorName").mockImplementation(async () => {});
+    jest.spyOn(app, "setNodeLocation").mockImplementation(async () => {});
+    jest.spyOn(app, "setNodeName").mockImplementation(async () => {});
     const { req, res } = mockRequestResponse("POST");
     req.body = { location: "TEST_LOCATION", name: "TEST_NAME" };
-    await sensorConfigHandler(req, res);
+    await nodeConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.OK);
     expect(res.getHeaders()).toEqual({
@@ -42,23 +42,23 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
 
   it("POST should return an error if things can't be changed", async () => {
     const app = services().getAppService();
-    jest.spyOn(app, "setSensorLocation").mockImplementation(() => {
+    jest.spyOn(app, "setNodeLocation").mockImplementation(() => {
       throw new Error("ugh");
     });
 
     const { req, res } = mockRequestResponse("POST");
     req.body = { location: "TEST_LOCATION" };
-    const promise = sensorConfigHandler(req, res);
+    const promise = nodeConfigHandler(req, res);
 
     await expect(promise).rejects.toMatchInlineSnapshot(
-      `[ErrorWithCause: could not handle sensor config]`
+      `[ErrorWithCause: could not handle node config]`
     );
   });
 
-  it("POST should return a 400 if Sensor config is invalid", async () => {
+  it("POST should return a 400 if Node config is invalid", async () => {
     const { req, res } = mockRequestResponse("POST");
     req.body = {}; // no name and no location given. bad.
-    await sensorConfigHandler(req, res);
+    await nodeConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(res.getHeaders()).toEqual({
@@ -70,10 +70,10 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     });
   });
 
-  it("POST should return a BAD_REQUEST if Sensor name is not a string", async () => {
+  it("POST should return a BAD_REQUEST if Node name is not a string", async () => {
     const { req, res } = mockRequestResponse("POST");
     req.body = { name: 40 };
-    await sensorConfigHandler(req, res);
+    await nodeConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(res._getJSONData()).toEqual({
@@ -81,10 +81,10 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     });
   });
 
-  it("POST should return a BAD_REQUEST if Sensor location is not a string", async () => {
+  it("POST should return a BAD_REQUEST if Node location is not a string", async () => {
     const { req, res } = mockRequestResponse("POST");
     req.body = { location: 40 };
-    await sensorConfigHandler(req, res);
+    await nodeConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(res._getJSONData()).toEqual({
@@ -96,7 +96,7 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
     const { req, res } = mockRequestResponse("POST");
     req.query.gatewayUID = 11; // Pass gateway UID of the incorrect type
 
-    await sensorConfigHandler(req, res);
+    await nodeConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
     // eslint-disable-next-line no-underscore-dangle
@@ -106,7 +106,7 @@ describe("/api/gateway/[gatewayUID]/sensor/[macAddress]/config API Endpoint", ()
   it("should return a 405 if method not POST is passed", async () => {
     const { req, res } = mockRequestResponse("PUT");
     req.body = { location: "FAILING_TEST_LOCATION", name: "FAILING_TEST_NAME" };
-    await sensorConfigHandler(req, res);
+    await nodeConfigHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.METHOD_NOT_ALLOWED);
     // eslint-disable-next-line no-underscore-dangle

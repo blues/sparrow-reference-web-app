@@ -1,5 +1,5 @@
 import Gateway from "../components/models/Gateway";
-import Sensor from "../components/models/Sensor";
+import Node from "../components/models/Node";
 import SensorReading from "../components/models/readings/SensorReading";
 
 // this interface shows gateway or sensor data - nothing more, nothing less
@@ -8,13 +8,13 @@ interface DataProvider {
 
   getGateway: (gatewayUID: string) => Promise<Gateway>;
 
-  getSensors: (gatewayUIDs: string[]) => Promise<Sensor[]>;
+  getNodes: (gatewayUIDs: string[]) => Promise<Node[]>;
 
-  getSensor: (gatewayUID: string, sensorUID: string) => Promise<Sensor>;
+  getNode: (gatewayUID: string, nodeId: string) => Promise<Node>;
 
-  getSensorData: (
+  getNodeData: (
     gatewayUID: string,
-    sensorUID: string,
+    nodeId: string,
     options?: {
       startDate?: Date;
     }

@@ -10,10 +10,10 @@ import HumiditySensorSchema from "../../../../src/components/models/readings/Hum
 import PressureSensorSchema from "../../../../src/components/models/readings/PressureSensorSchema";
 import VoltageSensorSchema from "../../../../src/components/models/readings/VoltageSensorSchema";
 import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
-import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
+import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubNodeConfig";
 import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";
 import Gateway from "../../../../src/components/models/Gateway";
-import Sensor from "../../../../src/components/models/Sensor";
+import Node from "../../../../src/components/models/Node";
 
 describe("Notehub data provider service functions", () => {
   const mockedGatewayJson =
@@ -24,7 +24,7 @@ describe("Notehub data provider service functions", () => {
     .events as NotehubResponse;
   const mockedNotehubConfigJson =
     notehubData.successfulNotehubConfigResponse2 as NotehubSensorConfig;
-  const mockedNotehubConfigJsonNoSensorDetails =
+  const mockedNotehubConfigJsonNoNodeDetails =
     notehubData.successfulNotehubConfigResponse3 as NotehubSensorConfig;
 
   let notehubAccessorMock: NotehubAccessor;
@@ -39,6 +39,7 @@ describe("Notehub data provider service functions", () => {
         .mockResolvedValueOnce(mockedNotehubLatestEventsJson),
       getEvents: jest.fn().mockResolvedValueOnce(mockedNotehubEventsJson),
       getConfig: jest.fn().mockResolvedValueOnce(mockedNotehubConfigJson),
+      setConfig: jest.fn().mockResolvedValueOnce({}),
     };
     notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock);
   });
@@ -59,31 +60,29 @@ describe("Notehub data provider service functions", () => {
     expect(res).toEqual(mockedGatewaysSparrowData);
   });
 
-  it("should return sparrow sensor data when a gateway UID and sensor UID is passed to getSensor", async () => {
-    const mockedSensorSparrowData =
-      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
+  it("should return sparrow node data when a gatewayUID and node id is passed to getSensor", async () => {
+    const mockedNodeSparrowData =
+      sparrowData.successfulNodeSparrowDataResponse as Node[];
 
-    const res = await notehubDataProviderMock.getSensor(
+    const res = await notehubDataProviderMock.getNode(
       mockedGatewayJson.uid,
       "456789b"
     );
-    expect(res).toEqual(mockedSensorSparrowData[1]);
+    expect(res).toEqual(mockedNodeSparrowData[1]);
   });
 
-  it("should return a list of sparrow sensor data when a list of gateway UIDs is passed in to getSensors", async () => {
-    const mockedSensorSparrowData =
-      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
+  it("should return a list of sparrow node data when a list of gateway UIDs is passed in to getNodes", async () => {
+    const mockedNodeSparrowData =
+      sparrowData.successfulNodeSparrowDataResponse as Node[];
 
-    const res = await notehubDataProviderMock.getSensors([
-      mockedGatewayJson.uid,
-    ]);
-    expect(res).toEqual(mockedSensorSparrowData);
+    const res = await notehubDataProviderMock.getNodes([mockedGatewayJson.uid]);
+    expect(res).toEqual(mockedNodeSparrowData);
   });
 
-  it("should return a list of sparrow sensor readings when a gateway UID, sensor UID and optional start date is to getSensorData", async () => {
-    const res = await notehubDataProviderMock.getSensorData(
+  it("should return a list of sparrow sensor readings when a gateway UID, sensor id and optional start date is to getNodeData", async () => {
+    const res = await notehubDataProviderMock.getNodeData(
       sparrowData.mockedGatewayUID2,
-      sparrowData.mockedSensorUID2
+      sparrowData.mockedNodeId2
     );
 
     expect(JSON.stringify(res[0].schema)).toEqual(
@@ -100,17 +99,17 @@ describe("Notehub data provider service functions", () => {
     );
   });
 
-  it("should gracefully handle when there is no additional sensor details for sparrow sensor readings and remove undefined information from the returned Sensor object", async () => {
-    jest.fn().mockResolvedValueOnce(mockedNotehubConfigJsonNoSensorDetails);
+  it("should gracefully handle when there is no additional node details for sparrow sensor readings and remove undefined information from the returned Node object", async () => {
+    jest.fn().mockResolvedValueOnce(mockedNotehubConfigJsonNoNodeDetails);
 
-    const mockedSensorSparrowData =
-      sparrowData.successfulSensorSparrowDataResponse as Sensor[];
+    const mockedNodeSparrowData =
+      sparrowData.successfulNodeSparrowDataResponse as Node[];
 
-    const res = await notehubDataProviderMock.getSensor(
+    const res = await notehubDataProviderMock.getNode(
       mockedGatewayJson.uid,
       "456789b"
     );
-    expect(res).toEqual(mockedSensorSparrowData[1]);
+    expect(res).toEqual(mockedNodeSparrowData[1]);
   });
 });
 

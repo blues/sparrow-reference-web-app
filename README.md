@@ -59,7 +59,7 @@ The Sparrow starter uses a series of environment variables to store project-spec
 
 #### HUB_AUTH_TOKEN
 
-The Sparrow starter app needs access to your Notehub project in order to show the gateway and sensors in your project. An access token is used to authenticate the app.
+The Sparrow starter app needs access to your Notehub project in order to show the gateway and sensor nodes in your project. An access token is used to authenticate the app.
 
 To find retrieve an authentication token, put this in your command line, replacing `YOUR_NOTEHUB_EMAIL` & `NOTEHUB_PASSWORD` with your own:
 
@@ -291,7 +291,7 @@ If you have the Sparrow starter already open you’ll have to refresh to see the
 
 **Incorrect “Last updated” date**
 
-Currently sensors may display an incorrect “Last updated” date or time. You can see the sensor’s correct last-updated time by looking at the most recent reading on the sensor’s detail page. We are addressing this issue for the GA release.
+Currently sensor nodes may display an incorrect “Last updated” date or time. You can see the node’s correct last-updated time by looking at the most recent reading on the node’s detail page. We are addressing this issue for the GA release.
 
 ## Support
 

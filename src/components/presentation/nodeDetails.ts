@@ -1,5 +1,9 @@
-import { GATEWAY_MESSAGE, SENSOR_MESSAGE } from "../../constants/ui";
-import SensorDetailViewModel from "../../models/SensorDetailViewModel";
+import {
+  GATEWAY_MESSAGE,
+  SENSOR_MESSAGE,
+  NODE_MESSSAGE,
+} from "../../constants/ui";
+import NodeDetailViewModel from "../../models/NodeDetailViewModel";
 import {
   getFormattedChartData,
   getFormattedHumidityData,
@@ -10,7 +14,7 @@ import {
   getFormattedCountData,
   getFormattedTotalData,
 } from "./uiHelpers";
-import Sensor from "../models/Sensor";
+import Node from "../models/Node";
 import Gateway from "../models/Gateway";
 import SensorReading from "../models/readings/SensorReading";
 import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
@@ -21,34 +25,33 @@ import CountSensorSchema from "../models/readings/CountSensorSchema";
 import TotalSensorSchema from "../models/readings/TotalSensorSchema";
 
 // eslint-disable-next-line import/prefer-default-export
-export function getSensorDetailsPresentation(
-  sensor?: Sensor,
+export function getNodeDetailsPresentation(
+  node?: Node,
   gateway?: Gateway,
   readings?: SensorReading<unknown>[]
-): SensorDetailViewModel {
+): NodeDetailViewModel {
   return {
     gateway: {
       serialNumber: gateway?.serialNumber || GATEWAY_MESSAGE.NO_SERIAL_NUMBER,
     },
-    sensor: sensor
+    node: node
       ? {
-          name: sensor.name || SENSOR_MESSAGE.NO_NAME,
-          lastActivity: getFormattedLastSeen(sensor.lastActivity),
-          location: sensor?.location || SENSOR_MESSAGE.NO_LOCATION,
+          name: node.name || NODE_MESSSAGE.NO_NAME,
+          lastActivity: getFormattedLastSeen(node.lastActivity),
+          location: node?.location || NODE_MESSSAGE.NO_LOCATION,
           temperature:
-            getFormattedTemperatureData(sensor.temperature) ||
+            getFormattedTemperatureData(node.temperature) ||
             SENSOR_MESSAGE.NO_TEMPERATURE,
           humidity:
-            getFormattedHumidityData(sensor.humidity) ||
+            getFormattedHumidityData(node.humidity) ||
             SENSOR_MESSAGE.NO_HUMIDITY,
           pressure:
-            getFormattedPressureData(sensor.pressure) ||
+            getFormattedPressureData(node.pressure) ||
             SENSOR_MESSAGE.NO_PRESSURE,
           voltage:
-            getFormattedVoltageData(sensor.voltage) ||
-            SENSOR_MESSAGE.NO_VOLTAGE,
-          count: getFormattedCountData(sensor.count) || SENSOR_MESSAGE.NO_COUNT,
-          total: getFormattedTotalData(sensor.total) || SENSOR_MESSAGE.NO_TOTAL,
+            getFormattedVoltageData(node.voltage) || SENSOR_MESSAGE.NO_VOLTAGE,
+          count: getFormattedCountData(node.count) || SENSOR_MESSAGE.NO_COUNT,
+          total: getFormattedTotalData(node.total) || SENSOR_MESSAGE.NO_TOTAL,
         }
       : undefined,
     readings: readings

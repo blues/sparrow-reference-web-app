@@ -8,7 +8,7 @@ import { HTTP_STATUS } from "../../../../../../constants/http";
 
 interface ValidRequest {
   gatewayUID: string;
-  macAddress: string;
+  nodeId: string;
   location?: string;
   name?: string;
 }
@@ -26,7 +26,7 @@ function validateRequest(
   req: NextApiRequest,
   res: NextApiResponse
 ): false | ValidRequest {
-  const { gatewayUID, macAddress } = req.query;
+  const { gatewayUID, nodeId } = req.query;
   // TODO (carl): figure out what to do about this unsafe assignment of any. I really want runtime
   // typechecking. All the code below feels terrible to write when we've already specified the API
   // in typescript. Maybe we should really use a different language to specify the API and generate
@@ -38,7 +38,7 @@ function validateRequest(
     res.json({ err: HTTP_STATUS.INVALID_GATEWAY });
     return false;
   }
-  if (typeof macAddress !== "string") {
+  if (typeof nodeId !== "string") {
     res.status(StatusCodes.BAD_REQUEST);
     res.json({ err: HTTP_STATUS.INVALID_SENSOR_MAC });
     return false;
@@ -59,19 +59,19 @@ function validateRequest(
     return false;
   }
 
-  return { gatewayUID, macAddress, location, name };
+  return { gatewayUID, nodeId, location, name };
 }
 
 async function performRequest({
-  macAddress,
+  nodeId,
   gatewayUID,
   location,
   name,
 }: ValidRequest) {
   const app = services().getAppService();
   try {
-    if (location) await app.setSensorLocation(gatewayUID, macAddress, location);
-    if (name) await app.setSensorName(gatewayUID, macAddress, name);
+    if (location) await app.setNodeLocation(gatewayUID, nodeId, location);
+    if (name) await app.setNodeName(gatewayUID, nodeId, name);
   } catch (cause) {
     throw new ErrorWithCause("Could not perform request", { cause });
   }
@@ -95,7 +95,7 @@ export default async function sensorConfigHandler(
   } catch (cause) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
     res.json({ err: ReasonPhrases.INTERNAL_SERVER_ERROR });
-    const e = new ErrorWithCause("could not handle sensor config", { cause });
+    const e = new ErrorWithCause("could not handle node config", { cause });
     console.error(e);
     throw e;
   }

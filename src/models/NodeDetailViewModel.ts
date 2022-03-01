@@ -1,8 +1,8 @@
-interface SensorDetailViewModel {
+interface NodeDetailViewModel {
   gateway?: {
     serialNumber: string;
   };
-  sensor?: {
+  node?: {
     name: string;
     location: string;
     lastActivity: string;
@@ -23,4 +23,4 @@ interface SensorDetailViewModel {
   };
 }
 
-export default SensorDetailViewModel;
+export default NodeDetailViewModel;

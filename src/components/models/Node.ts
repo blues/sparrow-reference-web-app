@@ -1,6 +1,6 @@
-interface Sensor {
+interface Node {
   name?: string;
-  macAddress: string;
+  nodeId: string;
   location?: string;
   humidity?: number;
   pressure?: number;
@@ -12,4 +12,4 @@ interface Sensor {
   gatewayUID: string;
 }
 
-export default Sensor;
+export default Node;

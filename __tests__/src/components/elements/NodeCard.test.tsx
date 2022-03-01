@@ -2,14 +2,14 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import userEvent from "@testing-library/user-event";
-import SensorCard from "../../../../src/components/elements/SensorCard";
+import NodeCard from "../../../../src/components/elements/NodeCard";
 // eslint-disable-next-line jest/no-mocks-import
 import "../../../../__mocks__/matchMediaMock";
-import { SENSOR_MESSAGE } from "../../../../src/constants/ui";
+import { NODE_MESSSAGE, SENSOR_MESSAGE } from "../../../../src/constants/ui";
 
-const mockSensorData = {
-  name: "My Mocked Sensor",
-  macAddress: "1234",
+const mockNodeData = {
+  name: "My Mocked Node",
+  nodeId: "1234",
   humidity: 29,
   pressure: 1000,
   temperature: 24.5,
@@ -22,7 +22,7 @@ const mockSensorData = {
 
 const mockedSensorDataLongName = {
   name: "My Extra Super Dee Duper Long Sensor Name",
-  macAddress: "9101",
+  nodeId: "9101",
   humidity: 46,
   temperature: 29,
   voltage: 4.2,
@@ -31,7 +31,7 @@ const mockedSensorDataLongName = {
 };
 
 const mockUndefinedSensorData = {
-  macAddress: "5678",
+  nodeId: "5678",
   lastActivity: "2022-01-06T01:23:41Z",
   gatewayUID: "ghijkl",
 };
@@ -39,27 +39,25 @@ const mockUndefinedSensorData = {
 const index = 1;
 
 describe("Sensor details card component", () => {
-  it("should render the card when sensor details data is supplied", () => {
-    render(<SensorCard sensorDetails={mockSensorData} index={index} />);
+  it("should render the card when node details data is supplied", () => {
+    render(<NodeCard nodeDetails={mockNodeData} index={index} />);
 
-    expect(screen.getByText(mockSensorData.name)).toBeInTheDocument();
+    expect(screen.getByText(mockNodeData.name)).toBeInTheDocument();
     expect(
-      screen.getByText(mockSensorData.humidity, { exact: false })
+      screen.getByText(mockNodeData.humidity, { exact: false })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(mockSensorData.temperature, { exact: false })
+      screen.getByText(mockNodeData.temperature, { exact: false })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(mockSensorData.voltage, { exact: false })
+      screen.getByText(mockNodeData.voltage, { exact: false })
     ).toBeInTheDocument();
-    expect(screen.getByText(mockSensorData.count)).toBeInTheDocument();
+    expect(screen.getByText(mockNodeData.count)).toBeInTheDocument();
   });
 
-  it("should render fallback messages when all sensor details are not supplied", () => {
-    render(
-      <SensorCard sensorDetails={mockUndefinedSensorData} index={index} />
-    );
-    expect(screen.getByText(SENSOR_MESSAGE.NO_NAME)).toBeInTheDocument();
+  it("should render fallback messages when all node details are not supplied", () => {
+    render(<NodeCard nodeDetails={mockUndefinedSensorData} index={index} />);
+    expect(screen.getByText(NODE_MESSSAGE.NO_NAME)).toBeInTheDocument();
     expect(
       screen.getAllByText(SENSOR_MESSAGE.NO_HUMIDITY, { exact: false })[0]
     ).toBeInTheDocument();
@@ -75,9 +73,7 @@ describe("Sensor details card component", () => {
   });
 
   it("should add an ellipsis and provide a tooltip when card name is too long to fit on card", () => {
-    render(
-      <SensorCard sensorDetails={mockedSensorDataLongName} index={index} />
-    );
+    render(<NodeCard nodeDetails={mockedSensorDataLongName} index={index} />);
     userEvent.hover(
       screen.getByText(mockedSensorDataLongName.name, { exact: false })
     );
