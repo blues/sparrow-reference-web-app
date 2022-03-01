@@ -43,12 +43,10 @@
   }
 
   :global .slick-dots li button {
-    border-radius: 100%;
     background: $bw-color--brand4;
     opacity: 0.5;
   }
   :global .slick-dots li.slick-active button {
-    border-radius: 100%;
     background: $bw-color--brand4;
   }
 
