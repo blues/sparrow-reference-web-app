@@ -1,6 +1,6 @@
 # Notehub Starter App Backend
 
-This document details the various Notehub constructs that the Sparrow Reference Webapp app uses to retrieve the data for gateways and sensors.
+This document details the various Notehub constructs that the Sparrow Reference Web App app uses to retrieve the data for gateways and sensors.
 
 - [Sensors](#sensors)
 - [Gateway Environment Variables](#gateway-environment-variables)
