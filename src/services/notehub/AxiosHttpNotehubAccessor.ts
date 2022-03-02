@@ -5,11 +5,11 @@ import NotehubDevice from "./models/NotehubDevice";
 import { HTTP_HEADER } from "../../constants/http";
 import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
-import NotehubSensorConfig from "./models/NotehubNodeConfig";
+import NotehubNodeConfig from "./models/NotehubNodeConfig";
 import NotehubErr from "./models/NotehubErr";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubResponse from "./models/NotehubResponse";
-import NoteSensorConfigBody from "./models/NoteNodeConfigBody";
+import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -165,13 +165,13 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
         throw getError(ERROR_CODES.INTERNAL_ERROR);
       }
     }
-    return resp.data as NotehubSensorConfig;
+    return resp.data as NotehubNodeConfig;
   }
 
   async setConfig(
     hubDeviceUID: string,
     nodeId: string,
-    body: NoteSensorConfigBody
+    body: NoteNodeConfigBody
   ) {
     const endpoint = `${this.hubBaseURL}/req?project=${this.hubProjectUID}&device=${hubDeviceUID}`;
     const req = {

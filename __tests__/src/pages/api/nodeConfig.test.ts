@@ -66,7 +66,7 @@ describe("/api/gateway/[gatewayUID]/node/[nodeId]/config API Endpoint", () => {
     });
     // eslint-disable-next-line no-underscore-dangle
     expect(res._getJSONData()).toEqual({
-      err: HTTP_STATUS.INVALID_SENSOR_CONFIG_BODY,
+      err: HTTP_STATUS.INVALID_NODE_CONFIG_BODY,
     });
   });
 

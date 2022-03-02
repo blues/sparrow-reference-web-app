@@ -31,12 +31,12 @@ interface SparrowQueryInterface extends ParsedUrlQuery {
   nodeId: string;
 }
 
-type SensorDetailsData = {
+type NodeDetailsData = {
   viewModel: NodeDetailViewModel;
   err?: string;
 };
 
-const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
+const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { query } = useRouter();
 
@@ -342,11 +342,11 @@ const SensorDetails: NextPage<SensorDetailsData> = ({ viewModel, err }) => {
   );
 };
 
-export default SensorDetails;
+export default NodeDetails;
 
-export const getServerSideProps: GetServerSideProps<
-  SensorDetailsData
-> = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
+  query,
+}) => {
   const { gatewayUID, nodeId } = query as SparrowQueryInterface;
   const appService = services().getAppService();
   let viewModel: NodeDetailViewModel = {};

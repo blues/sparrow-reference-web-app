@@ -20,8 +20,8 @@ const mockNodeData = {
   gatewayUID: "abcdef",
 };
 
-const mockedSensorDataLongName = {
-  name: "My Extra Super Dee Duper Long Sensor Name",
+const mockedNodeDataLongName = {
+  name: "My Extra Super Dee Duper Long Node Name",
   nodeId: "9101",
   humidity: 46,
   temperature: 29,
@@ -30,7 +30,7 @@ const mockedSensorDataLongName = {
   gatewayUID: "mnopqr",
 };
 
-const mockUndefinedSensorData = {
+const mockUndefinedNodeData = {
   nodeId: "5678",
   lastActivity: "2022-01-06T01:23:41Z",
   gatewayUID: "ghijkl",
@@ -56,7 +56,7 @@ describe("Sensor details card component", () => {
   });
 
   it("should render fallback messages when all node details are not supplied", () => {
-    render(<NodeCard nodeDetails={mockUndefinedSensorData} index={index} />);
+    render(<NodeCard nodeDetails={mockUndefinedNodeData} index={index} />);
     expect(screen.getByText(NODE_MESSSAGE.NO_NAME)).toBeInTheDocument();
     expect(
       screen.getAllByText(SENSOR_MESSAGE.NO_HUMIDITY, { exact: false })[0]
@@ -73,10 +73,10 @@ describe("Sensor details card component", () => {
   });
 
   it("should add an ellipsis and provide a tooltip when card name is too long to fit on card", () => {
-    render(<NodeCard nodeDetails={mockedSensorDataLongName} index={index} />);
+    render(<NodeCard nodeDetails={mockedNodeDataLongName} index={index} />);
     userEvent.hover(
-      screen.getByText(mockedSensorDataLongName.name, { exact: false })
+      screen.getByText(mockedNodeDataLongName.name, { exact: false })
     );
-    expect(screen.getByText(mockedSensorDataLongName.name)).toBeInTheDocument();
+    expect(screen.getByText(mockedNodeDataLongName.name)).toBeInTheDocument();
   });
 });

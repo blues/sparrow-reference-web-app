@@ -40,7 +40,7 @@ function validateRequest(
   }
   if (typeof nodeId !== "string") {
     res.status(StatusCodes.BAD_REQUEST);
-    res.json({ err: HTTP_STATUS.INVALID_SENSOR_MAC });
+    res.json({ err: HTTP_STATUS.INVALID_NODE_ID });
     return false;
   }
   if (typeof location !== "string" && typeof location !== "undefined") {
@@ -55,7 +55,7 @@ function validateRequest(
   }
   if (typeof location === "undefined" && typeof name === "undefined") {
     res.status(StatusCodes.BAD_REQUEST);
-    res.json({ err: HTTP_STATUS.INVALID_SENSOR_CONFIG_BODY });
+    res.json({ err: HTTP_STATUS.INVALID_NODE_CONFIG_BODY });
     return false;
   }
 

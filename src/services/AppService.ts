@@ -47,12 +47,12 @@ export default class AppService implements AppServiceInterface {
     return this.dataProvider.getNodes(gatewayUIDs);
   }
 
-  async getNode(gatewayUID: string, sensorUID: string) {
-    return this.dataProvider.getNode(gatewayUID, sensorUID);
+  async getNode(gatewayUID: string, nodeId: string) {
+    return this.dataProvider.getNode(gatewayUID, nodeId);
   }
 
-  async getNodeData(gatewayUID: string, sensorUID: string) {
-    return this.dataProvider.getNodeData(gatewayUID, sensorUID);
+  async getNodeData(gatewayUID: string, nodeId: string) {
+    return this.dataProvider.getNodeData(gatewayUID, nodeId);
   }
 
   async setNodeName(gatewayUID: string, nodeId: string, name: string) {
@@ -60,7 +60,7 @@ export default class AppService implements AppServiceInterface {
     try {
       await store.updateNodeName(gatewayUID, nodeId, name);
     } catch (e) {
-      const e2 = new ErrorWithCause(`could not setSensorName`, { cause: e });
+      const e2 = new ErrorWithCause(`could not setNodeName`, { cause: e });
       throw e2;
     }
   }
@@ -70,7 +70,7 @@ export default class AppService implements AppServiceInterface {
     try {
       await store.updateNodeLocation(gatewayUID, nodeId, loc);
     } catch (e) {
-      throw new ErrorWithCause(`could not setSensorLocation`, { cause: e });
+      throw new ErrorWithCause(`could not setNodeLocation`, { cause: e });
     }
   }
 }
