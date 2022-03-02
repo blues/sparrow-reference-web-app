@@ -58,7 +58,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
         </h3>
       ),
       contents: (
-        <div className={detailsStyles.sensorFormTimestamp}>
+        <div className={detailsStyles.nodeFormTimestamp}>
           Last updated{` `}
           {viewModel.node?.lastActivity}
         </div>
@@ -90,12 +90,12 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
           ? viewModel.node?.location
           : undefined,
       rules: [
-        { required: true, message: "Please add the location of your sensor" },
+        { required: true, message: "Please add the location of your node" },
       ],
       contents: (
         <Input
           data-testid="form-input-node-location"
-          placeholder="Sensor location"
+          placeholder="Node location"
           maxLength={15}
         />
       ),
@@ -154,7 +154,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
               </h3>
               <p
                 data-testid="last-seen"
-                className={detailsStyles.sensorTimestamp}
+                className={detailsStyles.nodeTimestamp}
               >
                 Last updated {viewModel.node.lastActivity}
               </p>
@@ -226,7 +226,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     <h3>Temperature</h3>
                     <p
                       data-testid="last-seen-temperature"
-                      className={detailsStyles.sensorChartTimestamp}
+                      className={detailsStyles.nodeChartTimestamp}
                     >
                       Last updated {viewModel.node.lastActivity}
                     </p>
@@ -247,7 +247,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     <h3>Humidity</h3>
                     <p
                       data-testid="last-seen-humidity"
-                      className={detailsStyles.sensorChartTimestamp}
+                      className={detailsStyles.nodeChartTimestamp}
                     >
                       Last updated {viewModel.node.lastActivity}
                     </p>
@@ -268,7 +268,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     <h3>Voltage</h3>
                     <p
                       data-testid="last-seen-voltage"
-                      className={detailsStyles.sensorChartTimestamp}
+                      className={detailsStyles.nodeChartTimestamp}
                     >
                       Last updated {viewModel.node.lastActivity}
                     </p>
@@ -289,7 +289,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     <h3>Pressure</h3>
                     <p
                       data-testid="last-seen-pressure"
-                      className={detailsStyles.sensorChartTimestamp}
+                      className={detailsStyles.nodeChartTimestamp}
                     >
                       Last updated {viewModel.node.lastActivity}
                     </p>
@@ -310,7 +310,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     <h3>Motion Count</h3>
                     <p
                       data-testid="last-seen-count"
-                      className={detailsStyles.sensorChartTimestamp}
+                      className={detailsStyles.nodeChartTimestamp}
                     >
                       Last updated {viewModel.node.lastActivity}
                     </p>
