@@ -3,10 +3,10 @@
  */
 import { NextJsUrlManager } from "../../../../src/adapters/nextjs-sparrow/NextJsUrlManager";
 
-describe(NextJsUrlManager.sensorNameUpdate, () => {
+describe(NextJsUrlManager.nodeNameUpdate, () => {
   it("should return correct endpoint url", () => {
     expect(
-      NextJsUrlManager.sensorNameUpdate("gfoo", "sbar")
-    ).toMatchInlineSnapshot(`"/api/gateway/gfoo/sensor/sbar/config"`);
+      NextJsUrlManager.nodeNameUpdate("gfoo", "sbar")
+    ).toMatchInlineSnapshot(`"/api/gateway/gfoo/node/sbar/config"`);
   });
 });

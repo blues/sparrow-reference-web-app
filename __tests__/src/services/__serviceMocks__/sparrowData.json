@@ -14,7 +14,7 @@
     {
       "nodeId": "123456a",
       "gatewayUID": "dev:5678",
-      "name": "My Mocked Sensor 1",
+      "name": "My Mocked Node 1",
       "voltage": 2.7,
       "lastActivity": "2021-11-30T14:31:24Z",
       "location": "Kitchen",

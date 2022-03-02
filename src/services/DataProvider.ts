@@ -2,7 +2,7 @@ import Gateway from "../components/models/Gateway";
 import Node from "../components/models/Node";
 import SensorReading from "../components/models/readings/SensorReading";
 
-// this interface shows gateway or sensor data - nothing more, nothing less
+// this interface shows gateway or node data - nothing more, nothing less
 interface DataProvider {
   getGateways: () => Promise<Gateway[]>;
 

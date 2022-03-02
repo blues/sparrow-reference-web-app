@@ -2,7 +2,7 @@ import { NotehubAccessor } from "../../../../src/services/notehub/NotehubAccesso
 import NotehubDataProvider, {
   notehubDeviceToSparrowGateway,
 } from "../../../../src/services/notehub/NotehubDataProvider";
-import sparrowData from "../__serviceMocks__/sparrowData.json"; // mocked data to do with Sparrow portion of app goes here (i.e. gateways and sensors)
+import sparrowData from "../__serviceMocks__/sparrowData.json"; // mocked data to do with Sparrow portion of app goes here (i.e. gateways and nodes)
 import notehubData from "../__serviceMocks__/notehubData.json"; // mocked data to do with Notehub portion of app goes here (i.e. devices and events)
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
 import TemperatureSensorSchema from "../../../../src/components/models/readings/TemperatureSensorSchema";
@@ -60,7 +60,7 @@ describe("Notehub data provider service functions", () => {
     expect(res).toEqual(mockedGatewaysSparrowData);
   });
 
-  it("should return sparrow node data when a gatewayUID and node id is passed to getSensor", async () => {
+  it("should return sparrow node data when a gatewayUID and node id is passed to getNode", async () => {
     const mockedNodeSparrowData =
       sparrowData.successfulNodeSparrowDataResponse as Node[];
 
@@ -79,7 +79,7 @@ describe("Notehub data provider service functions", () => {
     expect(res).toEqual(mockedNodeSparrowData);
   });
 
-  it("should return a list of sparrow sensor readings when a gateway UID, sensor id and optional start date is to getNodeData", async () => {
+  it("should return a list of sparrow sensor readings when a gateway UID, node id and optional start date is to getNodeData", async () => {
     const res = await notehubDataProviderMock.getNodeData(
       sparrowData.mockedGatewayUID2,
       sparrowData.mockedNodeId2

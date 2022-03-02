@@ -91,7 +91,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
       <h2 data-testid="node-header" className={styles.sectionSubTitle}>
         Nodes
       </h2>
-      {gatewayDetails?.nodeList.length ? (
+      {gatewayDetails.nodeList.length ? (
         <Row gutter={[16, 16]}>
           {gatewayDetails.nodeList.map((node, cardIndex) => (
             <Col xs={24} sm={24} lg={12} key={node.nodeId}>

@@ -14,7 +14,7 @@ const mockGatewayData = {
   lastActivity: "2022-01-05T07:36:55Z",
   nodeList: [
     {
-      name: "My First Mocked Sensor",
+      name: "My First Mocked Node",
       nodeId: "1011",
       humidity: 29,
       pressure: 1000,

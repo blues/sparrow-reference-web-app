@@ -4,7 +4,7 @@ import { ERROR_CODES } from "../../../../src/services/Errors";
 import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
 import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
-import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubNodeConfig";
+import NotehubNodeConfig from "../../../../src/services/notehub/models/NotehubNodeConfig";
 import notehubData from "../__serviceMocks__/notehubData.json";
 
 let mock: MockAdapter;
@@ -130,29 +130,29 @@ describe("Config handling", () => {
     mock = new MockAdapter(axios);
   });
 
-  const mockNotehubSensorConfig =
-    notehubData.successfulNotehubConfigResponse as NotehubSensorConfig;
-  const mockMacAddress = mockNotehubSensorConfig.note;
+  const mockNotehubNodeConfig =
+    notehubData.successfulNotehubConfigResponse as NotehubNodeConfig;
+  const mockMacAddress = mockNotehubNodeConfig.note;
 
   it("should return valid config", async () => {
-    mock.onPost(API_CONFIG_URL).reply(200, mockNotehubSensorConfig);
+    mock.onPost(API_CONFIG_URL).reply(200, mockNotehubNodeConfig);
 
     const res = await axiosHttpNotehubAccessorMock.getConfig(
       mockDeviceUID,
       mockMacAddress
     );
-    expect(res).toEqual(mockNotehubSensorConfig);
+    expect(res).toEqual(mockNotehubNodeConfig);
   });
 
   it("should pass through the response (and not throw an error) with a bad config", async () => {
     mock
       .onPost(API_CONFIG_URL)
-      .reply(200, notehubData.notehubConfigSensorNotFound);
+      .reply(200, notehubData.notehubConfigNodeNotFound);
     const res = await axiosHttpNotehubAccessorMock.getConfig(
       mockDeviceUID,
       mockMacAddress
     );
-    expect(res).toEqual(notehubData.notehubConfigSensorNotFound);
+    expect(res).toEqual(notehubData.notehubConfigNodeNotFound);
   });
 
   it("should throw a device-not-found error if the device does not exist", async () => {

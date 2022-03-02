@@ -172,14 +172,14 @@
   },
   "successfulNotehubConfigResponse2": {
     "note": "123456a",
-    "body": { "loc": "Kitchen", "name": "My Mocked Sensor 1" },
+    "body": { "loc": "Kitchen", "name": "My Mocked Node 1" },
     "time": 164380907
   },
   "successfulNotehubConfigResponse3": {
     "note": "123456a",
     "time": 164380907
   },
-  "notehubConfigSensorNotFound": {
+  "notehubConfigNodeNotFound": {
     "err": "'error getting note: {note-noexist} note not found: fjdsidiojfdsojf'"
   },
   "notehubConfigDeviceNotFound": {

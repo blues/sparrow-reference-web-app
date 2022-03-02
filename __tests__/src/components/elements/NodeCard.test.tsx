@@ -38,7 +38,7 @@ const mockUndefinedNodeData = {
 
 const index = 1;
 
-describe("Sensor details card component", () => {
+describe("Node details card component", () => {
   it("should render the card when node details data is supplied", () => {
     render(<NodeCard nodeDetails={mockNodeData} index={index} />);
 

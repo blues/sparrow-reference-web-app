@@ -77,7 +77,7 @@ async function performRequest({
   }
 }
 
-export default async function sensorConfigHandler(
+export default async function nodeConfigHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
