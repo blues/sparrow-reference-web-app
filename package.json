@@ -11,8 +11,9 @@
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
-    "cypress:open": "cypress open --env configFile=development",
-    "cypress:run": "cypress run --env configFile=development"
+	"cypress:open": "cypress open --config baseUrl=http://localhost:4000",
+    "cypress:run": "cypress run --config baseUrl=http://localhost:4000"
+ 
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
