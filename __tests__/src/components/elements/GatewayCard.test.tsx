@@ -7,15 +7,15 @@ import GatewayCard from "../../../../src/components/elements/GatewayCard";
 import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 
 const mockGatewayData = {
-  uid: "My Mocked Gatway",
+  uid: "My Mocked Gateway",
   serialNumber: "67890",
   location: "Gainesville, FL",
   voltage: 3.7,
   lastActivity: "2022-01-05T07:36:55Z",
-  sensorList: [
+  nodeList: [
     {
-      name: "My First Mocked Sensor",
-      macAddress: "1011",
+      name: "My First Mocked Node",
+      nodeId: "1011",
       humidity: 29,
       pressure: 1000,
       temperature: 24.5,
@@ -23,7 +23,7 @@ const mockGatewayData = {
       total: 40,
       count: 2,
       lastActivity: "2022-01-07T15:28:38Z",
-      gatewayUID: "My Mocked Gatway",
+      gatewayUID: "My Mocked Gateway",
     },
   ],
 };
@@ -35,15 +35,15 @@ const mockedGatewayDataLongName = {
   location: "San Diego, CA",
   voltage: 4.0,
   lastActivity: "2022-02-11T08:48:01Z",
-  sensorList: [],
+  nodeList: [],
 };
 
 const mockUndefinedGatewayData = {
-  uid: "My Other Mocked Gatway",
+  uid: "My Other Mocked Gateway",
   serialNumber: "13579",
   voltage: 2.8,
   lastActivity: "2022-01-07T09:12:00Z",
-  sensorList: [],
+  nodeList: [],
 };
 
 const index = 1;

@@ -32,7 +32,7 @@ Cypress.Commands.add("clickNodeCard", detailsCommands.clickNodeCard);
 
 Cypress.Commands.add("clickGatewayCard", detailsCommands.clickGatewayCard);
 
-Cypress.Commands.add(
-  "clickCarouselButton",
-  detailsCommands.clickCarouselButton
-);
+
+
+
+

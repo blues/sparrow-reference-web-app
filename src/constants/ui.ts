@@ -1,9 +1,13 @@
 import { ERROR_CODES } from "../services/Errors";
 
-// Sensor data fallbacks for empty data fields
-const SENSOR_MESSAGE = {
+// Node data fallbacks for empty data fields
+const NODE_MESSSAGE = {
   NO_NAME: "(unnamed)",
   NO_LOCATION: "—",
+};
+
+// Sensor data fallbacks for empty data fields
+const SENSOR_MESSAGE = {
   NO_VOLTAGE: "—",
   NO_HUMIDITY: "—",
   NO_PRESSURE: "—",
@@ -39,7 +43,7 @@ const ERROR_MESSAGE = {
     "An internal error occurred. If this problem persists please contact Blues support.",
   UNAUTHORIZED:
     "Authentication failed. Please ensure you have a valid HUB_AUTH_TOKEN environment variable.",
-  SENSORS_NOT_FOUND:
+  NODES_NOT_FOUND:
     "We were unable to locate any nodes. Ensure your events are registering in Notehub.",
 };
 
@@ -61,6 +65,7 @@ const getErrorMessage = (errorCode: string) => {
 };
 
 export {
+  NODE_MESSSAGE,
   SENSOR_MESSAGE,
   HISTORICAL_SENSOR_DATA_MESSAGE,
   GATEWAY_MESSAGE,

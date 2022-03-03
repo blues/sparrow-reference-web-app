@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { Card, Col, Row, Typography } from "antd";
 import Gateway from "../models/Gateway";
-import SensorCard from "./SensorCard";
+import NodeCard from "./NodeCard";
 import {
   getFormattedLastSeen,
   getFormattedVoltageData,
@@ -88,21 +88,19 @@ const GatewayCardComponent = (props: GatewayProps) => {
         </Col>
       </Row>
 
-      <h2 data-testid="sensor-header" className={styles.sectionSubTitle}>
-        Sensors
+      <h2 data-testid="node-header" className={styles.sectionSubTitle}>
+        Nodes
       </h2>
-      {gatewayDetails.sensorList.length ? (
+      {gatewayDetails.nodeList.length ? (
         <Row gutter={[16, 16]}>
-          {gatewayDetails.sensorList.map((sensor, cardIndex) => (
-            <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
-              <SensorCard index={cardIndex} sensorDetails={sensor} />
+          {gatewayDetails.nodeList.map((node, cardIndex) => (
+            <Col xs={24} sm={24} lg={12} key={node.nodeId}>
+              <NodeCard index={cardIndex} nodeDetails={node} />
             </Col>
           ))}
         </Row>
       ) : (
-        <h4 className={styles.errorMessage}>
-          {ERROR_MESSAGE.SENSORS_NOT_FOUND}
-        </h4>
+        <h4 className={styles.errorMessage}>{ERROR_MESSAGE.NODES_NOT_FOUND}</h4>
       )}
     </>
   );

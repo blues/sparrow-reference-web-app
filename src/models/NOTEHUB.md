@@ -1,20 +1,20 @@
 # Notehub Starter App Backend
 
-This document details the various Notehub constructs that the Sparrow Reference Web App app uses to retrieve the data for gateways and sensors.
+This document details the various Notehub constructs that the Sparrow Reference Web App app uses to retrieve the data for gateways and nodes.
 
-- [Sensors](#sensors)
+- [Nodes](#nodes)
 - [Gateway Environment Variables](#gateway-environment-variables)
 - [Note Databases](#note-databases)
 
-# Sensors
+# Nodes
 
-## Determining the Sensors paired with a Gateway
+## Determining the Nodes paired with a Gateway
 
 The `sensors.db` file contains notes for each device paired with the gateway. The ID of each node is the ID of the device paired with the gateway. See [sensors.db Notefile](#sensorsdb-notefile).
 
 ## Notefiles and Sensor Readings
 
-Sensor readings are sent as notes from the gateway device the sensor is paired with. The `id` of the note is named after the ID of the sensor node, followed by a hash and then the type of sensor reading. For example, an event with the properties
+Sensor readings are sent as notes from the gateway device the node is paired with. The `id` of the note is named after the ID of the sensor node, followed by a hash and then the type of sensor reading. For example, an event with the properties
 
 ```json
  "2032374632365005001f000d#data.qo": {
@@ -27,7 +27,7 @@ Sensor readings are sent as notes from the gateway device the sensor is paired w
 }
 ```
 
-is a sensor reading from Sensor `2032374632365005001f000d`. The type of sensor reading is [`data`](#data-sensor), which is a test of device connectivity and information transfer from the gateway to the sensor.
+is a sensor reading from Node `2032374632365005001f000d`. The type of sensor reading is [`data`](#data-sensor), which is a test of device connectivity and information transfer from the gateway to the node.
 
 ## Sensor Types
 
@@ -45,7 +45,7 @@ The data sensor (or "ping" sensor as it's called in the source code) is a diagno
 
 <pre>{ "count": 19, <br/>&emsp;&emsp;"sensor": "2F Ray's Bath SPARROW [87JFH688+2H]" }</pre>
 
-Each time a ping message is sent from the Sensor device, the count is incremented. If subsequent `data` events from the same device are not in sequence, this is an indication that messages may have been lost.
+Each time a ping message is sent from the device, the count is incremented. If subsequent `data` events from the same device are not in sequence, this is an indication that messages may have been lost.
 
 The `loc` property from `config.db` for the device is sent as part of the message. This can be used to verify that the location has been propagated through the Gateway to the device.
 
@@ -148,29 +148,29 @@ The upside of keeping this database up-to-date is that the Notehub (and by exten
 
 Used to reset the statistics in `sensors.db`.
 
-Normally, the "message count" statistics in the sensor database (`sensors.db`) just keep counting upward. Messages received, messages lost, and so on. Sometimes you will move sensors around, or even move the gateway around, and you'd just like to reset the statistics.
+Normally, the "message count" statistics in the sensor database (`sensors.db`) just keep counting upward. Messages received, messages lost, and so on. Sometimes you will move nodes around, or even move the gateway around, and you'd just like to reset the statistics.
 
 The way that you do this is to set this env var to the current unix epoch time. The Notecard will notice that this value has changed since the last time it checked, and will reset all the counters to 0.
 
 # Note Databases
 
-- [`config.db`](#configdb-notefile) - stores configuration details about each sensor, such as its name and location
-- [`sensors.db`](#sensorsdb-notefile) - stores connectivity details about each sensor, such as signal strength
+- [`config.db`](#configdb-notefile) - stores configuration details about each sensor node, such as its name and location
+- [`sensors.db`](#sensorsdb-notefile) - stores connectivity details about each sensor node, such as signal strength
 
 ## `config.db` Notefile
 
-The gateway uses this notefile in a read-only manner, to receive configuration information that it may use for itself and will pass-on to the sensors themselves. Although not strictly required, it is recommended that the cloud app use the HTTPS API to add or update notes within this database to distinguish one sensor from another, as the sensor IDs are fairly obscure.
+The gateway uses this notefile in a read-only manner, to receive configuration information that it may use for itself and will pass-on to the nodes themselves. Although not strictly required, it is recommended that the cloud app use the HTTPS API to add or update notes within this database to distinguish one node from another, as the node IDs are fairly obscure.
 
-The NoteID of each note is the sensor ID. The two (optional) fields currently in the body of each note are
+The NoteID of each note is the node ID. The two (optional) fields currently in the body of each note are
 
-- `name`: the human-readable name of the sensor
-- `loc`: the Open Location Code string indicating the geolocation of the sensor
+- `name`: the human-readable name of the node
+- `loc`: the Open Location Code string indicating the geolocation of the node
 
 ## `sensors.db` Notefile
 
-The sensor database `sensors.db` contains statistics about the operations of each sensor, with each NoteID being the ID of the sensor whose stats it contains.
+The sensor database `sensors.db` contains statistics about the operations of each node, with each NoteID being the ID of the node whose stats it contains.
 
-When a Sensor is paired, the database is updated.
+When a node is paired, the database is updated.
 Otherwise, device metrics are updated at the interval given by the [`sensordb_update_mins`](#sensordb_update_mins) environment variable for the gateway.
 
 This is an example of a note in the database file
@@ -200,11 +200,11 @@ This is an example of a note in the database file
 | ------------ | ------ | ------------------------------------------------------------ | ---- |
 | gateway_rssi | int_8  | Reciever's perspective of the Sender's signal strength       | dBm  |
 | gateway_snr  | int_8  | Reciever's perspective of the Sender's signal to noise ratio | dB   |
-| sensor_rssi  | int_8  | Sensors perspective of the Gateway signal strength           | dBm  |
-| sensor_snr   | int_8  | Sensor perspective of the Gateway signal to noise ratio      | dB   |
+| sensor_rssi  | int_8  | Node's perspective of the Gateway signal strength            | dBm  |
+| sensor_snr   | int_8  | Node's perspective of the Gateway signal to noise ratio      | dB   |
 | sensor_txp   | int_8  | Sender's transmit power level                                | dBm  |
-| sensor_ltp   | int_8  | Sensor lowest transmit power attempted                       | dBm  |
-| voltage      | float  | Core voltate of the Sensor                                   | V    |
+| sensor_ltp   | int_8  | Node lowest transmit power attempted                         | dBm  |
+| voltage      | float  | Core voltate of the node                                     | V    |
 | lost         | int_32 | Count of messages lost                                       | -    |
 | recieved     | int_32 | Count of messages received                                   | -    |
 | when         | int_32 | Unix Epoc timestamp                                          | ms   |

@@ -1,18 +1,18 @@
 import axios, { AxiosResponse } from "axios";
 import { services } from "../services/ServiceLocator";
 
-export async function changeSensorName(
+export async function changeNodeName(
   gatewayUID: string,
-  sensorUID: string,
+  nodeId: string,
   name: string
 ) {
   const endpoint = services()
     .getUrlManager()
-    .sensorNameUpdate(gatewayUID, sensorUID);
+    .nodeNameUpdate(gatewayUID, nodeId);
   const postBody = { name };
   const response: AxiosResponse = await axios.post(endpoint, postBody);
   return response.status === 200;
 }
 
-const DEFAULT = { changeSensorName };
+const DEFAULT = { changeNodeName };
 export default DEFAULT;

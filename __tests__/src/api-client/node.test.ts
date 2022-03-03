@@ -2,17 +2,17 @@
  * @jest-environment node
  */
 import axios from "axios";
-import { changeSensorName } from "../../../src/api-client/sensor";
+import { changeNodeName } from "../../../src/api-client/node";
 
-describe(changeSensorName, () => {
+describe(changeNodeName, () => {
   it("should construct good request", async () => {
     const spy = jest
       .spyOn(axios, "post")
       .mockImplementation(() => Promise.resolve({ status: 200 }));
 
-    await changeSensorName("gfoo", "sfoo", "bazname");
+    await changeNodeName("gfoo", "sfoo", "bazname");
 
-    expect(spy).toHaveBeenCalledWith("/api/gateway/gfoo/sensor/sfoo/config", {
+    expect(spy).toHaveBeenCalledWith("/api/gateway/gfoo/node/sfoo/config", {
       name: "bazname",
     });
   });

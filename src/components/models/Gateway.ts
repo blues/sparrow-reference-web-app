@@ -1,4 +1,4 @@
-import Sensor from "./Sensor";
+import Node from "./Node";
 
 interface Gateway {
   uid: string;
@@ -6,7 +6,7 @@ interface Gateway {
   lastActivity: string;
   location?: string;
   voltage: number;
-  sensorList: Sensor[];
+  nodeList: Node[];
 }
 
 export default Gateway;

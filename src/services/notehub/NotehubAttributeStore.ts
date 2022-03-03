@@ -1,30 +1,26 @@
 import { AttributeStore } from "../AttributeStore";
-import NoteSensorConfigBody from "./models/NoteSensorConfigBody";
+import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
 import { NotehubAccessor } from "./NotehubAccessor";
 
 export class NotehubAttributeStore implements AttributeStore {
   constructor(private accessor: NotehubAccessor) {}
 
   async getNodeConfig(gatewayUID: string, nodeID: string) {
-    const defaultConfig = {} as NoteSensorConfigBody;
+    const defaultConfig = {} as NoteNodeConfigBody;
     const { body } = await this.accessor.getConfig(gatewayUID, nodeID);
     return body || defaultConfig;
   }
 
-  async updateSensorName(gatewayUID: string, macAddress: string, name: string) {
-    const config = await this.getNodeConfig(gatewayUID, macAddress);
+  async updateNodeName(gatewayUID: string, nodeId: string, name: string) {
+    const config = await this.getNodeConfig(gatewayUID, nodeId);
     config.name = name;
-    await this.accessor.setConfig(gatewayUID, macAddress, config);
+    await this.accessor.setConfig(gatewayUID, nodeId, config);
   }
 
-  async updateSensorLocation(
-    gatewayUID: string,
-    macAddress: string,
-    loc: string
-  ) {
-    const config = await this.getNodeConfig(gatewayUID, macAddress);
+  async updateNodeLocation(gatewayUID: string, nodeId: string, loc: string) {
+    const config = await this.getNodeConfig(gatewayUID, nodeId);
     config.loc = loc;
-    await this.accessor.setConfig(gatewayUID, macAddress, config);
+    await this.accessor.setConfig(gatewayUID, nodeId, config);
   }
 }
 

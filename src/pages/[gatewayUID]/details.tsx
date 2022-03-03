@@ -2,14 +2,14 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { Row, Col, Card } from "antd";
-import SensorCard from "../../components/elements/SensorCard";
+import NodeCard from "../../components/elements/NodeCard";
 import { services } from "../../services/ServiceLocator";
 import {
   getFormattedLastSeen,
   getFormattedVoltageData,
 } from "../../components/presentation/uiHelpers";
 import Gateway from "../../components/models/Gateway";
-import Sensor from "../../components/models/Sensor";
+import Node from "../../components/models/Node";
 import {
   GATEWAY_MESSAGE,
   getErrorMessage,
@@ -21,13 +21,13 @@ import styles from "../../styles/Home.module.scss";
 
 type GatewayDetailsData = {
   gateway: Gateway | null;
-  sensors: Sensor[];
+  nodes: Node[];
   err?: string;
 };
 
 const GatewayDetails: NextPage<GatewayDetailsData> = ({
   gateway,
-  sensors,
+  nodes,
   err,
 }) => {
   const formattedLocation =
@@ -80,25 +80,25 @@ const GatewayDetails: NextPage<GatewayDetailsData> = ({
               </Col>
             </Row>
 
-            {sensors?.length > 0 ? (
+            {nodes?.length > 0 ? (
               <>
                 <h3
-                  data-testid="gateway-sensor-header"
+                  data-testid="gateway-node-header"
                   className={styles.sectionSubTitle}
                 >
-                  Sensors
+                  Nodes
                 </h3>
                 <Row gutter={[16, 16]}>
-                  {sensors.map((sensor, index) => (
-                    <Col xs={24} sm={24} lg={12} key={sensor.macAddress}>
-                      <SensorCard index={index} sensorDetails={sensor} />
+                  {nodes.map((node, index) => (
+                    <Col xs={24} sm={24} lg={12} key={node.nodeId}>
+                      <NodeCard index={index} nodeDetails={node} />
                     </Col>
                   ))}
                 </Row>
               </>
             ) : (
               <h4 className={styles.errorMessage}>
-                {ERROR_MESSAGE.SENSORS_NOT_FOUND}
+                {ERROR_MESSAGE.NODES_NOT_FOUND}
               </h4>
             )}
           </div>
@@ -119,25 +119,25 @@ export const getServerSideProps: GetServerSideProps<
 > = async ({ query }) => {
   const { gatewayUID } = query as GatewayDetailsQueryInterface;
   let gateway: Gateway | null = null;
-  let sensors: Sensor[] = [];
+  let nodes: Node[] = [];
   try {
     const appService = services().getAppService();
     gateway = await appService.getGateway(gatewayUID);
-    sensors = await appService.getSensors([gatewayUID]);
+    nodes = await appService.getNodes([gatewayUID]);
 
     return {
-      props: { gateway, sensors },
+      props: { gateway, nodes },
     };
   } catch (err) {
     if (err instanceof Error) {
       return {
-        props: { gateway, sensors, err: getErrorMessage(err.message) },
+        props: { gateway, nodes, err: getErrorMessage(err.message) },
       };
     }
     return {
       props: {
         gateway,
-        sensors,
+        nodes,
         err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
       },
     };

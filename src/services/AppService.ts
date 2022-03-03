@@ -1,6 +1,6 @@
 import { ErrorWithCause } from "pony-cause";
 import Gateway from "../components/models/Gateway";
-import Sensor from "../components/models/Sensor";
+import Node from "../components/models/Node";
 import SensorReading from "../components/models/readings/SensorReading";
 import { DataProvider } from "./DataProvider";
 import { AttributeStore } from "./AttributeStore";
@@ -9,20 +9,20 @@ import { AttributeStore } from "./AttributeStore";
 interface AppServiceInterface {
   getGateways: () => Promise<Gateway[]>;
   getGateway: (gatewayUID: string) => Promise<Gateway>;
-  getSensors: (gatewayUIDs: string[]) => Promise<Sensor[]>;
-  getSensor: (gatewayUID: string, sensorUID: string) => Promise<Sensor>;
-  getSensorData: (
+  getNodes: (gatewayUIDs: string[]) => Promise<Node[]>;
+  getNode: (gatewayUID: string, nodeId: string) => Promise<Node>;
+  getNodeData: (
     gatewayUID: string,
-    sensorUID: string
+    nodeId: string
   ) => Promise<SensorReading<unknown>[]>;
-  setSensorName: (
+  setNodeName: (
     gatewayUID: string,
-    macAddress: string,
+    nodeId: string,
     name: string
   ) => Promise<void>;
-  setSensorLocation: (
+  setNodeLocation: (
     gatewayUID: string,
-    macAddress: string,
+    nodeId: string,
     loc: string
   ) => Promise<void>;
 }
@@ -43,34 +43,34 @@ export default class AppService implements AppServiceInterface {
     return this.dataProvider.getGateway(gatewayUID);
   }
 
-  async getSensors(gatewayUIDs: string[]) {
-    return this.dataProvider.getSensors(gatewayUIDs);
+  async getNodes(gatewayUIDs: string[]) {
+    return this.dataProvider.getNodes(gatewayUIDs);
   }
 
-  async getSensor(gatewayUID: string, sensorUID: string) {
-    return this.dataProvider.getSensor(gatewayUID, sensorUID);
+  async getNode(gatewayUID: string, nodeId: string) {
+    return this.dataProvider.getNode(gatewayUID, nodeId);
   }
 
-  async getSensorData(gatewayUID: string, sensorUID: string) {
-    return this.dataProvider.getSensorData(gatewayUID, sensorUID);
+  async getNodeData(gatewayUID: string, nodeId: string) {
+    return this.dataProvider.getNodeData(gatewayUID, nodeId);
   }
 
-  async setSensorName(gatewayUID: string, macAddress: string, name: string) {
+  async setNodeName(gatewayUID: string, nodeId: string, name: string) {
     const store = this.attributeStore;
     try {
-      await store.updateSensorName(gatewayUID, macAddress, name);
+      await store.updateNodeName(gatewayUID, nodeId, name);
     } catch (e) {
-      const e2 = new ErrorWithCause(`could not setSensorName`, { cause: e });
+      const e2 = new ErrorWithCause(`could not setNodeName`, { cause: e });
       throw e2;
     }
   }
 
-  async setSensorLocation(gatewayUID: string, macAddress: string, loc: string) {
+  async setNodeLocation(gatewayUID: string, nodeId: string, loc: string) {
     const store = this.attributeStore;
     try {
-      await store.updateSensorLocation(gatewayUID, macAddress, loc);
+      await store.updateNodeLocation(gatewayUID, nodeId, loc);
     } catch (e) {
-      throw new ErrorWithCause(`could not setSensorLocation`, { cause: e });
+      throw new ErrorWithCause(`could not setNodeLocation`, { cause: e });
     }
   }
 }

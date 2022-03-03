@@ -1,6 +1,6 @@
 import Gateway from "../../../src/components/models/Gateway";
-import Sensor from "../../../src/components/models/Sensor";
-import SensorDetailViewModel from "../../../src/models/SensorDetailViewModel";
+import Node from "../../../src/components/models/Node";
+import NodeDetailViewModel from "../../../src/models/NodeDetailViewModel";
 import AppService from "../../../src/services/AppService";
 import { DataProvider } from "../../../src/services/DataProvider";
 import sparrowData from "./__serviceMocks__/sparrowData.json";
@@ -9,9 +9,7 @@ describe("App Service", () => {
   let dataProviderMock: DataProvider;
   let appServiceMock: AppService;
 
-  const { mockedGatewayUID } = sparrowData;
-
-  const { mockedSensorUID } = sparrowData;
+  const { mockedGatewayUID, mockedNodeId } = sparrowData;
 
   const mockedGatewaySparrowData =
     sparrowData.successfulGatewaySparrowDataResponse as Gateway;
@@ -20,25 +18,23 @@ describe("App Service", () => {
     sparrowData.successfulGatewaySparrowDataResponse as Gateway,
   ];
 
-  const mockedSensorSparrowData =
-    sparrowData.successfulSensorSparrowDataResponse as Sensor[];
+  const mockedNodeSparrowData =
+    sparrowData.successfulNodeSparrowDataResponse as Node[];
 
-  const mockedSensorsSparrowData = [
-    sparrowData.successfulSensorSparrowDataResponse as Sensor[],
+  const mockedNodesSparrowData = [
+    sparrowData.successfulNodeSparrowDataResponse as Node[],
   ];
 
-  const mockedSensorDataSparrowData =
-    sparrowData.successfulSensorDataSparrowDataResponse as SensorDetailViewModel;
+  const mockedSparrowNodeData =
+    sparrowData.successfulNodeDataSparrowDataResponse as NodeDetailViewModel;
 
   beforeEach(() => {
     dataProviderMock = {
       getGateway: jest.fn().mockResolvedValueOnce(mockedGatewaySparrowData),
       getGateways: jest.fn().mockResolvedValueOnce(mockedGatewaysSparrowData),
-      getSensor: jest.fn().mockResolvedValueOnce(mockedSensorSparrowData),
-      getSensors: jest.fn().mockResolvedValueOnce(mockedSensorsSparrowData),
-      getSensorData: jest
-        .fn()
-        .mockResolvedValueOnce(mockedSensorDataSparrowData),
+      getNode: jest.fn().mockResolvedValueOnce(mockedNodeSparrowData),
+      getNodes: jest.fn().mockResolvedValueOnce(mockedNodesSparrowData),
+      getNodeData: jest.fn().mockResolvedValueOnce(mockedSparrowNodeData),
     };
     appServiceMock = new AppService(dataProviderMock);
   });
@@ -53,24 +49,21 @@ describe("App Service", () => {
     expect(res).toEqual(mockedGatewaysSparrowData);
   });
 
-  it("should return a single sensor when getSensor is called", async () => {
-    const res = await appServiceMock.getSensor(
-      mockedGatewayUID,
-      mockedSensorUID
-    );
-    expect(res).toEqual(mockedSensorSparrowData);
+  it("should return a single node when getNode is called", async () => {
+    const res = await appServiceMock.getNode(mockedGatewayUID, mockedNodeId);
+    expect(res).toEqual(mockedNodeSparrowData);
   });
 
-  it("should return a list of sensors when getSensors is called", async () => {
-    const res = await appServiceMock.getSensors([mockedGatewayUID]);
-    expect(res).toEqual(mockedSensorsSparrowData);
+  it("should return a list of nodes when getNodes is called", async () => {
+    const res = await appServiceMock.getNodes([mockedGatewayUID]);
+    expect(res).toEqual(mockedNodesSparrowData);
   });
 
-  it("should return a list of sensor data when getSensorData is called", async () => {
-    const res = await appServiceMock.getSensorData(
+  it("should return a list of node data when getNodeData is called", async () => {
+    const res = await appServiceMock.getNodeData(
       mockedGatewayUID,
-      mockedSensorUID
+      mockedNodeId
     );
-    expect(res).toEqual(mockedSensorDataSparrowData);
+    expect(res).toEqual(mockedSparrowNodeData);
   });
 });

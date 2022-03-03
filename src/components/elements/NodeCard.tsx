@@ -1,28 +1,28 @@
 import { useRouter } from "next/router";
 import { Card, Row, Col, Typography } from "antd";
-import Sensor from "../models/Sensor";
-import { getSensorDetailsPresentation } from "../presentation/sensorDetails";
-import SensorDetailViewModel from "../../models/SensorDetailViewModel";
+import Node from "../models/Node";
+import { getNodeDetailsPresentation } from "../presentation/nodeDetails";
+import NodeDetailViewModel from "../../models/NodeDetailViewModel";
 import styles from "../../styles/Card.module.scss";
 
-interface SensorProps {
-  sensorDetails: Sensor;
+interface NodeProps {
+  nodeDetails: Node;
   index: number;
 }
 
-const SensorCardComponent = (props: SensorProps) => {
-  const { sensorDetails, index } = props;
+const NodeCardComponent = (props: NodeProps) => {
+  const { nodeDetails, index } = props;
   const { Text } = Typography;
 
-  const viewModel: SensorDetailViewModel =
-    getSensorDetailsPresentation(sensorDetails);
+  const viewModel: NodeDetailViewModel =
+    getNodeDetailsPresentation(nodeDetails);
 
   const router = useRouter();
-  const sensorUrl = `/${sensorDetails.gatewayUID}/sensor/${sensorDetails.macAddress}/details`;
+  const nodeUrl = `/${nodeDetails.gatewayUID}/node/${nodeDetails.nodeId}/details`;
   const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    router.push(sensorUrl);
+    router.push(nodeUrl);
   };
 
   return (
@@ -37,21 +37,19 @@ const SensorCardComponent = (props: SensorProps) => {
           <Text
             ellipsis={{
               // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-              tooltip: `${viewModel?.sensor?.name}`,
+              tooltip: `${viewModel?.node?.name}`,
             }}
-            data-testid={`sensor[${index}]-summary`}
+            data-testid={`node[${index}]-summary`}
           >
-            {viewModel?.sensor?.name}
+            {viewModel?.node?.name}
           </Text>
-          <span data-testid="sensor-timestamp" className={styles.timestamp}>
+          <span data-testid="node-timestamp" className={styles.timestamp}>
             Last updated{` `}
-            {viewModel?.sensor?.lastActivity}
+            {viewModel?.node?.lastActivity}
           </span>
-          <div data-testid="sensor-location" className={styles.locationWrapper}>
+          <div data-testid="node-location" className={styles.locationWrapper}>
             <span className={styles.locationTitle}>Location{` `}</span>
-            <span className={styles.location}>
-              {viewModel?.sensor?.location}
-            </span>
+            <span className={styles.location}>{viewModel?.node?.location}</span>
           </div>
         </>
       }
@@ -64,31 +62,31 @@ const SensorCardComponent = (props: SensorProps) => {
         <Col xs={8} sm={5} md={5} lg={8}>
           Humidity
           <br />
-          <span className="dataNumber">{viewModel?.sensor?.humidity}</span>
+          <span className="dataNumber">{viewModel?.node?.humidity}</span>
         </Col>
         <Col xs={8} sm={5} md={5} lg={8}>
           Pressure
           <br />
-          <span className="dataNumber">{viewModel?.sensor?.pressure}</span>
+          <span className="dataNumber">{viewModel?.node?.pressure}</span>
         </Col>
         <Col xs={8} sm={5} md={5} lg={8}>
           Temperature
           <br />
-          <span className="dataNumber">{viewModel?.sensor?.temperature}</span>
+          <span className="dataNumber">{viewModel?.node?.temperature}</span>
         </Col>
         <Col xs={8} sm={5} md={5} lg={8}>
           Voltage
           <br />
-          <span className="dataNumber">{viewModel?.sensor?.voltage}</span>
+          <span className="dataNumber">{viewModel?.node?.voltage}</span>
         </Col>
         <Col xs={8} sm={4} md={4} lg={8}>
           Motion
           <br />
-          <span className="dataNumber">{viewModel?.sensor?.count}</span>
+          <span className="dataNumber">{viewModel?.node?.count}</span>
         </Col>
       </Row>
     </Card>
   );
 };
 
-export default SensorCardComponent;
+export default NodeCardComponent;
