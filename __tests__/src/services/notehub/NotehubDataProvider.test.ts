@@ -40,6 +40,7 @@ describe("Notehub data provider service functions", () => {
       getEvents: jest.fn().mockResolvedValueOnce(mockedNotehubEventsJson),
       getConfig: jest.fn().mockResolvedValueOnce(mockedNotehubConfigJson),
       setConfig: jest.fn().mockResolvedValueOnce({}),
+      setEnvironmentVariables: jest.fn().mockResolvedValueOnce({}),
     };
     notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock);
   });
