@@ -1732,6 +1732,13 @@ chartjs-adapter-date-fns@^2.0.0:
   resolved "https://registry.yarnpkg.com/chartjs-adapter-date-fns/-/chartjs-adapter-date-fns-2.0.0.tgz#5e53b2f660b993698f936f509c86dddf9ed44c6b"
   integrity sha512-rmZINGLe+9IiiEB0kb57vH3UugAtYw33anRiw5kS2Tu87agpetDDoouquycWc9pRsKtQo5j+vLsYHyr8etAvFw==
 
+chartjs-plugin-zoom@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/chartjs-plugin-zoom/-/chartjs-plugin-zoom-1.2.0.tgz#dad0861b2d171bca1f6d11b3e3e917bc12b950ff"
+  integrity sha512-cLYKUHHx4bevuZQDpEKdjpvZ6HGu6NF8laTThgA0I9af+PV1N4qVTRZmyDNh0SAzsHZPtDOhuO3I7B4CF1lstw==
+  dependencies:
+    hammerjs "^2.0.8"
+
 check-more-types@^2.24.0:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/check-more-types/-/check-more-types-2.24.0.tgz#1420ffb10fd444dcfc79b43891bbfffd32a84600"
@@ -3107,6 +3114,11 @@ h3@^0.2.10:
   version "0.2.12"
   resolved "https://registry.yarnpkg.com/h3/-/h3-0.2.12.tgz#019db8f0c6910e0dc79266857560e22b5ef2a5e3"
   integrity sha512-M3Ot1J5emIyafibkzGtqlZMQimTf3OMgSR2tv3TSbOHlssEktp3HlzuzWGvRCaX7XhpbmgDjgYpOC/ml9h5xug==
+
+hammerjs@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
+  integrity sha1-BO93hiz/K7edMPdpIJWTAiK/YPE=
 
 harmony-reflect@^1.4.6:
   version "1.6.2"

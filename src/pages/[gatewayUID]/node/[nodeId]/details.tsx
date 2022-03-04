@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { Card, Input, Button, Tabs, Row, Col, Tooltip } from "antd";
 import axios from "axios";
@@ -6,8 +7,6 @@ import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import { ParsedUrlQuery } from "querystring";
 import Form, { FormProps } from "../../../../components/elements/Form";
-import SensorDetailsLineChart from "../../../../components/charts/SensorDetailsLineChart";
-import SensorDetailsBarChart from "../../../../components/charts/SensorDetailsBarChart";
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
@@ -24,6 +23,15 @@ import HumiditySensorSchema from "../../../../components/models/readings/Humidit
 import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
 import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
 import CountSensorSchema from "../../../../components/models/readings/CountSensorSchema";
+
+const DynamicLineChart = dynamic(
+  () => import("../../../../components/charts/SensorDetailsLineChart"),
+  { ssr: false }
+);
+const DynamicBarChart = dynamic(
+  () => import("../../../../components/charts/SensorDetailsBarChart"),
+  { ssr: false }
+);
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
 interface SparrowQueryInterface extends ParsedUrlQuery {
@@ -67,17 +75,18 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
     {
       label: "Name",
       name: "name",
-      rules: [{ required: true, message: "Please add the name of your node" }],
       tooltip: "What is the name of your node?",
       initialValue:
         viewModel.node?.name !== NODE_MESSSAGE.NO_NAME
           ? viewModel.node?.name
           : undefined,
+      rules: [{ required: true, message: "Please add the name of your node" }],
       contents: (
         <Input
           data-testid="form-input-node-name"
           placeholder="Name of node"
           maxLength={49}
+          showCount
         />
       ),
     },
@@ -97,6 +106,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
           data-testid="form-input-node-location"
           placeholder="Node location"
           maxLength={15}
+          showCount
         />
       ),
     },
@@ -231,7 +241,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.temperature.length ? (
-                      <SensorDetailsLineChart
+                      <DynamicLineChart
                         label="Temperature"
                         data={viewModel.readings.temperature}
                         chartColor="#59d2ff"
@@ -252,7 +262,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.humidity.length ? (
-                      <SensorDetailsLineChart
+                      <DynamicLineChart
                         label="Humidity"
                         data={viewModel.readings.humidity}
                         chartColor="#ba68c8"
@@ -273,7 +283,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.voltage.length ? (
-                      <SensorDetailsLineChart
+                      <DynamicLineChart
                         label="Voltage"
                         data={viewModel.readings.voltage}
                         chartColor="#9ccc65"
@@ -294,7 +304,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.pressure.length ? (
-                      <SensorDetailsLineChart
+                      <DynamicLineChart
                         label="Pressure"
                         data={viewModel.readings.pressure}
                         chartColor="#ffd54f"
@@ -315,7 +325,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.count.length ? (
-                      <SensorDetailsBarChart
+                      <DynamicBarChart
                         label="Count"
                         data={viewModel.readings.count}
                         chartColor="#ff7e6d"

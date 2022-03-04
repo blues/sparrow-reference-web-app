@@ -74,6 +74,23 @@ const SensorDetailsLineChart = ({
       legend: {
         display: false,
       },
+      zoom: {
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          drag: {
+            enabled: true,
+          },
+          mode: "xy",
+        },
+        limits: {
+          yAxis: { min: 0 },
+        },
+      },
     },
   };
 

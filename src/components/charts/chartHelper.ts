@@ -13,6 +13,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import zoomPlugin from "chartjs-plugin-zoom";
 import "chartjs-adapter-date-fns";
 import CountSensorSchema from "../models/readings/CountSensorSchema";
 import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
@@ -39,7 +40,8 @@ ChartJS.register(
   TimeScale,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  zoomPlugin
 );
 
 // See https://date-fns.org/v2.27.0/docs/format
