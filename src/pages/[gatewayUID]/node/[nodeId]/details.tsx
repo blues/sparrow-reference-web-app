@@ -1,7 +1,8 @@
 import { GetServerSideProps, NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { Card, Input, Button, Tabs, Row, Col, Tooltip } from "antd";
+import { Card, Input, Button, Tabs, Row, Col, Tooltip, Alert } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
@@ -218,21 +219,29 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     className={detailsStyles.card}
                     data-testid="motion-count"
                   >
+                    Motion
                     <Tooltip
                       title={`Total motions detected by ${viewModel.node?.name}: ${viewModel.node.total}`}
                     >
-                      Motion
-                      <br />
-                      <span className={detailsStyles.dataNumber}>
-                        {viewModel.node.count}
-                      </span>
+                      <InfoCircleOutlined />
                     </Tooltip>
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.node.count}
+                    </span>
                   </Card>
                 </Col>
               </Row>
+              <Alert
+                className={detailsStyles.currentReadingsRow}
+                message="To zoom on charts: scroll, draw a box, or pinch."
+                type="info"
+                showIcon
+                closable
+              />
               <Row justify="start" gutter={[8, 16]}>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Temperature</h3>
                     <p
                       data-testid="last-seen-temperature"
@@ -253,7 +262,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Humidity</h3>
                     <p
                       data-testid="last-seen-humidity"
@@ -274,7 +283,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Voltage</h3>
                     <p
                       data-testid="last-seen-voltage"
@@ -295,7 +304,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Pressure</h3>
                     <p
                       data-testid="last-seen-pressure"
@@ -316,7 +325,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Motion Count</h3>
                     <p
                       data-testid="last-seen-count"
