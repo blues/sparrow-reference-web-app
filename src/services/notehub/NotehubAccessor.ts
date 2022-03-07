@@ -1,4 +1,5 @@
 import NotehubDevice from "./models/NotehubDevice";
+import NotehubEnvVars from "./models/NotehubEnvVars";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubNodeConfig";
@@ -18,6 +19,10 @@ interface NotehubAccessor {
     hubDeviceUID: string,
     nodeId: string,
     body: NoteSensorConfigBody
+  ) => Promise<boolean>;
+  setEnvironmentVariables: (
+    hubDeviceUID: string,
+    envVars: NotehubEnvVars
   ) => Promise<boolean>;
 }
 
