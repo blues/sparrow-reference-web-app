@@ -131,7 +131,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
     console.log(response);
 
     if (response.status < 300) {
-      refreshData();
+      await refreshData();
     }
   };
 
