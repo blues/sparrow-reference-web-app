@@ -9,6 +9,7 @@ import { AttributeStore } from "./AttributeStore";
 interface AppServiceInterface {
   getGateways: () => Promise<Gateway[]>;
   getGateway: (gatewayUID: string) => Promise<Gateway>;
+  setGatewayName: (gatewayUID: string, name: string) => Promise<void>;
   getNodes: (gatewayUIDs: string[]) => Promise<Node[]>;
   getNode: (gatewayUID: string, nodeId: string) => Promise<Node>;
   getNodeData: (
@@ -41,6 +42,16 @@ export default class AppService implements AppServiceInterface {
 
   async getGateway(gatewayUID: string) {
     return this.dataProvider.getGateway(gatewayUID);
+  }
+
+  async setGatewayName(gatewayUID: string, name: string) {
+    const store = this.attributeStore;
+    try {
+      await store.updateGatewayName(gatewayUID, name);
+    } catch (e) {
+      const e2 = new ErrorWithCause(`could not setGatewayName`, { cause: e });
+      throw e2;
+    }
   }
 
   async getNodes(gatewayUIDs: string[]) {
