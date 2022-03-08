@@ -6,7 +6,7 @@ import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
-import SensorReading from "../../components/models/readings/SensorReading";
+import Reading from "../../components/models/readings/Reading";
 import { ERROR_CODES, getError } from "../Errors";
 import NotehubLocation from "./models/NotehubLocation";
 import TemperatureSensorReading from "../../components/models/readings/TemperatureSensorReading";
@@ -226,13 +226,9 @@ export default class NotehubDataProvider implements DataProvider {
     return match;
   }
 
-  async getNodeData(
-    gatewayUID: string,
-    nodeId: string,
-    options?: { startDate?: Date }
-  ) {
+  async getNodeData(gatewayUID: string, nodeId: string, startDate?: string) {
     const nodeEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
-      options?.startDate
+      Number(startDate)
     );
 
     const filteredEvents: NotehubEvent[] = nodeEvents.filter(
@@ -242,7 +238,7 @@ export default class NotehubDataProvider implements DataProvider {
         (event.file.includes("#air.qo") || event.file.includes("#motion.qo")) &&
         event.device_uid === gatewayUID
     );
-    const readingsToReturn: SensorReading<unknown>[] = [];
+    const readingsToReturn: Reading<unknown>[] = [];
     filteredEvents.forEach((event: NotehubEvent) => {
       if (event.body.temperature) {
         readingsToReturn.push(

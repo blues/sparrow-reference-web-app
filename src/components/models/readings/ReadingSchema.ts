@@ -1,4 +1,4 @@
 // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-unused-vars
-interface SensorReadingSchema<ReadingType> {}
+interface ReadingSchema<ReadingType> {}
 
-export default SensorReadingSchema;
+export default ReadingSchema;

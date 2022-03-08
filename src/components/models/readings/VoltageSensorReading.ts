@@ -1,7 +1,7 @@
-import SensorReading from "./SensorReading";
+import Reading from "./Reading";
 import VoltageSensorSchema from "./VoltageSensorSchema";
 
-class VoltageSensorReading implements SensorReading<number> {
+class VoltageSensorReading implements Reading<number> {
   schema: VoltageSensorSchema;
 
   value: number;

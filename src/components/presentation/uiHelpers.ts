@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { sortBy, uniqBy } from "lodash";
-import SensorReading from "../models/readings/SensorReading";
-import SensorReadingSchema from "../models/readings/SensorSchema";
+import Reading from "../models/readings/Reading";
+import ReadingSchema from "../models/readings/ReadingSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
@@ -10,14 +10,14 @@ export const getFormattedLastSeen = (date: string) =>
   });
 
 export const getFormattedChartData = (
-  sensorReadings: SensorReading<unknown>[],
-  sensorSchema: SensorReadingSchema<unknown>
+  readings: Reading<unknown>[],
+  readingSchema: ReadingSchema<unknown>
 ) => {
-  if (sensorReadings.length) {
+  if (readings.length) {
     const formattedData = sortBy(
       uniqBy(
-        sensorReadings
-          .filter((reading) => reading.schema === sensorSchema)
+        readings
+          .filter((reading) => reading.schema === readingSchema)
           .map((filteredEvent) => {
             const chartDataObj = {
               when: filteredEvent.captured,

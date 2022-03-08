@@ -1,35 +1,30 @@
 /* eslint-disable react/require-default-props */
 import { ChartData, ChartOptions } from "chart.js";
-import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
 import { CHART_DATE_FORMAT, getTooltipDisplayText } from "./chartHelper";
-import type { SensorDetailsChartProps } from "./chartHelper";
-import LineChart from "./LineChart";
+import type { NodeDetailsChartProps } from "./chartHelper";
+import BarChart from "./BarChart";
 
-const SensorDetailsLineChart = ({
+const NodeDetailsBarChart = ({
   label,
   chartColor,
   data,
   schema,
-}: SensorDetailsChartProps) => {
+}: NodeDetailsChartProps) => {
   const labels = data.map((obj) => obj.when);
   const values = data.map((obj) => obj.value);
 
-  const chartData: ChartData<"line"> = {
+  const chartData: ChartData<"bar"> = {
     labels,
     datasets: [
       {
         label,
         data: values,
         backgroundColor: `${chartColor}66`,
-        borderColor: `${chartColor}`,
-        pointBackgroundColor: `${chartColor}`,
-        pointRadius: 2,
-        fill: true,
       },
     ],
   };
 
-  const options: ChartOptions<"line"> = {
+  const options: ChartOptions<"bar"> = {
     scales: {
       xAxis: {
         grid: {
@@ -51,10 +46,7 @@ const SensorDetailsLineChart = ({
         },
       },
       yAxis: {
-        grid: {
-          drawBorder: false,
-        },
-        ...(schema === VoltageSensorSchema && { min: 0, max: 5 }),
+        beginAtZero: true,
         ticks: {
           stepSize: 0,
         },
@@ -74,31 +66,14 @@ const SensorDetailsLineChart = ({
       legend: {
         display: false,
       },
-      zoom: {
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          drag: {
-            enabled: true,
-          },
-          mode: "xy",
-        },
-        limits: {
-          yAxis: { min: 0 },
-        },
-      },
     },
   };
 
   return (
     <div style={{ width: "100%" }}>
-      <LineChart data={chartData} options={options} />
+      <BarChart data={chartData} options={options} />
     </div>
   );
 };
 
-export default SensorDetailsLineChart;
+export default NodeDetailsBarChart;

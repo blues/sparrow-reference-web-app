@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { ErrorWithCause } from "pony-cause";
+import { sub } from "date-fns";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
 import { HTTP_HEADER } from "../../constants/http";
@@ -20,7 +21,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   hubProjectUID: string;
 
-  hubHistoricalDataStartDate: Date;
+  hubHistoricalDataStartDate: number;
 
   commonHeaders;
 
@@ -34,11 +35,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     this.hubBaseURL = hubBaseURL;
     this.hubDeviceUID = hubDeviceUID;
     this.hubProjectUID = hubProjectUID;
-
-    const date = new Date();
-    date.setDate(date.getDate() - hubHistoricalDataStartDate);
-    this.hubHistoricalDataStartDate = date;
-
+    this.hubHistoricalDataStartDate = hubHistoricalDataStartDate;
     this.commonHeaders = {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
       [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
@@ -90,6 +87,14 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     return getError(errorCode, { cause: e as Error });
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  constructStartDate(startDate: number) {
+    const date = new Date();
+    const startDateToUse = sub(date, { minutes: startDate });
+    const startDateValue = Math.round(startDateToUse.getTime() / 1000);
+    return startDateValue;
+  }
+
   async getLatestEvents(hubDeviceUID: string) {
     const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}/latest`;
     try {
@@ -100,12 +105,13 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }
   }
 
-  async getEvents(startDate?: Date) {
+  async getEvents(startDate?: number) {
+    // start date is in minutes
+    let startDateValue = startDate || this.hubHistoricalDataStartDate;
+    startDateValue = this.constructStartDate(startDateValue);
+
     // Take the start date from the argument first, but fall back to the environment
     // variable.
-    const startDateToUse = startDate || this.hubHistoricalDataStartDate;
-    const startDateValue = Math.round(startDateToUse.getTime() / 1000);
-
     let events: NotehubEvent[] = [];
     const initialEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?startDate=${startDateValue}`;
     try {
@@ -116,7 +122,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       if (resp.data.events) {
         events = resp.data.events;
       }
-      while (resp.data.has_more) {
+      while (resp.data.has_more && resp.data.through) {
         const recurringEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?since=${resp.data.through}`;
         const recurringResponse: AxiosResponse<NotehubResponse> =
           // eslint-disable-next-line no-await-in-loop

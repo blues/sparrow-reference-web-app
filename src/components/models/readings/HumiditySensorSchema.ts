@@ -1,4 +1,3 @@
-import SensorReadingSchema from "./SensorSchema";
+import ReadingSchema from "./ReadingSchema";
 
-export default class HumiditySensorSchema
-  implements SensorReadingSchema<number> {}
+export default class HumiditySensorSchema implements ReadingSchema<number> {}
