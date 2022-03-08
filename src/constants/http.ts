@@ -6,6 +6,8 @@ const HTTP_STATUS = {
   INVALID_ENV_VAR_KEY: "Invalid environment variable key",
   INVALID_SENSOR_MAC: "Invalid Sensor MAC",
   INVALID_CONFIG_BODY: "Invalid Sensor Config Body",
+  INVALID_PROJECTUID: "Invalid ProjectUID",
+
   INTERNAL_ERR_GATEWAY: "Error while fetching Gateway",
   INTERNAL_ERR_SENSORS: "Error while fetching Sensors",
   INTERNAL_ERR_CONFIG: "Error while fetching Sensor Config",

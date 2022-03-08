@@ -19,7 +19,7 @@ interface HasNotehubLocation {
   tower_location?: NotehubLocation;
 }
 
-function getBestLocation(object: HasNotehubLocation) {
+export function getBestLocation(object: HasNotehubLocation) {
   if (object.triangulated_location) {
     return object.triangulated_location;
   }

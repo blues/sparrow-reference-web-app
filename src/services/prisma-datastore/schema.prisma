@@ -1,6 +1,5 @@
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["extendedIndexes"]
 }
 
@@ -10,83 +9,138 @@ datasource db {
 }
 
 model Project {
-  id            Int       @id @default(autoincrement())
-  createdAt     DateTime  @default(now()) @map("created_at")
-  projectUID    String    @map("project_uid") @unique
-  name          String    @db.VarChar(50)
-  gateways      Gateway[]
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now()) @map("created_at")
+  projectUID String    @map("project_uid") @unique
+  name       String    @db.VarChar(50)
+  gateways   Gateway[]
+
+  // the ReadingSource this gateway represents
+  readingSource     ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
+  reading_source_id Int           @unique
+
   @@map("project")
 }
 
 // A gateway comprises a sparrow device and a notecard. For now, the SparrowDevice itself isn't important
 model Gateway {
-  id            Int       @id @default(autoincrement())
+  id                Int @id @default(autoincrement())
 
   // unique device uid in notehub
-  deviceUID    String     @unique @map("device_uid") @db.Char(64)
+  deviceUID         String @unique @map("device_uid") @db.Char(64)
 
   // device serial number (cached)
-  sn            String   @db.VarChar(50)
+  name              String? @db.VarChar(50) // cached
+  location          String? @db.VarChar(200) // cached
+  lastSeenAt        DateTime? @map("last_seen_at") // the last time an event was heard from this device
 
   // the project the device belongs to
-  project       Project   @relation(fields:[project_id], references:[id])
-  project_id    Int
+  project           Project @relation(fields: [project_id], references: [id])
+  project_id        Int
 
   // the nodes paired with this gateway
-  nodes         Node[]
-  //radio         Node?
+  nodes             Node[]
 
+  // the radio providing LoRa connectivity to this gateway
+  // radio         Node?     @relation(fields:[radio_id], references:[id]) // the node that corresponds to the sensor details for this
+  // radio_id      Int
+
+  // the ReadingSource this gateway represents
+  readingSource     ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
+  reading_source_id Int           @unique
+
+  @@index([project_id])
+  @@index([deviceUID])
   @@map("gateway")
-  @@index([project_id])   // surprised that relationships aren't automatically indexed  
-
 }
 
 model Node {
-  id              Int         @id @default(autoincrement())
-  
-  deviceEUI      String       @unique @map("device_eui") @db.Char(64)
+  id Int @id @default(autoincrement())
 
-  name            String?     @db.VarChar(49) // cached
-  location        String?     @db.Char(15)    // cached
-  label           String?     @db.VarChar(50) // max 50
-  comment         String?     @db.VarChar(3000)  
-  lastSeenAt      DateTime?   @map("last_seen_at") // the last time an event was heard from this device
+  nodeEUI           String    @unique @map("node_eui") @db.Char(24)
 
-  gateway         Gateway     @relation(fields:[gateway_id], references:[id])
-  gateway_id      Int         
+  name              String?   @db.VarChar(49) // cached
+  location          String?   @db.Char(15) // cached
+  label             String?   @db.VarChar(50) // max 50
+  comment           String?   @db.VarChar(3000)
+  lastSeenAt        DateTime? @map("last_seen_at") // the last time an event was heard from this device
 
-  readingSchemas  DeviceReadingSchema[]
+  gateway           Gateway @relation(fields: [gateway_id], references: [id])    // todo - cascade delete?
+  gateway_id        Int
 
+  //notecard        Gateway?    // set if this node is the lora radio for a gateway
+  readingSource     ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
+  reading_source_id Int           @unique
+
+  @@index([gateway_id])
   @@map("node")
-  @@index([gateway_id])   // surprised that relationships aren't automatically indexed  
+}
+
+enum ReadingSourceType {
+  NODE
+  GATEWAY
+  PROJECT
+  GLOBAL
+}
+
+// A source of reading schema and readings. This abstracts away from the nature of the device that sent the readings and where
+// the reading schema comes from, so it can be per device, per firmware, per something else.
+model ReadingSource {
+  id                Int               @id @default(autoincrement())
+  type              ReadingSourceType
+  readingSchema     ReadingSchema[]
+  reading           Reading[]
+
+  // these should be unidirectional - we don't need these here.
+  gateway           Gateway?
+  node              Node?
+  project           Project?
+}
+
+enum ReadingSchemaValueType {
+  SCALAR_INT
+  SCALAR_FLOAT
+  COMPOSITE
 }
 
 // describes the nature of a sensor readong from a single device
-model DeviceReadingSchema {
-    id            Int                 @id @default(autoincrement())
-    name          String              @db.VarChar(32)
-    node          Node                @relation(fields: [node_id], references: [id])
-    node_id       Int
-    eventName     String              @db.VarChar(32) @map("event_name")  // "air.qo"
-    description   String?             @db.VarChar(1000)
-    unit          String?             @db.Char(10)      // presentation unit
-    readings      Reading[]
+model ReadingSchema {
+  id                  Int           @id @default(autoincrement())
+  name                String        @db.VarChar(50)
+  readingSource       ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
+  reading_source_id   Int
+  eventName           String        @map("event_name") @db.VarChar(32) // "*#air.qo"
 
-    // todo - allow property indexing into the event body? This allows composite events to be factored out into discrete readings
-    // alternative is to store the whole event body as json
-    @@map("device_reading_schema")
-    @@index([node_id])
+  unit                String?   @db.Char(10) // presentation unit
+  readings            Reading[]
+  valueType           ReadingSchemaValueType
+  scale               Int       @default(1)
+  spec                Json      // type descriptor for the event schema. Most typically just `{ count: number }`.
+
+  @@index([reading_source_id])
+  @@index([reading_source_id, eventName])
+  @@map("reading_schema")
 }
 
 // A single reading from a sensor on a specific device
 model Reading {
-    id            Int                   @id @default(autoincrement())
-    when          DateTime       
-    schema        DeviceReadingSchema   @relation(fields: [schema_id], references: [id])
-    schema_id     Int
-    value         Int
+  id                Int             @id @default(autoincrement())
 
-    @@map("reading")
-    @@index([schema_id])
+  // when the sensor reading was taken
+  when              DateTime      
+
+  // the schema associated with this type of reading
+  schema            ReadingSchema   @relation(fields: [schema_id], references: [id])
+  schema_id Int
+
+  // the reading source that produced this reading
+  readingSource     ReadingSource   @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
+  reading_source_id Int
+
+  intValue          Int?            // this may be premature optimization - denormalize the data for single values
+  floatValue        Float? 
+  value             Json
+
+  @@index([schema_id])
+  @@map("reading")
 }
-

@@ -2,10 +2,13 @@ import Gateway from "../components/models/Gateway";
 import Sensor from "../components/models/Sensor";
 import SensorReading from "../components/models/readings/SensorReading";
 import { DataProvider } from "./DataProvider";
+import { SparrowEventHandler } from "./SparrowEvent";
+import { SparrowEvent } from "./notehub/SparrowEvents";
 
 // this class / interface combo passes data and functions to the service locator file
 interface AppServiceInterface {
   getGateways: () => Promise<Gateway[]>;
+  // todo - make the interface less chatty.  
   getGateway: (gatewayUID: string) => Promise<Gateway>;
   getSensors: (gatewayUIDs: string[]) => Promise<Sensor[]>;
   getSensor: (gatewayUID: string, sensorUID: string) => Promise<Sensor>;
@@ -13,15 +16,15 @@ interface AppServiceInterface {
     gatewayUID: string,
     sensorUID: string
   ) => Promise<SensorReading<unknown>[]>;
+
+  handleEvent(event: SparrowEvent) : Promise<void>;
 }
 
 export type { AppServiceInterface };
 
 export default class AppService implements AppServiceInterface {
-  dataProvider: DataProvider;
-
-  constructor(dataProvider: DataProvider) {
-    this.dataProvider = dataProvider;
+ 
+  constructor(private dataProvider: DataProvider, private sparrowEventHandler: SparrowEventHandler) {
   }
 
   async getGateways() {
@@ -43,4 +46,9 @@ export default class AppService implements AppServiceInterface {
   async getSensorData(gatewayUID: string, sensorUID: string) {
     return this.dataProvider.getSensorData(gatewayUID, sensorUID);
   }
+
+  handleEvent(event: SparrowEvent) {
+    return this.sparrowEventHandler.handleEvent(event);
+  }
+
 }

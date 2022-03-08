@@ -15,7 +15,7 @@ const env = {
   HUB_PROJECTUID: process.env.HUB_PROJECTUID,
   NEXT_PUBLIC_BUILD_VERSION: process.env.NEXT_PUBLIC_BUILD_VERSION,
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
-
+  DATABASE_URL: process.env.DATABASE_URL,
   // TODO - delete when we're not making calls to the api from the server
   APP_BASE_URL: process.env.APP_BASE_URL,
   // TODO - delete when we're not making calls to the api from the server
@@ -74,6 +74,10 @@ const Config = {
   get hubHistoricalDataStartDate() {
     return parseInt(optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", "7"), 10);
   },
+  get databaseURL() {
+    return optionalEnvVar("DATABASE_URL", "");
+  },
+
 };
 
 const toString = (c: typeof Config | typeof env) => {

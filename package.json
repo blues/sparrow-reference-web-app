@@ -27,6 +27,7 @@
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.27.0",
     "lodash": "^4.17.21",
+    "mocker-data-generator": "^2.12.0",
     "next": "12.0.4",
     "next-plugin-antd-less": "^1.5.2",
     "pony-cause": "^1.1.1",

@@ -2,10 +2,14 @@ import AxiosHttpNotehubAccessor from "./notehub/AxiosHttpNotehubAccessor";
 import AppService, { AppServiceInterface } from "./AppService";
 import NotehubDataProvider from "./notehub/NotehubDataProvider";
 import Config from "../../config";
+import PrismaDatastoreEventHandler from "./prisma-datastore/PrismaDatastoreEventHandler";
+import { PrismaClient } from "@prisma/client";
+import { NoopSparrowEventHandler } from "./SparrowEvent";
+import { PrismaDataProvider } from "./prisma-datastore/PrismaDataProvider";
 
 // this class provides whatever service is needed to the React view component that needs it
 class ServiceLocator {
-  appService: AppServiceInterface;
+  private appService: AppServiceInterface;
 
   constructor() {
     const notehubAccessor = new AxiosHttpNotehubAccessor(
@@ -15,8 +19,11 @@ class ServiceLocator {
       Config.hubAuthToken,
       Config.hubHistoricalDataStartDate
     );
-    const notehubDataProvider = new NotehubDataProvider(notehubAccessor);
-    this.appService = new AppService(notehubDataProvider);
+    // todo factor this out so that we have clear separation of the notehub implementation from the datastore implementation
+    const prisma = Config.databaseURL ? new PrismaClient({datasources: {db: { url: Config.databaseURL }}}) : null;
+    const eventHandler = prisma ? new PrismaDatastoreEventHandler(prisma) : new NoopSparrowEventHandler();
+    const dataProvider = prisma ? new PrismaDataProvider(prisma, Config.hubProjectUID) : new NotehubDataProvider(notehubAccessor);
+    this.appService = new AppService(dataProvider, eventHandler);
   }
 
   getAppService(): AppServiceInterface {
