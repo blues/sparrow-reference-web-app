@@ -1,4 +1,5 @@
 import axios from "axios";
+import { sub } from "date-fns";
 import MockAdapter from "axios-mock-adapter";
 import { ERROR_CODES } from "../../../../src/services/Errors";
 import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
@@ -12,8 +13,10 @@ let mock: MockAdapter;
 const mockBaseURL = "http://blues.io";
 const mockProjectUID = "app:1234";
 const mockDeviceUID = "dev:1234";
-const mockHubHistoricalDataStartDate = 4;
-const mockedStartDate = new Date();
+const mockHubHistoricalDataStartDate = 1440;
+const mockedStartDate = sub(new Date(), {
+  minutes: mockHubHistoricalDataStartDate,
+});
 const mockedEpochTimeValue = Math.round(mockedStartDate.getTime() / 1000);
 
 const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}`;
@@ -113,7 +116,7 @@ describe("Event handling", () => {
 
   it("should return a list of events when getEvents is called with a valid hub app UID and date range", async () => {
     mock.onGet(API_INITIAL_ALL_EVENTS_URL).reply(200, mockNotehubEventData);
-    const res = await axiosHttpNotehubAccessorMock.getEvents(mockedStartDate);
+    const res = await axiosHttpNotehubAccessorMock.getEvents();
 
     expect(res).toEqual(mockNotehubEventData.events);
   });
