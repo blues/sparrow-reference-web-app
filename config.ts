@@ -72,7 +72,7 @@ const Config = {
     return requiredEnvVar("HUB_DEVICE_UID");
   },
   get hubHistoricalDataStartDate() {
-    return parseInt(optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", "7"), 10);
+    return parseInt(optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", "3"), 10);
   },
 };
 

@@ -16,7 +16,7 @@ interface DataProvider {
     gatewayUID: string,
     nodeId: string,
     options?: {
-      startDate?: Date;
+      startDate?: number;
     }
   ) => Promise<SensorReading<unknown>[]>;
 }
