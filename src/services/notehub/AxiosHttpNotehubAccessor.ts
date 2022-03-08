@@ -10,6 +10,7 @@ import NotehubErr from "./models/NotehubErr";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubResponse from "./models/NotehubResponse";
 import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
+import NotehubEnvVars from "./models/NotehubEnvVars";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -200,6 +201,20 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       } else {
         throw getError(`${ERROR_CODES.INTERNAL_ERROR}: ${err}`);
       }
+    }
+    return true;
+  }
+
+  async setEnvironmentVariables(hubDeviceUID: string, envVars: NotehubEnvVars) {
+    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}/environment_variables`;
+    try {
+      await axios.put(
+        endpoint,
+        { environment_variables: envVars },
+        { headers: this.commonHeaders }
+      );
+    } catch (e) {
+      throw this.errorWithCode(e);
     }
     return true;
   }

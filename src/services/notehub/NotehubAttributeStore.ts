@@ -5,6 +5,10 @@ import { NotehubAccessor } from "./NotehubAccessor";
 export class NotehubAttributeStore implements AttributeStore {
   constructor(private accessor: NotehubAccessor) {}
 
+  async updateGatewayName(gatewayUID: string, name: string) {
+    await this.accessor.setEnvironmentVariables(gatewayUID, { _sn: name });
+  }
+
   async getNodeConfig(gatewayUID: string, nodeID: string) {
     const defaultConfig = {} as NoteNodeConfigBody;
     const { body } = await this.accessor.getConfig(gatewayUID, nodeID);

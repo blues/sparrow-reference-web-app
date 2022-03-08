@@ -1,4 +1,5 @@
 export interface AttributeStore {
+  updateGatewayName: (gatewayUID: string, name: string) => Promise<void>;
   updateNodeName: (
     gatewayUID: string,
     nodeId: string,
