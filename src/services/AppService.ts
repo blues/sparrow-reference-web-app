@@ -1,7 +1,9 @@
+import { ErrorWithCause } from "pony-cause";
 import Gateway from "../components/models/Gateway";
-import Sensor from "../components/models/Sensor";
+import Node from "../components/models/Node";
 import SensorReading from "../components/models/readings/SensorReading";
 import { DataProvider } from "./DataProvider";
+import { AttributeStore } from "./AttributeStore";
 import { SparrowEventHandler } from "./SparrowEvent";
 import { SparrowEvent } from "./notehub/SparrowEvents";
 
@@ -10,12 +12,23 @@ interface AppServiceInterface {
   getGateways: () => Promise<Gateway[]>;
   // todo - make the interface less chatty.  
   getGateway: (gatewayUID: string) => Promise<Gateway>;
-  getSensors: (gatewayUIDs: string[]) => Promise<Sensor[]>;
-  getSensor: (gatewayUID: string, sensorUID: string) => Promise<Sensor>;
-  getSensorData: (
+  setGatewayName: (gatewayUID: string, name: string) => Promise<void>;
+  getNodes: (gatewayUIDs: string[]) => Promise<Node[]>;
+  getNode: (gatewayUID: string, nodeId: string) => Promise<Node>;
+  getNodeData: (
     gatewayUID: string,
-    sensorUID: string
+    nodeId: string
   ) => Promise<SensorReading<unknown>[]>;
+  setNodeName: (
+    gatewayUID: string,
+    nodeId: string,
+    name: string
+  ) => Promise<void>;
+  setNodeLocation: (
+    gatewayUID: string,
+    nodeId: string,
+    loc: string
+  ) => Promise<void>;
 
   handleEvent(event: SparrowEvent) : Promise<void>;
 }
@@ -23,9 +36,11 @@ interface AppServiceInterface {
 export type { AppServiceInterface };
 
 export default class AppService implements AppServiceInterface {
- 
-  constructor(private dataProvider: DataProvider, private sparrowEventHandler: SparrowEventHandler) {
-  }
+  constructor(
+    private dataProvider: DataProvider,
+    private attributeStore: AttributeStore,
+    private sparrowEventHandler: SparrowEventHandler
+  ) {}
 
   async getGateways() {
     return this.dataProvider.getGateways();
@@ -35,20 +50,48 @@ export default class AppService implements AppServiceInterface {
     return this.dataProvider.getGateway(gatewayUID);
   }
 
-  async getSensors(gatewayUIDs: string[]) {
-    return this.dataProvider.getSensors(gatewayUIDs);
+  async setGatewayName(gatewayUID: string, name: string) {
+    const store = this.attributeStore;
+    try {
+      await store.updateGatewayName(gatewayUID, name);
+    } catch (e) {
+      const e2 = new ErrorWithCause(`could not setGatewayName`, { cause: e });
+      throw e2;
+    }
   }
 
-  async getSensor(gatewayUID: string, sensorUID: string) {
-    return this.dataProvider.getSensor(gatewayUID, sensorUID);
+  async getNodes(gatewayUIDs: string[]) {
+    return this.dataProvider.getNodes(gatewayUIDs);
   }
 
-  async getSensorData(gatewayUID: string, sensorUID: string) {
-    return this.dataProvider.getSensorData(gatewayUID, sensorUID);
+  async getNode(gatewayUID: string, nodeId: string) {
+    return this.dataProvider.getNode(gatewayUID, nodeId);
   }
 
-  handleEvent(event: SparrowEvent) {
+  async getNodeData(gatewayUID: string, nodeId: string) {
+    return this.dataProvider.getNodeData(gatewayUID, nodeId);
+  }
+
+  async handleEvent(event: SparrowEvent) {
     return this.sparrowEventHandler.handleEvent(event);
   }
 
+  async setNodeName(gatewayUID: string, nodeId: string, name: string) {
+    const store = this.attributeStore;
+    try {
+      await store.updateNodeName(gatewayUID, nodeId, name);
+    } catch (e) {
+      const e2 = new ErrorWithCause(`could not setNodeName`, { cause: e });
+      throw e2;
+    }
+  }
+
+  async setNodeLocation(gatewayUID: string, nodeId: string, loc: string) {
+    const store = this.attributeStore;
+    try {
+      await store.updateNodeLocation(gatewayUID, nodeId, loc);
+    } catch (e) {
+      throw new ErrorWithCause(`could not setNodeLocation`, { cause: e });
+    }
+  }
 }

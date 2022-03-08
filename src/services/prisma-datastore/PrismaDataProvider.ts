@@ -2,7 +2,7 @@ import { PrismaClient, Project as PrismaProject, Gateway as PrismaGateway } from
 import { ErrorWithCause } from "pony-cause";
 import Gateway from "../../components/models/Gateway";
 import SensorReading from "../../components/models/readings/SensorReading";
-import Sensor from "../../components/models/Sensor";
+import Node from "../../components/models/Node";
 import { DataProvider } from "../DataProvider";
 
 /**
@@ -62,30 +62,25 @@ export class PrismaDataProvider implements DataProvider {
             serialNumber: gw.name || '',                        // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
             location: gw.location || '',
             lastActivity: gw.lastSeenAt?.toDateString() || '',                  // todo - ideally this is simply cached
-            voltage: 3.5
+            voltage: 3.5,
+            nodeList: []
         }
     }
 
-    getSensors(gatewayUIDs: string[]): Promise<Sensor[]> {
-        // for now just issue multiple queries. 
-        return Promise.all(gatewayUIDs.map(gatewayUID => this.getSensors(gatewayUID))); 
+    getNodes(gatewayUIDs: string[]): Promise<Node[]> {
+        // for now just issue multiple queries. Not sure how useful this method is anyway. 
+        return Promise.all(gatewayUIDs.map(gatewayUID => this.getGatewayNodes(gatewayUID))).then(nodes => nodes.flat()); 
     }
 
-    getGatewaySensors(gatewayUID: string): Promise<Sensor> {
-        return this.prisma.node.findMany({
-            where: {
-                gateway: {
-                    ga
-                }
-            }
-        });
+    async getGatewayNodes(gatewayUID: string): Promise<Node[]> {
+        return Promise.resolve([])
     }
 
-    getSensor(gatewayUID: string, sensorUID: string): Promise<Sensor> {
-        
+    async getNode(gatewayUID: string, sensorUID: string): Promise<Node> {
+        return Promise.reject();    
     }
-    getSensorData(gatewayUID: string, sensorUID: string, options?: { startDate?: Date | undefined; }): Promise<SensorReading<unknown>[]> {
-        
+    async getNodeData(gatewayUID: string, sensorUID: string, options?: { startDate?: Date | undefined; }): Promise<SensorReading<unknown>[]> {
+        return Promise.reject();    
     }
 
 
