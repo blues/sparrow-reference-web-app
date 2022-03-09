@@ -1,5 +1,5 @@
 {
-  "name": "sparrow-starter",
+  "name": "sparrow-reference-web-app",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -19,16 +19,19 @@
     "db:init": "ts-node --project ./node.tsconfig.json src/services/prisma-datastore/db-init.ts"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",    
     "@prisma/client": "^3.9.2",
     "@types/lodash": "^4.14.178",
+    "@types/react-slick": "^0.23.8",
     "antd": "^4.17.2",
     "axios": "^0.24.0",
     "chart.js": "^3.6.1",
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.27.0",
+    "http-status-codes": "^2.2.0",
     "lodash": "^4.17.21",
     "mocker-data-generator": "^2.12.0",
-    "next": "12.0.4",
+    "next": "12.1.0",
     "next-plugin-antd-less": "^1.5.2",
     "pony-cause": "^1.1.1",
     "prisma": "^3.9.2",
@@ -70,6 +73,12 @@
     "prettier": "^2.4.1",
     "react-test-renderer": "^17.0.2",
     "typescript": "4.5.2"
+  },
+  "resolutions": {
+    "nanoid": "^3.1.31",
+    "follow-redirects": "^1.14.9",
+    "node-fetch": "^2.6.7",
+    "simple-get": "^3.1.1"
   },
   "volta": {
     "node": "16.13.0",

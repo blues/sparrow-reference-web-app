@@ -22,6 +22,10 @@ interface HasNotehubLocation {
   tower_location?: NotehubLocation;
 }
 
+interface HasNodeId {
+  nodeId: string;
+}
+
 
 interface HasNodeId {
   nodeId: string;

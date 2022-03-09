@@ -1,16 +1,31 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
+// eslint-disable-next-line jest/no-mocks-import
+import "../../../../__mocks__/matchMediaMock";
 import GatewayCard from "../../../../src/components/elements/GatewayCard";
 import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 
 const mockGatewayData = {
-  uid: "My Mocked Gatway",
+  uid: "My Mocked Gateway",
   serialNumber: "67890",
   location: "Gainesville, FL",
   voltage: 3.7,
   lastActivity: "2022-01-05T07:36:55Z",
+  nodeList: [
+    {
+      name: "My First Mocked Node",
+      nodeId: "1011",
+      humidity: 29,
+      pressure: 1000,
+      temperature: 24.5,
+      voltage: 4.2,
+      total: 40,
+      count: 2,
+      lastActivity: "2022-01-07T15:28:38Z",
+      gatewayUID: "My Mocked Gateway",
+    },
+  ],
 };
 
 const mockedGatewayDataLongName = {
@@ -20,13 +35,15 @@ const mockedGatewayDataLongName = {
   location: "San Diego, CA",
   voltage: 4.0,
   lastActivity: "2022-02-11T08:48:01Z",
+  nodeList: [],
 };
 
 const mockUndefinedGatewayData = {
-  uid: "My Other Mocked Gatway",
+  uid: "My Other Mocked Gateway",
   serialNumber: "13579",
   voltage: 2.8,
   lastActivity: "2022-01-07T09:12:00Z",
+  nodeList: [],
 };
 
 const index = 1;

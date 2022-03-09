@@ -37,7 +37,7 @@ jobs:
           HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
           HUB_DEVICE_UID: ${{ secrets.HUB_DEVICE_UID }}
           HUB_PROJECTUID: ${{ secrets.HUB_PROJECTUID }}
-          TEST_SENSOR_MAC: ${{ secrets.TEST_SENSOR_MAC }}
+          TEST_NODE_ID: ${{ secrets.TEST_NODE_ID }}
         run: yarn test:coverage
       - run: yarn lint
       - name: Cypress run
@@ -50,7 +50,7 @@ jobs:
           HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
           HUB_DEVICE_UID: ${{ secrets.HUB_DEVICE_UID }}
           HUB_PROJECTUID: ${{ secrets.HUB_PROJECTUID }}
-          TEST_SENSOR_MAC: ${{ secrets.TEST_SENSOR_MAC }}
+          TEST_NODE_ID: ${{ secrets.TEST_NODE_ID }}
   docker-build:
     runs-on: ubuntu-latest
     steps:

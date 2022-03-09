@@ -3,10 +3,9 @@ import MockAdapter from "axios-mock-adapter";
 import { ERROR_CODES } from "../../../../src/services/Errors";
 import AxiosHttpNotehubAccessor from "../../../../src/services/notehub/AxiosHttpNotehubAccessor";
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
-import NotehubEvent from "../../../../src/services/notehub/models/NotehubEvent";
+import NotehubEnvVars from "../../../../src/services/notehub/models/NotehubEnvVars";
 import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
-import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";
-import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubSensorConfig";
+import NotehubNodeConfig from "../../../../src/services/notehub/models/NotehubNodeConfig";
 import notehubData from "../__serviceMocks__/notehubData.json";
 
 let mock: MockAdapter;
@@ -19,6 +18,7 @@ const mockedEpochTimeValue = Math.round(mockedStartDate.getTime() / 1000);
 
 const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}`;
 const API_CONFIG_URL = `${mockBaseURL}/req?project=${mockProjectUID}&device=${mockDeviceUID}`;
+const API_ENV_VAR_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}/environment_variables`;
 const API_LATEST_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}/latest`;
 const API_INITIAL_ALL_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/events?startDate=${mockedEpochTimeValue}`;
 
@@ -69,7 +69,7 @@ describe("Device handling", () => {
     ).rejects.toThrow(ERROR_CODES.DEVICE_NOT_FOUND);
   });
 
-  it("Should give an internal error error for 500s", async () => {
+  it("Should give an internal error for 500s", async () => {
     mock.onGet(API_DEVICE_URL).reply(500, mockNotehubDeviceData);
 
     await expect(
@@ -132,29 +132,29 @@ describe("Config handling", () => {
     mock = new MockAdapter(axios);
   });
 
-  const mockNotehubSensorConfig =
-    notehubData.successfulNotehubConfigResponse as NotehubSensorConfig;
-  const mockMacAddress = mockNotehubSensorConfig.note;
+  const mockNotehubNodeConfig =
+    notehubData.successfulNotehubConfigResponse as NotehubNodeConfig;
+  const mockMacAddress = mockNotehubNodeConfig.note;
 
   it("should return valid config", async () => {
-    mock.onPost(API_CONFIG_URL).reply(200, mockNotehubSensorConfig);
+    mock.onPost(API_CONFIG_URL).reply(200, mockNotehubNodeConfig);
 
     const res = await axiosHttpNotehubAccessorMock.getConfig(
       mockDeviceUID,
       mockMacAddress
     );
-    expect(res).toEqual(mockNotehubSensorConfig);
+    expect(res).toEqual(mockNotehubNodeConfig);
   });
 
   it("should pass through the response (and not throw an error) with a bad config", async () => {
     mock
       .onPost(API_CONFIG_URL)
-      .reply(200, notehubData.notehubConfigSensorNotFound);
+      .reply(200, notehubData.notehubConfigNodeNotFound);
     const res = await axiosHttpNotehubAccessorMock.getConfig(
       mockDeviceUID,
       mockMacAddress
     );
-    expect(res).toEqual(notehubData.notehubConfigSensorNotFound);
+    expect(res).toEqual(notehubData.notehubConfigNodeNotFound);
   });
 
   it("should throw a device-not-found error if the device does not exist", async () => {
@@ -180,6 +180,66 @@ describe("Config handling", () => {
 
     await expect(
       axiosHttpNotehubAccessorMock.getConfig(mockDeviceUID, mockMacAddress)
+    ).rejects.toThrow(ERROR_CODES.INTERNAL_ERROR);
+  });
+});
+
+describe("Environment variable handling", () => {
+  beforeEach(() => {
+    mock = new MockAdapter(axios);
+  });
+
+  type NotehubEnvVarResponse = { environment_variables: NotehubEnvVars };
+  const mockEnvVarResponse =
+    notehubData.notehubEnvVarResponse as NotehubEnvVarResponse;
+
+  it("should true if the request succeeds", async () => {
+    mock.onPut(API_ENV_VAR_URL).reply(200, mockEnvVarResponse);
+
+    const res = await axiosHttpNotehubAccessorMock.setEnvironmentVariables(
+      mockDeviceUID,
+      { _sn: "TEST" }
+    );
+    expect(res).toEqual(true);
+  });
+
+  it("Should give an unauthorized error for 401s", async () => {
+    mock.onPut(API_ENV_VAR_URL).reply(401, mockEnvVarResponse);
+
+    await expect(
+      axiosHttpNotehubAccessorMock.setEnvironmentVariables(mockDeviceUID, {
+        _sn: "TEST",
+      })
+    ).rejects.toThrow(ERROR_CODES.UNAUTHORIZED);
+  });
+
+  it("Should give a forbidden error for 403s", async () => {
+    mock.onPut(API_ENV_VAR_URL).reply(403, mockEnvVarResponse);
+
+    await expect(
+      axiosHttpNotehubAccessorMock.setEnvironmentVariables(mockDeviceUID, {
+        _sn: "TEST",
+      })
+    ).rejects.toThrow(ERROR_CODES.FORBIDDEN);
+  });
+
+  it("Should give a device-not-found error for 404s", async () => {
+    mock.onPut(API_ENV_VAR_URL).reply(404, mockEnvVarResponse);
+
+    await expect(
+      axiosHttpNotehubAccessorMock.setEnvironmentVariables(mockDeviceUID, {
+        _sn: "TEST",
+      })
+    ).rejects.toThrow(ERROR_CODES.DEVICE_NOT_FOUND);
+  });
+
+  it("Should give an internal error for 500s", async () => {
+    mock.onPut(API_ENV_VAR_URL).reply(500, mockEnvVarResponse);
+
+    await expect(
+      axiosHttpNotehubAccessorMock.setEnvironmentVariables(mockDeviceUID, {
+        _sn: "TEST",
+      })
     ).rejects.toThrow(ERROR_CODES.INTERNAL_ERROR);
   });
 });

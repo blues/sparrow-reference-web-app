@@ -7,6 +7,7 @@ const HTTP_STATUS = {
   INVALID_NODE_ID: "Invalid Node id",
   INVALID_PROJECTUID: "Invalid ProjectUID",
   INTERNAL_ERR_GATEWAY: "Error while fetching Gateway",
+  INTERNAL_ERR_CONFIG: "Error while fetching Node Config",
   NOT_FOUND_GATEWAY: "Unable to locate Gateway",
   NOT_FOUND_CONFIG: "Unable to locate Node config",
   UNAUTHORIZED: "Unauthorized to access this project",

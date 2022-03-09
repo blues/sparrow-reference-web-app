@@ -1,9 +1,9 @@
 @import "_variables.scss";
 
 .timestamp,
-.sensorTimestamp,
-.sensorChartTimestamp,
-.sensorFormTimestamp {
+.nodeTimestamp,
+.nodeChartTimestamp,
+.nodeFormTimestamp {
   color: $bw-color--grey4;
   font-size: 16px;
   font-weight: 400;
@@ -11,19 +11,24 @@
   margin-top: -7px;
 }
 
-.sensorTimestamp {
+.nodeTimestamp {
   font-size: 13px;
   margin-top: -3px;
 }
 
-.sensorChartTimestamp,
-.sensorFormTimestamp {
+.nodeChartTimestamp,
+.nodeFormTimestamp {
   font-size: 13px;
   margin-top: -10px;
 }
 
+.currentReadingsRow {
+  margin-bottom: 16px;
+}
+
 .card {
   padding: 10px 15px;
+  text-align: center;
 
   :global .ant-card-body {
     padding: 0;
@@ -45,12 +50,12 @@
     font-size: 18px;
   }
 
-  .sensorTimestamp,
-  .sensorFormTimestamp {
+  .nodeTimestamp,
+  .nodeFormTimestamp {
     font-size: 16px;
   }
 
-  .sensorChartTimestamp {
+  .nodeChartTimestamp {
     font-size: 15px;
     margin-top: -12px;
     margin-bottom: 15px;

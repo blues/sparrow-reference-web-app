@@ -1,7 +1,9 @@
 import NotehubDevice from "./models/NotehubDevice";
+import NotehubEnvVars from "./models/NotehubEnvVars";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
-import NotehubSensorConfig from "./models/NotehubSensorConfig";
+import NotehubSensorConfig from "./models/NotehubNodeConfig";
+import NoteSensorConfigBody from "./models/NoteNodeConfigBody";
 
 // An interface for accessing Notehub APIs
 interface NotehubAccessor {
@@ -11,8 +13,17 @@ interface NotehubAccessor {
   getEvents: (startDate?: Date) => Promise<NotehubEvent[]>;
   getConfig: (
     hubDeviceUID: string,
-    macAddress: string
+    nodeId: string
   ) => Promise<NotehubSensorConfig>;
+  setConfig: (
+    hubDeviceUID: string,
+    nodeId: string,
+    body: NoteSensorConfigBody
+  ) => Promise<boolean>;
+  setEnvironmentVariables: (
+    hubDeviceUID: string,
+    envVars: NotehubEnvVars
+  ) => Promise<boolean>;
 }
 
 // eslint-disable-next-line import/prefer-default-export

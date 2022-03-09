@@ -1,13 +1,16 @@
 import axios, { AxiosResponse } from "axios";
+import { ErrorWithCause } from "pony-cause";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
 import { HTTP_HEADER } from "../../constants/http";
 import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
-import NotehubSensorConfig from "./models/NotehubSensorConfig";
+import NotehubNodeConfig from "./models/NotehubNodeConfig";
 import NotehubErr from "./models/NotehubErr";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubResponse from "./models/NotehubResponse";
+import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
+import NotehubEnvVars from "./models/NotehubEnvVars";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -42,12 +45,17 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     };
   }
 
+  async getAllDevices(deviceUIDs: string[]) {
+    return Promise.all(deviceUIDs.map((device) => this.getDevice(device)));
+  }
+
   // Eventually we’ll want to find all valid gateways in a Notehub project.
-  // For now, just take the hardcoded gateway UID from the starter’s
+  // For now, just take the hardcoded list of gateway UID from the starter’s
   // environment variables and use that.
   async getDevices() {
-    const device = await this.getDevice(this.hubDeviceUID);
-    return [device];
+    const deviceUIDs = this.hubDeviceUID.split(",");
+    const allDeviceData = await this.getAllDevices(deviceUIDs);
+    return allDeviceData;
   }
 
   async getDevice(hubDeviceUID: string) {
@@ -128,12 +136,12 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }
   }
 
-  async getConfig(hubDeviceUID: string, macAddress: string) {
+  async getConfig(hubDeviceUID: string, nodeId: string) {
     const endpoint = `${this.hubBaseURL}/req?project=${this.hubProjectUID}&device=${hubDeviceUID}`;
     const body = {
       req: "note.get",
       file: "config.db",
-      note: macAddress,
+      note: nodeId,
     };
     let resp;
     try {
@@ -146,16 +154,68 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     if ("err" in resp.data) {
       const { err } = resp.data as NotehubErr;
 
-      // If the mac address cannot be found the API will return a
-      // “note-noexist” error, which we ignore because that just means
-      // the sensor does not have a name / location yet.
-      if (err.includes("device-noexist")) {
+      if (err.includes("note-noexist")) {
+        // Because the mac address cannot be found the API will return a
+        // “note-noexist” error, which we ignore because that just means
+        // the sensor does not have a name / location yet.
+      } else if (err.includes("device-noexist")) {
         throw getError(ERROR_CODES.DEVICE_NOT_FOUND);
-      }
-      if (err.includes("insufficient permissions")) {
+      } else if (err.includes("insufficient permissions")) {
         throw getError(ERROR_CODES.FORBIDDEN);
+      } else {
+        throw getError(ERROR_CODES.INTERNAL_ERROR);
       }
     }
-    return resp.data as NotehubSensorConfig;
+    return resp.data as NotehubNodeConfig;
+  }
+
+  async setConfig(
+    hubDeviceUID: string,
+    nodeId: string,
+    body: NoteNodeConfigBody
+  ) {
+    const endpoint = `${this.hubBaseURL}/req?project=${this.hubProjectUID}&device=${hubDeviceUID}`;
+    const req = {
+      req: "note.update",
+      file: "config.db",
+      note: nodeId,
+      body,
+    };
+    let resp;
+    try {
+      resp = await axios.post(endpoint, req, {
+        headers: this.commonHeaders,
+      });
+    } catch (cause) {
+      throw new ErrorWithCause(ERROR_CODES.INTERNAL_ERROR, { cause });
+    }
+    if ("err" in resp.data) {
+      const { err } = resp.data as NotehubErr;
+
+      if (err.includes("device-noexist")) {
+        throw getError(ERROR_CODES.DEVICE_NOT_FOUND);
+      } else if (err.includes("note-noexist")) {
+        throw getError(ERROR_CODES.NODE_NOT_FOUND);
+      } else if (err.includes("insufficient permissions")) {
+        throw getError(ERROR_CODES.FORBIDDEN);
+      } else {
+        throw getError(`${ERROR_CODES.INTERNAL_ERROR}: ${err}`);
+      }
+    }
+    return true;
+  }
+
+  async setEnvironmentVariables(hubDeviceUID: string, envVars: NotehubEnvVars) {
+    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}/environment_variables`;
+    try {
+      await axios.put(
+        endpoint,
+        { environment_variables: envVars },
+        { headers: this.commonHeaders }
+      );
+    } catch (e) {
+      throw this.errorWithCode(e);
+    }
+    return true;
   }
 }

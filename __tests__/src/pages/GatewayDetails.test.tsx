@@ -5,7 +5,7 @@ import "@testing-library/jest-dom/extend-expect";
 import "../../../__mocks__/matchMediaMock"; // needed to avoid error due to JSDOM not implemetning method yet: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import GatewayDetails from "../../../src/pages/[gatewayUID]/details";
 import Gateway from "../../../src/components/models/Gateway";
-import Sensor from "../../../src/components/models/Sensor";
+import Node from "../../../src/components/models/Node";
 import { GATEWAY_MESSAGE } from "../../../src/constants/ui";
 
 function getMockGateway(): Gateway {
@@ -15,26 +15,27 @@ function getMockGateway(): Gateway {
     lastActivity: "2022-01-13T15:02:46Z",
     location: "someplace",
     voltage: 1.2,
+    nodeList: [],
   };
 }
 
-const mockSensors: Sensor[] = [
+const mockNodes: Node[] = [
   {
     gatewayUID: "dev:123",
+    nodeId: "20323746323650050028000a",
     lastActivity: "2022-01-13T15:02:46Z",
-    macAddress: "20323746323650050028000a",
     humidity: 11,
-    name: "my-sensor",
+    name: "my-node",
     pressure: 22,
     temperature: 33,
     voltage: 4.4,
   },
   {
     gatewayUID: "dev:123",
+    nodeId: "20323746323650050028000b",
     lastActivity: "2022-01-13T15:02:46Z",
-    macAddress: "20323746323650050028000b",
     humidity: 11,
-    name: "another-sensor",
+    name: "another-node",
     pressure: 22,
     temperature: 33,
     voltage: 4.4,
@@ -42,19 +43,19 @@ const mockSensors: Sensor[] = [
 ];
 
 describe("Gateway details page", () => {
-  it("should render the gateway and sensor information when a gateway is present", () => {
+  it("should render the gateway and node information when a gateway is present", () => {
     const gateway = getMockGateway();
-    render(<GatewayDetails gateway={gateway} sensors={mockSensors} />);
+    render(<GatewayDetails gateway={gateway} nodes={mockNodes} />);
 
     expect(
       screen.getByText(gateway.serialNumber, { exact: false })
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(mockSensors[0].name || "", { exact: false })
+      screen.getByText(mockNodes[0].name || "", { exact: false })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(mockSensors[1].name || "", { exact: false })
+      screen.getByText(mockNodes[1].name || "", { exact: false })
     ).toBeInTheDocument();
   });
 
@@ -62,20 +63,22 @@ describe("Gateway details page", () => {
     const gateway = getMockGateway();
     gateway.location = "Michigan";
 
-    render(<GatewayDetails gateway={gateway} sensors={mockSensors} />);
+    render(<GatewayDetails gateway={gateway} nodes={mockNodes} />);
     expect(screen.getByTestId("gateway-location")).toBeInTheDocument();
   });
 
   it("should not render a gateway location if one is not present", () => {
     const gateway = getMockGateway();
     delete gateway.location;
-    render(<GatewayDetails gateway={gateway} sensors={mockSensors} />);
-    expect(screen.queryByText(GATEWAY_MESSAGE.NO_LOCATION)).toBeInTheDocument();
+    render(<GatewayDetails gateway={gateway} nodes={mockNodes} />);
+    expect(
+      screen.queryAllByText(GATEWAY_MESSAGE.NO_LOCATION)[0]
+    ).toBeInTheDocument();
   });
 
   it("should render an error when present", () => {
     const errorMessage = "FAILURE!";
-    render(<GatewayDetails gateway={null} sensors={[]} err={errorMessage} />);
+    render(<GatewayDetails gateway={null} nodes={[]} err={errorMessage} />);
 
     expect(
       screen.getByText(errorMessage, { exact: false })
@@ -84,7 +87,7 @@ describe("Gateway details page", () => {
       screen.queryByText("Gateway", { exact: false })
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText("Sensor", { exact: false })
+      screen.queryByText("Node", { exact: false })
     ).not.toBeInTheDocument();
   });
 });
