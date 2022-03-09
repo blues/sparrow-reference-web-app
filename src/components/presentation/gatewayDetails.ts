@@ -10,18 +10,18 @@ export function getGatewayDetailsPresentation(
   nodes?: Node[]
 ): GatewayDetailViewModel {
   return {
-    gateway: {
-      uid: gateway?.uid || "",
-      lastActivity: getFormattedLastSeen(gateway?.lastActivity || ""),
-      location:
-        gateway && gateway?.location
-          ? gateway.location
-          : GATEWAY_MESSAGE.NO_LOCATION,
-      serialNumber: gateway?.serialNumber || GATEWAY_MESSAGE.NO_SERIAL_NUMBER,
-      voltage: gateway
-        ? getFormattedVoltageData(gateway?.voltage) || ""
-        : GATEWAY_MESSAGE.NO_VOLTAGE,
-    },
+    gateway: gateway
+      ? {
+          uid: gateway.uid || "",
+          lastActivity: getFormattedLastSeen(gateway.lastActivity || ""),
+          location: gateway.location || GATEWAY_MESSAGE.NO_LOCATION,
+          serialNumber:
+            gateway.serialNumber || GATEWAY_MESSAGE.NO_SERIAL_NUMBER,
+          voltage:
+            getFormattedVoltageData(gateway.voltage) ||
+            GATEWAY_MESSAGE.NO_VOLTAGE,
+        }
+      : undefined,
     nodes,
   };
 }

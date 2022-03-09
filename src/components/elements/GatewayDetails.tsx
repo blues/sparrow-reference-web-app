@@ -1,5 +1,5 @@
 import { Button, Col, Card, Form, Input, Row } from "antd";
-import { CheckOutlined, CloseOutlined, EditTwoTone } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import NodeCard from "./NodeCard";
 import { ERROR_MESSAGE } from "../../constants/ui";
@@ -51,7 +51,7 @@ const GatewayDetails = ({
                 <Button
                   type="link"
                   onClick={toggleEditingName}
-                  icon={<EditTwoTone />}
+                  icon={<EditOutlined />}
                 />
               </>
             )}
@@ -69,12 +69,12 @@ const GatewayDetails = ({
                 <Button
                   type="link"
                   htmlType="submit"
-                  icon={<CheckOutlined style={{}} />}
+                  icon={<CheckOutlined />}
                 />
                 <Button
                   type="link"
                   onClick={toggleEditingName}
-                  icon={<CloseOutlined style={{}} />}
+                  icon={<CloseOutlined />}
                 />
               </Form>
             )}
