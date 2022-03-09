@@ -122,26 +122,6 @@ describe("Sparrow Application", () => {
       "contain",
       "Cypress Test Node"
     );
-    // Enter a second new node name
-    cy.get('[data-testid="form-input-node-name"]')
-      .clear()
-      .type("Other Node Name");
-    // Enter a second new node location
-    cy.get('[data-testid="form-input-node-location"]').clear().type("Garage");
-    //Click the Submit button
-    cy.get(".ant-form").submit();
-    // Verify the node name is now updated to "Other Node Name"
-    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
-      "contain",
-      "Other Node Name"
-    );
-    //Click the sparrow Logo to return to the homepage
-    cy.get('[data-testid="logo"]').click({ force: true });
-    // verify the node location is now updated to "Garage"
-    cy.get('[data-testid="node-location"]', { timeout: 15000 }).should(
-      "contain",
-      "Garage"
-    );
   });
 
   it("should be able to paginate through the carousel for multiple gateways", function () {
