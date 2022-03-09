@@ -237,9 +237,8 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                 </Col>
               </Row>
               <Row>
-                <Col span={8}>
+                <Col span={8} data-testid="date-range-picker">
                   <Select
-                    data-testid="date-range-picker"
                     className={detailsStyles.currentReadingsRow}
                     defaultValue="1440"
                     style={{ width: "100%" }}
