@@ -7,12 +7,13 @@ import { StatusCodes } from "http-status-codes";
 import nodeConfigHandler from "../../../../src/pages/api/gateway/[gatewayUID]/node/[nodeId]/config";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 import { services } from "../../../../src/services/ServiceLocator";
+import TestConfig from "../../TestConfig";
 
 describe("/api/gateway/[gatewayUID]/node/[nodeId]/config API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
   const gatewayUIDs = process.env.HUB_DEVICE_UID;
   const gatewayUID = gatewayUIDs.split(",")[0];
-  const nodeId = process.env.TEST_NODE_ID;
+  const nodeId = TestConfig.testNodeId;
 
   function mockRequestResponse(method: RequestMethod = "GET") {
     const { req, res }: { req: NextApiRequest; res: NextApiResponse } =
