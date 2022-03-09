@@ -21,8 +21,8 @@ interface DataProvider {
     }
   ) => Promise<SensorReadingDEPRECATED<unknown>[]>;
 
-  queryProject(f: SimpleFilter): Query<SimpleFilter, Project>;
-  queryLatestValues(): Query<SimpleFilter, Project>;
+  queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;
+  queryLatestValues?(): Query<SimpleFilter, Project>;
 }
 
 // eslint-disable-next-line import/prefer-default-export
