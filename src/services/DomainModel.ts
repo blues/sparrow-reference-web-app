@@ -26,42 +26,63 @@ export type ReadingSchemaID = { type: "ReadingSchemaID"; id: string };
 //   practice in JS? For example `sensors?: Set<Sensor | undefined>;`
 
 export interface Gateway {
-  type: "Gateway"; // For type descrimination and debugging
-  readonly id: GatewayID;
+  // Attributes
+  name: string;
+  description: string;
+  shortDescription: string;
+  // Links
   nodes: Set<Node> | Unknown;
+  // Implementation Details
+  readonly id: GatewayID; // Reference across the whole system architecture
+  type: "Gateway"; // For typescript narrowing and javascript debugging
 }
 
 export interface Node {
-  type: "Node";
-  readonly id: NodeID;
+  // Attributes
+  description: string;
+  shortDescription: string;
+  locationHref: string;
+  locationName: string;
+  name: string;
+  // Links
   gateway: Gateway;
   sensors: Set<Sensor> | Unknown;
-  name: string;
-  location: string;
-  description: string;
+  // Implementation Details
+  readonly id: NodeID;
+  type: "Node";
 }
 
 export interface Sensor {
-  type: "Sensor";
+  // Attributes
+  // Links
   node: Node;
-  schema: ReadingSchema;
   readings: Set<Reading> | Unknown;
+  schema: ReadingSchema;
+  // Implementation Details
+  type: "Sensor";
 }
 
 export interface ReadingSchema {
-  type: "ReadingSchema";
-  readonly id: ReadingSchemaID;
+  // Attributes
+  measure: string; // Temperature, etc.
+  name: string; // Outdoor Temperature, etc.
+  systemOfMeasurement: string; // SI, Imperial, US Customary, etc.
   unit: string; // Kelvin, etc.
   unitSymbol: string; // K, etc.
-  name: string; // Outdoor Temperature, etc.
-  measure: string; // Temperature, etc.
-  systemOfMeasurement: string; // SI, Imperial, US Customary, etc.
+  // Links
+  // Implementation Details
+  readonly id: ReadingSchemaID;
+  type: "ReadingSchema";
 }
 
 export interface Reading {
-  type: "Reading";
+  // Attributes
+  value: JSONValue;
   timestamp: Date;
-  value: number | object;
+  // Links
+  schema: ReadingSchema;
+  // Implementation Details
+  type: "Reading";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,3 +111,15 @@ export interface Query<T extends QueryItem> {
   filter: QueryFilter;
   results: Set<T>;
 }
+
+// TODO: I don't like that 'JSON', an implementation details, has leaked into
+// our domain model But, I also don't love the idea of using generics across
+// architectural boundaries and I _think_ that's what we'd want to do otherwise.
+// That must not be true though, because this app would definitely be possible
+// without generics.
+export type JSONValue =
+  | string
+  | number
+  | boolean
+  | { [x: string]: JSONValue }
+  | Array<JSONValue>;
