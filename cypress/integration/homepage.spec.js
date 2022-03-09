@@ -81,7 +81,7 @@ describe("Sparrow Application", () => {
     //Verify the Last Seen header
     cy.get('[data-testid="last-seen"]').should("contain", "Last updated");
     // Verify the Date Range Picker for charts
-    cy.get('[data-testid="date-range-picker]').should("be.visible");
+    cy.get('[data-testid="date-range-picker"]').should("be.visible");
     //Verify the Temperature header
     cy.get('[data-testid="temperature"]').should("contain", "Temperature");
     //Verify the Humidity header
