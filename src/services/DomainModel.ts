@@ -22,60 +22,50 @@ export interface Project {
   description: string;
   // Links
   gateways?: Set<Gateway>;
-  // Implementation Details
-  type: "Project"; // For typescript narrowing and javascript debugging
 }
 
 export interface SensorHost {
+  // Attributes
   name: string;
-  description: string;
+  descriptionBig: string;
+  descriptionSmall: string;
+  // Links
   sensors?: Set<Sensor>;
-  shortDescription: string;
 }
 
 export interface Gateway extends SensorHost {
+  readonly id: GatewayID; // Reference across the whole system architecture
   // Attributes
-  locationForMachines: LocationOLC;
+  locationForMachines?: LocationOLC;
+  lastSeen?: Date;
   // Links
   nodes?: Set<Node>;
-  // Implementation Details
-  readonly id: GatewayID; // Reference across the whole system architecture
-  type: "Gateway"; // For typescript narrowing and javascript debugging
 }
 
 export type LocationOLC = string;
 export interface Node extends SensorHost {
+  readonly id: NodeID;
   // Attributes
   locationForMachines?: LocationOLC;
   locationForHumans?: string;
   // Links
   gateway: Gateway;
-  // Implementation Details
-  readonly id: NodeID;
-  type: "Node";
 }
 
 export interface Sensor {
-  // Attributes
   // Links
   node: Node;
   readings?: Set<Reading>;
-  schema: SensorType;
-  // Implementation Details
-  type: "Sensor";
+  sensorType: SensorType;
 }
 
 export interface SensorType {
+  readonly id: SensorTypeID;
   // Attributes
-  // TODO (carl) Lean on @buge/ts-units here?
   measure: string; // Temperature, etc.
   name: string; // Outdoor Temperature, etc.
   unit: string; // Kelvin, Million, etc.
   unitSymbol: string; // K, M, etc.
-  // Links
-  // Implementation Details
-  readonly id: SensorTypeID;
-  type: "SensorType";
 }
 
 export interface Reading {
@@ -83,10 +73,8 @@ export interface Reading {
   value: JSONValue;
   timestamp: Date;
   // Links
-  schema: SensorType;
+  sensorType: SensorType;
   sensor: Sensor;
-  // Implementation Details
-  type: "Reading";
 }
 
 export type JSONValue =
