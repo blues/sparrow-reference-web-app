@@ -236,23 +236,25 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
               </Row>
-              <Select
-                className={detailsStyles.currentReadingsRow}
-                defaultValue="1440"
-                style={{ width: 200 }}
-                onChange={handleDateRangeChange}
-              >
-                <Option value="5">Last 5 minutes</Option>
-                <Option value="15">Last 15 minutes</Option>
-                <Option value="30">Last 30 minutes</Option>
-                <Option value="60">Last 1 hour</Option>
-                <Option value="180">Last 3 hours</Option>
-                <Option value="360">Last 6 hours</Option>
-                <Option value="720">Last 12 hours</Option>
-                <Option value="1440">Last 24 hours</Option>
-                <Option value="2880">Last 2 days</Option>
-                <Option value="10080">Last 7 days</Option>
-              </Select>
+              <Row>
+                <Col span={8}>
+                  <Select
+                    data-testid="date-range-picker"
+                    className={detailsStyles.currentReadingsRow}
+                    defaultValue="1440"
+                    style={{ width: "100%" }}
+                    onChange={handleDateRangeChange}
+                  >
+                    <Option value="60">Last 1 hour</Option>
+                    <Option value="720">Last 12 hours</Option>
+                    <Option value="1440">Last 24 hours</Option>
+                    <Option value="2880">Last 2 days</Option>
+                    <Option value="4320">Last 3 days</Option>
+                    <Option value="7200">Last 5 days</Option>
+                    <Option value="10080">Last 7 days</Option>
+                  </Select>
+                </Col>
+              </Row>
               <Row justify="start" gutter={[8, 16]}>
                 <Col xs={24} sm={24} lg={12}>
                   <Card className={detailsStyles.nodeChart}>
