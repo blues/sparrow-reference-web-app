@@ -11,15 +11,14 @@
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
-	"cypress:open": "cypress open --config baseUrl=http://localhost:4000",
+    "cypress:open": "cypress open --config baseUrl=http://localhost:4000",
     "cypress:run": "cypress run --config baseUrl=http://localhost:4000"
- 
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@types/lodash": "^4.14.178",
     "@types/react-slick": "^0.23.8",
-    "antd": "^4.17.2",
+    "antd": "^4.19.1",
     "axios": "^0.24.0",
     "chart.js": "^3.6.1",
     "chartjs-adapter-date-fns": "^2.0.0",
@@ -27,7 +26,7 @@
     "http-status-codes": "^2.2.0",
     "lodash": "^4.17.21",
     "next": "12.1.0",
-    "next-plugin-antd-less": "^1.5.2",
+    "next-plugin-antd-less": "^1.8.0",
     "pony-cause": "^1.1.1",
     "rc-field-form": "^1.22.0",
     "react": "17.0.2",

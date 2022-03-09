@@ -1,5 +1,13 @@
 @import "_variables.scss";
 
+.editable {
+  display: flex;
+  margin-bottom: 5px;
+  :global .ant-form-inline .ant-form-item {
+    margin-right: 10px;
+  }
+}
+
 .timestamp,
 .nodeTimestamp,
 .nodeChartTimestamp,
