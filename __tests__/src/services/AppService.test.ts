@@ -30,8 +30,6 @@ describe("App Service", () => {
   const mockedSparrowNodeData =
     sparrowData.successfulNodeDataSparrowDataResponse as NodeDetailViewModel;
 
-  // const mockedUpdatedGatewayName =
-
   beforeEach(() => {
     dataProviderMock = {
       getGateway: jest.fn().mockResolvedValueOnce(mockedGatewaySparrowData),
