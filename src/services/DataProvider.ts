@@ -28,12 +28,7 @@ interface DataProvider {
 // eslint-disable-next-line import/prefer-default-export
 export type { DataProvider };
 
-////////////////////////////////////////////////////////////////////////////////
-// Query
-//
-// A user of the website might not 'think' about the following things unless
-// they had a way to save favorite queries as first class citizens of the app.
-//
+// Query Interface
 
 export type DateRange = { from: Date; to: Date };
 
