@@ -10,7 +10,7 @@ const mockedFormItems = [
     name: "another mocked label",
     tooltip: "What is this tooltip for?",
     initialValue: "This is here for show",
-    contents: "Hello Sparrow",
+    contents: <div data-testid="form-test-element">Hello Sparrow</div>,
   },
 ];
 
@@ -30,7 +30,7 @@ describe("Form component", () => {
 
     expect(screen.getByText(mockedFormItems[0].label)).toBeInTheDocument();
     expect(
-      screen.getByText(mockedFormItems[0].contents, {
+      screen.getByTestId("form-test-element", {
         exact: false,
       })
     ).toBeInTheDocument();
