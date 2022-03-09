@@ -1,4 +1,3 @@
-import NotehubLocation from "./NotehubLocation";
 
 interface NotehubRoutedEvent {
     file: string;
@@ -11,8 +10,8 @@ interface NotehubRoutedEvent {
     best_location: string;
     best_lat: number,
     best_lon: number,
-    best_country: "US",
-    best_timezone: "America/New_York",
+    best_country: string,
+    best_timezone: string,
     
     best_id: string;
     project: {
