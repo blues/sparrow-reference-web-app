@@ -27,13 +27,13 @@ describe("Sparrow Application", () => {
     //Click the Gateway Details arrow
     cy.clickGatewayCard("0");
     //Verify the Gateway Details header
-    cy.get('[data-testid="gateway-details-header"]', { timeout: 5000 }).should(
+    cy.get('[data-testid="gateway-details-header"]').should(
       "contain",
       "Gateway"
     );
     // check for gateway details
     cy.get(".ant-card-body").should("contain", "Location");
-    cy.get('[data-testid="gateway-location"]',{ timeout: 90000 }).should("be.visible");
+    cy.get('[data-testid="gateway-location"]', { timeout: 90000 }).should("be.visible");
     cy.get(".ant-card-body").should("contain", "Voltage");
     cy.get('[data-testid="gateway-last-seen"]').should("contain", "Last seen");
     // check for sensors related to gateway
