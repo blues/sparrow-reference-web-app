@@ -50,6 +50,7 @@ const GatewayDetails = ({
               <>
                 {viewModel.gateway.serialNumber}
                 <Button
+                  data-testid="gateway-name-edit-button"
                   type="link"
                   onClick={toggleEditingName}
                   icon={<EditOutlined />}
@@ -76,6 +77,7 @@ const GatewayDetails = ({
                   <Input required />
                 </Form.Item>
                 <Button
+                  data-testid="gateway-name-submit-button"
                   type="link"
                   htmlType="submit"
                   icon={<CheckOutlined />}
