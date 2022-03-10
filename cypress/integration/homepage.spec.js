@@ -34,7 +34,9 @@ describe("Sparrow Application", () => {
     );
     // check for gateway details
     cy.get(".ant-card-body").should("contain", "Location");
-    cy.get('[data-testid="gateway-location"]').should("be.visible");
+    cy.get('[data-testid="gateway-location"]', { timeout: 90000 }).should(
+      "be.visible"
+    );
     cy.get(".ant-card-body").should("contain", "Voltage");
     cy.get('[data-testid="gateway-last-seen"]').should("contain", "Last seen");
     // check for nodes related to gateway
@@ -51,10 +53,12 @@ describe("Sparrow Application", () => {
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click({ force: true });
     // verify it navigates back to the homepage
-    cy.get('[data-testid="gateway-header"]').should("be.visible");
+    cy.get('[data-testid="gateway-header"]', { timeout: 20000 }).should(
+      "be.visible"
+    );
   });
 
-  it("should be able to click on a node card and see more details about that node and update the name and location of that node", function () {
+  it.only("should be able to click on a node card and see more details about that node and update the name and location of that node", function () {
     // this keeps uncaught exceptions from failing Cypress tests
     Cypress.on("uncaught:exception", (err, runnable) => {
       return false;
@@ -66,7 +70,9 @@ describe("Sparrow Application", () => {
     //TODO: remove once the page architecture is fixed
     //wait for the (very slow) page to load
     //Verify the Node Name header
-    cy.get('[data-testid="node-name"]').should("be.visible");
+    cy.get('[data-testid="node-name"]', { timeout: 90000 }).should(
+      "be.visible"
+    );
     // Verify the parent gateway name is displayed
     cy.get('[data-testid="node-gateway-name"]').should("be.visible");
     //Verify the Current Readings header
@@ -76,8 +82,6 @@ describe("Sparrow Application", () => {
     );
     //Verify the Last Seen header
     cy.get('[data-testid="last-seen"]').should("contain", "Last updated");
-    // Verify the Date Range Picker for charts
-    cy.get('[data-testid="date-range-picker"]').should("be.visible");
     //Verify the Temperature header
     cy.get('[data-testid="temperature"]').should("contain", "Temperature");
     //Verify the Humidity header
@@ -93,7 +97,9 @@ describe("Sparrow Application", () => {
     //Check for the Name label
     cy.get(".ant-form-item-required").should("contain", "Name");
     //Verify the Name field exists in the Details tab
-    const nodeNameInput = cy.get('[data-testid="form-input-node-name"]');
+    const nodeNameInput = cy.get('[data-testid="form-input-node-name"]', {
+      timeout: 15000,
+    });
     nodeNameInput.should("be.visible");
     // Enter a new node name
     nodeNameInput.clear().type("Cypress Test Node");
@@ -101,7 +107,8 @@ describe("Sparrow Application", () => {
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
     const nodeLocationInput = cy.get(
-      '[data-testid="form-input-node-location"]'
+      '[data-testid="form-input-node-location"]',
+      { timeout: 15000 }
     );
     nodeLocationInput.should("be.visible");
     // Enter a new node location
@@ -111,7 +118,10 @@ describe("Sparrow Application", () => {
     nodeSubmitButton.should("be.visible");
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Cypress Test Node"
-    cy.get('[data-testid="node-name"]').should("contain", "Cypress Test Node");
+    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
+      "contain",
+      "Cypress Test Node"
+    );
     // Enter a second new node name
     cy.get('[data-testid="form-input-node-name"]')
       .clear()
@@ -121,18 +131,25 @@ describe("Sparrow Application", () => {
     //Click the Submit button
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Other Node Name"
-    cy.get('[data-testid="node-name"]').should("contain", "Other Node Name");
+    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
+      "contain",
+      "Other Node Name"
+    );
   });
 
   it("should be able to paginate through the carousel for multiple gateways", function () {
     cy.visit("/");
     // Check first gateway card is visible
-    cy.get('[data-testid="gateway[0]-details"]').should("be.visible");
+    cy.get('[data-testid="gateway[0]-details"]', { timeout: 50000 }).should(
+      "be.visible"
+    );
     // check 2nd gateway card is NOT visible
     cy.get('[data-testid="gateway[1]-details"]').should("not.be.visible");
     // click carousel button
     cy.clickCarouselButton("right");
     // check 1st gateway card is NOT visible
-    cy.get('[data-testid="gateway[0]-details"]').should("not.be.visible");
+    cy.get('[data-testid="gateway[0]-details"]', { timeout: 10000 }).should(
+      "not.be.visible"
+    );
   });
 });

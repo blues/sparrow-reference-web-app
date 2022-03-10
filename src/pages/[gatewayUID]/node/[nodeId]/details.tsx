@@ -239,7 +239,9 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
               </Row>
               <Row>
                 <Col span={8}>
-                  <p>Chart date range</p>
+                  <p className={detailsStyles.dateRangeLabel}>
+                    Chart date range
+                  </p>
                   <Select
                     data-testid="date-range-picker"
                     className={detailsStyles.currentReadingsRow}
