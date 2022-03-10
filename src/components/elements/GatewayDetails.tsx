@@ -74,7 +74,7 @@ const GatewayDetails = ({
                       : null
                   }
                 >
-                  <Input required />
+                  <Input maxLength={49} required />
                 </Form.Item>
                 <Button
                   data-testid="gateway-name-submit-button"
