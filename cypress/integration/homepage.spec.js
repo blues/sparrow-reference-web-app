@@ -28,7 +28,7 @@ describe("Sparrow Application", () => {
     //Click the Gateway Details arrow
     cy.clickGatewayCard("0");
     //Verify the Gateway Details header
-    cy.get('[data-testid="gateway-details-header"]', { timeout: 5000 }).should(
+    cy.get('[data-testid="gateway-details-header"]',).should(
       "contain",
       "Gateway"
     );
@@ -51,7 +51,7 @@ describe("Sparrow Application", () => {
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click({ force: true });
     // verify it navigates back to the homepage
-    cy.get('[data-testid="gateway-header"]', { timeout: 10000 }).should(
+    cy.get('[data-testid="gateway-header"]').should(
       "be.visible"
     );
   });
@@ -105,8 +105,7 @@ describe("Sparrow Application", () => {
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
     const nodeLocationInput = cy.get(
-      '[data-testid="form-input-node-location"]',
-      { timeout: 15000 }
+      '[data-testid="form-input-node-location"]'
     );
     nodeLocationInput.should("be.visible");
     // Enter a new node location
@@ -116,7 +115,7 @@ describe("Sparrow Application", () => {
     nodeSubmitButton.should("be.visible");
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Cypress Test Node"
-    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
+    cy.get('[data-testid="node-name"]').should(
       "contain",
       "Cypress Test Node"
     );
@@ -129,14 +128,14 @@ describe("Sparrow Application", () => {
     //Click the Submit button
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Other Node Name"
-    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
+    cy.get('[data-testid="node-name"]').should(
       "contain",
       "Other Node Name"
     );
     //Click the sparrow Logo to return to the homepage
     cy.get('[data-testid="logo"]').click({ force: true });
     // verify the node location is now updated to "Garage"
-    cy.get('[data-testid="node-location"]', { timeout: 15000 }).should(
+    cy.get('[data-testid="node-location"]').should(
       "contain",
       "Garage"
     );
