@@ -13,9 +13,6 @@ type GatewayDetailsData = {
   onChangeName: (name: string) => Promise<boolean>;
   viewModel: GatewayDetailViewModel;
 };
-type NameFormData = {
-  name: string;
-};
 
 const GatewayDetails = ({
   err,
@@ -23,12 +20,16 @@ const GatewayDetails = ({
   viewModel,
 }: GatewayDetailsData) => {
   const [isEditingName, setIsEditingName] = useState(false);
+  const [isNameErred, setIsNameErred] = useState(false);
+
   const toggleEditingName = () => {
     setIsEditingName(!isEditingName);
   };
+  type NameFormData = { name: string };
   const onNameFinish = async (values: NameFormData) => {
     const { name } = values;
     const result = await onChangeName(name);
+    setIsNameErred(!result);
     if (result) {
       setIsEditingName(false);
     }
@@ -63,7 +64,15 @@ const GatewayDetails = ({
                 }}
                 layout="inline"
               >
-                <Form.Item name="name">
+                <Form.Item
+                  validateStatus={isNameErred ? "error" : ""}
+                  name="name"
+                  help={
+                    isNameErred
+                      ? ERROR_MESSAGE.GATEWAY_NAME_CHANGE_FAILED
+                      : null
+                  }
+                >
                   <Input required />
                 </Form.Item>
                 <Button

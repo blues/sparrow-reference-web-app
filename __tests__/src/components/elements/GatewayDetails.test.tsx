@@ -1,12 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+import userEvent from "@testing-library/user-event";
 // eslint-disable-next-line jest/no-mocks-import
 import "../../../../__mocks__/matchMediaMock"; // needed to avoid error due to JSDOM not implementing method yet: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import GatewayDetails from "../../../../src/components/elements/GatewayDetails";
 import Gateway from "../../../../src/components/models/Gateway";
 import Node from "../../../../src/components/models/Node";
-import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
+import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../../../src/constants/ui";
 import { getGatewayDetailsPresentation } from "../../../../src/components/presentation/gatewayDetails";
 
 function getMockGateway(): Gateway {
@@ -102,6 +103,58 @@ describe("Gateway details page", () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText("Node", { exact: false })
+    ).not.toBeInTheDocument();
+  });
+
+  it("should show an error if a name change failed", async () => {
+    const gateway = getMockGateway();
+    const viewModel = getGatewayDetailsPresentation(gateway, mockNodes);
+
+    const promise = Promise.resolve(false);
+    const onChangeName = () => promise;
+
+    render(
+      <GatewayDetails
+        viewModel={viewModel}
+        onChangeName={onChangeName}
+        err=""
+      />
+    );
+
+    userEvent.click(screen.getByRole("button", { name: /edit/i }));
+    userEvent.click(screen.getByRole("button", { name: /check/i }));
+
+    await waitFor(() =>
+      screen.getByText(ERROR_MESSAGE.GATEWAY_NAME_CHANGE_FAILED)
+    );
+    expect(
+      screen.getByText(ERROR_MESSAGE.GATEWAY_NAME_CHANGE_FAILED)
+    ).toBeInTheDocument();
+  });
+
+  it("should NOT show an error if a name change succeeds", async () => {
+    const gateway = getMockGateway();
+    const viewModel = getGatewayDetailsPresentation(gateway, mockNodes);
+
+    const promise = Promise.resolve(true);
+    const onChangeName = () => promise;
+
+    render(
+      <GatewayDetails
+        viewModel={viewModel}
+        onChangeName={onChangeName}
+        err=""
+      />
+    );
+
+    userEvent.click(screen.getByRole("button", { name: /edit/i }));
+    userEvent.click(screen.getByRole("button", { name: /check/i }));
+
+    await waitFor(() => screen.getByRole("button", { name: /edit/i }));
+    expect(
+      screen.queryByText(ERROR_MESSAGE.GATEWAY_NAME_CHANGE_FAILED, {
+        exact: false,
+      })
     ).not.toBeInTheDocument();
   });
 });
