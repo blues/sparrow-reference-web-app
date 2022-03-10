@@ -142,7 +142,7 @@ describe("Sparrow Application", () => {
     );
   });
 
-  it("should be able to paginate through the carousel for multiple gateways", function () {
+  it.skip("should be able to paginate through the carousel for multiple gateways", function () {
     cy.visit("/");
     // Check first gateway card is visible
     cy.get('[data-testid="gateway[0]-details"]').should("be.visible");
