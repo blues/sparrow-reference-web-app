@@ -18,12 +18,13 @@ const SENSOR_MESSAGE = {
 
 // Historical sensor data fallbacks for no historical sensor data to display
 const HISTORICAL_SENSOR_DATA_MESSAGE = {
-  NO_VOLTAGE_HISTORY: "No voltage history currently available.",
-  NO_HUMIDITY_HISTORY: "No humidity history currently available.",
-  NO_PRESSURE_HISTORY: "No pressure history currently available.",
-  NO_TEMPERATURE_HISTORY: "No temperature history currently available.",
-  NO_COUNT_HISTORY: "No count history currently available.",
-  NO_TOTAL_HISTORY: "No total history currently available.",
+  NO_VOLTAGE_HISTORY: "No voltage history available for selected date range.",
+  NO_HUMIDITY_HISTORY: "No humidity history available for selected date range.",
+  NO_PRESSURE_HISTORY: "No pressure history available for selected date range.",
+  NO_TEMPERATURE_HISTORY:
+    "No temperature history available for selected date range.",
+  NO_COUNT_HISTORY: "No count history available for selected date range.",
+  NO_TOTAL_HISTORY: "No total history available for selected date range.",
 };
 
 // Gateway data fallbacks for empty data fields

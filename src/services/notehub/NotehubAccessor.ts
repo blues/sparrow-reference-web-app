@@ -10,7 +10,7 @@ interface NotehubAccessor {
   getDevices: () => Promise<NotehubDevice[]>;
   getDevice: (hubDeviceUID: string) => Promise<NotehubDevice>;
   getLatestEvents: (hubDeviceUID: string) => Promise<NotehubLatestEvents>;
-  getEvents: (startDate?: number) => Promise<NotehubEvent[]>;
+  getEvents: (startDate?: string) => Promise<NotehubEvent[]>;
   getConfig: (
     hubDeviceUID: string,
     nodeId: string

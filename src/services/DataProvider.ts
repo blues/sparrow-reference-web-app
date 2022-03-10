@@ -15,7 +15,7 @@ interface DataProvider {
   getNodeData: (
     gatewayUID: string,
     nodeId: string,
-    startDate?: string
+    minutesBeforeNow?: string
   ) => Promise<Reading<unknown>[]>;
 }
 

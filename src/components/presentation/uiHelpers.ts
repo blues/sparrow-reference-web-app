@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, sub } from "date-fns";
 import { sortBy, uniqBy } from "lodash";
 import Reading from "../models/readings/Reading";
 import ReadingSchema from "../models/readings/ReadingSchema";
@@ -82,4 +82,13 @@ export const getFormattedTotalData = (total: number | undefined) => {
     return formattedData;
   }
   return null;
+};
+
+export const getEpochChartDataDate = (minutesToConvert: number) => {
+  const date = new Date();
+  const rawEpochDate = sub(date, { minutes: minutesToConvert });
+  const formattedEpochDate = Math.round(
+    rawEpochDate.getTime() / 1000
+  ).toString();
+  return formattedEpochDate;
 };

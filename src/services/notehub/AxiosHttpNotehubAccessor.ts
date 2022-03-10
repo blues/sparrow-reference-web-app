@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 import { ErrorWithCause } from "pony-cause";
-import { sub } from "date-fns";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
 import { HTTP_HEADER } from "../../constants/http";
@@ -12,6 +11,7 @@ import NotehubEvent from "./models/NotehubEvent";
 import NotehubResponse from "./models/NotehubResponse";
 import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
 import NotehubEnvVars from "./models/NotehubEnvVars";
+import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -87,14 +87,6 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     return getError(errorCode, { cause: e as Error });
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  constructStartDate(startDate: number) {
-    const date = new Date();
-    const startDateToUse = sub(date, { minutes: startDate });
-    const startDateValue = Math.round(startDateToUse.getTime() / 1000);
-    return startDateValue;
-  }
-
   async getLatestEvents(hubDeviceUID: string) {
     const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}/latest`;
     try {
@@ -105,10 +97,10 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }
   }
 
-  async getEvents(startDate?: number) {
-    // start date is in minutes
-    let startDateValue = startDate || this.hubHistoricalDataRecentMinutes;
-    startDateValue = this.constructStartDate(startDateValue);
+  async getEvents(startDate?: string) {
+    // start date is an epoch time string to avoid TS error when it's passed into Notehub URL
+    const startDateValue =
+      startDate || getEpochChartDataDate(this.hubHistoricalDataRecentMinutes);
 
     // Take the start date from the argument first, but fall back to the environment
     // variable.

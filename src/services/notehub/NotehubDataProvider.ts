@@ -15,6 +15,7 @@ import PressureSensorReading from "../../components/models/readings/PressureSens
 import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
 import CountSensorReading from "../../components/models/readings/CountSensorReading";
 import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
+import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
@@ -226,10 +227,20 @@ export default class NotehubDataProvider implements DataProvider {
     return match;
   }
 
-  async getNodeData(gatewayUID: string, nodeId: string, startDate?: string) {
-    const nodeEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
-      Number(startDate)
-    );
+  async getNodeData(
+    gatewayUID: string,
+    nodeId: string,
+    minutesBeforeNow?: string
+  ) {
+    let nodeEvents: NotehubEvent[];
+    if (minutesBeforeNow) {
+      const epochDateString: string = getEpochChartDataDate(
+        Number(minutesBeforeNow)
+      );
+      nodeEvents = await this.notehubAccessor.getEvents(epochDateString);
+    } else {
+      nodeEvents = await this.notehubAccessor.getEvents();
+    }
 
     const filteredEvents: NotehubEvent[] = nodeEvents.filter(
       (event: NotehubEvent) =>

@@ -30,7 +30,7 @@ import detailsStyles from "../../../../styles/Details.module.scss";
 interface SparrowQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
   nodeId: string;
-  startDate?: string;
+  minutesBeforeNow?: string; // this value is a string to it can be a query param
 }
 
 type NodeDetailsData = {
@@ -43,7 +43,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   const { Option } = Select;
   const { query } = useRouter();
 
-  // neither of these values will every be null because the URL path depends on them to render this page
+  // neither of these values will ever be null because the URL path depends on them to render this page
   const { gatewayUID, nodeId } = query as SparrowQueryInterface;
   const nodeUrl = `/${gatewayUID}/node/${nodeId}/details`;
 
@@ -58,7 +58,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
     // call this function to force a page update with new chart date range
     await router.replace({
       pathname: `${nodeUrl}`,
-      query: { startDate: value },
+      query: { minutesBeforeNow: value },
     });
   };
 
@@ -384,7 +384,8 @@ export default NodeDetails;
 export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
   query,
 }) => {
-  const { gatewayUID, nodeId, startDate } = query as SparrowQueryInterface;
+  const { gatewayUID, nodeId, minutesBeforeNow } =
+    query as SparrowQueryInterface;
   const appService = services().getAppService();
   let viewModel: NodeDetailViewModel = {};
 
@@ -394,7 +395,7 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
     const readings = await appService.getNodeData(
       gatewayUID,
       nodeId,
-      startDate
+      minutesBeforeNow
     );
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
 
