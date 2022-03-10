@@ -244,7 +244,9 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     data-testid="date-range-picker"
                     className={detailsStyles.currentReadingsRow}
                     defaultValue={
-                      query.minutesBeforeNow ? query.minutesBeforeNow : "1440"
+                      query.minutesBeforeNow
+                        ? query.minutesBeforeNow.toString()
+                        : "1440"
                     }
                     style={{ width: "100%" }}
                     onChange={handleDateRangeChange}
