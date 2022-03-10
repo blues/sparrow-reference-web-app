@@ -13,9 +13,9 @@ let mock: MockAdapter;
 const mockBaseURL = "http://blues.io";
 const mockProjectUID = "app:1234";
 const mockDeviceUID = "dev:1234";
-const mockHubHistoricalDataStartDate = 1440;
+const mockHubHistoricalDataRecentMinutes = 1440;
 const mockedStartDate = sub(new Date(), {
-  minutes: mockHubHistoricalDataStartDate,
+  minutes: mockHubHistoricalDataRecentMinutes,
 });
 const mockedEpochTimeValue = Math.round(mockedStartDate.getTime() / 1000);
 
@@ -30,7 +30,7 @@ const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
   mockDeviceUID,
   mockProjectUID,
   "",
-  mockHubHistoricalDataStartDate
+  mockHubHistoricalDataRecentMinutes
 );
 
 describe("Device handling", () => {

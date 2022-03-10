@@ -43,6 +43,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   const { Option } = Select;
   const { query } = useRouter();
 
+  // neither of these values will every be null because the URL path depends on them to render this page
   const { gatewayUID, nodeId } = query as SparrowQueryInterface;
   const nodeUrl = `/${gatewayUID}/node/${nodeId}/details`;
 
@@ -238,6 +239,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
               </Row>
               <Row>
                 <Col span={8}>
+                  <p>Chart date range</p>
                   <Select
                     data-testid="date-range-picker"
                     className={detailsStyles.currentReadingsRow}

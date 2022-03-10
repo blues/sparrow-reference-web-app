@@ -21,7 +21,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   hubProjectUID: string;
 
-  hubHistoricalDataStartDate: number;
+  hubHistoricalDataRecentMinutes: number;
 
   commonHeaders;
 
@@ -30,12 +30,12 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     hubDeviceUID: string,
     hubProjectUID: string,
     hubAuthToken: string,
-    hubHistoricalDataStartDate: number
+    hubHistoricalDataRecentMinutes: number
   ) {
     this.hubBaseURL = hubBaseURL;
     this.hubDeviceUID = hubDeviceUID;
     this.hubProjectUID = hubProjectUID;
-    this.hubHistoricalDataStartDate = hubHistoricalDataStartDate;
+    this.hubHistoricalDataRecentMinutes = hubHistoricalDataRecentMinutes;
     this.commonHeaders = {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
       [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
@@ -107,7 +107,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   async getEvents(startDate?: number) {
     // start date is in minutes
-    let startDateValue = startDate || this.hubHistoricalDataStartDate;
+    let startDateValue = startDate || this.hubHistoricalDataRecentMinutes;
     startDateValue = this.constructStartDate(startDateValue);
 
     // Take the start date from the argument first, but fall back to the environment

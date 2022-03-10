@@ -21,7 +21,8 @@ const env = {
   // TODO - delete when we're not making calls to the api from the server
   DEPLOY_URL: process.env.DEPLOY_URL, // Netlify URL for an individual deploy
   // todo delete in future - these values only exists so we can configure how far in the past we're pulling Notehub data
-  HUB_HISTORICAL_DATA_START_DATE: process.env.HUB_HISTORICAL_DATA_START_DATE,
+  HUB_HISTORICAL_DATA_RECENT_MINUTES:
+    process.env.HUB_HISTORICAL_DATA_RECENT_MINUTES,
 };
 
 const optionalEnvVar = (varName: keyof typeof env, defaultValue: string) => {
@@ -71,8 +72,11 @@ const Config = {
   get hubDeviceUID() {
     return requiredEnvVar("HUB_DEVICE_UID");
   },
-  get hubHistoricalDataStartDate() {
-    return parseInt(optionalEnvVar("HUB_HISTORICAL_DATA_START_DATE", "3"), 10);
+  get hubHistoricalDataRecentMinutes() {
+    return parseInt(
+      optionalEnvVar("HUB_HISTORICAL_DATA_RECENT_MINUTES", "2880"),
+      10
+    );
   },
 };
 
