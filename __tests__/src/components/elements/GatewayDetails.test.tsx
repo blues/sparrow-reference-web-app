@@ -110,13 +110,10 @@ describe("Gateway details page", () => {
     const gateway = getMockGateway();
     const viewModel = getGatewayDetailsPresentation(gateway, mockNodes);
 
-    const promise = Promise.resolve(false);
-    const onChangeName = () => promise;
-
     render(
       <GatewayDetails
         viewModel={viewModel}
-        onChangeName={onChangeName}
+        onChangeName={() => Promise.resolve(false)}
         err=""
       />
     );
@@ -136,13 +133,10 @@ describe("Gateway details page", () => {
     const gateway = getMockGateway();
     const viewModel = getGatewayDetailsPresentation(gateway, mockNodes);
 
-    const promise = Promise.resolve(true);
-    const onChangeName = () => promise;
-
     render(
       <GatewayDetails
         viewModel={viewModel}
-        onChangeName={onChangeName}
+        onChangeName={() => Promise.resolve(true)}
         err=""
       />
     );
