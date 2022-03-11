@@ -1,3 +1,4 @@
 {
-  "experimentalStudio": true
+  "experimentalStudio": true,
+  "defaultCommandTimeout": 60000
 }

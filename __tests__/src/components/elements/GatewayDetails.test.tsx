@@ -7,7 +7,7 @@ import "../../../../__mocks__/matchMediaMock"; // needed to avoid error due to J
 import GatewayDetails from "../../../../src/components/elements/GatewayDetails";
 import Gateway from "../../../../src/components/models/Gateway";
 import Node from "../../../../src/components/models/Node";
-import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../../../src/constants/ui";
+import { ERROR_MESSAGE } from "../../../../src/constants/ui";
 import { getGatewayDetailsPresentation } from "../../../../src/components/presentation/gatewayDetails";
 
 function getMockGateway(): Gateway {
@@ -50,6 +50,8 @@ const mockChange = async () => true;
 describe("Gateway details page", () => {
   it("should render the gateway and node information when a gateway is present", () => {
     const gateway = getMockGateway();
+    mockNodes[0].name = "a-name";
+    mockNodes[1].name = "b-name";
     const viewModel = getGatewayDetailsPresentation(gateway, mockNodes);
     render(<GatewayDetails viewModel={viewModel} onChangeName={mockChange} />);
 
@@ -58,29 +60,10 @@ describe("Gateway details page", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(mockNodes[0].name || "", { exact: false })
+      screen.getByText(mockNodes[0].name, { exact: false })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(mockNodes[1].name || "", { exact: false })
-    ).toBeInTheDocument();
-  });
-
-  it("should render a gateway location if one is present", () => {
-    const gateway = getMockGateway();
-    gateway.location = "Michigan";
-    const viewModel = getGatewayDetailsPresentation(gateway, mockNodes);
-
-    render(<GatewayDetails viewModel={viewModel} onChangeName={mockChange} />);
-    expect(screen.getByTestId("gateway-location")).toBeInTheDocument();
-  });
-
-  it("should not render a gateway location if one is not present", () => {
-    const gateway = getMockGateway();
-    delete gateway.location;
-    const viewModel = getGatewayDetailsPresentation(gateway, mockNodes);
-    render(<GatewayDetails viewModel={viewModel} onChangeName={mockChange} />);
-    expect(
-      screen.queryAllByText(GATEWAY_MESSAGE.NO_LOCATION)[0]
+      screen.getByText(mockNodes[1].name, { exact: false })
     ).toBeInTheDocument();
   });
 

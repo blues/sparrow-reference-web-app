@@ -156,13 +156,11 @@ describe("Sparrow Application", () => {
   it("should allow you to change a gateway’s name", function () {
     cy.visit("/");
     cy.clickGatewayCard("0");
-    cy.get('[data-testid="gateway-name-edit-button"]', {
-      timeout: 30000,
-    }).click();
+    cy.get('[data-testid="gateway-name-edit-button"]').click();
     cy.get("#name").clear();
     cy.get("#name").type("CYPRESS_TEST");
     cy.get('[data-testid="gateway-name-submit-button"]').click();
-    cy.get('[data-testid="gateway-details-header"]', { timeout: 5000 }).should(
+    cy.get('[data-testid="gateway-details-header"]').should(
       "contain",
       "CYPRESS_TEST"
     );
