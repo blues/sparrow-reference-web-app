@@ -5,7 +5,7 @@ import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 function getMockGateway(): Gateway {
   return {
     uid: "dev:123",
-    serialNumber: "my-gateway",
+    name: "my-gateway",
     lastActivity: "2022-01-13T15:02:46Z",
     location: "someplace",
     voltage: 1.2,

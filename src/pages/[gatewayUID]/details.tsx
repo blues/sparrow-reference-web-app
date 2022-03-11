@@ -29,7 +29,7 @@ const GatewayDetailsPage: NextPage<GatewayDetailsData> = ({
   };
 
   const changeName = async (name: string) => {
-    if (name === viewModel.gateway?.serialNumber) return true;
+    if (name === viewModel.gateway?.name) return true;
     setIsLoading(true);
     const isSuccessful = await changeGatewayName(
       viewModel.gateway?.uid || "",

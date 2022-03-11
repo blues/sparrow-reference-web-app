@@ -29,7 +29,7 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
 
 // Gateway data fallbacks for empty data fields
 const GATEWAY_MESSAGE = {
-  NO_SERIAL_NUMBER: "Unknown Gateway.",
+  NO_NAME: "Unknown Gateway.",
   NO_LOCATION: "—",
   NO_VOLTAGE: "—",
 };

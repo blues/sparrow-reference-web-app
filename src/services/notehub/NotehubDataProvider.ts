@@ -43,7 +43,7 @@ export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
     ...(getBestLocation(device) && {
       location: getBestLocation(device)?.name,
     }),
-    serialNumber: device.serial_number,
+    name: device.serial_number,
     uid: device.uid,
     voltage: device.voltage,
     nodeList: [],

@@ -3,7 +3,7 @@ import Node from "../components/models/Node";
 interface GatewayDetailViewModel {
   gateway?: {
     uid: string;
-    serialNumber: string;
+    name: string;
     lastActivity: string;
     location: string;
     voltage: string;

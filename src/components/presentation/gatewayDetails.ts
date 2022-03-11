@@ -15,8 +15,7 @@ export function getGatewayDetailsPresentation(
           uid: gateway.uid || "",
           lastActivity: getFormattedLastSeen(gateway.lastActivity || ""),
           location: gateway.location || GATEWAY_MESSAGE.NO_LOCATION,
-          serialNumber:
-            gateway.serialNumber || GATEWAY_MESSAGE.NO_SERIAL_NUMBER,
+          name: gateway.name || GATEWAY_MESSAGE.NO_NAME,
           voltage:
             getFormattedVoltageData(gateway.voltage) ||
             GATEWAY_MESSAGE.NO_VOLTAGE,
