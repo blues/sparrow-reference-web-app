@@ -6,7 +6,7 @@ import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
-import SensorReading from "../../components/models/readings/SensorReading";
+import Reading from "../../components/models/readings/Reading";
 import { ERROR_CODES, getError } from "../Errors";
 import NotehubLocation from "./models/NotehubLocation";
 import TemperatureSensorReading from "../../components/models/readings/TemperatureSensorReading";
@@ -15,6 +15,7 @@ import PressureSensorReading from "../../components/models/readings/PressureSens
 import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
 import CountSensorReading from "../../components/models/readings/CountSensorReading";
 import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
+import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
@@ -229,11 +230,17 @@ export default class NotehubDataProvider implements DataProvider {
   async getNodeData(
     gatewayUID: string,
     nodeId: string,
-    options?: { startDate?: Date }
+    minutesBeforeNow?: string
   ) {
-    const nodeEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
-      options?.startDate
-    );
+    let nodeEvents: NotehubEvent[];
+    if (minutesBeforeNow) {
+      const epochDateString: string = getEpochChartDataDate(
+        Number(minutesBeforeNow)
+      );
+      nodeEvents = await this.notehubAccessor.getEvents(epochDateString);
+    } else {
+      nodeEvents = await this.notehubAccessor.getEvents();
+    }
 
     const filteredEvents: NotehubEvent[] = nodeEvents.filter(
       (event: NotehubEvent) =>
@@ -242,7 +249,7 @@ export default class NotehubDataProvider implements DataProvider {
         (event.file.includes("#air.qo") || event.file.includes("#motion.qo")) &&
         event.device_uid === gatewayUID
     );
-    const readingsToReturn: SensorReading<unknown>[] = [];
+    const readingsToReturn: Reading<unknown>[] = [];
     filteredEvents.forEach((event: NotehubEvent) => {
       if (event.body.temperature) {
         readingsToReturn.push(

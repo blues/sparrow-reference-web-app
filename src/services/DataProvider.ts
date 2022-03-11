@@ -1,6 +1,6 @@
 import Gateway from "../components/models/Gateway";
 import Node from "../components/models/Node";
-import SensorReading from "../components/models/readings/SensorReading";
+import Reading from "../components/models/readings/Reading";
 
 // this interface shows gateway or node data - nothing more, nothing less
 interface DataProvider {
@@ -15,10 +15,8 @@ interface DataProvider {
   getNodeData: (
     gatewayUID: string,
     nodeId: string,
-    options?: {
-      startDate?: Date;
-    }
-  ) => Promise<SensorReading<unknown>[]>;
+    minutesBeforeNow?: string
+  ) => Promise<Reading<unknown>[]>;
 }
 
 // eslint-disable-next-line import/prefer-default-export

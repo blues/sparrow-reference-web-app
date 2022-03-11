@@ -45,7 +45,7 @@ class ServiceLocator {
         Config.hubDeviceUID,
         Config.hubProjectUID,
         Config.hubAuthToken,
-        Config.hubHistoricalDataStartDate
+        Config.hubHistoricalDataRecentMinutes
       );
     }
     return this.notehubAccessor;

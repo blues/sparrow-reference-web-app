@@ -30,6 +30,10 @@
   margin-top: -10px;
 }
 
+.dateRangeLabel {
+  margin-bottom: 4px;
+}
+
 .currentReadingsRow {
   margin-bottom: 16px;
 }
@@ -40,6 +44,10 @@
 
   :global .ant-card-body {
     padding: 0;
+
+    :global .anticon-info-circle {
+      padding-left: 4px;
+    }
   }
 
   .dataNumber {
@@ -69,7 +77,7 @@
     margin-bottom: 15px;
   }
 
-  .sensorChart {
+  .nodeChart {
     :global .ant-card-body {
       padding: 10px 20px;
     }
