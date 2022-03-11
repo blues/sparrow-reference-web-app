@@ -2,6 +2,10 @@
 
 .formLabel {
   font-weight: 600;
+
+  :global .ant-input-show-count-suffix {
+    font-weight: 400;
+  }
 }
 
 .formLabel:first-child {

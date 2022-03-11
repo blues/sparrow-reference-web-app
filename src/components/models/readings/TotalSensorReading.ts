@@ -1,7 +1,7 @@
-import SensorReading from "./SensorReading";
+import Reading from "./Reading";
 import TotalSensorSchema from "./TotalSensorSchema";
 
-class TotalSensorReading implements SensorReading<number> {
+class TotalSensorReading implements Reading<number> {
   schema: TotalSensorSchema;
 
   value: number;

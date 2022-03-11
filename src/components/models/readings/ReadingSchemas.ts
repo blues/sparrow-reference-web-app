@@ -5,7 +5,7 @@ import VoltageSensorSchema from "./VoltageSensorSchema";
 import CountSensorSchema from "./CountSensorSchema";
 import TotalSensorSchema from "./TotalSensorSchema";
 
-const SensorSchemas = {
+const ReadingSchemas = {
   humidity: HumiditySensorSchema,
   pressure: PressureSensorSchema,
   temperature: TemperatureSensorSchema,
@@ -14,4 +14,4 @@ const SensorSchemas = {
   total: TotalSensorSchema,
 };
 
-export default SensorSchemas;
+export default ReadingSchemas;

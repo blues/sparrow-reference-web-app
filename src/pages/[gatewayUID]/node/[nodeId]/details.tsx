@@ -1,34 +1,36 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { Card, Input, Button, Tabs, Row, Col, Tooltip } from "antd";
+import { Card, Input, Button, Tabs, Row, Col, Tooltip, Select } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import { ParsedUrlQuery } from "querystring";
 import Form, { FormProps } from "../../../../components/elements/Form";
-import SensorDetailsLineChart from "../../../../components/charts/SensorDetailsLineChart";
-import SensorDetailsBarChart from "../../../../components/charts/SensorDetailsBarChart";
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
   NODE_MESSSAGE,
 } from "../../../../constants/ui";
 import { services } from "../../../../services/ServiceLocator";
+import NodeDetailsLineChart from "../../../../components/charts/NodeDetailsLineChart";
+import NodeDetailsBarChart from "../../../../components/charts/NodeDetailsBarChart";
 import NodeDetailViewModel from "../../../../models/NodeDetailViewModel";
 import { getNodeDetailsPresentation } from "../../../../components/presentation/nodeDetails";
 import { ERROR_CODES } from "../../../../services/Errors";
-import styles from "../../../../styles/Home.module.scss";
-import detailsStyles from "../../../../styles/Details.module.scss";
 import TemperatureSensorSchema from "../../../../components/models/readings/TemperatureSensorSchema";
 import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
 import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
 import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
 import CountSensorSchema from "../../../../components/models/readings/CountSensorSchema";
+import styles from "../../../../styles/Home.module.scss";
+import detailsStyles from "../../../../styles/Details.module.scss";
 
 // custom interface to avoid UI believing query params can be undefined when they can't be
 interface SparrowQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
   nodeId: string;
+  minutesBeforeNow?: string; // this value is a string to it can be a query param
 }
 
 type NodeDetailsData = {
@@ -38,13 +40,26 @@ type NodeDetailsData = {
 
 const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
+  const { Option } = Select;
   const { query } = useRouter();
+
+  // neither of these values will ever be null because the URL path depends on them to render this page
+  const { gatewayUID, nodeId } = query as SparrowQueryInterface;
+  const nodeUrl = `/${gatewayUID}/node/${nodeId}/details`;
 
   const router = useRouter();
   // Call this function whenever you want to
   // refresh props!
   const refreshData = async () => {
     await router.replace(router.asPath);
+  };
+
+  const handleDateRangeChange = async (value: string) => {
+    // call this function to force a page update with new chart date range
+    await router.replace({
+      pathname: `${nodeUrl}`,
+      query: { minutesBeforeNow: value },
+    });
   };
 
   const formItems: FormProps[] = [
@@ -67,17 +82,18 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
     {
       label: "Name",
       name: "name",
-      rules: [{ required: true, message: "Please add the name of your node" }],
       tooltip: "What is the name of your node?",
       initialValue:
         viewModel.node?.name !== NODE_MESSSAGE.NO_NAME
           ? viewModel.node?.name
           : undefined,
+      rules: [{ required: true, message: "Please add the name of your node" }],
       contents: (
         <Input
           data-testid="form-input-node-name"
           placeholder="Name of node"
           maxLength={49}
+          showCount
         />
       ),
     },
@@ -97,6 +113,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
           data-testid="form-input-node-location"
           placeholder="Node location"
           maxLength={15}
+          showCount
         />
       ),
     },
@@ -110,7 +127,6 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   ];
 
   const formOnFinish = async (values: Store) => {
-    const { gatewayUID, nodeId } = query as SparrowQueryInterface;
     // TODO: Move this to the app service / data provider
     const response = await axios.post(
       `/api/gateway/${gatewayUID}/node/${nodeId}/config`,
@@ -120,7 +136,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
     console.log(response);
 
     if (response.status < 300) {
-      refreshData();
+      await refreshData();
     }
   };
 
@@ -208,21 +224,48 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     className={detailsStyles.card}
                     data-testid="motion-count"
                   >
+                    Motion
                     <Tooltip
                       title={`Total motions detected by ${viewModel.node?.name}: ${viewModel.node.total}`}
                     >
-                      Motion
-                      <br />
-                      <span className={detailsStyles.dataNumber}>
-                        {viewModel.node.count}
-                      </span>
+                      <InfoCircleOutlined />
                     </Tooltip>
+                    <br />
+                    <span className={detailsStyles.dataNumber}>
+                      {viewModel.node.count}
+                    </span>
                   </Card>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={8}>
+                  <p className={detailsStyles.dateRangeLabel}>
+                    Chart date range
+                  </p>
+                  <Select
+                    data-testid="date-range-picker"
+                    className={detailsStyles.currentReadingsRow}
+                    defaultValue={
+                      query.minutesBeforeNow
+                        ? query.minutesBeforeNow.toString()
+                        : "1440"
+                    }
+                    style={{ width: "100%" }}
+                    onChange={handleDateRangeChange}
+                  >
+                    <Option value="60">Last 1 hour</Option>
+                    <Option value="720">Last 12 hours</Option>
+                    <Option value="1440">Last 24 hours</Option>
+                    <Option value="2880">Last 2 days</Option>
+                    <Option value="4320">Last 3 days</Option>
+                    <Option value="7200">Last 5 days</Option>
+                    <Option value="10080">Last 7 days</Option>
+                  </Select>
                 </Col>
               </Row>
               <Row justify="start" gutter={[8, 16]}>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Temperature</h3>
                     <p
                       data-testid="last-seen-temperature"
@@ -231,7 +274,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.temperature.length ? (
-                      <SensorDetailsLineChart
+                      <NodeDetailsLineChart
                         label="Temperature"
                         data={viewModel.readings.temperature}
                         chartColor="#59d2ff"
@@ -243,7 +286,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Humidity</h3>
                     <p
                       data-testid="last-seen-humidity"
@@ -252,7 +295,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.humidity.length ? (
-                      <SensorDetailsLineChart
+                      <NodeDetailsLineChart
                         label="Humidity"
                         data={viewModel.readings.humidity}
                         chartColor="#ba68c8"
@@ -264,7 +307,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Voltage</h3>
                     <p
                       data-testid="last-seen-voltage"
@@ -273,7 +316,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.voltage.length ? (
-                      <SensorDetailsLineChart
+                      <NodeDetailsLineChart
                         label="Voltage"
                         data={viewModel.readings.voltage}
                         chartColor="#9ccc65"
@@ -285,7 +328,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Pressure</h3>
                     <p
                       data-testid="last-seen-pressure"
@@ -294,7 +337,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.pressure.length ? (
-                      <SensorDetailsLineChart
+                      <NodeDetailsLineChart
                         label="Pressure"
                         data={viewModel.readings.pressure}
                         chartColor="#ffd54f"
@@ -306,7 +349,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   </Card>
                 </Col>
                 <Col xs={24} sm={24} lg={12}>
-                  <Card className={detailsStyles.sensorChart}>
+                  <Card className={detailsStyles.nodeChart}>
                     <h3>Motion Count</h3>
                     <p
                       data-testid="last-seen-count"
@@ -315,7 +358,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                       Last updated {viewModel.node.lastActivity}
                     </p>
                     {viewModel.readings?.count.length ? (
-                      <SensorDetailsBarChart
+                      <NodeDetailsBarChart
                         label="Count"
                         data={viewModel.readings.count}
                         chartColor="#ff7e6d"
@@ -347,15 +390,20 @@ export default NodeDetails;
 export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
   query,
 }) => {
-  const { gatewayUID, nodeId } = query as SparrowQueryInterface;
+  const { gatewayUID, nodeId, minutesBeforeNow } =
+    query as SparrowQueryInterface;
   const appService = services().getAppService();
   let viewModel: NodeDetailViewModel = {};
 
   try {
     const gateway = await appService.getGateway(gatewayUID);
-    const sensor = await appService.getNode(gatewayUID, nodeId);
-    const readings = await appService.getNodeData(gatewayUID, nodeId);
-    viewModel = getNodeDetailsPresentation(sensor, gateway, readings);
+    const node = await appService.getNode(gatewayUID, nodeId);
+    const readings = await appService.getNodeData(
+      gatewayUID,
+      nodeId,
+      minutesBeforeNow
+    );
+    viewModel = getNodeDetailsPresentation(node, gateway, readings);
 
     return {
       props: { viewModel },

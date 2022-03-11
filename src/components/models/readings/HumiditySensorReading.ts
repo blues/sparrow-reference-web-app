@@ -1,7 +1,7 @@
-import SensorReading from "./SensorReading";
+import Reading from "./Reading";
 import HumiditySensorSchema from "./HumiditySensorSchema";
 
-class HumiditySensorReading implements SensorReading<number> {
+class HumiditySensorReading implements Reading<number> {
   schema: HumiditySensorSchema;
 
   value: number;

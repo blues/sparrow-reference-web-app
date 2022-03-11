@@ -1,3 +1,3 @@
-import SensorReadingSchema from "./SensorSchema";
+import ReadingSchema from "./ReadingSchema";
 
-export default class TotalSensorSchema implements SensorReadingSchema<number> {}
+export default class TotalSensorSchema implements ReadingSchema<number> {}

@@ -11,6 +11,7 @@ import NotehubEvent from "./models/NotehubEvent";
 import NotehubResponse from "./models/NotehubResponse";
 import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
 import NotehubEnvVars from "./models/NotehubEnvVars";
+import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
@@ -20,7 +21,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   hubProjectUID: string;
 
-  hubHistoricalDataStartDate: Date;
+  hubHistoricalDataRecentMinutes: number;
 
   commonHeaders;
 
@@ -29,16 +30,12 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     hubDeviceUID: string,
     hubProjectUID: string,
     hubAuthToken: string,
-    hubHistoricalDataStartDate: number
+    hubHistoricalDataRecentMinutes: number
   ) {
     this.hubBaseURL = hubBaseURL;
     this.hubDeviceUID = hubDeviceUID;
     this.hubProjectUID = hubProjectUID;
-
-    const date = new Date();
-    date.setDate(date.getDate() - hubHistoricalDataStartDate);
-    this.hubHistoricalDataStartDate = date;
-
+    this.hubHistoricalDataRecentMinutes = hubHistoricalDataRecentMinutes;
     this.commonHeaders = {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
       [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
@@ -100,12 +97,13 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }
   }
 
-  async getEvents(startDate?: Date) {
+  async getEvents(startDate?: string) {
+    // start date is an epoch time string to avoid TS error when it's passed into Notehub URL
+    const startDateValue =
+      startDate || getEpochChartDataDate(this.hubHistoricalDataRecentMinutes);
+
     // Take the start date from the argument first, but fall back to the environment
     // variable.
-    const startDateToUse = startDate || this.hubHistoricalDataStartDate;
-    const startDateValue = Math.round(startDateToUse.getTime() / 1000);
-
     let events: NotehubEvent[] = [];
     const initialEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?startDate=${startDateValue}`;
     try {
@@ -116,7 +114,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       if (resp.data.events) {
         events = resp.data.events;
       }
-      while (resp.data.has_more) {
+      while (resp.data.has_more && resp.data.through) {
         const recurringEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?since=${resp.data.through}`;
         const recurringResponse: AxiosResponse<NotehubResponse> =
           // eslint-disable-next-line no-await-in-loop
