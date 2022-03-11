@@ -1,6 +1,7 @@
 import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import React, { useState } from "react";
+import styles from "../../styles/EditInPlace.module.scss";
 
 type EditInPlaceData = {
   initialText: string;
@@ -33,7 +34,7 @@ const EditInPlace = ({
     <>
       {!isEditing && (
         <>
-          {initialText}
+          <span className={styles.editInPlaceText}>{initialText}</span>
           <Button
             data-testid="edit-in-place-edit-button"
             type="link"
@@ -47,6 +48,7 @@ const EditInPlace = ({
           onFinish={onFinish}
           initialValues={{ value: initialText }}
           layout="inline"
+          className={styles.editInPlaceForm}
         >
           <Form.Item
             validateStatus={isErred ? "error" : ""}

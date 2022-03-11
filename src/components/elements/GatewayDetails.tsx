@@ -25,7 +25,7 @@ const GatewayDetails = ({
       <div>
         <h2
           data-testid="gateway-details-header"
-          className={`${styles.sectionTitle} ${detailsStyles.editable}`}
+          className={`${styles.sectionTitle} ${detailsStyles.editableHeading}`}
         >
           <span>Gateway:</span>
           <EditInPlace
