@@ -4,7 +4,7 @@ import { Carousel } from "antd";
 import { CarouselRef } from "antd/lib/carousel";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
-import Gateway from "../components/models/Gateway";
+import GatewayDEPRECATED from "../components/models/Gateway";
 import Node from "../components/models/Node";
 import { getErrorMessage } from "../constants/ui";
 import { ERROR_CODES } from "../services/Errors";
@@ -12,13 +12,15 @@ import CarouselArrowFixRight from "../components/elements/CarouselArrowFixRight"
 import CarouselArrowFixLeft from "../components/elements/CarouselArrowFixLeft";
 import { getCombinedGatewayNodeInfo } from "../components/presentation/gatewayNodeInfo";
 import styles from "../styles/Home.module.scss";
+import { Project } from "../services/DomainModel";
 
 type HomeData = {
-  gatewayNodeData: Gateway[];
+  gatewayNodeData: GatewayDEPRECATED[];
+  latestProjectReadings?: Project
   err?: string;
 };
 
-const Home: NextPage<HomeData> = ({ gatewayNodeData, err }) => {
+const Home: NextPage<HomeData> = ({ gatewayNodeData, err, latestProjectReadings }) => {
   const carouselRef = useRef<CarouselRef>(null);
 
   useEffect(() => {
@@ -59,11 +61,12 @@ const Home: NextPage<HomeData> = ({ gatewayNodeData, err }) => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
-  let gateways: Gateway[] = [];
+  let gateways: GatewayDEPRECATED[] = [];
   let latestNodeDataList: Node[] = [];
-  let gatewayNodeData: Gateway[] = [];
+  let gatewayNodeData: GatewayDEPRECATED[] = [];
   try {
-    const appService = services().getAppService();
+    const appService = services().getAppService();    
+    const latestProjectReadings = await appService.getLatestProjectReadings();
     gateways = await appService.getGateways();
     latestNodeDataList = await appService.getNodes(
       gateways.map((gateway) => gateway.uid)
@@ -72,7 +75,7 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
     gatewayNodeData = getCombinedGatewayNodeInfo(latestNodeDataList, gateways);
 
     return {
-      props: { gatewayNodeData },
+      props: { gatewayNodeData, latestProjectReadings },
     };
   } catch (err) {
     if (err instanceof Error) {

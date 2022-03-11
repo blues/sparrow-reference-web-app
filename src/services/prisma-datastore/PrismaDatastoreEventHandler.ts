@@ -1,4 +1,5 @@
-import { PrismaClient, Prisma, ReadingSource, ReadingSchema, ReadingSchemaValueType, Project, ReadingSourceType, Gateway, Reading } from "@prisma/client";
+import { PrismaClient, Prisma, ReadingSource, ReadingSchema, ReadingSchemaValueType, Project, Sensor, ReadingSourceType, Gateway, Reading } from "@prisma/client";
+import { ErrorWithCause } from "pony-cause";
 import NotehubLocation from "../notehub/models/NotehubLocation";
 import { SparrowEvent, SparrowEventHandler } from "../SparrowEvent";
 
@@ -6,8 +7,10 @@ import { SparrowEvent, SparrowEventHandler } from "../SparrowEvent";
 /**
  * The "hidden" property that describes the property that bears the primary data item in the event.
  */
+// todo - move to a shared definition. Also used in db-init.ts
 const __primary = "__primary";
 
+type SensorWithSchema = Sensor & { schema: ReadingSchema };
 
 export default class PrismaDatastoreEventHandler implements SparrowEventHandler {
 
@@ -16,42 +19,94 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
     }
 
     public async handleEvent(event: SparrowEvent): Promise<void> {
-    
+        console.log("handling event", event);
         const project = await this.projectFromNaturalKey(event.projectUID);
 
         const gateway = await this.upsertGateway(project, event.gatewayUID, event.gatewayName, event.when);        
         const node = event.nodeID ? await this.upsertNode(project, gateway, event.nodeID, event.when) : undefined;
 
-        
         // the schema can exist at the node, gateway, project or global level. 
-        // todo - add global reading source
+        // todo - add global reading source in db-init.ts
         const deviceReadingSources = [ gateway.readingSource, project.readingSource ];
         if (node) {
             deviceReadingSources.push(node.readingSource);
         }
         const deviceReadingSource = node ? node.readingSource : gateway.readingSource;
 
-
-        // find the schemata that matches the event name and 
+        // find the schemata that matches the event name and reading source
         const schemas = await this.prisma.readingSchema.findMany({
             where: {
-                eventName: event.eventName, 
+                eventName: event.eventName,     
                 reading_source_id: {
                     in: deviceReadingSources.map(rs => rs.id)
                 }
             }
         });
 
-        const promises = schemas.map(s => this.addSchemaReading(deviceReadingSource, s, event.when, event.eventBody as Prisma.InputJsonValue));
+        // upsert the sensors corresponding to the device reading source and the matched schemata.
+        const sensors = await this.upsertSensors(deviceReadingSource, schemas); 
+
+        // todo - the whole event body is stored for each reading on multiple schema. ideally the schema filters the
+        // event body to include only the relevant data. Optimization only. 
+        const promises = sensors.map(sensor => this.addSensorReading(sensor, event.when, event.eventBody as Prisma.InputJsonValue));
         return Promise.all(promises).then((r:Reading[]) => {
             console.log("added readings", r);
         })
     }
 
-    private addSchemaReading(readingSource: ReadingSource, schema: ReadingSchema, when: Date, value: Prisma.InputJsonValue) {
+    private async sensorsForDeviceSchema(deviceReadingSource: ReadingSource, schemas: ReadingSchema[]) {
+        return this.prisma.sensor.findMany({
+            where: {
+                readingSource: deviceReadingSource,
+                schema_id: {
+                    in: schemas.map(s => s.id)
+                }
+            },
+            include: {
+                schema: true
+            }
+        });
+    }
+
+    /**
+     * Create or retrieve sensors for the device.
+     * @param deviceReadingSource
+     * @param schemas 
+     */
+    private async upsertSensors(deviceReadingSource: ReadingSource, schemas: ReadingSchema[]) : Promise<SensorWithSchema[]> {
+        // prisma doesn't currently support multiple upserts.  Using a simple iterative approach. 
+        // Almost all of the time the sensors already exist
+
+        let existingSensors = await this.sensorsForDeviceSchema(deviceReadingSource, schemas);
+        if (existingSensors.length!==schemas.length) {
+
+            console.log("adding missing sensors");
+            const sensorForSchema = new Map<number, Sensor>();      // map reading schema ID to sensor
+            existingSensors.forEach(s => {
+                sensorForSchema.set(s.schema.id, s);
+            });
+
+            // there are some sensors that need creating
+            const toCreate = schemas.filter(s => !sensorForSchema.has(s.id));
+            const batch = await this.prisma.sensor.createMany({
+                data: toCreate.map(schema =>  { 
+                    return { 
+                        schema_id: schema.id, 
+                        reading_source_id: deviceReadingSource.id,
+                    };
+                })
+            });
+            existingSensors = await this.sensorsForDeviceSchema(deviceReadingSource, schemas);
+            // todo - check that it has the expected size?
+        }
+        return existingSensors;
+    }
+
+    // really would like prisma to 
+    private addSensorReading(sensor: SensorWithSchema, when: Date, value: Prisma.InputJsonValue) {
         let intValue = null;
         let floatValue = null;
-
+        const schema = sensor.schema;
         const primaryValue = ((schema.spec as any)[__primary]);
         if (primaryValue) {
             switch (schema.valueType) {
@@ -65,15 +120,30 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
             }
         }
 
+        // update the latest reading.
+        // todo - this assumes readings are received in order. Check that the new reading is more recent than the existing one.
+
         return this.prisma.reading.create({
             data: {
-                schema_id: schema.id,
+                sensor_id: sensor.id,
                 when,
-                reading_source_id: readingSource.id,
                 value,
                 intValue,
                 floatValue
             }
+        }).then( reading => {
+            return this.prisma.sensor.update({
+                where: {
+                    id: sensor.id
+                },
+                data: {
+                    latest: {
+                        connect: {
+                            id: reading.id
+                        }
+                    }
+                }
+            }).then(() => reading);
         });
     }
 
@@ -115,6 +185,9 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
      * @returns 
      */
     private upsertGateway(project: Project, deviceUID: string, name: string, lastSeenAt: Date, location?: NotehubLocation ) {
+        const args = arguments;
+        name = name.substring(50);
+
         return this.prisma.gateway.upsert({
             where: {
                 deviceUID
@@ -140,7 +213,7 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
             },
             update: {
                 name,
-                location: location?.name,
+                location: location?.name,   // todo use structured location
                 project: {
                     connect: {
                         id: project.id
@@ -148,11 +221,14 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
                 },
                 lastSeenAt,
             }
+        }).catch(cause => {
+
+            throw new ErrorWithCause(`error updating gateway ${deviceUID} ${JSON.stringify(args)}`, { cause });
         });
     }
 
     private upsertNode(project: Project, gateway: Gateway, nodeID: string, lastSeenAt: Date) {
-        
+        const args = arguments;
         return this.prisma.node.upsert({
             where: {
                 nodeEUI: nodeID
@@ -182,6 +258,8 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
                 },
                 lastSeenAt
             }
+        }).catch(cause => {
+            throw new ErrorWithCause(`error updating node ${nodeID} ${args}`, { cause });
         });
     }
 

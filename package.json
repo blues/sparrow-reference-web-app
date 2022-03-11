@@ -14,12 +14,12 @@
     "cypress:open": "cypress open --env configFile=development",
     "cypress:run": "cypress run --env configFile=development",
     "prisma:generate": "prisma generate",
-    "prisma:reset": "prisma db push --force-reset",
+    "db:reset": "prisma db push --force-reset",
     "db:update": "prisma db push",
     "db:init": "ts-node --project ./node.tsconfig.json src/services/prisma-datastore/db-init.ts"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",    
+    "@ant-design/icons": "^4.7.0",
     "@prisma/client": "^3.9.2",
     "@types/lodash": "^4.14.178",
     "@types/react-slick": "^0.23.8",

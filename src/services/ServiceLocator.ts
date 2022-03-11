@@ -12,6 +12,7 @@ import PrismaDatastoreEventHandler from "./prisma-datastore/PrismaDatastoreEvent
 import { PrismaClient } from "@prisma/client";
 import { NoopSparrowEventHandler, SparrowEventHandler } from "./SparrowEvent";
 import { PrismaDataProvider } from "./prisma-datastore/PrismaDataProvider";
+import { SimpleIDBuilder } from "./IDBuilder";
 
 // this class provides whatever service is needed to the React view component that needs it
 class ServiceLocator {
@@ -36,6 +37,8 @@ class ServiceLocator {
   getAppService(): AppServiceInterface {
     if (!this.appService) {
       this.appService = new AppService(
+        Config.hubProjectUID,
+        new SimpleIDBuilder(),
         this.getDataProvider(),
         this.getAttributeStore(),
         this.getEventHandler()

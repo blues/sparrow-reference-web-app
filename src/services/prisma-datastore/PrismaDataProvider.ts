@@ -1,15 +1,20 @@
-import { PrismaClient, Project as PrismaProject, Gateway as PrismaGateway } from "@prisma/client";
+import Prisma, { PrismaClient, ReadingSource, ReadingSourceType } from "@prisma/client";
 import { ErrorWithCause } from "pony-cause";
-import Gateway from "../../components/models/Gateway";
+import GatewayDEPRECATED from "../../components/models/Gateway";
 import SensorReading from "../../components/models/readings/SensorReading";
-import Node from "../../components/models/Node";
-import { DataProvider } from "../DataProvider";
+import NodeDEPRECATED from "../../components/models/Node";
+import { DataProvider, QueryResult, SimpleFilter, ProjectReadingShapshot, latest } from "../DataProvider";
+import { ProjectID, Project, SensorHost, SensorHostReadingsSnapshot, SensorType, Reading } from "../DomainModel";
+import Mapper from "./PrismaDomainModelMapper";
+import { fstat } from "fs";
 
 /**
  * Implements the DataProvider service using a Prisma data model.
  */
 export class PrismaDataProvider implements DataProvider {
-    
+    // todo - this is too restraining and belongs in the app layer.
+    // but it's like this for now since the original DataProvider interface doesn't have Project.
+    // When the domain model refactor is complete, projectUID constructor parameter can be removed.
     constructor(
         private prisma: PrismaClient, 
         private projectUID: string)
@@ -19,9 +24,15 @@ export class PrismaDataProvider implements DataProvider {
         return this.projectUID;
     }
 
-    private async currentProject(): Promise<PrismaProject> {
+    private async currentProject(): Promise<Prisma.Project> {
         // this is intentionally oversimplified - later will need to consider the current logged in user
+        // Project should be included in each method so that this interface is agnostic of the fact that the application
+        // works with just one project. 
         const projectUID = await this.currentProjectUID();
+        return this.findProject(projectUID);
+    }
+
+    private async findProject(projectUID: string) : Promise<Prisma.Project> {
         const project = await this.prisma.project.findFirst({where: {
             projectUID 
         }});
@@ -31,7 +42,7 @@ export class PrismaDataProvider implements DataProvider {
         return project;
     }
 
-    async getGateways(): Promise<Gateway[]> {
+    async getGateways(): Promise<GatewayDEPRECATED[]> {
         const project = await this.currentProject();
         const gateways = await this.prisma.gateway.findMany({
             where: {
@@ -42,7 +53,7 @@ export class PrismaDataProvider implements DataProvider {
         return gateways.map((gw) => this.sparrowGateway(gw));
     }
 
-    async getGateway(gatewayUID: string): Promise<Gateway> {
+    async getGateway(gatewayUID: string): Promise<GatewayDEPRECATED> {
         const project = await this.currentProject();
         const gateway = await this.prisma.gateway.findUnique({
             where: {
@@ -55,8 +66,12 @@ export class PrismaDataProvider implements DataProvider {
         return this.sparrowGateway(gateway);
     }
 
-
-    private sparrowGateway(gw: PrismaGateway): Gateway {
+    /**
+     * Converts a prisma gateway to the old domain model.
+     * @param gw
+     * @returns 
+     */
+    private sparrowGateway(gw: Prisma.Gateway): GatewayDEPRECATED {
         return {
             uid: gw.deviceUID,
             serialNumber: gw.name || '',                        // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
@@ -67,22 +82,118 @@ export class PrismaDataProvider implements DataProvider {
         }
     }
 
-    getNodes(gatewayUIDs: string[]): Promise<Node[]> {
+    getNodes(gatewayUIDs: string[]): Promise<NodeDEPRECATED[]> {
         // for now just issue multiple queries. Not sure how useful this method is anyway. 
         return Promise.all(gatewayUIDs.map(gatewayUID => this.getGatewayNodes(gatewayUID))).then(nodes => nodes.flat()); 
     }
 
-    async getGatewayNodes(gatewayUID: string): Promise<Node[]> {
+    async getGatewayNodes(gatewayUID: string): Promise<NodeDEPRECATED[]> {
         return Promise.resolve([])
     }
 
-    async getNode(gatewayUID: string, sensorUID: string): Promise<Node> {
+    async getNode(gatewayUID: string, sensorUID: string): Promise<NodeDEPRECATED> {
         return Promise.reject();    
     }
     async getNodeData(gatewayUID: string, sensorUID: string, options?: { startDate?: Date | undefined; }): Promise<SensorReading<unknown>[]> {
         return Promise.reject();    
     }
 
+    async queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingShapshot>> {
+        const filter: SimpleFilter = {};
+
+        const latestReading = {
+            include: {
+                sensor: {
+                    include: {
+                        latest: {
+                            include: {
+                                reading: true
+                            }
+                        },
+                        schema: true
+                    }
+                }
+            }
+        };
+
+        // this retrieves the hiearachy of project/gateway/node with the latest reading for each 
+        const prismaProject = await this.prisma.project.findUnique({
+            where: {
+                projectUID: projectID.projectUID
+            },
+            include: {
+                gateways: {
+                    include: {
+                        readingSource: latestReading,
+                        nodes: {
+                            include: {
+                                readingSource: latestReading
+                            },
+                            orderBy: {
+                                nodeEUI: "asc"
+                            }
+                        }
+                    },
+                    orderBy: {
+                        name: "asc"
+                    }
+                }
+            },
+            rejectOnNotFound: true
+        });
+
+        type P = typeof prismaProject;
+        type G = P["gateways"]["0"];
+        type N = G["nodes"]["0"];
+        type RS = N["readingSource"];
+        type S = RS["sensor"]["0"];
+
+        // now map the data to the domain model
+        const project = Mapper.mapProject(prismaProject);
+
+        const readingSourceToSensorHost:  Map<ReadingSource, SensorHost>  = new Map();
+        const latestReadings: ProjectReadingShapshot["latestReadings"] = new Map<SensorHost, SensorHostReadingsSnapshot>();
+
+        const addReadingSource = (rs: RS, sensorHost: SensorHost) => {
+            readingSourceToSensorHost.set(rs, sensorHost);
+
+            const readings = new Map<SensorType, Reading>();
+
+            const snapshot: SensorHostReadingsSnapshot = {
+                sensorHost,
+                readings
+            }
+
+            // todo - could consider caching the ReadingSchema -> SensorType but it's not that much overhead with duplication per device
+            rs.sensor.map(s => {
+                readings.set(Mapper.mapReadingSchema(s.schema), Mapper.mapReading(s.latest?.reading))
+            });
+
+            latestReadings.set(sensorHost, snapshot);
+        }
+
+        const deepMapNode = (n: N) => {
+            const result = Mapper.mapNode(n);
+            addReadingSource(n.readingSource, result);            
+            return result;
+        }
+
+        const deepMapGateway = (g: G) => {
+            const result = Mapper.mapGateway(g);
+            addReadingSource(g.readingSource, result);
+            result.nodes = new Set(g.nodes.map(deepMapNode));
+            return result;
+        };
+        project.gateways = new Set(prismaProject.gateways.map(deepMapGateway));
+
+        return { 
+            request: projectID, 
+            results: {
+                project, 
+                latestReadings
+            }
+        };
+    }
 
     private error<E>(msg: string, cause?: E) {
         if (cause) {

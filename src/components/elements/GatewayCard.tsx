@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { Card, Col, Row, Typography } from "antd";
-import Gateway from "../models/Gateway";
+import GatewayDEPRECATED from "../models/Gateway";
 import NodeCard from "./NodeCard";
 import {
   getFormattedLastSeen,
@@ -9,10 +9,12 @@ import {
 import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
 import cardStyles from "../../styles/Card.module.scss";
+import { Gateway } from "../../services/DomainModel";
 
 interface GatewayProps {
-  gatewayDetails: Gateway;
+  gatewayDetails: GatewayDEPRECATED;
   index: number;
+  gateway: Gateway;
 }
 
 const GatewayCardComponent = (props: GatewayProps) => {
@@ -23,6 +25,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
   );
 
   const router = useRouter();
+  // todo - use urlBuilder on the server to create the correct URL
   const gatewayUrl = `/${gatewayDetails.uid}/details`;
   const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -86,6 +89,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
             </Row>
           </Card>
         </Col>
+
       </Row>
 
       <h2 data-testid="node-header" className={styles.sectionSubTitle}>

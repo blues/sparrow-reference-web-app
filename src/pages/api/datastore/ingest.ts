@@ -7,7 +7,7 @@ import { services } from "../../../services/ServiceLocator";
 
 
 async function ingestEvent(notehubEvent: NotehubRoutedEvent) {
-
+    console.log("ingesting ", JSON.stringify(notehubEvent));
     if (!notehubEvent.project?.id) {
         throw Error(HTTP_STATUS.INVALID_PROJECTUID);         // todo - this is a client error. 
     }

@@ -82,3 +82,27 @@ docker run --rm \
   -v ~/pgdata:/var/lib/postgresql/data \
   postgres
 ```
+
+#### Setting the required environment
+
+The databse scripts don't depend on next.js loading and so `.env.local` and related files aren't loaded. A quick workaround is to ensure `HUB_PROJECT_UID` and `DATABASE_URL` are defined in `.env.local` and then export these:
+
+```
+set -a && . .env.local && set +a
+```
+
+#### Reset the Datastore and generate the datastore tables
+
+```
+yarn run db:reset
+```
+
+#### Seed the datastore
+```
+yarn run db:init
+```
+
+#### Update the datastore schema
+```
+yarn run db:update
+```

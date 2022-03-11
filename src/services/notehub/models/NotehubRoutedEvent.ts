@@ -3,7 +3,7 @@ interface NotehubRoutedEvent {
     file: string;
     when: number;
     device: string;
-
+    note?: string;
     body: unknown;
     sn: string;
 

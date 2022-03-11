@@ -6,9 +6,12 @@ import { DataProvider } from "./DataProvider";
 import { AttributeStore } from "./AttributeStore";
 import { SparrowEventHandler } from "./SparrowEvent";
 import { SparrowEvent } from "./notehub/SparrowEvents";
+import { Project, ProjectID } from "./DomainModel";
+import { IDBuilder } from "./IDBuilder";
 
 // this class / interface combo passes data and functions to the service locator file
 interface AppServiceInterface {
+  
   getGateways: () => Promise<Gateway[]>;
   // todo - make the interface less chatty.  
   getGateway: (gatewayUID: string) => Promise<Gateway>;
@@ -30,17 +33,27 @@ interface AppServiceInterface {
     loc: string
   ) => Promise<void>;
 
+
+  getLatestProjectReadings() : Promise<Project>;
+  
+    // todo - ingesting events should be on a separate service. 
   handleEvent(event: SparrowEvent) : Promise<void>;
 }
 
 export type { AppServiceInterface };
 
 export default class AppService implements AppServiceInterface {
+  private projectID: ProjectID;
+  
   constructor(
+    projectUID: string,
+    private readonly idBuilder: IDBuilder,
     private dataProvider: DataProvider,
     private attributeStore: AttributeStore,
     private sparrowEventHandler: SparrowEventHandler
-  ) {}
+  ) {
+    this.projectID = this.idBuilder.buildProjectID(projectUID);
+  }
 
   async getGateways() {
     return this.dataProvider.getGateways();
@@ -93,5 +106,16 @@ export default class AppService implements AppServiceInterface {
     } catch (e) {
       throw new ErrorWithCause(`could not setNodeLocation`, { cause: e });
     }
+  }
+
+  async getLatestProjectReadings() : Promise<Project> {
+    const projectID = this.currentProjectID();
+    const result = await this.dataProvider.queryProjectLatestValues(projectID);
+    const project = result.results;
+    return project;
+  }
+
+  private currentProjectID() {
+    return this.projectID;
   }
 }

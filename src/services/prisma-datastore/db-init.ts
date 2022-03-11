@@ -54,9 +54,17 @@ const air = {
     qo: "air.qo"
 }
 
+const sensors = {
+    db: "sensors.db"
+}
+
+const _session = {
+    db:  "_session.db"
+}
+
 
 function nodeEvent(event: string) {
-    return "*#"+event;
+    return event;
 }
 
 function sensorName(item: string) {
@@ -81,6 +89,121 @@ function readingSchemaDefaults<R extends { spec: any }>(r: R): R {
     return r;
 }
 
+
+
+const standardSchemas = [
+    {
+        name: "Gateway Voltage",
+        measure: "Voltage",
+        unit: "V",
+        eventName: session.qo,
+        valueType: ReadingSchemaValueType.SCALAR_FLOAT,   // if type not filled in, it is inferred from the data
+        spec: {
+            voltage: 1.0
+        }
+    },
+    {
+        name: "Gateway Signal strength",
+        measure: "Signal Strength",
+        unit: "bars",
+        eventName: session.qo,
+        valueType: ReadingSchemaValueType.SCALAR_INT,
+        spec: {
+            bars: 1
+        }
+    },
+    {
+        name: "Gateway Temperature",
+        measure: "Temperature",
+        unit: "°C",
+        eventName: session.qo,
+        valueType: ReadingSchemaValueType.SCALAR_FLOAT,
+        spec: {
+            temp: 36.7
+        }
+    },
+    {
+        // todo - use an event transformer based on the event name to help sculpture the data coming from notehub
+        // to store it in a more useful form. This preceeds creation of the reading.
+        name: "Gateway Location",
+        measure: "Location",
+        eventName: session.qo,
+        valueType: ReadingSchemaValueType.COMPOSITE,
+        spec: {
+            tri_when: 1644251539,
+            tri_lat: 42.76392871,
+            tri_lon: -84.64847525,
+            tri_location: 'Waverly, MI',
+            tri_country: 'US',
+            tri_timezone: 'America/Detroit',
+            tri_points: 8, 
+            __primary: "tri_location"                                                                     
+        }
+    },
+    {
+        name: sensorName("PIR Motion"),
+        measure: "External Motion",
+        eventName: nodeEvent(motion.qo),
+        valueType: ReadingSchemaValueType.SCALAR_INT,
+        spec: {
+           count: 1,
+           total: 1,
+           __primary: "count"                                                                   
+        }
+    },
+    {
+        name: sensorName("Temperature"),
+        measure: "Temperature",
+        eventName: nodeEvent(air.qo),
+        valueType: ReadingSchemaValueType.SCALAR_FLOAT,
+        unit: "°C",
+        spec: {
+            temperature: 37.6
+        }
+    },
+    {
+        name: sensorName("Pressure"),
+        measure: "Pressure",
+        eventName: nodeEvent(air.qo),
+        unit: "mmHg",
+        valueType: ReadingSchemaValueType.SCALAR_FLOAT,
+        scale: 100,
+        spec: {
+            pressure: 10000.1,
+        }
+    },
+    {
+        name: sensorName("Humidity"),
+        measure: "Humidity",
+        eventName: nodeEvent(air.qo),
+        valueType: ReadingSchemaValueType.SCALAR_FLOAT,
+        unit: "%",
+        spec: {
+            humidity: 54.3,
+        }
+    },
+    {
+        name: sensorName("Voltage"),
+        measure: "Voltage",
+        eventName: nodeEvent(air.qo),
+        valueType: ReadingSchemaValueType.SCALAR_FLOAT,
+        unit: "V",
+        spec: {
+            voltage: 3.3,
+        }
+    },
+    {
+        name: sensorName("RSSI"),
+        measure: "Signal Strength",
+        eventName: nodeEvent(sensors.db),
+        valueType: ReadingSchemaValueType.SCALAR_INT,
+        unit: "dBm",
+        spec: {
+            sensor_rssi: 1
+        }
+    }
+];
+
 /**
  * Creates a new project. 
  * @param projectUID 
@@ -94,97 +217,7 @@ async function createTypicalProject(prisma: PrismaClient, projectUID: string) {
                 create: {
                     type: ReadingSourceType.PROJECT,
                     readingSchema: {
-                        create: [
-                            {
-                                name: "Gateway Voltage",
-                                unit: "V",
-                                eventName: session.qo,
-                                valueType: ReadingSchemaValueType.SCALAR_FLOAT,   // if type not filled in, it is inferred from the data
-                                spec: {
-                                    voltage: 1.0
-                                }
-                            },
-                            {
-                                name: "Gateway Signal strength",
-                                unit: "bars",
-                                eventName: session.qo,
-                                valueType: ReadingSchemaValueType.SCALAR_INT,
-                                spec: {
-                                    bars: 1
-                                }
-                            },
-                            {
-                                name: "Gateway Temperature",
-                                unit: "°C",
-                                eventName: session.qo,
-                                valueType: ReadingSchemaValueType.SCALAR_FLOAT,
-                                spec: {
-                                    temp: 36.7
-                                }
-                            },
-                            {
-                                name: "Gateway Location",
-                                eventName: session.qo,
-                                valueType: ReadingSchemaValueType.COMPOSITE,
-                                spec: {
-                                    tri_when: 1644251539,
-                                    tri_lat: 42.76392871,
-                                    tri_lon: -84.64847525,
-                                    tri_location: 'Waverly, MI',
-                                    tri_country: 'US',
-                                    tri_timezone: 'America/Detroit',
-                                    tri_points: 8, 
-                                    __primary: "tri_location"                                                                     
-                                }
-                            },
-                            {
-                                name: sensorName("PIR Motion"),
-                                eventName: nodeEvent(motion.qo),
-                                valueType: ReadingSchemaValueType.SCALAR_INT,
-                                spec: {
-                                   count: 1,
-                                   total: 1,
-                                   __primary: "count"                                                                   
-                                }
-                            },
-                            {
-                                name: sensorName("Temperature"),
-                                eventName: nodeEvent(air.qo),
-                                valueType: ReadingSchemaValueType.SCALAR_FLOAT,
-                                unit: "°C",
-                                spec: {
-                                    temperature: 37.6
-                                }
-                            },
-                            {
-                                name: sensorName("Pressure"),
-                                eventName: nodeEvent(air.qo),
-                                unit: "mmHg",
-                                valueType: ReadingSchemaValueType.SCALAR_FLOAT,
-                                scale: 100,
-                                spec: {
-                                    pressure: 10000.1,
-                                }
-                            },
-                            {
-                                name: sensorName("Humidity"),
-                                eventName: nodeEvent(air.qo),
-                                valueType: ReadingSchemaValueType.SCALAR_FLOAT,
-                                unit: "%",
-                                spec: {
-                                    humidity: 54.3,
-                                }
-                            },
-                            {
-                                name: sensorName("Voltage"),
-                                eventName: nodeEvent(air.qo),
-                                valueType: ReadingSchemaValueType.SCALAR_FLOAT,
-                                unit: "V",
-                                spec: {
-                                    voltage: 3.3,
-                                }
-                            }
-                        ].map(readingSchemaDefaults)
+                         createMany: { data: standardSchemas.map(readingSchemaDefaults) }
                     }
                 },
             },
@@ -228,6 +261,7 @@ async function createTypicalProject(prisma: PrismaClient, projectUID: string) {
             }
         }
     });
+
     return project;
 }
 

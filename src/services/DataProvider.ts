@@ -1,7 +1,14 @@
 import GatewayDEPRECATED from "../components/models/Gateway";
 import NodeDEPRECATED from "../components/models/Node";
 import SensorReadingDEPRECATED from "../components/models/readings/SensorReading";
-import { GatewayID, NodeID, Project, SensorTypeID } from "./DomainModel";
+import { ProjectID, GatewayID, NodeID, Project, SensorTypeID, SensorHost, SensorHostReadingsSnapshot } from "./DomainModel";
+
+type ProjectReadingShapshot = {
+  // the sensor hierarchy
+  project: Project;
+  latestReadings: Map<SensorHost, SensorHostReadingsSnapshot>;
+}
+
 
 // this interface shows gateway or node data - nothing more, nothing less
 interface DataProvider {
@@ -21,12 +28,13 @@ interface DataProvider {
     }
   ) => Promise<SensorReadingDEPRECATED<unknown>[]>;
 
-  queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;
-  queryLatestValues?(): Query<SimpleFilter, Project>;
+  //queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;
+
+  queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingShapshot>>;
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export type { DataProvider };
+export type { DataProvider, ProjectReadingShapshot };
 
 // Query Interface
 
@@ -47,7 +55,7 @@ export type SimpleFilter = {
   readingTimeframe?: DateRange | All | Nothing | Latest;
 };
 
-export interface Query<R, P> {
+export interface QueryResult<R, P> {
   request: R;
   results: P;
 }
