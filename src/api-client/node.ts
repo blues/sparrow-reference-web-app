@@ -14,5 +14,11 @@ export async function changeNodeName(
   return response.status === 200;
 }
 
-const DEFAULT = { changeNodeName };
+export async function getNodes(gatewayUID: string) {
+  const endpoint = services().getUrlManager().getNodes(gatewayUID);
+  const response: AxiosResponse = await axios.get(endpoint);
+  return response.data as Node[];
+}
+
+const DEFAULT = { changeNodeName, getNodes };
 export default DEFAULT;
