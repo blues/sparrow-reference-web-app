@@ -1,28 +1,34 @@
-import { GetServerSideProps, NextPage } from "next";
+import { useEffect, useState } from "react";
+import { NextPage, GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import { isEmpty } from "lodash";
 import { Card, Input, Button, Tabs, Row, Col, Tooltip, Select } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import { ParsedUrlQuery } from "querystring";
+import { services } from "../../../../services/ServiceLocator";
 import Form, { FormProps } from "../../../../components/elements/Form";
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
   NODE_MESSSAGE,
 } from "../../../../constants/ui";
-import { services } from "../../../../services/ServiceLocator";
 import NodeDetailsLineChart from "../../../../components/charts/NodeDetailsLineChart";
 import NodeDetailsBarChart from "../../../../components/charts/NodeDetailsBarChart";
 import NodeDetailViewModel from "../../../../models/NodeDetailViewModel";
 import { getNodeDetailsPresentation } from "../../../../components/presentation/nodeDetails";
-import { ERROR_CODES } from "../../../../services/Errors";
 import TemperatureSensorSchema from "../../../../components/models/readings/TemperatureSensorSchema";
 import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
 import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
 import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
 import CountSensorSchema from "../../../../components/models/readings/CountSensorSchema";
+import { getGateway } from "../../../../api-client/gateway";
+import { getNode, getNodeData } from "../../../../api-client/node";
+import { LoadingSpinner } from "../../../../components/layout/LoadingSpinner";
+import { ERROR_CODES } from "../../../../services/Errors";
+import Reading from "../../../../components/models/readings/Reading";
 import styles from "../../../../styles/Home.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 
@@ -33,15 +39,47 @@ interface SparrowQueryInterface extends ParsedUrlQuery {
   minutesBeforeNow?: string; // this value is a string to it can be a query param
 }
 
-type NodeDetailsData = {
-  viewModel: NodeDetailViewModel;
-  err?: string;
-};
+const NodeDetails: NextPage = () => {
+  const [viewModel, setViewModel] = useState<NodeDetailViewModel>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [err, setErr] = useState<string | undefined>(undefined);
 
-const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { Option } = Select;
   const { query } = useRouter();
+
+  useEffect(() => {
+    const fetchNodeDetails = async () => {
+      const { gatewayUID, nodeId, minutesBeforeNow } =
+        query as SparrowQueryInterface;
+      setIsLoading(true);
+
+      if (gatewayUID && nodeId) {
+        try {
+          const gateway = await getGateway(gatewayUID);
+          const node = await getNode(gatewayUID, nodeId);
+          const readings = (await getNodeData(
+            gatewayUID,
+            nodeId,
+            minutesBeforeNow
+          )) as Reading<unknown>[];
+
+          // todo figure out what's going wrong with readings
+          const nodeModel = getNodeDetailsPresentation(node, gateway, readings);
+          console.log("node model ", nodeModel);
+          setViewModel(nodeModel);
+        } catch (error) {
+          if (error instanceof Error) {
+            setErr(getErrorMessage(error.message));
+          }
+        }
+      }
+      setIsLoading(false);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    fetchNodeDetails();
+  }, [query]);
 
   // neither of these values will ever be null because the URL path depends on them to render this page
   const { gatewayUID, nodeId } = query as SparrowQueryInterface;
@@ -145,9 +183,10 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   };
 
   return (
-    <>
+    <LoadingSpinner isLoading={isLoading}>
       {err && <h2 className={styles.errorMessage}>{err}</h2>}
-      {viewModel.node && (
+
+      {viewModel.node && !isEmpty(viewModel.node) && (
         <div>
           <h2 data-testid="node-name" className={styles.sectionTitle}>
             Node:{` `}
@@ -381,15 +420,13 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
           </Tabs>
         </div>
       )}
-    </>
+    </LoadingSpinner>
   );
 };
 
 export default NodeDetails;
 
-export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
-  query,
-}) => {
+export const getServerSideProps: GetServerSideProps<> = async ({ query }) => {
   const { gatewayUID, nodeId, minutesBeforeNow } =
     query as SparrowQueryInterface;
   const appService = services().getAppService();
@@ -404,6 +441,7 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
       minutesBeforeNow
     );
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
+    console.log("server side view model", viewModel);
 
     return {
       props: { viewModel },

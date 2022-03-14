@@ -43,18 +43,19 @@ const GatewayDetails: NextPage = () => {
     const fetchGateways = async () => {
       const { gatewayUID } = query as GatewayDetailsQueryInterface;
       setIsLoading(true);
-
-      try {
-        const rawGateway = (await getGateway(gatewayUID)) as Gateway;
-        setGateway(rawGateway);
-        const rawNodes = (await getNodes(gatewayUID)) as Node[];
-        setNodes(rawNodes);
-        setIsLoading(false);
-      } catch (error) {
-        if (error instanceof Error) {
-          setErr(getErrorMessage(error.message));
+      if (gatewayUID) {
+        try {
+          const rawGateway = await getGateway(gatewayUID);
+          setGateway(rawGateway);
+          const rawNodes = await getNodes(gatewayUID);
+          setNodes(rawNodes);
+        } catch (error) {
+          if (error instanceof Error) {
+            setErr(getErrorMessage(error.message));
+          }
         }
       }
+      setIsLoading(false);
     };
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
