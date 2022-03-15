@@ -15,7 +15,19 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     Router.events.on("routeChangeStart", () => setIsLoading(true));
     Router.events.on("routeChangeComplete", () => setIsLoading(false));
     Router.events.on("routeChangeError", () => setIsLoading(false));
-  }, [Router.events]);
+
+    const unobtrusiveDataReload = () => {
+      Router.replace(window.location, undefined, { scroll: false }).catch(
+        () => {
+          throw new Error("Could not do unobtrusiveDataReload");
+        }
+      );
+    };
+    const i = setInterval(unobtrusiveDataReload, 7000);
+    const cleanup = () => clearInterval(i);
+
+    return cleanup;
+  }, [Router]);
 
   return (
     <>

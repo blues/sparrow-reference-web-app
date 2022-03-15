@@ -51,15 +51,19 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   // Call this function whenever you want to
   // refresh props!
   const refreshData = async () => {
-    await router.replace(router.asPath);
+    await router.replace(router.asPath, undefined, { scroll: false });
   };
 
   const handleDateRangeChange = async (value: string) => {
     // call this function to force a page update with new chart date range
-    await router.replace({
-      pathname: `${nodeUrl}`,
-      query: { minutesBeforeNow: value },
-    });
+    await router.replace(
+      {
+        pathname: `${nodeUrl}`,
+        query: { minutesBeforeNow: value },
+      },
+      undefined,
+      { scroll: false }
+    );
   };
 
   const formItems: FormProps[] = [

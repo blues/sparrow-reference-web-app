@@ -25,7 +25,7 @@ const GatewayDetailsPage: NextPage<GatewayDetailsData> = ({
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const refreshData = async () => {
-    await router.replace(router.asPath);
+    await router.replace(router.asPath, undefined, { scroll: false });
   };
 
   const changeName = async (name: string) => {
