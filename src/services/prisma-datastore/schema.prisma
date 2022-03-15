@@ -113,8 +113,8 @@ model ReadingSource {
   id                Int               @id @default(autoincrement())
   type              ReadingSourceType
 
-  readingSchema     ReadingSchema[]   // the schema defined on this source
-  sensor            Sensor[]          // the Sensors producing data from this reading source (sensors on a node or gateway)
+  readingSchemas    ReadingSchema[]   // the schema defined on this source.
+  sensors           Sensor[]          // the Sensors producing data from this reading source (sensors on a node or gateway)
 
   // provides the backreference for the owner of this reading source.
   gateway           Gateway?
@@ -135,8 +135,11 @@ enum ReadingSchemaValueType {
 model ReadingSchema {
   id                  Int           @id @default(autoincrement())
 
-  name                String        @unique @db.VarChar(200)
-  measure             String        @db.VarChar(50)
+  displayMeasure      String?       @db.VarChar(200)
+  displayName         String?       @db.VarChar(50)
+
+  name                String        @unique @db.VarChar(50)     // specific name for this type of sensor
+  measure             String        @db.VarChar(50)             // a more general name
 
   // the place in the hierarchy where this schema is defined
   readingSource       ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)

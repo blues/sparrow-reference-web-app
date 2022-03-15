@@ -46,19 +46,34 @@ export interface Project {
   name: string;
   description: string | null;
   // Links
-  gateways?: Set<Gateway>;
 }
+
+export type Gateways = Set<Gateway>;
+
+export type ProjectWithGateways = Project & { 
+  gateways: Gateways;
+}
+
+export type ProjectHierarchy = Project & { 
+  gateways: Set<GatewayWithNodes>;
+}
+
 
 export interface SensorHost {
   // Attributes
   name: string | null;
   descriptionBig: string | null;
   descriptionSmall: string | null;
-  // Links
-  sensors?: Set<Sensor>;
+  lastSeen: Date | null;
+}
+
+export type Sensors = Set<Sensor>;
+export type SensorHostWithSensors = SensorHost & {  
+  sensors: Sensors;
 }
 
 // todo - doesn't belong here, but in a location dedicated to sensor formats.
+// i.e. location is not a property but a sensor reading. 
 export interface Location {
   name: string;
   country: string;
@@ -66,18 +81,23 @@ export interface Location {
 
 export interface Gateway extends SensorHost {
   readonly id: GatewayID; // Reference across the whole system architecture
-  // Attributes
-  lastSeen?: Date | null;
   // Links
-  nodes?: Set<Node>;
 }
 
+export type Nodes = Set<Node>;
+export type GatewayWithNodes = Gateway & {
+  nodes: Nodes;
+}
+
+
+// OLC is a storage format. This doesn't beling here. Instead we should expose the location in meaningful form
+// and independent form the on-device format. 
 export type LocationOLC = string;
 export interface Node extends SensorHost {
   readonly id: NodeID;
   // Attributes
-  locationForMachines?: LocationOLC;
-  locationForHumans?: string;
+  // locationForMachines: LocationOLC | null;
+  // locationForHumans: string | null;
   // Links
   // gateway: Gateway;
 }
@@ -90,31 +110,61 @@ export interface Sensor {
   sensorHost: SensorHost;
   sensorType: SensorType;
 
-  // can add other instance-specific details here.
-
+  // can add other instance-specific details here, e.g. a name field that uniquely identifies the sensor from all others in the project
 }
 
+export interface ReadingBySensorType {
+  get(s: SensorType) : Reading | undefined;
+}
+
+type SensorTypes = Set<SensorType>;
+
 /**
- * Describes a point-in-time slice through the readings for a SensorHost. 
+ * Describes a point-in-time slice through the readings for a SensorHost. This represents the last known values at the time given
  */
 export interface SensorHostReadingsSnapshot {
   sensorHost: SensorHost;
-  readings: Map<SensorType, Reading>;
+  sensorTypes: SensorTypes;
+  readings: ReadingBySensorType;
 }
 
-export interface SensorHostReadingsSeries {
+export interface DateRange {
   from: Date;
   to: Date;
-  readings: Map<SensorType, Set<Reading>>;
+}
+
+/**
+ * Shows the most recent data
+ */
+export interface MostRecent {
+  duration: number;   // in minutes
+}
+
+export type TimePeriod = DateRange | MostRecent;
+
+export type Readings = Set<Reading>;
+export type ReadingsBySensorType = Map<SensorType, Readings>;
+
+/**
+ * Describes historical data from a sensor host.
+ */
+export interface SensorHostReadingsSeries {
+  /**
+   * The readings from the sensor host in chronological order (oldest first).
+   */
+  readings: ReadingsBySensorType;
 }
 
 export interface SensorType {
   readonly id: SensorTypeID;      // todo - do we really need the ID here? let's add it when it's needed.
 
+  name: string;             // 
+  measure: string;          // "measure" expressed as an identifier. 
+
   // Attributes
-  measure: string;    // Temperature, etc.
-  name: string;       // Outdoor Temperature, etc.
-  unit: string | null; // Kelvin, Million, etc.
+  displayName: string;           // Outdoor Temperature, etc. (most specific name) - human readable
+  displayMeasure: string;        // Temperature, etc. Used as "class" identifier (general type name) - human readable
+  unit: string | null;    // Kelvin, Million, etc.
   unitSymbol: string | null; // K, M, etc. null for no inut
 
   spec: JSONObject;
@@ -131,10 +181,11 @@ export interface Reading {
   value: JSONObject;
 
   // todo - how do clients know what to do with "value", or what its expected structure is.
+  // I added spec to the SensorType
 
   // The simple numeric value for this sensor for simple numeric readings. This is too common a case for us to ignore and
   // makes handling simple numeric values much easier. (No need to reach into the json on some arbitrary key.)
-  numericValue?: number | null;
+  numericValue: number | null;
 
   // Links
   // sensorType: SensorType;   // todo - do we need both sensorType and sensor?
@@ -151,3 +202,50 @@ export type JSONValue =
   | JSONObject
   | Array<JSONValue>;
 
+
+/**
+ * This is the datamodel for displaying the latest values for the whole project.
+ */
+ type ProjectReadingsShapshot = {
+
+  /**
+   * The timestamp of the snapshot. All readings will have been taken on or before the snapshot.
+   */
+  when: number;
+
+  /**
+   * The sensor hierarchy.
+   */
+  project: ProjectHierarchy;
+
+  /**
+   * The readings for each sensor host. 
+   * todo - not so happy using a Map here. A higher-level interface would be preferred
+   */
+  hostReadings: Map<SensorHost, SensorHostReadingsSnapshot>;
+
+  /**
+   * Retrieve a reading for a sensor host, with the given name.
+   * @param sensorHost  The sensor host the reading is present on.
+   * @param readingName The name of the reading to retrieve.
+   */
+  findSensorReading(sensorHost: SensorHost, readingName: string): Reading;
+}
+
+/**
+ * Historical data for gateways and nodes.
+ **/
+type ProjectHistoricalData = {
+  period: TimePeriod;
+  hostReadings: Map<SensorHost, SensorHostReadingsSeries>; 
+}
+
+/**
+ * Gateways have a handful of known sensor types. These are enumerated here so that they can be queried for.
+ */
+export enum GatewaySensorTypes {
+    VOLTAGE = "Gateway Voltage",
+    SIGNAL_STRENGTH = "Gateway Signal strength",
+    TEMPERATURE = "Gateway Temperature",
+    LOCATION = "Gateway Location"
+}

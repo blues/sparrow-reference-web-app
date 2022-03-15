@@ -3,45 +3,48 @@ import NotehubLocation from './notehub/models/NotehubLocation'
 
 interface SparrowEvent {
 
-  /**
-   * Events that relate to a specific node have this value set to the node EUI. 
-   */
-  nodeID?: string;
-
-  /**
-   * The device UID of the gateway that forwarded this event.
-   */
-  gatewayUID: string;
-
-  /**
-   * The simplified name of the event.
-   */
-  eventName: string;
+  // replace these IDs with typed IDs?
 
   /**
    * The projectUID of the event
    */
-  projectUID: string;
+   readonly projectUID: string;
 
   /**
-   * The time the event was published by the device.
+   * Events that relate to a specific node have this value set to the node EUI. 
    */
-  when: Date;
+   readonly nodeID?: string; 
+
+  /**
+   * The device UID of the gateway that forwarded this event.
+   */
+  readonly gatewayUID: string;
+
+  /**
+   * The simplified name of the event.
+   */
+  readonly eventName: string;
 
   /**
    * The format of the event depends upon the event type. 
    */
-  eventBody: unknown;
+  readonly eventBody: unknown;
 
   /**
-   * The location of the gateway 
-   */
-  gatewayLocation?: NotehubLocation;
+  * The time the event was published by the origin device.
+  */
+  readonly when: Date;
 
   /**
-   * The gateway name
+   * The location of the gateway that forwarded the event
    */
-  gatewayName: string;
+  readonly gatewayLocation?: NotehubLocation;
+
+  /**
+   * The gateway name that forwarded the event. 
+   * todo - wrap up in GatewayRoutedEvent that includes the details provided by the gateway for all events
+   */
+  readonly gatewayName: string;
 }
 
 export class BasicSparrowEvent implements SparrowEvent {

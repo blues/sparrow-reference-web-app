@@ -1,6 +1,6 @@
 import { PrismaClient, Project, Gateway, ReadingSchema, Reading, Prisma, Node, ReadingSource, ReadingSourceType, ReadingSchemaValueType as ReadingSchemaValueType } from '@prisma/client'
-import { hasIn } from 'lodash'
 import Config from '../../../config'
+import { GatewaySensorTypes } from '../DomainModel'
 
 const prisma = new PrismaClient()
 
@@ -93,7 +93,7 @@ function readingSchemaDefaults<R extends { spec: any }>(r: R): R {
 
 const standardSchemas = [
     {
-        name: "Gateway Voltage",
+        name: GatewaySensorTypes.VOLTAGE,
         measure: "Voltage",
         unit: "V",
         eventName: session.qo,
@@ -103,7 +103,7 @@ const standardSchemas = [
         }
     },
     {
-        name: "Gateway Signal strength",
+        name: GatewaySensorTypes.SIGNAL_STRENGTH,
         measure: "Signal Strength",
         unit: "bars",
         eventName: session.qo,
@@ -113,7 +113,7 @@ const standardSchemas = [
         }
     },
     {
-        name: "Gateway Temperature",
+        name: GatewaySensorTypes.TEMPERATURE,
         measure: "Temperature",
         unit: "°C",
         eventName: session.qo,
@@ -125,7 +125,7 @@ const standardSchemas = [
     {
         // todo - use an event transformer based on the event name to help sculpture the data coming from notehub
         // to store it in a more useful form. This preceeds creation of the reading.
-        name: "Gateway Location",
+        name: GatewaySensorTypes.LOCATION,
         measure: "Location",
         eventName: session.qo,
         valueType: ReadingSchemaValueType.COMPOSITE,
@@ -140,6 +140,7 @@ const standardSchemas = [
             __primary: "tri_location"                                                                     
         }
     },
+    
     {
         name: sensorName("PIR Motion"),
         measure: "External Motion",

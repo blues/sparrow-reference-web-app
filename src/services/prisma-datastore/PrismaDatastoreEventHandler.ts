@@ -18,8 +18,16 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
 
     }
 
+    /**
+     * Handles a SparrowEvent relating to a gateway or a node. 
+     * The project is first looked up from the projectUID.
+     * @param event 
+     * @returns 
+     */
     public async handleEvent(event: SparrowEvent): Promise<void> {
         console.log("handling event", event);
+
+        // todo - should we validate the project? and create on demand?
         const project = await this.projectFromNaturalKey(event.projectUID);
 
         const gateway = await this.upsertGateway(project, event.gatewayUID, event.gatewayName, event.when);        

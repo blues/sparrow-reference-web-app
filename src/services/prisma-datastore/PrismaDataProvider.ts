@@ -4,9 +4,8 @@ import GatewayDEPRECATED from "../../components/models/Gateway";
 import SensorReading from "../../components/models/readings/SensorReading";
 import NodeDEPRECATED from "../../components/models/Node";
 import { DataProvider, QueryResult, SimpleFilter, ProjectReadingShapshot, latest } from "../DataProvider";
-import { ProjectID, Project, SensorHost, SensorHostReadingsSnapshot, SensorType, Reading } from "../DomainModel";
+import { ProjectID, Project, SensorHost, SensorHostReadingsSnapshot, SensorType, Reading, SensorHostWithSensors } from "../DomainModel";
 import Mapper from "./PrismaDomainModelMapper";
-import { fstat } from "fs";
 
 /**
  * Implements the DataProvider service using a Prisma data model.
@@ -99,17 +98,12 @@ export class PrismaDataProvider implements DataProvider {
     }
 
     async queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingShapshot>> {
-        const filter: SimpleFilter = {};
 
-        const latestReading = {
+        const latestReading = {             // from the readingSource, fetch all sensors and the latest reading of each.
             include: {
-                sensor: {
+                sensors: {
                     include: {
-                        latest: {
-                            include: {
-                                reading: true
-                            }
-                        },
+                        latest: true,
                         schema: true
                     }
                 }
@@ -124,18 +118,12 @@ export class PrismaDataProvider implements DataProvider {
             include: {
                 gateways: {
                     include: {
-                        readingSource: latestReading,
+                        readingSource:  latestReading,
                         nodes: {
                             include: {
-                                readingSource: latestReading
-                            },
-                            orderBy: {
-                                nodeEUI: "asc"
+                                readingSource: latestReading,
                             }
                         }
-                    },
-                    orderBy: {
-                        name: "asc"
                     }
                 }
             },
@@ -145,14 +133,13 @@ export class PrismaDataProvider implements DataProvider {
         type P = typeof prismaProject;
         type G = P["gateways"]["0"];
         type N = G["nodes"]["0"];
-        type RS = N["readingSource"];
-        type S = RS["sensor"]["0"];
+        type RS = G["readingSource"];
+        type S = RS["sensors"]["0"];
 
         // now map the data to the domain model
-        const project = Mapper.mapProject(prismaProject);
 
         const readingSourceToSensorHost:  Map<ReadingSource, SensorHost>  = new Map();
-        const latestReadings: ProjectReadingShapshot["latestReadings"] = new Map<SensorHost, SensorHostReadingsSnapshot>();
+        const latestReadings: ProjectReadingShapshot["hostReadings"] = new Map<SensorHost, SensorHostReadingsSnapshot>();
 
         const addReadingSource = (rs: RS, sensorHost: SensorHost) => {
             readingSourceToSensorHost.set(rs, sensorHost);
@@ -161,12 +148,15 @@ export class PrismaDataProvider implements DataProvider {
 
             const snapshot: SensorHostReadingsSnapshot = {
                 sensorHost,
+                sensorTypes: new Set(readings.keys()),
                 readings
             }
 
-            // todo - could consider caching the ReadingSchema -> SensorType but it's not that much overhead with duplication per device
-            rs.sensor.map(s => {
-                readings.set(Mapper.mapReadingSchema(s.schema), Mapper.mapReading(s.latest?.reading))
+            // maydo - could consider caching the ReadingSchema -> SensorType but it's not that much overhead with duplication per device
+            rs.sensors.map(s => {
+                if (s.latest) {
+                    readings.set(Mapper.mapReadingSchema(s.schema), Mapper.mapReading(s.latest));
+                }
             });
 
             latestReadings.set(sensorHost, snapshot);
@@ -179,18 +169,21 @@ export class PrismaDataProvider implements DataProvider {
         }
 
         const deepMapGateway = (g: G) => {
-            const result = Mapper.mapGateway(g);
+            const nodes = new Set(g.nodes.map(deepMapNode));
+            const result = Mapper.mapGatewayWithNodes(g, nodes);
             addReadingSource(g.readingSource, result);
-            result.nodes = new Set(g.nodes.map(deepMapNode));
             return result;
         };
-        project.gateways = new Set(prismaProject.gateways.map(deepMapGateway));
+        const gateways = new Set(prismaProject.gateways.map(deepMapGateway));
+        const project = Mapper.mapProjectHierarchy(prismaProject, gateways);
+
 
         return { 
             request: projectID, 
             results: {
-                project, 
-                latestReadings
+                when: Date.now(),
+                project,
+                hostReadings: latestReadings
             }
         };
     }
