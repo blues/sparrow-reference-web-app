@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect } from "react";
 import type { NextPage } from "next";
-import { isEmpty } from "lodash";
 import { useRouter } from "next/router";
+import { useQuery } from "react-query";
 import { ParsedUrlQuery } from "querystring";
 import { Row, Col, Card } from "antd";
 import { getGateway } from "../../api-client/gateway";
@@ -14,7 +14,6 @@ import {
   getFormattedVoltageData,
 } from "../../components/presentation/uiHelpers";
 import Gateway from "../../components/models/Gateway";
-import Node from "../../components/models/Node";
 import {
   GATEWAY_MESSAGE,
   getErrorMessage,
@@ -28,39 +27,56 @@ interface GatewayDetailsQueryInterface extends ParsedUrlQuery {
 }
 
 const GatewayDetails: NextPage = () => {
-  const [gateway, setGateway] = useState<Gateway>({});
-  const [nodes, setNodes] = useState<Node[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState<string>(GATEWAY_MESSAGE.NO_LOCATION);
   const [voltage, setVoltage] = useState<string | null>(
     GATEWAY_MESSAGE.NO_VOLTAGE
   );
-  const [err, setErr] = useState<string>("");
+  const [err, setErr] = useState<string | undefined>(undefined);
 
   const { query } = useRouter();
+  const { gatewayUID } = query as GatewayDetailsQueryInterface;
+
+  const {
+    isLoading: gatewayLoading,
+    error: gatewayErr,
+    data: gateway,
+  } = useQuery<Gateway, Error>("getGateway", () => getGateway(gatewayUID), {
+    refetchInterval: 30000,
+    enabled: !!gatewayUID,
+  });
+
+  const {
+    isLoading: nodesLoading,
+    error: nodeErr,
+    data: nodes,
+  } = useQuery<unknown, Error>("getNodes", () => getNodes(gatewayUID), {
+    enabled: !!gatewayUID,
+  });
 
   useEffect(() => {
-    const fetchGateways = async () => {
-      const { gatewayUID } = query as GatewayDetailsQueryInterface;
-      setIsLoading(true);
-      if (gatewayUID) {
-        try {
-          const rawGateway = await getGateway(gatewayUID);
-          setGateway(rawGateway);
-          const rawNodes = await getNodes(gatewayUID);
-          setNodes(rawNodes);
-        } catch (error) {
-          if (error instanceof Error) {
-            setErr(getErrorMessage(error.message));
-          }
-        }
-      }
-      setIsLoading(false);
-    };
+    if (gatewayErr) {
+      setErr(getErrorMessage(gatewayErr.message));
+    }
+    if (nodeErr) {
+      setErr(getErrorMessage(nodeErr.message));
+    }
+    if (!nodeErr && !gatewayErr) {
+      setErr(undefined);
+    }
+  }, [gatewayErr, nodeErr]);
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchGateways();
-  }, [query]);
+  useEffect(() => {
+    if (gatewayLoading) {
+      setIsLoading(true);
+    }
+    if (nodesLoading) {
+      setIsLoading(true);
+    }
+    if (!gatewayLoading && !nodesLoading) {
+      setIsLoading(false);
+    }
+  }, [gatewayLoading, nodesLoading]);
 
   useEffect(() => {
     const formattedLocation =
@@ -79,7 +95,7 @@ const GatewayDetails: NextPage = () => {
     <LoadingSpinner isLoading={isLoading}>
       {err && <h2 className={styles.errorMessage}>{err}</h2>}
 
-      {!isEmpty(gateway) && (
+      {gateway && (
         <div>
           <h2
             data-testid="gateway-details-header"
@@ -115,7 +131,7 @@ const GatewayDetails: NextPage = () => {
               </Col>
             </Row>
 
-            {nodes?.length > 0 ? (
+            {nodes ? (
               <>
                 <h3
                   data-testid="gateway-node-header"

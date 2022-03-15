@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { NextPage, GetServerSideProps } from "next";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
+import { useQuery } from "react-query";
 import { isEmpty } from "lodash";
 import { Card, Input, Button, Tabs, Row, Col, Tooltip, Select } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -8,7 +9,6 @@ import axios from "axios";
 import { Store } from "antd/lib/form/interface";
 import { ValidateErrorEntity } from "rc-field-form/lib/interface";
 import { ParsedUrlQuery } from "querystring";
-import { services } from "../../../../services/ServiceLocator";
 import Form, { FormProps } from "../../../../components/elements/Form";
 import {
   getErrorMessage,
@@ -27,8 +27,7 @@ import CountSensorSchema from "../../../../components/models/readings/CountSenso
 import { getGateway } from "../../../../api-client/gateway";
 import { getNode, getNodeData } from "../../../../api-client/node";
 import { LoadingSpinner } from "../../../../components/layout/LoadingSpinner";
-import { ERROR_CODES } from "../../../../services/Errors";
-import Reading from "../../../../components/models/readings/Reading";
+import Gateway from "../../../../components/models/Gateway";
 import styles from "../../../../styles/Home.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 
@@ -48,52 +47,86 @@ const NodeDetails: NextPage = () => {
   const { Option } = Select;
   const { query } = useRouter();
 
-  useEffect(() => {
-    const fetchNodeDetails = async () => {
-      const { gatewayUID, nodeId, minutesBeforeNow } =
-        query as SparrowQueryInterface;
-      setIsLoading(true);
-
-      if (gatewayUID && nodeId) {
-        try {
-          const gateway = await getGateway(gatewayUID);
-          const node = await getNode(gatewayUID, nodeId);
-          const readings = await getNodeData(
-            gatewayUID,
-            nodeId,
-            minutesBeforeNow
-          );
-          // note there's an issue where the schema definition is lost during json serialization
-          // that causes our charts not to populate data
-          const nodeModel: NodeDetailViewModel = getNodeDetailsPresentation(
-            node,
-            gateway,
-            readings
-          );
-          setViewModel(nodeModel);
-        } catch (error) {
-          if (error instanceof Error) {
-            setErr(getErrorMessage(error.message));
-          }
-        }
-      }
-      setIsLoading(false);
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchNodeDetails();
-  }, [query]);
-
   // neither of these values will ever be null because the URL path depends on them to render this page
-  const { gatewayUID, nodeId } = query as SparrowQueryInterface;
+  const { gatewayUID, nodeId, minutesBeforeNow } =
+    query as SparrowQueryInterface;
   const nodeUrl = `/${gatewayUID}/node/${nodeId}/details`;
 
+  const {
+    isLoading: gatewayLoading,
+    error: gatewayError,
+    data: gateway,
+  } = useQuery<Gateway, Error>("getGateway", () => getGateway(gatewayUID), {
+    enabled: !!gatewayUID,
+  });
+
+  const {
+    isRefetching: nodeRefetching, // for when we update the node name
+    isLoading: nodeLoading,
+    error: nodeError,
+    data: node,
+    refetch: nodeRefetch,
+  } = useQuery<Node, Error>("getNode", () => getNode(gatewayUID, nodeId), {
+    enabled: !!gatewayUID && !!nodeId,
+    refetchInterval: 40000,
+  });
+
+  const {
+    isLoading: readingsLoading,
+    error: readingsError,
+    data: readings,
+    refetch: nodeReadingsRefetch,
+  } = useQuery<unknown, Error>(
+    "getNodeData",
+    () => getNodeData(gatewayUID, nodeId, minutesBeforeNow),
+    {
+      enabled: !!gatewayUID && !!nodeId,
+      refetchInterval: 60000,
+    }
+  );
+
+  useEffect(() => {
+    if (gateway && node && readings) {
+      const nodeModel: NodeDetailViewModel = getNodeDetailsPresentation(
+        node,
+        gateway,
+        readings
+      );
+      setViewModel(nodeModel);
+    }
+  }, [gateway, node, readings]);
+
+  useEffect(() => {
+    if (gatewayLoading) {
+      setIsLoading(true);
+    }
+    if (nodeLoading || nodeRefetching) {
+      setIsLoading(true);
+    }
+    if (readingsLoading) {
+      setIsLoading(true);
+    }
+    if (!gatewayLoading && !nodeLoading && !readingsLoading) {
+      setIsLoading(false);
+    }
+  }, [gatewayLoading, nodeLoading, nodeRefetching, readingsLoading]);
+
+  useEffect(() => {
+    if (gatewayError) {
+      setErr(getErrorMessage(gatewayError.message));
+    }
+    if (nodeError) {
+      setErr(getErrorMessage(nodeError.message));
+    }
+    if (readingsError) {
+      setErr(getErrorMessage(readingsError.message));
+    }
+    if (!gatewayError && !nodeError && !readingsError) {
+      setErr(undefined);
+    }
+  }, [gatewayError, nodeError, readingsError]);
+
   const router = useRouter();
-  // Call this function whenever you want to
-  // refresh props!
-  const refreshData = async () => {
-    await router.replace(router.asPath);
-  };
 
   const handleDateRangeChange = async (value: string) => {
     // call this function to force a page update with new chart date range
@@ -101,6 +134,7 @@ const NodeDetails: NextPage = () => {
       pathname: `${nodeUrl}`,
       query: { minutesBeforeNow: value },
     });
+    await nodeReadingsRefetch();
   };
 
   const formItems: FormProps[] = [
@@ -177,7 +211,7 @@ const NodeDetails: NextPage = () => {
     console.log(response);
 
     if (response.status < 300) {
-      await refreshData();
+      await nodeRefetch();
     }
   };
 
@@ -428,40 +462,3 @@ const NodeDetails: NextPage = () => {
 };
 
 export default NodeDetails;
-
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { gatewayUID, nodeId, minutesBeforeNow } =
-    query as SparrowQueryInterface;
-  const appService = services().getAppService();
-  let viewModel: NodeDetailViewModel = {};
-
-  try {
-    const gateway = await appService.getGateway(gatewayUID);
-    const node = await appService.getNode(gatewayUID, nodeId);
-    const readings = await appService.getNodeData(
-      gatewayUID,
-      nodeId,
-      minutesBeforeNow
-    );
-    viewModel = getNodeDetailsPresentation(node, gateway, readings);
-
-    return {
-      props: { viewModel },
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      return {
-        props: {
-          viewModel,
-          err: getErrorMessage(err.message),
-        },
-      };
-    }
-    return {
-      props: {
-        viewModel,
-        err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
-      },
-    };
-  }
-};
