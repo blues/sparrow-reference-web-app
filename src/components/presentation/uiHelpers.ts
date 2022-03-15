@@ -17,7 +17,8 @@ export const getFormattedChartData = (
     const formattedData = sortBy(
       uniqBy(
         readings
-          .filter((reading) => reading.schema === readingSchema)
+          // todo uncomment after poc completed
+          // .filter((reading) => reading.schema === readingSchema)
           .map((filteredEvent) => {
             const chartDataObj = {
               when: filteredEvent.captured,

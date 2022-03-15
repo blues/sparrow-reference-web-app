@@ -38,7 +38,7 @@ function validateRequest(
     res.json({ err: HTTP_STATUS.INVALID_NODE_ID });
     return false;
   }
-  if (minutesBeforeNow && typeof minutesBeforeNow !== "string") {
+  if (typeof minutesBeforeNow !== "string") {
     res.status(StatusCodes.BAD_REQUEST);
     res.json({
       err: "minutes before now should be a string of numbers or undefined",
@@ -55,8 +55,12 @@ async function performRequest({
 }: ValidRequest) {
   const app = services().getAppService();
   try {
-    const node = await app.getNodeData(gatewayUID, nodeId, minutesBeforeNow);
-    return node;
+    const nodeData = await app.getNodeData(
+      gatewayUID,
+      nodeId,
+      minutesBeforeNow
+    );
+    return nodeData;
   } catch (cause) {
     throw new ErrorWithCause("Could not perform request", { cause });
   }
@@ -75,5 +79,7 @@ export default async function nodeDataHandler(
   }
 
   const nodeData = await performRequest(validRequest);
+  // there's an issue where the schema definition is lost during json serialization
+  // that causes our charts not to populate data
   res.status(StatusCodes.OK).json(nodeData);
 }

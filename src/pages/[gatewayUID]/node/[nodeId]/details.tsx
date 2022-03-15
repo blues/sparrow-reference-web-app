@@ -58,15 +58,18 @@ const NodeDetails: NextPage = () => {
         try {
           const gateway = await getGateway(gatewayUID);
           const node = await getNode(gatewayUID, nodeId);
-          const readings = (await getNodeData(
+          const readings = await getNodeData(
             gatewayUID,
             nodeId,
             minutesBeforeNow
-          )) as Reading<unknown>[];
-
-          // todo figure out what's going wrong with readings
-          const nodeModel = getNodeDetailsPresentation(node, gateway, readings);
-          console.log("node model ", nodeModel);
+          );
+          // note there's an issue where the schema definition is lost during json serialization
+          // that causes our charts not to populate data
+          const nodeModel: NodeDetailViewModel = getNodeDetailsPresentation(
+            node,
+            gateway,
+            readings
+          );
           setViewModel(nodeModel);
         } catch (error) {
           if (error instanceof Error) {
@@ -426,7 +429,7 @@ const NodeDetails: NextPage = () => {
 
 export default NodeDetails;
 
-export const getServerSideProps: GetServerSideProps<> = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { gatewayUID, nodeId, minutesBeforeNow } =
     query as SparrowQueryInterface;
   const appService = services().getAppService();
@@ -441,7 +444,6 @@ export const getServerSideProps: GetServerSideProps<> = async ({ query }) => {
       minutesBeforeNow
     );
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
-    console.log("server side view model", viewModel);
 
     return {
       props: { viewModel },
