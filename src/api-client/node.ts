@@ -1,3 +1,4 @@
+import { useQuery } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import NodeDetailViewModel from "../models/NodeDetailViewModel";
 import { services } from "../services/ServiceLocator";
@@ -15,19 +16,38 @@ export async function changeNodeName(
   return response.status === 200;
 }
 
-export async function getNodes(gatewayUID: string) {
+async function getNodes(gatewayUID: string) {
   const endpoint = services().getUrlManager().getNodes(gatewayUID);
   const response: AxiosResponse = await axios.get(endpoint);
   return response.data as Node[];
 }
 
-export async function getNode(gatewayUID: string, nodeId: string) {
+// todo should these custom Hook be in a separate folder of individual Hooks??
+export function useNodes(gatewayUID: string) {
+  return useQuery<Node[], Error>("getNodes", () => getNodes(gatewayUID), {
+    enabled: !!gatewayUID,
+  });
+}
+
+async function getNode(gatewayUID: string, nodeId: string) {
   const endpoint = services().getUrlManager().getNode(gatewayUID, nodeId);
   const response: AxiosResponse = await axios.get(endpoint);
   return response.data as Node;
 }
 
-export async function getNodeData(
+// todo should these custom Hook be in a separate folder of individual Hooks??
+export function useNode(
+  gatewayUID: string,
+  nodeId: string,
+  refetchInterval?: number
+) {
+  return useQuery<Node, Error>("getNode", () => getNode(gatewayUID, nodeId), {
+    enabled: !!gatewayUID && !!nodeId,
+    refetchInterval,
+  });
+}
+
+async function getNodeData(
   gatewayUID: string,
   nodeId: string,
   minutesBeforeNow?: string
@@ -40,5 +60,22 @@ export async function getNodeData(
   return response.data as NodeDetailViewModel;
 }
 
-const DEFAULT = { changeNodeName, getNodes, getNode, getNodeData };
+// todo should these custom Hook be in a separate folder of individual Hooks??
+export function useNodeData(
+  gatewayUID: string,
+  nodeId: string,
+  minutesBeforeNow?: string,
+  refetchInterval?: number
+) {
+  return useQuery<unknown, Error>(
+    "getNodeData",
+    () => getNodeData(gatewayUID, nodeId, minutesBeforeNow),
+    {
+      enabled: !!gatewayUID && !!nodeId,
+      refetchInterval,
+    }
+  );
+}
+
+const DEFAULT = { changeNodeName, useNode, useNodes, useNodeData };
 export default DEFAULT;

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useQuery } from "react-query";
 import { isEmpty } from "lodash";
 import { Card, Input, Button, Tabs, Row, Col, Tooltip, Select } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -24,10 +23,9 @@ import HumiditySensorSchema from "../../../../components/models/readings/Humidit
 import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
 import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
 import CountSensorSchema from "../../../../components/models/readings/CountSensorSchema";
-import { getGateway } from "../../../../api-client/gateway";
-import { getNode, getNodeData } from "../../../../api-client/node";
+import { useGateway } from "../../../../api-client/gateway";
+import { useNode, useNodeData } from "../../../../api-client/node";
 import { LoadingSpinner } from "../../../../components/layout/LoadingSpinner";
-import Gateway from "../../../../components/models/Gateway";
 import styles from "../../../../styles/Home.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 
@@ -42,6 +40,7 @@ const NodeDetails: NextPage = () => {
   const [viewModel, setViewModel] = useState<NodeDetailViewModel>({});
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState<string | undefined>(undefined);
+  const refetchInterval = 40000;
 
   const { TabPane } = Tabs;
   const { Option } = Select;
@@ -56,9 +55,7 @@ const NodeDetails: NextPage = () => {
     isLoading: gatewayLoading,
     error: gatewayError,
     data: gateway,
-  } = useQuery<Gateway, Error>("getGateway", () => getGateway(gatewayUID), {
-    enabled: !!gatewayUID,
-  });
+  } = useGateway(gatewayUID);
 
   const {
     isRefetching: nodeRefetching, // for when we update the node name
@@ -66,24 +63,14 @@ const NodeDetails: NextPage = () => {
     error: nodeError,
     data: node,
     refetch: nodeRefetch,
-  } = useQuery<Node, Error>("getNode", () => getNode(gatewayUID, nodeId), {
-    enabled: !!gatewayUID && !!nodeId,
-    refetchInterval: 40000,
-  });
+  } = useNode(gatewayUID, nodeId, refetchInterval);
 
   const {
     isLoading: readingsLoading,
     error: readingsError,
     data: readings,
     refetch: nodeReadingsRefetch,
-  } = useQuery<unknown, Error>(
-    "getNodeData",
-    () => getNodeData(gatewayUID, nodeId, minutesBeforeNow),
-    {
-      enabled: !!gatewayUID && !!nodeId,
-      refetchInterval: 60000,
-    }
-  );
+  } = useNodeData(gatewayUID, nodeId, minutesBeforeNow, refetchInterval);
 
   useEffect(() => {
     if (gateway && node && readings) {

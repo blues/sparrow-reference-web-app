@@ -2,18 +2,16 @@
 import { useState, useEffect } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useQuery } from "react-query";
 import { ParsedUrlQuery } from "querystring";
 import { Row, Col, Card } from "antd";
-import { getGateway } from "../../api-client/gateway";
-import { getNodes } from "../../api-client/node";
+import { useGateway } from "../../api-client/gateway";
+import { useNodes } from "../../api-client/node";
 import NodeCard from "../../components/elements/NodeCard";
 import { LoadingSpinner } from "../../components/layout/LoadingSpinner";
 import {
   getFormattedLastSeen,
   getFormattedVoltageData,
 } from "../../components/presentation/uiHelpers";
-import Gateway from "../../components/models/Gateway";
 import {
   GATEWAY_MESSAGE,
   getErrorMessage,
@@ -33,6 +31,7 @@ const GatewayDetails: NextPage = () => {
     GATEWAY_MESSAGE.NO_VOLTAGE
   );
   const [err, setErr] = useState<string | undefined>(undefined);
+  const refetchInterval = 10000;
 
   const { query } = useRouter();
   const { gatewayUID } = query as GatewayDetailsQueryInterface;
@@ -41,18 +40,13 @@ const GatewayDetails: NextPage = () => {
     isLoading: gatewayLoading,
     error: gatewayErr,
     data: gateway,
-  } = useQuery<Gateway, Error>("getGateway", () => getGateway(gatewayUID), {
-    refetchInterval: 30000,
-    enabled: !!gatewayUID,
-  });
+  } = useGateway(gatewayUID, refetchInterval);
 
   const {
     isLoading: nodesLoading,
     error: nodeErr,
     data: nodes,
-  } = useQuery<unknown, Error>("getNodes", () => getNodes(gatewayUID), {
-    enabled: !!gatewayUID,
-  });
+  } = useNodes(gatewayUID);
 
   useEffect(() => {
     if (gatewayErr) {
