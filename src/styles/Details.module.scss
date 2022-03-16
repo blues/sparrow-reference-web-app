@@ -1,5 +1,9 @@
 @import "_variables.scss";
 
+.editableHeading {
+  display: flex;
+}
+
 .timestamp,
 .nodeTimestamp,
 .nodeChartTimestamp,

@@ -32,7 +32,7 @@ export function getNodeDetailsPresentation(
 ): NodeDetailViewModel {
   return {
     gateway: {
-      serialNumber: gateway?.serialNumber || GATEWAY_MESSAGE.NO_SERIAL_NUMBER,
+      name: gateway?.name || GATEWAY_MESSAGE.NO_NAME,
     },
     node: node
       ? {

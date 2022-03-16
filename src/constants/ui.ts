@@ -29,7 +29,7 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
 
 // Gateway data fallbacks for empty data fields
 const GATEWAY_MESSAGE = {
-  NO_SERIAL_NUMBER: "Unknown Gateway.",
+  NO_NAME: "Unknown Gateway.",
   NO_LOCATION: "—",
   NO_VOLTAGE: "—",
 };
@@ -46,6 +46,7 @@ const ERROR_MESSAGE = {
     "Authentication failed. Please ensure you have a valid HUB_AUTH_TOKEN environment variable.",
   NODES_NOT_FOUND:
     "We were unable to locate any nodes. Ensure your events are registering in Notehub.",
+  GATEWAY_NAME_CHANGE_FAILED: "An error occurred changing the name.",
 };
 
 const getErrorMessage = (errorCode: string) => {
