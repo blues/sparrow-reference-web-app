@@ -27,7 +27,7 @@ To get started with running the Sparrow Reference Web App you need to:
 
 - [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
 - [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices.
-- [Set up a Sparrow Gateway and one or more sensors](https://blueswireless.notion.site/Sparrow-Setup-and-Run-Guide-302725d84d9642b9b274e087881134a8).
+- [Set up a Sparrow Gateway and one or more sensors](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/7733505/Sparrow+Quickstart+Guide).
 - [Clone this repository](#clone-this-repository) to your local development environment.
 - Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
 - Install the project’s development [dependencies](#dependencies).
@@ -220,13 +220,13 @@ This repo contains [Netlify configuration](netlify.toml) that allows you to depl
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-reference-web-app)
 
-Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Netlify](https://blueswireless.notion.site/Deploy-Sparrow-Reference-Web-app-using-Netlify-0fc1e6bbccd84a0d8a9542ec00ef245f) for more information.
+Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Netlify](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4686203/Deploy+Sparrow+Reference+Web+App+with+Netlify) for more information.
 
 ### Deploy on Vercel
 
 The next easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Vercel](https://blueswireless.notion.site/Deploy-Sparrow-Reference-Web-app-using-Vercel-c1b668dff4a24f268f3c277d8ee5e8f4) for more information.
+Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Vercel](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4817057/Deploy+the+Sparrow+Starter+Web+App+Using+Vercel) for more information.
 
 ### Deploy on Microsoft Azure Cloud
 
