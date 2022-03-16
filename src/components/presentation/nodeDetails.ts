@@ -30,6 +30,14 @@ export function getNodeDetailsPresentation(
   gateway?: Gateway,
   readings?: Reading<unknown>[]
 ): NodeDetailViewModel {
+  const tempReadings = getFormattedChartData(
+    readings || [],
+    TemperatureSensorSchema
+  );
+  tempReadings.push({
+    when: "2022-03-16T14:34:09Z",
+    value: Math.random() * 20,
+  });
   return {
     gateway: {
       name: gateway?.name || GATEWAY_MESSAGE.NO_NAME,
@@ -56,7 +64,7 @@ export function getNodeDetailsPresentation(
       : undefined,
     readings: readings
       ? {
-          temperature: getFormattedChartData(readings, TemperatureSensorSchema),
+          temperature: tempReadings,
           humidity: getFormattedChartData(readings, HumiditySensorSchema),
           pressure: getFormattedChartData(readings, PressureSensorSchema),
           voltage: getFormattedChartData(readings, VoltageSensorSchema),
