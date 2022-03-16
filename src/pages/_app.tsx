@@ -7,16 +7,25 @@ import "../styles/globals.css";
 
 require("../styles/antd-variables.less");
 
+let globalLoading = false;
+
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const Router = useRouter();
 
   useEffect(() => {
-    Router.events.on("routeChangeStart", () => setIsLoading(true));
-    Router.events.on("routeChangeComplete", () => setIsLoading(false));
-    Router.events.on("routeChangeError", () => setIsLoading(false));
+    Router.events.on("routeChangeStart", () =>
+      setIsLoading((globalLoading = true))
+    );
+    Router.events.on("routeChangeComplete", () =>
+      setIsLoading((globalLoading = false))
+    );
+    Router.events.on("routeChangeError", () =>
+      setIsLoading((globalLoading = false))
+    );
 
     const unobtrusiveDataReload = () => {
+      if (globalLoading) return;
       Router.replace(window.location, undefined, { scroll: false }).catch(
         () => {
           throw new Error("Could not do unobtrusiveDataReload");

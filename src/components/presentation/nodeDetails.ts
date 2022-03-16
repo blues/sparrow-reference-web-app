@@ -50,7 +50,7 @@ export function getNodeDetailsPresentation(
             SENSOR_MESSAGE.NO_PRESSURE,
           voltage:
             getFormattedVoltageData(node.voltage) || SENSOR_MESSAGE.NO_VOLTAGE,
-          count: getFormattedCountData(node.count) || SENSOR_MESSAGE.NO_COUNT,
+          count: `${Math.random()}` || SENSOR_MESSAGE.NO_COUNT,
           total: getFormattedTotalData(node.total) || SENSOR_MESSAGE.NO_TOTAL,
         }
       : undefined,
