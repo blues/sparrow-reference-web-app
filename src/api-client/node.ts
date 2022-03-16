@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import NodeDetailViewModel from "../models/NodeDetailViewModel";
+import Node from "../components/models/Node";
 import { services } from "../services/ServiceLocator";
 
 export async function changeNodeName(
