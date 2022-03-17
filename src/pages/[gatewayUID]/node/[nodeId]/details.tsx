@@ -40,7 +40,7 @@ const NodeDetails: NextPage = () => {
   const [viewModel, setViewModel] = useState<NodeDetailViewModel>({});
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState<string | undefined>(undefined);
-  const refetchInterval = 40000;
+  const refetchInterval = 15000;
 
   const { TabPane } = Tabs;
   const { Option } = Select;

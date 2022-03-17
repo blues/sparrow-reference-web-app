@@ -1,6 +1,7 @@
 export interface UrlManager {
   getGateway(gatewayUID: string): string;
-  getNodes(gatewayUID: string): string;
+  getGateways(): string;
+  getNodes(gatewayUIDs: string[]): string;
   getNode(gatewayUID: string, nodeId: string): string;
   getNodeData(
     gatewayUID: string,

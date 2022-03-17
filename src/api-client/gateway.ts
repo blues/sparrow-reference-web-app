@@ -17,5 +17,17 @@ export function useGateway(gatewayUID: string, refetchInterval?: number) {
   });
 }
 
-const DEFAULT = { useGateway };
+async function getGateways() {
+  const endpoint = services().getUrlManager().getGateways();
+  const response: AxiosResponse = await axios.get(endpoint);
+  return response.data as Gateway[];
+}
+
+export function useGateways(refetchInterval?: number) {
+  return useQuery<Gateway[], Error>("getGateways", () => getGateways(), {
+    refetchInterval,
+  });
+}
+
+const DEFAULT = { useGateway, useGateways };
 export default DEFAULT;
