@@ -28,7 +28,7 @@ describe("/api/gateways/[gatewayUID]/name API Endpoint", () => {
     const app = services().getAppService();
     jest.spyOn(app, "setGatewayName").mockImplementation(async () => {});
     const { req, res } = mockRequestResponse("POST");
-    req.query.name = "TEST_NAME";
+    req.body = { name: "TEST_NAME" };
     await gatewayNameHandler(req, res);
 
     expect(res.statusCode).toBe(200);
@@ -45,7 +45,7 @@ describe("/api/gateways/[gatewayUID]/name API Endpoint", () => {
     });
 
     const { req, res } = mockRequestResponse("POST");
-    req.query.name = "TEST_NAME";
+    req.body = { name: "TEST_NAME" };
     const promise = gatewayNameHandler(req, res);
 
     await expect(promise).rejects.toMatchInlineSnapshot(
@@ -55,7 +55,7 @@ describe("/api/gateways/[gatewayUID]/name API Endpoint", () => {
 
   it("POST should return a 400 if gateway name is invalid", async () => {
     const { req, res } = mockRequestResponse("POST");
-    delete req.query.name;
+    req.body = {}; // no name in body
     await gatewayNameHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST);
@@ -81,7 +81,7 @@ describe("/api/gateways/[gatewayUID]/name API Endpoint", () => {
 
   it("should return a 405 if method not POST is passed", async () => {
     const { req, res } = mockRequestResponse("GET");
-    req.query.name = "TEST NAME";
+    req.body = { name: "TEST_NAME" };
     await gatewayNameHandler(req, res);
 
     expect(res.statusCode).toBe(StatusCodes.METHOD_NOT_ALLOWED);

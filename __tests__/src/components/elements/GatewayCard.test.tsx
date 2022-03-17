@@ -8,7 +8,7 @@ import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 
 const mockGatewayData = {
   uid: "My Mocked Gateway",
-  serialNumber: "67890",
+  name: "67890",
   location: "Gainesville, FL",
   voltage: 3.7,
   lastActivity: "2022-01-05T07:36:55Z",
@@ -30,8 +30,7 @@ const mockGatewayData = {
 
 const mockedGatewayDataLongName = {
   uid: "Another Mocked Gateway",
-  serialNumber:
-    "My Mocked Gateway With an Unbelievably Long Serial Number, Seriously You'll be Amazed",
+  name: "My Mocked Gateway With an Unbelievably Long Serial Number, Seriously You'll be Amazed",
   location: "San Diego, CA",
   voltage: 4.0,
   lastActivity: "2022-02-11T08:48:01Z",
@@ -40,7 +39,7 @@ const mockedGatewayDataLongName = {
 
 const mockUndefinedGatewayData = {
   uid: "My Other Mocked Gateway",
-  serialNumber: "13579",
+  name: "13579",
   voltage: 2.8,
   lastActivity: "2022-01-07T09:12:00Z",
   nodeList: [],
@@ -52,7 +51,7 @@ describe("Gateway card component", () => {
   it("should render the card when gateway data is supplied", () => {
     render(<GatewayCard gatewayDetails={mockGatewayData} index={index} />);
 
-    expect(screen.getByText(mockGatewayData.serialNumber)).toBeInTheDocument();
+    expect(screen.getByText(mockGatewayData.name)).toBeInTheDocument();
     expect(
       screen.getByText(mockGatewayData.location, {
         exact: false,
@@ -68,9 +67,7 @@ describe("Gateway card component", () => {
       <GatewayCard gatewayDetails={mockUndefinedGatewayData} index={index} />
     );
 
-    expect(
-      screen.getByText(mockUndefinedGatewayData.serialNumber)
-    ).toBeInTheDocument();
+    expect(screen.getByText(mockUndefinedGatewayData.name)).toBeInTheDocument();
     expect(
       screen.getByText(GATEWAY_MESSAGE.NO_LOCATION, { exact: false })
     ).toBeInTheDocument();
@@ -84,10 +81,10 @@ describe("Gateway card component", () => {
       <GatewayCard gatewayDetails={mockedGatewayDataLongName} index={index} />
     );
     userEvent.hover(
-      screen.getByText(mockedGatewayDataLongName.serialNumber, { exact: false })
+      screen.getByText(mockedGatewayDataLongName.name, { exact: false })
     );
     expect(
-      screen.getByText(mockedGatewayDataLongName.serialNumber)
+      screen.getByText(mockedGatewayDataLongName.name)
     ).toBeInTheDocument();
   });
 });

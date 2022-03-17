@@ -49,11 +49,11 @@ const GatewayCardComponent = (props: GatewayProps) => {
                 <Text
                   ellipsis={{
                     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                    tooltip: `${gatewayDetails.serialNumber}`,
+                    tooltip: `${gatewayDetails.name}`,
                   }}
                   data-testid={`gateway[${index}]-details`}
                 >
-                  {gatewayDetails.serialNumber}
+                  {gatewayDetails.name}
                 </Text>
                 <span className={cardStyles.timestamp}>
                   Last updated{` `}

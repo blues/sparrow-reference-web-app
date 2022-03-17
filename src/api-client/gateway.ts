@@ -29,5 +29,12 @@ export function useGateways(refetchInterval?: number) {
   });
 }
 
-const DEFAULT = { useGateway, useGateways };
+export async function changeGatewayName(gatewayUID: string, name: string) {
+  const endpoint = services().getUrlManager().gatewayNameUpdate(gatewayUID);
+  const postBody = { name };
+  const response: AxiosResponse = await axios.post(endpoint, postBody);
+  return response.status === 200;
+}
+
+const DEFAULT = { useGateway, useGateways, changeGatewayName };
 export default DEFAULT;

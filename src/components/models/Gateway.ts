@@ -2,7 +2,7 @@ import Node from "./Node";
 
 interface Gateway {
   uid: string;
-  serialNumber: string;
+  name: string;
   lastActivity: string;
   location?: string;
   voltage: number;

@@ -1,6 +1,6 @@
 interface NodeDetailViewModel {
   gateway?: {
-    serialNumber: string;
+    name: string;
   };
   node?: {
     name: string;

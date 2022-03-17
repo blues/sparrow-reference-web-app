@@ -221,7 +221,7 @@ const NodeDetails: NextPage = () => {
             className={styles.sectionSubHeader}
           >
             Gateway:{` `}
-            {viewModel?.gateway?.serialNumber && viewModel.gateway.serialNumber}
+            {viewModel?.gateway?.name && viewModel.gateway.name}
           </h3>
           <Tabs defaultActiveKey="1">
             <TabPane tab="Summary" key="1">

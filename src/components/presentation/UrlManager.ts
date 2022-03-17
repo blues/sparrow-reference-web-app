@@ -8,5 +8,6 @@ export interface UrlManager {
     nodeId: string,
     minutesBeforeNow: string
   ): string;
+  gatewayNameUpdate(gatewayUID: string): string;
   nodeNameUpdate(gatewayUID: string, nodeId: string): string;
 }
