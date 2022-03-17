@@ -8,23 +8,18 @@ import GatewayDetails from "../../components/elements/GatewayDetails";
 import { LoadingSpinner } from "../../components/layout/LoadingSpinner";
 import { getErrorMessage } from "../../constants/ui";
 import { useNodes } from "../../api-client/node";
-import NodeDetailViewModel from "../../models/NodeDetailViewModel";
-import { getNodeDetailsPresentation } from "../../components/presentation/nodeDetails";
+import GatewayDetailViewModel from "../../models/GatewayDetailViewModel";
+import { getGatewayDetailsPresentation } from "../../components/presentation/gatewayDetails";
 
 interface GatewayDetailsQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
 }
 
 const GatewayDetailsPage: NextPage = () => {
-  const router = useRouter();
-  const refreshData = async () => {
-    await router.replace(router.asPath);
-  };
-
-  const [viewModel, setViewModel] = useState<NodeDetailViewModel>({});
+  const [viewModel, setViewModel] = useState<GatewayDetailViewModel>({});
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState<string | undefined>(undefined);
-  const refetchInterval = 10000;
+  const refetchInterval = 20000;
 
   const { query } = useRouter();
   const { gatewayUID } = query as GatewayDetailsQueryInterface;
@@ -33,6 +28,7 @@ const GatewayDetailsPage: NextPage = () => {
     isLoading: gatewayLoading,
     error: gatewayErr,
     data: gateway,
+    refetch: gatewayRefetch,
   } = useGateway(gatewayUID, refetchInterval);
 
   const {
@@ -67,11 +63,8 @@ const GatewayDetailsPage: NextPage = () => {
 
   useEffect(() => {
     if (gateway && nodes) {
-      const nodeModel: NodeDetailViewModel = getNodeDetailsPresentation(
-        nodes,
-        gateway
-      );
-      setViewModel(nodeModel);
+      const gatewayViewModel = getGatewayDetailsPresentation(gateway, nodes);
+      setViewModel(gatewayViewModel);
     }
   }, [gateway, nodes]);
 
@@ -83,17 +76,19 @@ const GatewayDetailsPage: NextPage = () => {
       name
     );
     setIsLoading(false);
-    await refreshData();
+    await gatewayRefetch();
     return isSuccessful;
   };
 
   return (
     <LoadingSpinner isLoading={isLoading}>
-      <GatewayDetails
-        onChangeName={changeName}
-        viewModel={viewModel}
-        err={err}
-      />
+      {viewModel && (
+        <GatewayDetails
+          onChangeName={changeName}
+          viewModel={viewModel}
+          err={err}
+        />
+      )}
     </LoadingSpinner>
   );
 };

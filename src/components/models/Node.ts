@@ -1,15 +1,15 @@
 interface Node {
   name?: string;
-  nodeId?: string;
+  nodeId: string;
   location?: string;
   humidity?: number;
   pressure?: number;
   temperature?: number;
   voltage?: number;
-  lastActivity?: string;
+  lastActivity: string;
   count?: number;
   total?: number;
-  gatewayUID?: string;
+  gatewayUID: string;
 }
 
 export default Node;
