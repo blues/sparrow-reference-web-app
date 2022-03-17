@@ -12,34 +12,61 @@ import NotehubResponse from "./models/NotehubResponse";
 import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
 import NotehubEnvVars from "./models/NotehubEnvVars";
 import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
+import FormData from "form-data";
+
+type HubAuth = { id: string; secret: string };
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
-  hubBaseURL: string;
+  private commonHeaders;
 
-  hubDeviceUID: string;
-
-  hubProjectUID: string;
-
-  hubHistoricalDataRecentMinutes: number;
-
-  commonHeaders;
+  private authBearerToken = "";
 
   constructor(
-    hubBaseURL: string,
-    hubDeviceUID: string,
-    hubProjectUID: string,
-    hubAuthToken: string,
-    hubHistoricalDataRecentMinutes: number
+    private hubAuth: HubAuth,
+    private hubBaseURL: string,
+    private hubDeviceUID: string,
+    private hubProjectUID: string,
+    private hubHistoricalDataRecentMinutes: number
   ) {
-    this.hubBaseURL = hubBaseURL;
-    this.hubDeviceUID = hubDeviceUID;
-    this.hubProjectUID = hubProjectUID;
-    this.hubHistoricalDataRecentMinutes = hubHistoricalDataRecentMinutes;
     this.commonHeaders = {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
-      [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
     };
+    this.renewAuthToken(this.hubBaseURL, this.hubAuth.id, this.hubAuth.secret)
+      .then((token) => {
+        this.commonHeaders[HTTP_HEADER.SESSION_TOKEN] = token + "f";
+      })
+      .catch((cause: unknown) => {
+        throw new ErrorWithCause("Could not renew Auth Token", { cause });
+      });
+  }
+
+  async renewAuthToken(baseUrl: string, id: string, secret: string) {
+    /* $ curl --request POST   --url 'https://notehub.io/hydra/oauth2/token' --header 'content-type:
+    application/x-www-form-urlencoded'   --data grant_type=client_credentials   --data
+    client_id=7ad0d82d-457e-467d-86ec-67a77714585b   --data
+    client_secret=c2fb797c547ee1a82f899c8a8a4a61656d13586dc542e6a626d488b3b9fa8020
+    {"access_token":"RupfnwD1igcQdmHhLtSWSjhDwid4QBUBjUtudhyKhXc.23QQjhw_4pUSvFzI7IcYENGnh5GPl6fQsIsBbynRRLY",
+    "expires_in":1799,"scope":"","token_type":"bearer"}
+    */
+    const endpoint = `${this.hubBaseURL}/oauth2/token`;
+    const form = new FormData();
+    form.append("grant_type", "client_credentials");
+    form.append("client_id", id);
+    form.append("client_secret", secret);
+    type OAuthTokenResponse = {
+      access_token: string;
+      expires_in: number;
+      scope: string;
+      token_type: string;
+    };
+
+    const resp = await axios.post<OAuthTokenResponse>(endpoint, form, {
+      headers: form.getHeaders(),
+    });
+    this.authBearerToken = resp.data.access_token;
+    console.log("token: ", this.authBearerToken);
+    return resp.data.access_token;
   }
 
   async getAllDevices(deviceUIDs: string[]) {
@@ -57,6 +84,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   async getDevice(hubDeviceUID: string) {
     const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}`;
+    console.log(endpoint);
     try {
       const resp = await axios.get(endpoint, { headers: this.commonHeaders });
       return resp.data as NotehubDevice;

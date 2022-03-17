@@ -41,10 +41,10 @@ class ServiceLocator {
   private getNotehubAccessor(): NotehubAccessor {
     if (!this.notehubAccessor) {
       this.notehubAccessor = new AxiosHttpNotehubAccessor(
+        Config.hubAuth,
         Config.hubBaseURL,
         Config.hubDeviceUID,
         Config.hubProjectUID,
-        Config.hubAuthToken,
         Config.hubHistoricalDataRecentMinutes
       );
     }

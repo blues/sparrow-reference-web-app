@@ -23,6 +23,7 @@
     "chart.js": "^3.6.1",
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.27.0",
+    "form-data": "^4.0.0",
     "http-status-codes": "^2.2.0",
     "lodash": "^4.17.21",
     "next": "12.1.0",

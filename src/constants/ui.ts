@@ -43,7 +43,7 @@ const ERROR_MESSAGE = {
   INTERNAL_ERROR:
     "An internal error occurred. If this problem persists please contact Blues support.",
   UNAUTHORIZED:
-    "Authentication failed. Please ensure you have a valid HUB_AUTH_TOKEN environment variable.",
+    "Authentication failed. Please ensure you have valid HUB_API_CLIENT_ID, HUB_API_CLIENT_SECRET environment variables.",
   NODES_NOT_FOUND:
     "We were unable to locate any nodes. Ensure your events are registering in Notehub.",
   GATEWAY_NAME_CHANGE_FAILED: "An error occurred changing the name.",

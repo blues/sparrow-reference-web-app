@@ -8,8 +8,8 @@ const debugLog = console.log; // eslint-disable-line no-console
 */
 const env = {
   DEBUG_CONFIG: process.env.DEBUG_CONFIG,
-  HUB_APP_UID: process.env.HUB_APP_UID,
-  HUB_AUTH_TOKEN: process.env.HUB_AUTH_TOKEN,
+  HUB_API_CLIENT_ID: process.env.HUB_API_CLIENT_ID,
+  HUB_API_CLIENT_SECRET: process.env.HUB_API_CLIENT_SECRET,
   HUB_BASE_URL: process.env.HUB_BASE_URL,
   HUB_DEVICE_UID: process.env.HUB_DEVICE_UID,
   HUB_PROJECTUID: process.env.HUB_PROJECTUID,
@@ -58,13 +58,13 @@ const Config = {
     return Boolean(optionalEnvVar("DEBUG_CONFIG", ""));
   },
   get hubProjectUID() {
-    return (
-      optionalEnvVar("HUB_APP_UID", "") || // TODO(carl) remove LOC once a-team devs shun HUB_APP_UID
-      requiredEnvVar("HUB_PROJECTUID")
-    );
+    return requiredEnvVar("HUB_PROJECTUID");
   },
-  get hubAuthToken() {
-    return requiredEnvVar("HUB_AUTH_TOKEN");
+  get hubAuth() {
+    return {
+      id: requiredEnvVar("HUB_API_CLIENT_ID"),
+      secret: requiredEnvVar("HUB_API_CLIENT_SECRET"),
+    };
   },
   get hubBaseURL() {
     return optionalEnvVar("HUB_BASE_URL", "https://api.notefile.net");

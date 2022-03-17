@@ -10,6 +10,7 @@ import NotehubNodeConfig from "../../../../src/services/notehub/models/NotehubNo
 import notehubData from "../__serviceMocks__/notehubData.json";
 
 let mock: MockAdapter;
+const mockHubAuth = { id: "james:bond", secret: "007" };
 const mockBaseURL = "http://blues.io";
 const mockProjectUID = "app:1234";
 const mockDeviceUID = "dev:1234";
@@ -26,10 +27,10 @@ const API_LATEST_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devi
 const API_INITIAL_ALL_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/events?startDate=${mockedEpochTimeValue}`;
 
 const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
+  mockHubAuth,
   mockBaseURL,
   mockDeviceUID,
   mockProjectUID,
-  "",
   mockHubHistoricalDataRecentMinutes
 );
 

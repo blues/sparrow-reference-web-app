@@ -6,7 +6,7 @@ An example web application to configure and view sensor data from Blues Wireless
   - [Setup](#setup)
     - [Clone This Repository](#clone-this-repository)
     - [Environment Variables](#environment-variables)
-      - [HUB_AUTH_TOKEN](#hub_auth_token)
+      - [HUB_API_CLIENT_ID, HUB_API_CLIENT_SECRET](#hub_api_client_id-hub_api_client_secret)
       - [HUB_DEVICE_UID](#hub_device_uid)
       - [HUB_PROJECTUID](#hub_projectuid)
     - [Dependencies](#dependencies)
@@ -57,28 +57,11 @@ The Sparrow Reference Web App uses a series of environment variables to store pr
 1. Copy the contents of this repo’s [.env.local.example](.env.local.example) file, and paste it into your new `.env.local` file.
 1. Change the required values in your `.env.local` to your own values using the steps below.
 
-#### HUB_AUTH_TOKEN
+#### HUB_API_CLIENT_ID, HUB_API_CLIENT_SECRET
 
-The Sparrow Reference Web App needs access to your Notehub project in order to show the gateway and sensor nodes in your project. An access token is used to authenticate the app.
+The Sparrow Reference Web App needs access to your Notehub project in order to get sensor readings and to save settings to Notehub. An access ID and secret are used to authenticate the app.
 
-To find retrieve an authentication token, put this in your command line, replacing `YOUR_NOTEHUB_EMAIL` & `NOTEHUB_PASSWORD` with your own:
-
-```
-curl -X POST -L 'https://api.notefile.net/auth/login' \
-    -d '{"username":"YOUR_NOTEHUB_EMAIL", "password": "NOTEHUB_PASSWORD"}'
-```
-
-When successful, you will see a response like
-
-```
-{"session_token":"BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD"}
-```
-
-Copy the value after the colon to set the environment variable in `.env.local`, e.g.
-
-```
-HUB_AUTH_TOKEN=BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD
-```
+To generate an API Client ID and Secret, see the 'Programmatic API access' section of the Settings page of your Notehub Project.
 
 #### HUB_DEVICE_UID
 
