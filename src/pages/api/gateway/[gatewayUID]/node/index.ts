@@ -7,7 +7,7 @@ import { services } from "../../../../../services/ServiceLocator";
 import { HTTP_STATUS } from "../../../../../constants/http";
 
 interface ValidRequest {
-  gatewayUID: string;
+  gatewayUIDArray: string[];
 }
 
 function validateMethod(req: NextApiRequest, res: NextApiResponse) {
@@ -25,19 +25,30 @@ function validateRequest(
   res: NextApiResponse
 ): false | ValidRequest {
   const { gatewayUID } = req.query;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const gatewayUIDArray = gatewayUID.split(",");
   // Gateway UID must be a string
   if (typeof gatewayUID !== "string") {
     res.status(StatusCodes.BAD_REQUEST);
     res.json({ err: HTTP_STATUS.INVALID_GATEWAY });
     return false;
   }
-  return { gatewayUID };
+  // Gateway UID Array must have at least one gateway UID
+  if (gatewayUIDArray.length) {
+    res.status(StatusCodes.BAD_REQUEST);
+    res.json({ err: HTTP_STATUS.INVALID_GATEWAY });
+    return false;
+  }
+  return { gatewayUIDArray };
 }
 
-async function performRequest({ gatewayUID }: ValidRequest) {
+async function performRequest({ gatewayUIDArray }: ValidRequest) {
+  console.log("get node api call");
   const app = services().getAppService();
   try {
-    const node = await app.getNodes([gatewayUID]);
+    console.log("gateway UID array", gatewayUIDArray);
+    const node = await app.getNodes(gatewayUIDArray);
+    console.log("returned node", node);
     return node;
   } catch (cause) {
     throw new ErrorWithCause("Could not perform request", { cause });

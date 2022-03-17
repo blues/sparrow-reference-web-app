@@ -2,7 +2,9 @@ import { UrlManager } from "../../components/presentation/UrlManager";
 
 export const NextJsUrlManager: UrlManager = {
   getGateway: (gatewayUID: string) => `/api/gateway/${gatewayUID}`,
-  getNodes: (gatewayUIDs: string[]) => `/api/gateway/${gatewayUID}/node`,
+  getGateways: () => `/api/`,
+  getNodes: (gatewayUIDs: string[]) =>
+    `/api/gateway/${gatewayUIDs.toString()}/node`,
   getNode: (gatewayUID: string, nodeId: string) =>
     `/api/gateway/${gatewayUID}/node/${nodeId}`,
   getNodeData: (gatewayUID: string, nodeId: string, minutesBeforeNow: string) =>

@@ -17,16 +17,16 @@ export async function changeNodeName(
   return response.status === 200;
 }
 
-async function getNodes(gatewayUID: string) {
-  const endpoint = services().getUrlManager().getNodes(gatewayUID);
+export async function getNodes(gatewayUIDs: string[]) {
+  const endpoint = services().getUrlManager().getNodes(gatewayUIDs);
   const response: AxiosResponse = await axios.get(endpoint);
   return response.data as Node[];
 }
 
 // todo should these custom Hook be in a separate folder of individual Hooks??
-export function useNodes(gatewayUID: string) {
-  return useQuery<Node[], Error>("getNodes", () => getNodes(gatewayUID), {
-    enabled: !!gatewayUID,
+export function useNodes(gatewayUIDs: string[]) {
+  return useQuery<Node[], Error>("getNodes", () => getNodes(gatewayUIDs), {
+    enabled: !!gatewayUIDs,
   });
 }
 
