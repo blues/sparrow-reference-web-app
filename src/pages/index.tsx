@@ -21,6 +21,7 @@ const Home: NextPage = () => {
   const [gatewayNodeData, setGatewayNodeData] = useState<Gateway[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [err, setErr] = useState<string | undefined>(undefined);
+  const refetchInterval = 60000;
 
   useEffect(() => {
     // auto focuses the carousel on component mount for keyboard accessibility
@@ -31,7 +32,7 @@ const Home: NextPage = () => {
     isLoading: gatewayLoading,
     error: gatewayError,
     data: gateways,
-  } = useGateways();
+  } = useGateways(refetchInterval);
 
   useEffect(() => {
     setLatestNodeDataLoading(true);
