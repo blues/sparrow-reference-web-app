@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { isEmpty } from "lodash";
+import classNames from "classnames/bind";
 import { Card, Input, Button, Tabs, Row, Col, Tooltip, Select } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -40,10 +41,11 @@ const NodeDetails: NextPage = () => {
   const [viewModel, setViewModel] = useState<NodeDetailViewModel>({});
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState<string | undefined>(undefined);
-  const refetchInterval = 15000;
+  const refetchInterval = 10000;
 
   const { TabPane } = Tabs;
   const { Option } = Select;
+  const router = useRouter();
   const { query } = useRouter();
 
   // neither of these values will ever be null because the URL path depends on them to render this page
@@ -113,7 +115,112 @@ const NodeDetails: NextPage = () => {
     }
   }, [gatewayError, nodeError, readingsError]);
 
-  const router = useRouter();
+  // this is the largely uneffective attempt to compare previously fetched data values to newly fetched ones
+  // to make the UI highlight in the proper place when vallues change
+  const nodeNameRef = useRef();
+  const [isNameUpdated, setIsNameUpdated] = useState<boolean>(false);
+  const nodeTempRef = useRef();
+  const [isTempUpdated, setIsTempUpdated] = useState<boolean>(false);
+  const nodeHumidityRef = useRef();
+  const [isHumidityUpdated, setIsHumidityUpdated] = useState<boolean>(false);
+  const nodeVoltageRef = useRef();
+  const [isVoltageUpdated, setIsVoltageUpdated] = useState<boolean>(false);
+  const nodePressureRef = useRef();
+  const [isPressureUpdated, setIsPressureUpdated] = useState<boolean>(false);
+  const nodeMotionRef = useRef();
+  const [isMotionUpdated, setIsMotionUpdated] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log("node data refetched!");
+    if (node) {
+      // check node name
+      if (!nodeNameRef.current || nodeNameRef.current === node.name) {
+        setIsNameUpdated(false);
+        nodeNameRef.current = node.name;
+        console.log("Name not updated", nodeNameRef.current);
+      } else {
+        nodeNameRef.current = node.name;
+        setIsNameUpdated(true);
+        console.log("Name updated! ", nodeNameRef.current);
+      }
+      // check node temp
+      if (!nodeTempRef.current || nodeTempRef.current === node.temperature) {
+        setIsTempUpdated(false);
+        nodeTempRef.current = node.temperature;
+        console.log("Temp not updated", nodeTempRef.current);
+      } else {
+        nodeTempRef.current = node.temperature;
+        setIsTempUpdated(true);
+        console.log("Temp updated! ", nodeTempRef.current);
+      }
+      // check node humidity
+      if (
+        !nodeHumidityRef.current ||
+        nodeHumidityRef.current === node.humidity
+      ) {
+        setIsHumidityUpdated(false);
+        nodeHumidityRef.current = node.humidity;
+        console.log("Humidity not updated", nodeHumidityRef.current);
+      } else {
+        nodeHumidityRef.current = node.humidity;
+        setIsHumidityUpdated(true);
+        console.log("Humidity updated! ", nodeHumidityRef.current);
+      }
+      // check node voltage
+      if (!nodeVoltageRef.current || nodeVoltageRef.current === node.voltage) {
+        setIsVoltageUpdated(false);
+        nodeVoltageRef.current = node.voltage;
+        console.log("Voltage not updated", nodeVoltageRef.current);
+      } else {
+        nodeVoltageRef.current = node.voltage;
+        setIsVoltageUpdated(true);
+        console.log("Voltage updated! ", nodeVoltageRef.current);
+      }
+      // check node pressure
+      if (
+        !nodePressureRef.current ||
+        nodePressureRef.current === node.pressure
+      ) {
+        setIsPressureUpdated(false);
+        nodePressureRef.current = node.pressure;
+        console.log("Pressure not updated", nodePressureRef.current);
+      } else {
+        nodePressureRef.current = node.pressure;
+        setIsPressureUpdated(true);
+        console.log("Pressure updated! ", nodePressureRef.current);
+      }
+      // check node motion
+      if (!nodeMotionRef.current || nodeMotionRef.current === node.count) {
+        setIsMotionUpdated(false);
+        nodeMotionRef.current = node.count;
+        console.log("Count not updated", nodeMotionRef.current);
+      } else {
+        nodeMotionRef.current = node.count;
+        setIsMotionUpdated(true);
+        console.log("Count updated! ", nodeMotionRef.current);
+      }
+    }
+  }, [node]);
+
+  const nodeNameStyle = classNames(styles.sectionTitle, {
+    [styles.highlight]: isNameUpdated,
+  });
+  const nodeTempStyle = classNames(detailsStyles.dataNumber, {
+    [styles.highlight]: isTempUpdated,
+  });
+  const nodeHumidityStyle = classNames(detailsStyles.dataNumber, {
+    [styles.highlight]: isHumidityUpdated,
+  });
+  const nodeVoltageStyle = classNames(detailsStyles.dataNumber, {
+    [styles.highlight]: isVoltageUpdated,
+  });
+  const nodePressureStyle = classNames(detailsStyles.dataNumber, {
+    [styles.highlight]: isPressureUpdated,
+  });
+  const nodeMotionStyle = classNames(detailsStyles.dataNumber, {
+    [styles.highlight]: isMotionUpdated,
+  });
+  // end of the code to make highlighting values a thing
 
   const handleDateRangeChange = async (value: string) => {
     // call this function to force a page update with new chart date range
@@ -190,6 +297,7 @@ const NodeDetails: NextPage = () => {
 
   const formOnFinish = async (values: Store) => {
     // TODO: Move this to the app service / data provider
+    setIsLoading(true);
     const response = await axios.post(
       `/api/gateway/${gatewayUID}/node/${nodeId}/config`,
       values
@@ -198,8 +306,10 @@ const NodeDetails: NextPage = () => {
     console.log(response);
 
     if (response.status < 300) {
+      setIsNameUpdated(false);
       await nodeRefetch();
     }
+    setIsLoading(false);
   };
 
   const formOnFinishFailed = (errorInfo: ValidateErrorEntity) => {
@@ -212,7 +322,7 @@ const NodeDetails: NextPage = () => {
 
       {viewModel.node && !isEmpty(viewModel.node) && (
         <div>
-          <h2 data-testid="node-name" className={styles.sectionTitle}>
+          <h2 data-testid="node-name" className={nodeNameStyle}>
             Node:{` `}
             {viewModel.node.name}
           </h2>
@@ -250,7 +360,7 @@ const NodeDetails: NextPage = () => {
                   >
                     Temperature
                     <br />
-                    <span className={detailsStyles.dataNumber}>
+                    <span className={nodeTempStyle}>
                       {viewModel.node.temperature}
                     </span>
                   </Card>
@@ -259,7 +369,7 @@ const NodeDetails: NextPage = () => {
                   <Card className={detailsStyles.card} data-testid="humidity">
                     Humidity
                     <br />
-                    <span className={detailsStyles.dataNumber}>
+                    <span className={nodeHumidityStyle}>
                       {viewModel.node.humidity}
                     </span>
                   </Card>
@@ -268,7 +378,7 @@ const NodeDetails: NextPage = () => {
                   <Card className={detailsStyles.card} data-testid="voltage">
                     Voltage
                     <br />
-                    <span className={detailsStyles.dataNumber}>
+                    <span className={nodeVoltageStyle}>
                       {viewModel.node.voltage}
                     </span>
                   </Card>
@@ -277,7 +387,7 @@ const NodeDetails: NextPage = () => {
                   <Card className={detailsStyles.card} data-testid="pressure">
                     Pressure
                     <br />
-                    <span className={detailsStyles.dataNumber}>
+                    <span className={nodePressureStyle}>
                       {viewModel.node.pressure}
                     </span>
                   </Card>
@@ -294,7 +404,7 @@ const NodeDetails: NextPage = () => {
                       <InfoCircleOutlined />
                     </Tooltip>
                     <br />
-                    <span className={detailsStyles.dataNumber}>
+                    <span className={nodeMotionStyle}>
                       {viewModel.node.count}
                     </span>
                   </Card>

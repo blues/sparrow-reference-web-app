@@ -75,6 +75,19 @@
   font-weight: 600;
 }
 
+.highlight {
+  animation: highlight-fade 5s;
+}
+
+@keyframes highlight-fade {
+  0% {
+    background-color: #f8ffb4;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
 .sectionTitle {
   margin-bottom: 0;
   font-size: 20px;
