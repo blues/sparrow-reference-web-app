@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axiosStatic, { AxiosInstance, AxiosResponse } from "axios";
 import { ErrorWithCause } from "pony-cause";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubDevice from "./models/NotehubDevice";
@@ -13,32 +13,64 @@ import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
 import NotehubEnvVars from "./models/NotehubEnvVars";
 import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
 import FormData from "form-data";
+import { client, interceptor } from "axios-oauth-client";
+import AxiosTokenProvider from "axios-token-interceptor";
+import InterceptorFactory from "axios-oauth-client/dist/interceptor";
 
 type HubAuth = { id: string; secret: string };
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
-  private commonHeaders;
-
   private authBearerToken = "";
 
+  private axios: AxiosInstance;
+
   constructor(
-    private hubAuth: HubAuth,
+    hubAuth: HubAuth,
     private hubBaseURL: string,
     private hubDeviceUID: string,
     private hubProjectUID: string,
     private hubHistoricalDataRecentMinutes: number
   ) {
-    this.commonHeaders = {
-      [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
-    };
-    this.renewAuthToken(this.hubBaseURL, this.hubAuth.id, this.hubAuth.secret)
-      .then((token) => {
-        this.commonHeaders[HTTP_HEADER.SESSION_TOKEN] = token + "f";
-      })
-      .catch((cause: unknown) => {
-        throw new ErrorWithCause("Could not renew Auth Token", { cause });
-      });
+    const getClientCredentials = client(
+      axiosStatic as unknown as typeof axiosStatic.create,
+      {
+        url: `${this.hubBaseURL}/oauth2/token`,
+        grant_type: "client_credentials",
+        client_id: hubAuth.id,
+        client_secret: hubAuth.secret,
+      }
+    );
+    this.axios = axiosStatic.create({
+      headers: {
+        [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
+      },
+    });
+    this.axios.interceptors.request.use((request) => {
+      //request.url = `https://postman-echo.com/${request.method}`;
+      // request.headers = {};
+      console.log("Starting Request", JSON.stringify(request, null, 2));
+      return request;
+    });
+    this.axios.interceptors.request.use(
+      // Wraps axios-token-interceptor with oauth-specific configuration,
+      // fetches the token using the desired claim method, and caches
+      // until the token expires
+      InterceptorFactory(AxiosTokenProvider, getClientCredentials)
+    );
+
+    this.axios.interceptors.response.use(
+      function (response) {
+        // Any status code that lie within the range of 2xx cause this function to trigger
+        // Do something with response data
+        console.log("response~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", response);
+        return response;
+      },
+      (error) => {
+        console.log("error:", JSON.stringify(error, null, 2));
+        return Promise.reject(error);
+      }
+    );
   }
 
   async renewAuthToken(baseUrl: string, id: string, secret: string) {
@@ -61,7 +93,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
       token_type: string;
     };
 
-    const resp = await axios.post<OAuthTokenResponse>(endpoint, form, {
+    const resp = await axiosStatic.post<OAuthTokenResponse>(endpoint, form, {
       headers: form.getHeaders(),
     });
     this.authBearerToken = resp.data.access_token;
@@ -86,8 +118,8 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}`;
     console.log(endpoint);
     try {
-      const resp = await axios.get(endpoint, { headers: this.commonHeaders });
-      return resp.data as NotehubDevice;
+      const resp = await this.axios.get<NotehubDevice>(endpoint);
+      return resp.data;
     } catch (e) {
       throw this.errorWithCode(e);
     }
@@ -96,7 +128,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   // eslint-disable-next-line class-methods-use-this
   httpErrorToErrorCode(e: unknown): ERROR_CODES {
     let errorCode = ERROR_CODES.INTERNAL_ERROR;
-    if (axios.isAxiosError(e)) {
+    if (axiosStatic.isAxiosError(e)) {
       if (e.response?.status === 401) {
         errorCode = ERROR_CODES.UNAUTHORIZED;
       }
@@ -118,8 +150,8 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   async getLatestEvents(hubDeviceUID: string) {
     const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}/latest`;
     try {
-      const resp = await axios.get(endpoint, { headers: this.commonHeaders });
-      return resp.data as NotehubLatestEvents;
+      const resp = await this.axios.get<NotehubLatestEvents>(endpoint);
+      return resp.data;
     } catch (e) {
       throw this.errorWithCode(e);
     }
@@ -135,10 +167,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     let events: NotehubEvent[] = [];
     const initialEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?startDate=${startDateValue}`;
     try {
-      const resp: AxiosResponse<NotehubResponse> = await axios.get(
-        initialEndpoint,
-        { headers: this.commonHeaders }
-      );
+      const resp = await this.axios.get<NotehubResponse>(initialEndpoint);
       if (resp.data.events) {
         events = resp.data.events;
       }
@@ -146,7 +175,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
         const recurringEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?since=${resp.data.through}`;
         const recurringResponse: AxiosResponse<NotehubResponse> =
           // eslint-disable-next-line no-await-in-loop
-          await axios.get(recurringEndpoint, { headers: this.commonHeaders });
+          await this.axios.get(recurringEndpoint);
         if (recurringResponse.data.events) {
           events = [...events, ...recurringResponse.data.events];
         }
@@ -171,9 +200,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     };
     let resp;
     try {
-      resp = await axios.post(endpoint, body, {
-        headers: this.commonHeaders,
-      });
+      resp = await this.axios.post(endpoint, body);
     } catch (e) {
       throw getError(ERROR_CODES.INTERNAL_ERROR, { cause: e as Error });
     }
@@ -209,9 +236,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     };
     let resp;
     try {
-      resp = await axios.post(endpoint, req, {
-        headers: this.commonHeaders,
-      });
+      resp = await this.axios.post(endpoint, req);
     } catch (cause) {
       throw new ErrorWithCause(ERROR_CODES.INTERNAL_ERROR, { cause });
     }
@@ -234,11 +259,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   async setEnvironmentVariables(hubDeviceUID: string, envVars: NotehubEnvVars) {
     const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}/environment_variables`;
     try {
-      await axios.put(
-        endpoint,
-        { environment_variables: envVars },
-        { headers: this.commonHeaders }
-      );
+      await this.axios.put(endpoint, { environment_variables: envVars });
     } catch (e) {
       throw this.errorWithCode(e);
     }
