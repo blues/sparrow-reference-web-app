@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { flattenDeep } from "lodash";
-import Gateway from "../../components/models/Gateway";
-import Node from "../../components/models/Node";
+import GatewayDEPRECATED from "../../components/models/Gateway";
+import NodeDEPRECATED from "../../components/models/Node";
 import NotehubDevice from "./models/NotehubDevice";
-import { DataProvider } from "../DataProvider";
+import { DataProvider, ProjectHierarchyFilter, QueryHistoricalReadings, QueryResult } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
 import SensorReading from "../../components/models/readings/SensorReading";
@@ -15,17 +15,14 @@ import PressureSensorReading from "../../components/models/readings/PressureSens
 import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
 import CountSensorReading from "../../components/models/readings/CountSensorReading";
 import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
+import { Project, ProjectID, ProjectReadingsSnapshot, Gateway, Node, SensorType, ProjectHierarchy, Gateways, GatewayWithNodes, SensorHost, SensorHostReadingsSnapshot, SensorTypeNames, Reading, ProjectHistoricalData, TimePeriod } from "../DomainModel";
+import Config from "../../../config";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
   triangulated_location?: NotehubLocation;
   tower_location?: NotehubLocation;
 }
-
-interface HasNodeId {
-  nodeId: string;
-}
-
 
 interface HasNodeId {
   nodeId: string;
@@ -55,15 +52,63 @@ export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
 }
 
 export default class NotehubDataProvider implements DataProvider {
-  notehubAccessor: NotehubAccessor;
 
-  constructor(notehubAccessor: NotehubAccessor) {
-    this.notehubAccessor = notehubAccessor;
+  constructor(private readonly notehubAccessor: NotehubAccessor, private readonly projectID: ProjectID) {}
+
+  /**
+   * We made the interface more general (accepting a projectID) but the implementation has the
+   * ID fixed. This is a quick check to be sure the project ID is the one expected. 
+   * @param projectID 
+   */
+  private checkProjectID(projectID: ProjectID) {
+    if (projectID.projectUID!==this.projectID.projectUID) {
+      throw new Error("Project ID does not match expected ID");
+    }
   }
+
+  async queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
+    this.checkProjectID(projectID);
+
+    const gateways = new Set<GatewayWithNodes>();
+
+    const project: ProjectHierarchy = {
+      id: projectID,
+      name: Config.companyName,
+      description: null,
+      gateways
+    };
+
+    const results: ProjectReadingsSnapshot = {
+      when: new Date(),
+      project,
+      hostReadings: function (sensorHost: SensorHost): SensorHostReadingsSnapshot {
+        throw new Error("Function not implemented.");
+      },
+      hostReadingByName: function (sensorHost: SensorHost, readingName: SensorTypeNames): Reading | undefined {
+        throw new Error("Function not implemented.");
+      }
+    };
+
+    return { request: projectID, results };    
+  }
+
+  async queryProjectReadingSeries(request: QueryHistoricalReadings): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>> {
+    const results: ProjectHistoricalData = {
+      period: request.timeFilter,
+      hostReadings: new Map(),
+      project: await this.buildProjectHierarchy(request.projectFilter)
+    };
+    return { request, results }
+  }
+
+  private async buildProjectHierarchy(projectFilter: ProjectHierarchyFilter): Promise<ProjectHierarchy> {
+    throw new Error("Method not implemented.");
+  }
+
 
   // eventually this projectUID will need to be passed in - just not yet
   async getGateways() {
-    const gateways: Gateway[] = [];
+    const gateways: GatewayDEPRECATED[] = [];
     const rawDevices = await this.notehubAccessor.getDevices();
     rawDevices.forEach((device) => {
       gateways.push(notehubDeviceToSparrowGateway(device));
@@ -176,7 +221,7 @@ export default class NotehubDataProvider implements DataProvider {
     const reducedEvents = Array.from(reducedEventsIterator);
 
     // get the names and locations of the nodes from the API via config.db
-    const getExtraNodeDetails = async (gatewayNodeInfo: Node) => {
+    const getExtraNodeDetails = async (gatewayNodeInfo: NodeDEPRECATED) => {
       const nodeDetailsInfo = await this.notehubAccessor.getConfig(
         gatewayNodeInfo.gatewayUID,
         gatewayNodeInfo.nodeId
@@ -211,10 +256,10 @@ export default class NotehubDataProvider implements DataProvider {
         ...(gatewayNodeInfo.total && {
           total: gatewayNodeInfo.total,
         }),
-      } as Node;
+      };
     };
 
-    const getAllNodeData = async (gatewayNodeInfo: Node[]) =>
+    const getAllNodeData = async (gatewayNodeInfo: NodeDEPRECATED[]) =>
       Promise.all(gatewayNodeInfo.map(getExtraNodeDetails));
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const allLatestNodeData = await getAllNodeData(reducedEvents);
@@ -240,6 +285,7 @@ export default class NotehubDataProvider implements DataProvider {
       options?.startDate
     );
 
+    // filter for a specific node ID
     const filteredEvents: NotehubEvent[] = nodeEvents.filter(
       (event: NotehubEvent) =>
         event.file &&
