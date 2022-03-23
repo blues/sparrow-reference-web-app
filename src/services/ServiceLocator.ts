@@ -6,21 +6,22 @@ import { UrlManager } from "../components/presentation/UrlManager";
 import { NextJsUrlManager } from "../adapters/nextjs-sparrow/NextJsUrlManager";
 import { AttributeStore } from "./AttributeStore";
 import { NotehubAccessor } from "./notehub/NotehubAccessor";
-import { DataProvider, ProjectReadingShapshot, QueryResult } from "./DataProvider";
+import { DataProvider, QueryHistoricalReadings, QueryResult } from "./DataProvider";
 import { NotehubAttributeStore } from "./notehub/NotehubAttributeStore";
 import PrismaDatastoreEventHandler from "./prisma-datastore/PrismaDatastoreEventHandler";
 import { PrismaClient } from "@prisma/client";
 import { NoopSparrowEventHandler, SparrowEventHandler } from "./SparrowEvent";
 import { PrismaDataProvider } from "./prisma-datastore/PrismaDataProvider";
-import { SimpleIDBuilder } from "./IDBuilder";
+import IDBuilder, { SimpleIDBuilder } from "./IDBuilder";
 import Gateway from "../components/models/Gateway";
 import Node from "../components/models/Node";
 import SensorReading from "../components/models/readings/SensorReading";
-import { ProjectID } from "./DomainModel";
+import { ProjectHistoricalData, ProjectID, ProjectReadingsSnapshot } from "./DomainModel";
 
-
+// todo(must) - temporary. remove when notehub and datastore implementations are working
 class CompositeDataProvider implements DataProvider {
   constructor(private notehubProvider: NotehubDataProvider, private prismaDataProvider: PrismaDataProvider) {}
+  
   getGateways(): Promise<Gateway[]> {
     return this.notehubProvider.getGateways();
   }
@@ -37,10 +38,12 @@ class CompositeDataProvider implements DataProvider {
   getNodeData(gatewayUID: string, nodeId: string, options?: { startDate?: Date | undefined; } | undefined): Promise<SensorReading<unknown>[]> {
     return this.notehubProvider.getNodeData(gatewayUID, nodeId, options);
   }
-  queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingShapshot>> {
+  queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
     return this.prismaDataProvider.queryProjectLatestValues(projectID);
   }
-  
+  queryProjectReadingSeries(query: QueryHistoricalReadings): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>> {
+    throw new Error("Method not implemented.");
+  }
 }
 
 // this class provides whatever service is needed to the React view component that needs it
@@ -57,7 +60,7 @@ class ServiceLocator {
 
   private prisma?: PrismaClient;
 
-  private eventHandler?: SparrowEventHandler
+  private eventHandler?: SparrowEventHandler;
 
   constructor() {
     this.prisma = Config.databaseURL ? new PrismaClient({datasources: {db: { url: Config.databaseURL }}}) : undefined;
@@ -78,9 +81,10 @@ class ServiceLocator {
 
   private getDataProvider(): DataProvider {
     if (!this.dataProvider) {
-      const notehubProvider = new NotehubDataProvider(this.getNotehubAccessor());
+      const projectID = IDBuilder.buildProjectID(Config.hubProjectUID);
+      const notehubProvider = new NotehubDataProvider(this.getNotehubAccessor(), projectID);
       if (this.prisma) {
-        const dataStoreProvider = new PrismaDataProvider(this.prisma, Config.hubProjectUID);
+        const dataStoreProvider = new PrismaDataProvider(this.prisma, projectID);
         const combinedProvider = new CompositeDataProvider(notehubProvider, dataStoreProvider);
         this.dataProvider = combinedProvider;
       }
@@ -128,7 +132,7 @@ class ServiceLocator {
       this.urlManager = NextJsUrlManager;
     }
     return this.urlManager;
-  }
+  }  
 }
 
 let Services: ServiceLocator | null = null;
