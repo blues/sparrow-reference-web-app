@@ -175,7 +175,7 @@ const standardSchemas:BareReadingSchema[] = [
         }
     },
     {
-        name: "pir_motion_total",
+        name: NodeSensorTypeNames.PIR_MOTION_TOTAL,
         measure: "count",
         uuid: "959464bf-024e-4f68-8e71-64e3416a7d87",
         displayName: referenceSensorName("PIR Total Motion"),
@@ -191,7 +191,7 @@ const standardSchemas:BareReadingSchema[] = [
         }
     },
     {
-        name: "node_temperature",
+        name: NodeSensorTypeNames.TEMPERATURE,
         measure: "temperature",
         uuid: "8cfb013c-ab5f-4f0a-9530-9c56f51e3640",
         displayName: referenceSensorName("Temperature"),
@@ -205,7 +205,7 @@ const standardSchemas:BareReadingSchema[] = [
         }
     },
     {
-        name: "node_pressure",
+        name: NodeSensorTypeNames.AIR_PRESSURE,
         measure: "pressure",
         uuid: "6edaf653-12fa-4a43-b585-e4668892c3f5",
         displayName: referenceSensorName("Pressure"),
@@ -220,7 +220,7 @@ const standardSchemas:BareReadingSchema[] = [
         }
     },
     {
-        name: "node_humidity",
+        name: NodeSensorTypeNames.HUMIDITY,
         measure: "humidity",
         uuid: "5822e3bf-e152-43df-9ee8-74b18619b4e0",
         displayName: referenceSensorName("Humidity"),
@@ -234,7 +234,7 @@ const standardSchemas:BareReadingSchema[] = [
         }
     },
     {
-        name: "node_voltage",
+        name: NodeSensorTypeNames.VOLTAGE,
         measure: "voltage",
         uuid: "f85a869d-6be7-4fa4-b007-51a992ff9ecd",
         displayName: referenceSensorName("Voltage"),
@@ -250,7 +250,7 @@ const standardSchemas:BareReadingSchema[] = [
         }
     },
     {
-        name: "node_lora_rssi",
+        name: NodeSensorTypeNames.LORA_SIGNAL_STRENGTH,
         measure: "rssi_lora",
         uuid: "5c59bd9d-b56e-4faf-bfde-2de836cf39d9",
         displayName: referenceSensorName("RSSI"),
@@ -264,7 +264,7 @@ const standardSchemas:BareReadingSchema[] = [
         }
     },
     {
-        name: "gateway_lora_rssi",
+        name: GatewaySensorTypeNames.LORA_SIGNAL_STRENGTH,
         measure: "rssi_lora",
         uuid: "591305a3-6b51-4f1f-a2fb-fd685fdc3fdd",
         displayName: GatewaySensorTypeNames.LORA_SIGNAL_STRENGTH,
@@ -273,7 +273,7 @@ const standardSchemas:BareReadingSchema[] = [
         valueType: ReadingSchemaValueType.SCALAR_INT,
         unit: "dBm",
         spec: {
-            sensor_rssi: 1
+            gateway_rssi: 1
         }
     }
 ];

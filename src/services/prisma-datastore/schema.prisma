@@ -27,7 +27,7 @@ model Gateway {
   id                Int @id @default(autoincrement())
 
   // unique device uid in notehub
-  deviceUID         String @unique @map("device_uid") @db.Char(64)
+  deviceUID         String @unique @map("device_uid") @db.VarChar(64)
 
   // device serial number (cached)
   name              String? @db.VarChar(50) // cached
@@ -57,10 +57,10 @@ model Gateway {
 model Node {
   id Int @id @default(autoincrement())
 
-  nodeEUI           String    @unique @map("node_eui") @db.Char(24)
+  nodeEUI           String    @unique @map("node_eui") @db.VarChar(24)
 
   name              String?   @db.VarChar(49) // cached
-  location          String?   @db.Char(15) // cached
+  location          String?   @db.VarChar(15) // cached
   label             String?   @db.VarChar(50) // max 50
   comment           String?   @db.VarChar(3000)
   lastSeenAt        DateTime? @map("last_seen_at") // the last time an event was heard from this device
@@ -154,7 +154,7 @@ model ReadingSchema {
   eventName           String        @map("event_name") @db.VarChar(32) // "*#air.qo"
   spec                Json          // type descriptor for the event schema. Most typically just `{ count: number }`.
 
-  unitSymbol          String?       @db.Char(10)
+  unitSymbol          String?       @db.VarChar(10)
   unit                String?
   valueType           ReadingSchemaValueType
   scale               Int           @default(1)
