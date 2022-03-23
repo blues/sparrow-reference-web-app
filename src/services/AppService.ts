@@ -6,8 +6,10 @@ import { DataProvider } from "./DataProvider";
 import { AttributeStore } from "./AttributeStore";
 import { SparrowEventHandler } from "./SparrowEvent";
 import { SparrowEvent } from "./notehub/SparrowEvents";
-import { Project, ProjectID } from "./DomainModel";
+import { ProjectID, ProjectReadingsSnapshot } from "./DomainModel";
 import { IDBuilder } from "./IDBuilder";
+import AppModelBuilder from "./AppModelBuilder";
+import * as AppModel from "./AppModel";
 
 // this class / interface combo passes data and functions to the service locator file
 interface AppServiceInterface {
@@ -34,9 +36,9 @@ interface AppServiceInterface {
   ) => Promise<void>;
 
 
-  getLatestProjectReadings() : Promise<Project>;
+  getLatestProjectReadings() : Promise<AppModel.Project>;
   
-    // todo - ingesting events should be on a separate service. 
+    // todo - ingesting events should be on a separate service? could even be a separate app.
   handleEvent(event: SparrowEvent) : Promise<void>;
 }
 
@@ -108,11 +110,10 @@ export default class AppService implements AppServiceInterface {
     }
   }
 
-  async getLatestProjectReadings() : Promise<Project> {
+  async getLatestProjectReadings() : Promise<AppModel.Project> {
     const projectID = this.currentProjectID();
-    const result = await this.dataProvider.queryProjectLatestValues(projectID);
-    const project = result.results;
-    return project;
+    const latest = await this.dataProvider.queryProjectLatestValues(projectID);
+    return AppModelBuilder.buildProjectReadingsSnapshot(latest.results);
   }
 
   private currentProjectID() {

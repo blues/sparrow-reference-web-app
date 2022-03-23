@@ -1,17 +1,24 @@
 import GatewayDEPRECATED from "../components/models/Gateway";
 import NodeDEPRECATED from "../components/models/Node";
 import SensorReadingDEPRECATED from "../components/models/readings/SensorReading";
-import { ProjectID, GatewayID, NodeID, Project, SensorTypeID, SensorHost, SensorHostReadingsSnapshot } from "./DomainModel";
+import { ProjectID, ProjectReadingsSnapshot, GatewayID, NodeID, Project, SensorTypeID, SensorHost, SensorHostReadingsSnapshot, TimePeriod, SensorHostReadingsSeries, ProjectWithGateways, SensorHostWithSensors, ProjectHierarchy, ProjectHistoricalData } from "./DomainModel";
 
-type ProjectReadingShapshot = {
-  // the sensor hierarchy
-  project: Project;
-  latestReadings: Map<SensorHost, SensorHostReadingsSnapshot>;
+export type ProjectHierarchyFilter = { 
+  projectID: ProjectID,
+  gatewayID?: GatewayID,
+  nodeID?: NodeID
+}
+
+export type TimePeriodFilter = TimePeriod;
+
+export type QueryHistoricalReadings = {
+  projectFilter: ProjectHierarchyFilter,
+  timeFilter: TimePeriodFilter
 }
 
 
 // this interface shows gateway or node data - nothing more, nothing less
-interface DataProvider {
+export interface DataProvider {
   getGateways: () => Promise<GatewayDEPRECATED[]>;
 
   getGateway: (gatewayUID: string) => Promise<GatewayDEPRECATED>;
@@ -30,13 +37,18 @@ interface DataProvider {
 
   //queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;
 
-  queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingShapshot>>;
+  /**
+   * Retrieves the hierarchy of gateways and nodes, and the latest sensor readings for these.
+   * @param projectID The project to retrieve the latest values for
+   */
+  queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>>;
+
+  queryProjectReadingSeries(query: QueryHistoricalReadings): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>>;
+
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export type { DataProvider, ProjectReadingShapshot };
 
-// Query Interface
+// Query Interface - not using this for now.  May need it when we retrieve just a single gateway or single sensor data
 
 export type DateRange = { from: Date; to: Date };
 

@@ -1,9 +1,10 @@
 import { ERROR_CODES } from "../services/Errors";
 
 // Node data fallbacks for empty data fields
-const NODE_MESSSAGE = {
+const NODE_MESSAGE = {
   NO_NAME: "(unnamed)",
   NO_LOCATION: "—",
+  NEVER_SEEN: "(never)"
 };
 
 // Sensor data fallbacks for empty data fields
@@ -14,6 +15,7 @@ const SENSOR_MESSAGE = {
   NO_TEMPERATURE: "—",
   NO_COUNT: "—",
   NO_TOTAL: "—",
+  
 };
 
 // Historical sensor data fallbacks for no historical sensor data to display
@@ -31,6 +33,7 @@ const GATEWAY_MESSAGE = {
   NO_SERIAL_NUMBER: "Unknown Gateway.",
   NO_LOCATION: "—",
   NO_VOLTAGE: "—",
+  NEVER_SEEN: "(never)"
 };
 
 // Error messages when the project fails to display for some reason
@@ -65,7 +68,7 @@ const getErrorMessage = (errorCode: string) => {
 };
 
 export {
-  NODE_MESSSAGE,
+  NODE_MESSAGE,
   SENSOR_MESSAGE,
   HISTORICAL_SENSOR_DATA_MESSAGE,
   GATEWAY_MESSAGE,
