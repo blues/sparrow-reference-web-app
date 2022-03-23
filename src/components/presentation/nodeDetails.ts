@@ -1,7 +1,7 @@
 import {
   GATEWAY_MESSAGE,
   SENSOR_MESSAGE,
-  NODE_MESSSAGE,
+  NODE_MESSAGE,
 } from "../../constants/ui";
 import NodeDetailViewModel from "../../models/NodeDetailViewModel";
 import {
@@ -36,9 +36,9 @@ export function getNodeDetailsPresentation(
     },
     node: node
       ? {
-          name: node.name || NODE_MESSSAGE.NO_NAME,
+          name: node.name || NODE_MESSAGE.NO_NAME,
           lastActivity: getFormattedLastSeen(node.lastActivity),
-          location: node?.location || NODE_MESSSAGE.NO_LOCATION,
+          location: node?.location || NODE_MESSAGE.NO_LOCATION,
           temperature:
             getFormattedTemperatureData(node.temperature) ||
             SENSOR_MESSAGE.NO_TEMPERATURE,

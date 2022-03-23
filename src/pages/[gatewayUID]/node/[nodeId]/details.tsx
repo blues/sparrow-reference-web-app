@@ -11,7 +11,7 @@ import SensorDetailsBarChart from "../../../../components/charts/SensorDetailsBa
 import {
   getErrorMessage,
   HISTORICAL_SENSOR_DATA_MESSAGE,
-  NODE_MESSSAGE,
+  NODE_MESSAGE,
 } from "../../../../constants/ui";
 import { services } from "../../../../services/ServiceLocator";
 import NodeDetailViewModel from "../../../../models/NodeDetailViewModel";
@@ -70,7 +70,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
       rules: [{ required: true, message: "Please add the name of your node" }],
       tooltip: "What is the name of your node?",
       initialValue:
-        viewModel.node?.name !== NODE_MESSSAGE.NO_NAME
+        viewModel.node?.name !== NODE_MESSAGE.NO_NAME
           ? viewModel.node?.name
           : undefined,
       contents: (
@@ -86,7 +86,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
       name: "location",
       tooltip: "Where is your node located?",
       initialValue:
-        viewModel.node?.location !== NODE_MESSSAGE.NO_LOCATION
+        viewModel.node?.location !== NODE_MESSAGE.NO_LOCATION
           ? viewModel.node?.location
           : undefined,
       rules: [
