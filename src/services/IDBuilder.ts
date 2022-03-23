@@ -21,27 +21,27 @@ class SimpleNodeID implements NodeID {
 }
 
 class SimpleSensorTypeID implements SensorTypeID {
-    constructor(public readonly readingSchemaName: string, public readonly type: "SensorTypeID"="SensorTypeID"){};
+    constructor(public readonly uuid: string, public readonly type: "SensorTypeID"="SensorTypeID"){};
 }
 
 
 
 export class SimpleIDBuilder implements IDBuilder {
 
-    buildSensorTypeID(readingSchemaName: string): SensorTypeID {
-        return new SimpleSensorTypeID(readingSchemaName);
+    buildSensorTypeID(uuid: string): SensorTypeID {
+        return {...new SimpleSensorTypeID(uuid)};
     }
 
     buildNodeID(nodeEUI: string): NodeID {
-        return new SimpleNodeID(nodeEUI);
+        return {...new SimpleNodeID(nodeEUI)};
     }
     
     buildGatewayID(gatewayDeviceUID: string): GatewayID {
-        return new SimpleGatewayID(gatewayDeviceUID);
+        return {...new SimpleGatewayID(gatewayDeviceUID)};
     }
     
     buildProjectID(projectUID: string): ProjectID {
-        return new SimpleProjectID(projectUID);
+        return {...new SimpleProjectID(projectUID)};
     }
 }
 
