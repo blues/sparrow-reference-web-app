@@ -5,9 +5,13 @@ import SensorReadingSchema from "../models/readings/SensorSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
-  formatDistanceToNow(new Date(date), {
+  getFormattedLastSeenDate(new Date(date));
+
+export const getFormattedLastSeenDate = (date: Date) =>
+  formatDistanceToNow(date, {
     addSuffix: true,
   });
+
 
 export const getFormattedChartData = (
   sensorReadings: SensorReading<unknown>[],
