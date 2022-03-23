@@ -15,7 +15,7 @@ import { PrismaDataProvider } from "./prisma-datastore/PrismaDataProvider";
 import IDBuilder, { SimpleIDBuilder } from "./IDBuilder";
 import Gateway from "../components/models/Gateway";
 import Node from "../components/models/Node";
-import SensorReading from "../components/models/readings/SensorReading";
+import ReadingDEPRECATED from "../components/models/readings/Reading";
 import { ProjectHistoricalData, ProjectID, ProjectReadingsSnapshot } from "./DomainModel";
 
 // todo(must) - temporary. remove when notehub and datastore implementations are working
@@ -35,9 +35,10 @@ class CompositeDataProvider implements DataProvider {
   getNode(gatewayUID: string, nodeId: string): Promise<Node> {
     return this.notehubProvider.getNode(gatewayUID, nodeId);
   }
-  getNodeData(gatewayUID: string, nodeId: string, options?: { startDate?: Date | undefined; } | undefined): Promise<SensorReading<unknown>[]> {
-    return this.notehubProvider.getNodeData(gatewayUID, nodeId, options);
+  getNodeData(gatewayUID: string, nodeId: string, minutesBeforeNow?: string | undefined): Promise<ReadingDEPRECATED<unknown>[]> {
+    return this.notehubProvider.getNodeData(gatewayUID, nodeId, minutesBeforeNow);
   }
+
   queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
     return this.prismaDataProvider.queryProjectLatestValues(projectID);
   }
@@ -112,7 +113,7 @@ class ServiceLocator {
         Config.hubDeviceUID,
         Config.hubProjectUID,
         Config.hubAuthToken,
-        Config.hubHistoricalDataStartDate
+        Config.hubHistoricalDataRecentMinutes
       );
     }
     return this.notehubAccessor;

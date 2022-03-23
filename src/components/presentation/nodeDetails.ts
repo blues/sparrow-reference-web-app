@@ -16,7 +16,7 @@ import {
 } from "./uiHelpers";
 import Node from "../models/Node";
 import Gateway from "../models/Gateway";
-import SensorReading from "../models/readings/SensorReading";
+import Reading from "../models/readings/Reading";
 import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
 import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
 import PressureSensorSchema from "../models/readings/PressureSensorSchema";
@@ -28,11 +28,11 @@ import TotalSensorSchema from "../models/readings/TotalSensorSchema";
 export function getNodeDetailsPresentation(
   node?: Node,
   gateway?: Gateway,
-  readings?: SensorReading<unknown>[]
+  readings?: Reading<unknown>[]
 ): NodeDetailViewModel {
   return {
     gateway: {
-      serialNumber: gateway?.serialNumber || GATEWAY_MESSAGE.NO_SERIAL_NUMBER,
+      name: gateway?.name || GATEWAY_MESSAGE.NO_NAME,
     },
     node: node
       ? {

@@ -2,16 +2,17 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 // eslint-disable-next-line jest/no-mocks-import
-import "../../../__mocks__/matchMediaMock"; // needed to avoid error due to JSDOM not implemetning method yet: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
-import GatewayDetails from "../../../src/pages/[gatewayUID]/details";
-import Gateway from "../../../src/components/models/Gateway";
-import Node from "../../../src/components/models/Node";
-import { GATEWAY_MESSAGE } from "../../../src/constants/ui";
+import "../../../../__mocks__/matchMediaMock"; // needed to avoid error due to JSDOM not implementing method yet: https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
+import GatewayDetails from "../../../../src/components/elements/GatewayDetails";
+import Gateway from "../../../../src/components/models/Gateway";
+import Node from "../../../../src/components/models/Node";
+
+import { getGatewayDetailsPresentation } from "../../../../src/components/presentation/gatewayDetails";
 
 function getMockGateway(): Gateway {
   return {
     uid: "dev:123",
-    serialNumber: "my-gateway",
+    name: "my-gateway",
     lastActivity: "2022-01-13T15:02:46Z",
     location: "someplace",
     voltage: 1.2,
@@ -42,43 +43,39 @@ const mockNodes: Node[] = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/require-await
+const mockChange = async () => true;
+
 describe("Gateway details page", () => {
   it("should render the gateway and node information when a gateway is present", () => {
     const gateway = getMockGateway();
-    render(<GatewayDetails gateway={gateway} nodes={mockNodes} />);
+    mockNodes[0].name = "a-name";
+    mockNodes[1].name = "b-name";
+    const viewModel = getGatewayDetailsPresentation(gateway, mockNodes);
+    render(<GatewayDetails viewModel={viewModel} onChangeName={mockChange} />);
 
     expect(
-      screen.getByText(gateway.serialNumber, { exact: false })
+      screen.getByText(gateway.name, { exact: false })
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(mockNodes[0].name || "", { exact: false })
+      screen.getByText(mockNodes[0].name, { exact: false })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(mockNodes[1].name || "", { exact: false })
-    ).toBeInTheDocument();
-  });
-
-  it("should render a gateway location if one is present", () => {
-    const gateway = getMockGateway();
-    gateway.location = "Michigan";
-
-    render(<GatewayDetails gateway={gateway} nodes={mockNodes} />);
-    expect(screen.getByTestId("gateway-location")).toBeInTheDocument();
-  });
-
-  it("should not render a gateway location if one is not present", () => {
-    const gateway = getMockGateway();
-    delete gateway.location;
-    render(<GatewayDetails gateway={gateway} nodes={mockNodes} />);
-    expect(
-      screen.queryAllByText(GATEWAY_MESSAGE.NO_LOCATION)[0]
+      screen.getByText(mockNodes[1].name, { exact: false })
     ).toBeInTheDocument();
   });
 
   it("should render an error when present", () => {
     const errorMessage = "FAILURE!";
-    render(<GatewayDetails gateway={null} nodes={[]} err={errorMessage} />);
+    const viewModel = getGatewayDetailsPresentation(undefined, undefined);
+    render(
+      <GatewayDetails
+        viewModel={viewModel}
+        onChangeName={mockChange}
+        err={errorMessage}
+      />
+    );
 
     expect(
       screen.getByText(errorMessage, { exact: false })

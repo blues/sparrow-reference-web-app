@@ -25,7 +25,10 @@ function validateRequest(
   req: NextApiRequest,
   res: NextApiResponse
 ): false | ValidRequest {
-  const { gatewayUID, name } = req.query;
+  const { gatewayUID } = req.query;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { name } = req.body;
+
   // Gateway UID must be a string
   if (typeof gatewayUID !== "string") {
     res.status(StatusCodes.BAD_REQUEST);

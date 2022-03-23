@@ -1,7 +1,7 @@
 import { ErrorWithCause } from "pony-cause";
 import Gateway from "../components/models/Gateway";
 import Node from "../components/models/Node";
-import SensorReading from "../components/models/readings/SensorReading";
+import Reading from "../components/models/readings/Reading";
 import { DataProvider } from "./DataProvider";
 import { AttributeStore } from "./AttributeStore";
 import { SparrowEventHandler } from "./SparrowEvent";
@@ -22,8 +22,9 @@ interface AppServiceInterface {
   getNode: (gatewayUID: string, nodeId: string) => Promise<Node>;
   getNodeData: (
     gatewayUID: string,
-    nodeId: string
-  ) => Promise<SensorReading<unknown>[]>;
+    nodeId: string,
+    minutesBeforeNow?: string
+  ) => Promise<Reading<unknown>[]>;
   setNodeName: (
     gatewayUID: string,
     nodeId: string,
@@ -83,8 +84,12 @@ export default class AppService implements AppServiceInterface {
     return this.dataProvider.getNode(gatewayUID, nodeId);
   }
 
-  async getNodeData(gatewayUID: string, nodeId: string) {
-    return this.dataProvider.getNodeData(gatewayUID, nodeId);
+  async getNodeData(
+    gatewayUID: string,
+    nodeId: string,
+    minutesBeforeNow?: string
+  ) {
+    return this.dataProvider.getNodeData(gatewayUID, nodeId, minutesBeforeNow);
   }
 
   async handleEvent(event: SparrowEvent) {

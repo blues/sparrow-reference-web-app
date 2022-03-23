@@ -1,15 +1,15 @@
 /* eslint-disable react/require-default-props */
 import { ChartData, ChartOptions } from "chart.js";
 import { CHART_DATE_FORMAT, getTooltipDisplayText } from "./chartHelper";
-import type { SensorDetailsChartProps } from "./chartHelper";
+import type { NodeDetailsChartProps } from "./chartHelper";
 import BarChart from "./BarChart";
 
-const SensorDetailsBarChart = ({
+const NodeDetailsBarChart = ({
   label,
   chartColor,
   data,
   schema,
-}: SensorDetailsChartProps) => {
+}: NodeDetailsChartProps) => {
   const labels = data.map((obj) => obj.when);
   const values = data.map((obj) => obj.value);
 
@@ -76,4 +76,4 @@ const SensorDetailsBarChart = ({
   );
 };
 
-export default SensorDetailsBarChart;
+export default NodeDetailsBarChart;

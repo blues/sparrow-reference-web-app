@@ -6,7 +6,7 @@ import NotehubDevice from "./models/NotehubDevice";
 import { DataProvider, ProjectHierarchyFilter, QueryHistoricalReadings, QueryResult } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
-import SensorReading from "../../components/models/readings/SensorReading";
+import ReadingDEPRECATED from "../../components/models/readings/Reading";
 import { ERROR_CODES, getError } from "../Errors";
 import NotehubLocation from "./models/NotehubLocation";
 import TemperatureSensorReading from "../../components/models/readings/TemperatureSensorReading";
@@ -15,8 +15,9 @@ import PressureSensorReading from "../../components/models/readings/PressureSens
 import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
 import CountSensorReading from "../../components/models/readings/CountSensorReading";
 import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
-import { Project, ProjectID, ProjectReadingsSnapshot, Gateway, Node, SensorType, ProjectHierarchy, Gateways, GatewayWithNodes, SensorHost, SensorHostReadingsSnapshot, SensorTypeNames, Reading, ProjectHistoricalData, TimePeriod } from "../DomainModel";
+import { Project, ProjectID, ProjectReadingsSnapshot, Gateway, Node, SensorType, ProjectHierarchy, Gateways, GatewayWithNodes, SensorHost, SensorHostReadingsSnapshot, SensorTypeNames, ProjectHistoricalData, TimePeriod, Reading } from "../DomainModel";
 import Config from "../../../config";
+import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
@@ -44,7 +45,7 @@ export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
     ...(getBestLocation(device) && {
       location: getBestLocation(device)?.name,
     }),
-    serialNumber: device.serial_number,
+    name: device.serial_number,
     uid: device.uid,
     voltage: device.voltage,
     nodeList: [],
@@ -79,7 +80,7 @@ export default class NotehubDataProvider implements DataProvider {
     };
 
     const results: ProjectReadingsSnapshot = {
-      when: new Date(),
+      when: Date.now(),
       project,
       hostReadings: function (sensorHost: SensorHost): SensorHostReadingsSnapshot {
         throw new Error("Function not implemented.");
@@ -279,11 +280,17 @@ export default class NotehubDataProvider implements DataProvider {
   async getNodeData(
     gatewayUID: string,
     nodeId: string,
-    options?: { startDate?: Date }
+    minutesBeforeNow?: string
   ) {
-    const nodeEvents: NotehubEvent[] = await this.notehubAccessor.getEvents(
-      options?.startDate
-    );
+    let nodeEvents: NotehubEvent[];
+    if (minutesBeforeNow) {
+      const epochDateString: string = getEpochChartDataDate(
+        Number(minutesBeforeNow)
+      );
+      nodeEvents = await this.notehubAccessor.getEvents(epochDateString);
+    } else {
+      nodeEvents = await this.notehubAccessor.getEvents();
+    }
 
     // filter for a specific node ID
     const filteredEvents: NotehubEvent[] = nodeEvents.filter(
@@ -293,7 +300,7 @@ export default class NotehubDataProvider implements DataProvider {
         (event.file.includes("#air.qo") || event.file.includes("#motion.qo")) &&
         event.device_uid === gatewayUID
     );
-    const readingsToReturn: SensorReading<unknown>[] = [];
+    const readingsToReturn: ReadingDEPRECATED<unknown>[] = [];
     filteredEvents.forEach((event: NotehubEvent) => {
       if (event.body.temperature) {
         readingsToReturn.push(

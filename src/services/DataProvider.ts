@@ -1,6 +1,6 @@
 import GatewayDEPRECATED from "../components/models/Gateway";
 import NodeDEPRECATED from "../components/models/Node";
-import SensorReadingDEPRECATED from "../components/models/readings/SensorReading";
+import ReadingDEPRECATED from "../components/models/readings/Reading";
 import { ProjectID, ProjectReadingsSnapshot, GatewayID, NodeID, Project, SensorTypeID, SensorHost, SensorHostReadingsSnapshot, TimePeriod, SensorHostReadingsSeries, ProjectWithGateways, SensorHostWithSensors, ProjectHierarchy, ProjectHistoricalData } from "./DomainModel";
 
 export type ProjectHierarchyFilter = { 
@@ -30,10 +30,8 @@ export interface DataProvider {
   getNodeData: (
     gatewayUID: string,
     nodeId: string,
-    options?: {
-      startDate?: Date;
-    }
-  ) => Promise<SensorReadingDEPRECATED<unknown>[]>;
+    minutesBeforeNow?: string
+  ) => Promise<ReadingDEPRECATED<unknown>[]>; 
 
   //queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;
 

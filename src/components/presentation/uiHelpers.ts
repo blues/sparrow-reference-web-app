@@ -1,7 +1,7 @@
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, sub } from "date-fns";
 import { sortBy, uniqBy } from "lodash";
-import SensorReading from "../models/readings/SensorReading";
-import SensorReadingSchema from "../models/readings/SensorSchema";
+import Reading from "../models/readings/Reading";
+import ReadingSchema from "../models/readings/ReadingSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
@@ -14,14 +14,14 @@ export const getFormattedLastSeenDate = (date: Date) =>
 
 
 export const getFormattedChartData = (
-  sensorReadings: SensorReading<unknown>[],
-  sensorSchema: SensorReadingSchema<unknown>
+  readings: Reading<unknown>[],
+  readingSchema: ReadingSchema<unknown>
 ) => {
-  if (sensorReadings.length) {
+  if (readings.length) {
     const formattedData = sortBy(
       uniqBy(
-        sensorReadings
-          .filter((reading) => reading.schema === sensorSchema)
+        readings
+          .filter((reading) => reading.schema === readingSchema)
           .map((filteredEvent) => {
             const chartDataObj = {
               when: filteredEvent.captured,
@@ -86,4 +86,13 @@ export const getFormattedTotalData = (total: number | undefined) => {
     return formattedData;
   }
   return null;
+};
+
+export const getEpochChartDataDate = (minutesToConvert: number) => {
+  const date = new Date();
+  const rawEpochDate = sub(date, { minutes: minutesToConvert });
+  const formattedEpochDate = Math.round(
+    rawEpochDate.getTime() / 1000
+  ).toString();
+  return formattedEpochDate;
 };

@@ -1,10 +1,10 @@
 import Prisma, { PrismaClient, ReadingSource, ReadingSourceType } from "@prisma/client";
 import { ErrorWithCause } from "pony-cause";
 import GatewayDEPRECATED from "../../components/models/Gateway";
-import SensorReading from "../../components/models/readings/SensorReading";
+import ReadingDEPRECATED from "../../components/models/readings/Reading";
 import NodeDEPRECATED from "../../components/models/Node";
-import { DataProvider, QueryResult, SimpleFilter, latest } from "../DataProvider";
-import { ProjectID, Project, ProjectReadingsSnapshot, SensorHost, SensorHostReadingsSnapshot, SensorType, Reading, SensorHostWithSensors } from "../DomainModel";
+import { DataProvider, QueryResult, SimpleFilter, latest, QueryHistoricalReadings } from "../DataProvider";
+import { ProjectID, Project, ProjectReadingsSnapshot, SensorHost, SensorHostReadingsSnapshot, SensorType, Reading, SensorHostWithSensors, ProjectHistoricalData } from "../DomainModel";
 import Mapper from "./PrismaDomainModelMapper";
 
 /**
@@ -93,7 +93,8 @@ export class PrismaDataProvider implements DataProvider {
     async getNode(gatewayUID: string, sensorUID: string): Promise<NodeDEPRECATED> {
         return Promise.reject();    
     }
-    async getNodeData(gatewayUID: string, sensorUID: string, options?: { startDate?: Date | undefined; }): Promise<SensorReading<unknown>[]> {
+
+    async getNodeData(gatewayUID: string, sensorUID: string, minutesBeforeNow?: string): Promise<ReadingDEPRECATED<unknown>[]> {
         return Promise.reject();    
     }
 
@@ -216,6 +217,11 @@ export class PrismaDataProvider implements DataProvider {
             results
         };
     }
+
+    queryProjectReadingSeries(query: QueryHistoricalReadings): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>> {
+        throw new Error("Method not implemented.");
+    }
+
 
     private error<E>(msg: string, cause?: E) {
         if (cause) {

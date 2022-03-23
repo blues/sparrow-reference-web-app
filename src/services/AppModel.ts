@@ -3,6 +3,7 @@ import * as DomainModel from "./DomainModel";
 export type ProjectID = DomainModel.ProjectID;
 export type GatewayID = DomainModel.GatewayID;
 export type NodeID = DomainModel.NodeID;
+export type SensorTypeID = DomainModel.SensorTypeID;
 
 /**
  * The presentation models here are json-serializable representations of the domain model.

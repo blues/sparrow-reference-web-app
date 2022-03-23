@@ -17,7 +17,7 @@ import "chartjs-adapter-date-fns";
 import CountSensorSchema from "../models/readings/CountSensorSchema";
 import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
 import PressureSensorSchema from "../models/readings/PressureSensorSchema";
-import SensorReadingSchema from "../models/readings/SensorSchema";
+import ReadingSchema from "../models/readings/ReadingSchema";
 import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
 import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
 import {
@@ -62,19 +62,19 @@ export function getChartOptions(
   };
 }
 
-export type SensorDetailsChartProps = {
+export type NodeDetailsChartProps = {
   label: string;
   chartColor: string;
   data: {
     when: string;
     value: number;
   }[];
-  schema: SensorReadingSchema<number>;
+  schema: ReadingSchema<number>;
 };
 
 export function getTooltipDisplayText(
   label: string,
-  schema: SensorReadingSchema<number>,
+  schema: ReadingSchema<number>,
   value: number
 ) {
   let valueDisplay = "";

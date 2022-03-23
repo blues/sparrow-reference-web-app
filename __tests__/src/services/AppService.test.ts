@@ -3,10 +3,16 @@ import Node from "../../../src/components/models/Node";
 import NodeDetailViewModel from "../../../src/models/NodeDetailViewModel";
 import AppService from "../../../src/services/AppService";
 import { DataProvider } from "../../../src/services/DataProvider";
+import { AttributeStore } from "../../../src/services/AttributeStore";
 import sparrowData from "./__serviceMocks__/sparrowData.json";
+import { IDBuilder } from "../../../src/services/IDBuilder";
+import * as AppModel from "../../../src/services/AppModel";
+
+const mockProjectUID = "app:123456";
 
 describe("App Service", () => {
   let dataProviderMock: DataProvider;
+  let attributeStoreMock: AttributeStore;
   let appServiceMock: AppService;
 
   const { mockedGatewayUID, mockedNodeId } = sparrowData;
@@ -35,8 +41,33 @@ describe("App Service", () => {
       getNode: jest.fn().mockResolvedValueOnce(mockedNodeSparrowData),
       getNodes: jest.fn().mockResolvedValueOnce(mockedNodesSparrowData),
       getNodeData: jest.fn().mockResolvedValueOnce(mockedSparrowNodeData),
+      queryProjectLatestValues: jest.fn(),
+      queryProjectReadingSeries: jest.fn()
     };
-    appServiceMock = new AppService(dataProviderMock);
+    attributeStoreMock = {
+      updateGatewayName: jest.fn(),
+      updateNodeName: jest.fn(),
+      updateNodeLocation: jest.fn(),
+    };
+    const mockEventHandler = {
+      handleEvent: jest.fn()
+    }
+    const mockIDBuilder: IDBuilder = {
+      buildProjectID: (projectUID: string): AppModel.ProjectID => {
+          return { projectUID, type: "ProjectID" };
+      },
+      buildGatewayID: function (gatewayDeviceUID: string): AppModel.GatewayID {
+        throw new Error("Function not implemented.");
+      },
+      buildNodeID: function (nodeID: string): AppModel.NodeID {
+        throw new Error("Function not implemented.");
+      },
+      buildSensorTypeID: function (readingSchemaName: string): AppModel.SensorTypeID {
+        throw new Error("Function not implemented.");
+      }
+    } 
+    
+    appServiceMock = new AppService(mockProjectUID, mockIDBuilder, dataProviderMock, attributeStoreMock, mockEventHandler);
   });
 
   it("should return a single gateway when getGateway is called", async () => {
@@ -47,6 +78,15 @@ describe("App Service", () => {
   it("should return a list of gateways when getGateways is called", async () => {
     const res = await appServiceMock.getGateways();
     expect(res).toEqual(mockedGatewaysSparrowData);
+  });
+
+  it("should successfully update a gateway name when setGatewayName is called", async () => {
+    const mockedGatewayName = "Updated Gateway Name";
+    await appServiceMock.setGatewayName(mockedGatewayUID, mockedGatewayName);
+    expect(attributeStoreMock.updateGatewayName).toHaveBeenCalledWith(
+      mockedGatewayUID,
+      mockedGatewayName
+    );
   });
 
   it("should return a single node when getNode is called", async () => {
@@ -65,5 +105,33 @@ describe("App Service", () => {
       mockedNodeId
     );
     expect(res).toEqual(mockedSparrowNodeData);
+  });
+
+  it("should successfully update a node name when setNodeName is called", async () => {
+    const mockedNodeName = "Updated Node Name";
+    await appServiceMock.setNodeName(
+      mockedGatewayUID,
+      mockedNodeId,
+      mockedNodeName
+    );
+    expect(attributeStoreMock.updateNodeName).toHaveBeenCalledWith(
+      mockedGatewayUID,
+      mockedNodeId,
+      mockedNodeName
+    );
+  });
+
+  it("should successfully update a node location when setNodeLocation is called", async () => {
+    const mockedNodeLoc = "The Shed";
+    await appServiceMock.setNodeLocation(
+      mockedGatewayUID,
+      mockedNodeId,
+      mockedNodeLoc
+    );
+    expect(attributeStoreMock.updateNodeLocation).toHaveBeenCalledWith(
+      mockedGatewayUID,
+      mockedNodeId,
+      mockedNodeLoc
+    );
   });
 });
