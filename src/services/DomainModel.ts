@@ -223,13 +223,7 @@ export interface Reading {
   /**
    * The value of the sensor reading. 
    */
-  value: JSONValue;
-
-
-  // The simple numeric value for this sensor for simple numeric readings. This is too common a case for us to ignore and
-  // makes handling simple numeric values much easier. (No need to reach into the json on some arbitrary key.)
-  // todo - make JSONObject a JSONValue so simple numbers can be stored in value.
-  numericValue: number | null;
+  value: JSONValue; 
 
 }
 

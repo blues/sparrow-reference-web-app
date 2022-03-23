@@ -19,8 +19,10 @@ function formatReadingValue(sensorType: SensorType, fixedPointPrecision: number,
 export function formatReadingRenderProps(props: TextReadingRenderProps): string {
   const fixedPointPrecision = props.fixedPointPrecision===undefined ? 2 : props.fixedPointPrecision;
   const noValuePlaceholder = props.noValuePlaceholder===undefined ? '-' : props.noValuePlaceholder;
-  const value = props.reading?.numericValue!=null ? formatReadingValue(props.sensorType, fixedPointPrecision, props.reading.numericValue) : noValuePlaceholder;
-  return value;
+  const value = props.reading?.value;
+  const valueToShow = typeof value==="number" ? value : null;
+  const formattedValue = valueToShow!==null ? formatReadingValue(props.sensorType, fixedPointPrecision, valueToShow) : noValuePlaceholder;
+  return formattedValue;
 }
 
 const TextReadingRendererComponent = (props: Renderer.RenderSensorReadingProps) => {

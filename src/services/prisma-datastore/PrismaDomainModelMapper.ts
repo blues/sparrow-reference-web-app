@@ -82,8 +82,7 @@ class DefaultPrismaDomainModelMapper {
     mapReading(data: Prisma.Reading): DomainModel.Reading {
         return {
             when: this.mapDate(data.when),
-            value: this.mapJSONValue(data.value),
-            numericValue: data.floatValue || data.intValue
+            value: this.mapJSONValue(data.value)            
         }
     }
 }

@@ -176,10 +176,7 @@ model Reading {
 
   // when the sensor reading was taken
   when              DateTime
-  intValue          Int?            // this may be premature optimization - denormalize the data for single values?
-  floatValue        Float? 
   value             Json
-
 
   latest            Sensor?         @relation(name: "latest")
 

@@ -111,19 +111,17 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
     }
 
     // really would like prisma to 
-    private addSensorReading(sensor: SensorWithSchema, when: Date, value: Prisma.InputJsonValue) {
-        let intValue = null;
-        let floatValue = null;
+    private addSensorReading(sensor: SensorWithSchema, when: Date, value: Prisma.InputJsonValue) {        
         const schema = sensor.schema;
         const primaryValue = ((schema.spec as any)[__primary]);
         if (primaryValue) {
             switch (schema.valueType) {
                 case ReadingSchemaValueType.SCALAR_INT:
-                    intValue = ((value as any)[primaryValue]) as number;
+                    value = ((value as any)[primaryValue]) as number;
                     break;
 
                 case ReadingSchemaValueType.SCALAR_FLOAT:
-                    floatValue = ((value as any)[primaryValue]) as number;
+                    value = ((value as any)[primaryValue]) as number;
                     break;
             }
         }
@@ -135,9 +133,7 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
             data: {
                 sensor_id: sensor.id,
                 when,
-                value,
-                intValue,
-                floatValue
+                value                
             }
         }).then( reading => {
             return this.prisma.sensor.update({
