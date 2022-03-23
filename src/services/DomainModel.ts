@@ -32,6 +32,7 @@ export interface NodeID {
 
 export interface SensorTypeID {
   readonly type: "SensorTypeID";
+  readonly uuid: string;
 }
 
 export interface ProjectID {
@@ -58,7 +59,10 @@ export type ProjectHierarchy = Project & {
   gateways: Set<GatewayWithNodes>;
 }
 
-export type DomainDate = Date;
+/**
+ * Seconds since the epoch
+ */
+export type DomainDate = number;
 
 export interface SensorHost {
   // Attributes
@@ -162,7 +166,7 @@ export interface SensorHostReadingsSeries {
 
 export interface SensorType {
 
-  // attributes
+  id: SensorTypeID,
 
   /**
    * A unique name expressed as a javascript identifier for this sensor type in this project.
@@ -190,7 +194,7 @@ export interface SensorType {
    * E.g. K, C
    * If the unit is dimensionless the unit is the empty string.
    */
-  unit: string;            
+  unit: string;
 
   /**
    * Symbolic representation of the unit this type of sensor measures in. Can be null if the quantity is dimensionless. 
@@ -261,19 +265,29 @@ export type JSONValue =
 
   /**
    * Retrieve a reading for a sensor host, with the given name. This is intended to retrieve the known readings for a given type of sensorHost
-   * in contrast to 
+   * in contrast to the named cutomized readings that may be added by application developers.
    * @param sensorHost  The sensor host the reading is present on.
    * @param readingName The name of the reading to retrieve.
    */
   hostReadingByName(sensorHost: SensorHost, readingName: SensorTypeNames): Reading | undefined;
+
 }
 
 /**
  * Historical data for gateways and nodes.
  **/
-export type ProjectHistoricalData = {
-  period: TimePeriod;
-  hostReadings: Map<SensorHost, SensorHostReadingsSeries>; 
+export type ProjectHistoricalData = { 
+  /**
+   * The period of time the historical data is taken from.
+   */ 
+  readonly period: TimePeriod;
+
+  /**
+   * The sensor hierarchy.
+   */
+  readonly project: ProjectHierarchy;
+  
+  readonly hostReadings: Map<SensorHost, SensorHostReadingsSeries>; 
 }
 
 /**
@@ -295,6 +309,7 @@ export const enum NodeSensorTypeNames {
     VOLTAGE = "node_voltage",
     LORA_SIGNAL_STRENGTH = "node_lora_rssi",
     PIR_MOTION = "pir_motion",
+    PIR_MOTION_TOTAL = "pir_motion_total",
     HUMIDITY = "humidity",
     TEMPERATURE = "temperature",
     AIR_PRESSURE = "air_pressure"
