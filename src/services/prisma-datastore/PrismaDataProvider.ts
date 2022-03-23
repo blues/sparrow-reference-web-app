@@ -3,23 +3,23 @@ import { ErrorWithCause } from "pony-cause";
 import GatewayDEPRECATED from "../../components/models/Gateway";
 import SensorReading from "../../components/models/readings/SensorReading";
 import NodeDEPRECATED from "../../components/models/Node";
-import { DataProvider, QueryResult, SimpleFilter, ProjectReadingShapshot, latest } from "../DataProvider";
-import { ProjectID, Project, SensorHost, SensorHostReadingsSnapshot, SensorType, Reading, SensorHostWithSensors } from "../DomainModel";
+import { DataProvider, QueryResult, SimpleFilter, latest } from "../DataProvider";
+import { ProjectID, Project, ProjectReadingsSnapshot, SensorHost, SensorHostReadingsSnapshot, SensorType, Reading, SensorHostWithSensors } from "../DomainModel";
 import Mapper from "./PrismaDomainModelMapper";
 
 /**
- * Implements the DataProvider service using a Prisma data model.
+ * Implements the DataProvider service using Prisma ORM.
  */
 export class PrismaDataProvider implements DataProvider {
-    // todo - this is too restraining and belongs in the app layer.
+    // todo - passing in the project - this is too restraining and belongs in the app layer.
     // but it's like this for now since the original DataProvider interface doesn't have Project.
-    // When the domain model refactor is complete, projectUID constructor parameter can be removed.
+    // When the domain model refactor is complete, the projectUID constructor parameter can be removed.
     constructor(
-        private prisma: PrismaClient, 
-        private projectUID: string)
+        private prisma: PrismaClient,
+        private projectUID: ProjectID)   // todo - remove
     {}
 
-    private async currentProjectUID(): Promise<string> {
+    private async currentProjectID(): Promise<ProjectID> {
         return this.projectUID;
     }
 
@@ -27,16 +27,16 @@ export class PrismaDataProvider implements DataProvider {
         // this is intentionally oversimplified - later will need to consider the current logged in user
         // Project should be included in each method so that this interface is agnostic of the fact that the application
         // works with just one project. 
-        const projectUID = await this.currentProjectUID();
-        return this.findProject(projectUID);
+        const projectID = await this.currentProjectID();
+        return this.findProject(projectID);
     }
 
-    private async findProject(projectUID: string) : Promise<Prisma.Project> {
+    private async findProject(projectID: ProjectID) : Promise<Prisma.Project> {
         const project = await this.prisma.project.findFirst({where: {
-            projectUID 
+            projectUID: projectID.projectUID 
         }});
         if (project===null) {
-            throw this.error(`Cannot find project with projectUID ${projectUID}`)
+            throw this.error(`Cannot find project with projectUID ${projectID.projectUID}`)
         }
         return project;
     }
@@ -97,8 +97,7 @@ export class PrismaDataProvider implements DataProvider {
         return Promise.reject();    
     }
 
-    async queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingShapshot>> {
-
+    private retrieveLatestValues({ projectUID } : { projectUID: string }) {
         const latestReading = {             // from the readingSource, fetch all sensors and the latest reading of each.
             include: {
                 sensors: {
@@ -111,9 +110,9 @@ export class PrismaDataProvider implements DataProvider {
         };
 
         // this retrieves the hiearachy of project/gateway/node with the latest reading for each 
-        const prismaProject = await this.prisma.project.findUnique({
+        return this.prisma.project.findUnique({
             where: {
-                projectUID: projectID.projectUID
+                projectUID
             },
             include: {
                 gateways: {
@@ -129,37 +128,51 @@ export class PrismaDataProvider implements DataProvider {
             },
             rejectOnNotFound: true
         });
+    } 
 
+    async queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
+
+        const prismaProject = await this.retrieveLatestValues(projectID);
+
+        // get the types indirectly so loose coupling
         type P = typeof prismaProject;
-        type G = P["gateways"]["0"];
-        type N = G["nodes"]["0"];
+        type G = P["gateways"][number];
+        type N = G["nodes"][number];
         type RS = G["readingSource"];
-        type S = RS["sensors"]["0"];
+        type S = RS["sensors"][number];
 
-        // now map the data to the domain model
+        // map the data to the domain model
+        const hostReadings = new Map<SensorHost, SensorHostReadingsSnapshot>();
 
-        const readingSourceToSensorHost:  Map<ReadingSource, SensorHost>  = new Map();
-        const latestReadings: ProjectReadingShapshot["hostReadings"] = new Map<SensorHost, SensorHostReadingsSnapshot>();
-
+        /**
+         * Walks the sensors associated with a ReadingSource, and converts the ReadingSchema and Reading to 
+         * SensorType and Reading. 
+         * @param rs 
+         * @param sensorHost 
+         */
         const addReadingSource = (rs: RS, sensorHost: SensorHost) => {
-            readingSourceToSensorHost.set(rs, sensorHost);
 
+            // one reading per sensor type
             const readings = new Map<SensorType, Reading>();
 
             const snapshot: SensorHostReadingsSnapshot = {
                 sensorHost,
-                sensorTypes: new Set(readings.keys()),
+                sensorTypes: new Map(),
                 readings
             }
 
             // maydo - could consider caching the ReadingSchema -> SensorType but it's not that much overhead with duplication per device
             rs.sensors.map(s => {
                 if (s.latest) {
-                    readings.set(Mapper.mapReadingSchema(s.schema), Mapper.mapReading(s.latest));
+                    const sensorType = Mapper.mapReadingSchema(s.schema);
+                    const reading =  Mapper.mapReading(s.latest);
+                    
+                    snapshot.sensorTypes.set(sensorType.name, sensorType);
+                    readings.set(sensorType, reading);
                 }
             });
 
-            latestReadings.set(sensorHost, snapshot);
+            hostReadings.set(sensorHost, snapshot);
         }
 
         const deepMapNode = (n: N) => {
@@ -169,22 +182,38 @@ export class PrismaDataProvider implements DataProvider {
         }
 
         const deepMapGateway = (g: G) => {
+            // map nodes from Prisma to DomainModel
             const nodes = new Set(g.nodes.map(deepMapNode));
             const result = Mapper.mapGatewayWithNodes(g, nodes);
+            // add the reading source to provide the set of SensorType and Readings.
             addReadingSource(g.readingSource, result);
             return result;
         };
+
+        // transform Prisma to DomainModel gateways
         const gateways = new Set(prismaProject.gateways.map(deepMapGateway));
         const project = Mapper.mapProjectHierarchy(prismaProject, gateways);
 
-
+        const results: ProjectReadingsSnapshot = {
+            when: Date.now(),
+            project,
+            hostReadings: (sensorHost: SensorHost) => {
+                const reading = hostReadings.get(sensorHost);
+                if (reading==undefined) {
+                    throw new Error('unknown sensorHost');
+                }
+                return reading;
+            },
+            hostReadingByName: (sensorHost: SensorHost, readingName: string) => {
+                const snapshot = hostReadings.get(sensorHost);
+                const sensorType = snapshot?.sensorTypes.get(readingName);
+                return sensorType && snapshot?.readings.get(sensorType);
+            }
+        };
+        
         return { 
             request: projectID, 
-            results: {
-                when: Date.now(),
-                project,
-                hostReadings: latestReadings
-            }
+            results
         };
     }
 
