@@ -1,69 +1,29 @@
 import { useRouter } from "next/router";
 import { Card, Row, Col, Typography } from "antd";
+import Node from "../models/Node";
+import { getNodeDetailsPresentation } from "../presentation/nodeDetails";
+import NodeDetailViewModel from "../../models/NodeDetailViewModel";
 import styles from "../../styles/Card.module.scss";
-import { Gateway, Node, Reading, SensorType } from "../../services/AppModel";
-import { NODE_MESSAGE } from "../../constants/ui";
-import { getFormattedLastSeenDate } from "../presentation/uiHelpers";
-import registry from "../renderers/client";
-import { ReadingVisualization } from "../renderers/renderers";
-import TextReadingRenderer from "./TextReadingRenderer";
-import TextReadingRendererComponent from "./TextReadingRenderer";
 
 interface NodeProps {
-  gateway: Gateway;
-  node: Node;
+  nodeDetails: Node;
   index: number;
 }
 
 const NodeCardComponent = (props: NodeProps) => {
-  const { gateway, node, index } = props;
+  const { nodeDetails, index } = props;
   const { Text } = Typography;
- 
+
+  const viewModel: NodeDetailViewModel =
+    getNodeDetailsPresentation(nodeDetails);
+
   const router = useRouter();
-  // todo - use urlManager to construct the URL from the gateway/node. 
-  const nodeUrl = `/${gateway.id.gatewayDeviceUID}/node/${node.id.nodeID}/details`;
+  const nodeUrl = `/${nodeDetails.gatewayUID}/node/${nodeDetails.nodeId}/details`;
   const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     router.push(nodeUrl);
   };
-
-  const name = node.name || NODE_MESSAGE.NO_NAME;
-
-  // todo - fix up location. Either as a property on Node or as a known sensor type
-  const location = NODE_MESSAGE.NO_LOCATION;
-  const lastActivity = node.lastSeen ? getFormattedLastSeenDate(new Date(node.lastSeen)) : NODE_MESSAGE.NEVER_SEEN;
-  const nodeReadings = node.currentReadings || [];
-
-  console.log("nodeReadings.length", nodeReadings.length, node.id.nodeID, nodeReadings);
-
-  const noContent = <>nothing</>;
-
-  const renders = nodeReadings!.map((readingAndType, index) => {  
-      const Renderer = registry.findRenderer(readingAndType.sensorType, ReadingVisualization.CARD);
-      
-      if (!Renderer && readingAndType.reading) {
-        console.log(`warn: no renderer for type ${readingAndType.sensorType.name}`);
-      }
-    });
-  //console.log("renders length ", renders.length, gateway.id.gatewayDeviceUID, renders);
-  
-  const sensorRenders = nodeReadings.map((readingAndType,index) => {
-    console.log("rendering reading ",readingAndType);
-    let Renderer = registry.findRenderer(readingAndType.sensorType, ReadingVisualization.CARD);
-    if (!Renderer) {
-      console.log("no renderer for ", readingAndType.sensorType.name);
-      Renderer = TextReadingRendererComponent;
-    }
-    const content = (<Renderer 
-          sensorType={readingAndType.sensorType} reading={readingAndType.reading} 
-          node={node} gateway={gateway}/>);
-
-      return content===null ? content :
-     (<Col key={index} xs={8} sm={5} md={5} lg={8}>                      
-        {content}
-      </Col>)
-  });
 
   return (
     <Card
@@ -77,19 +37,19 @@ const NodeCardComponent = (props: NodeProps) => {
           <Text
             ellipsis={{
               // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-              tooltip: `${name}`,
+              tooltip: `${viewModel?.node?.name}`,
             }}
             data-testid={`node[${index}]-summary`}
           >
-            {name}
+            {viewModel?.node?.name}
           </Text>
           <span data-testid="node-timestamp" className={styles.timestamp}>
             Last updated{` `}
-            {lastActivity}
+            {viewModel?.node?.lastActivity}
           </span>
           <div data-testid="node-location" className={styles.locationWrapper}>
             <span className={styles.locationTitle}>Location{` `}</span>
-            <span className={styles.location}>{location}</span>
+            <span className={styles.location}>{viewModel?.node?.location}</span>
           </div>
         </>
       }
@@ -98,12 +58,35 @@ const NodeCardComponent = (props: NodeProps) => {
         justify="start"
         gutter={[16, 16]}
         className={styles.cardContentsSensor}
-      >     
-        <>{sensorRenders}</>
+      >
+        <Col xs={8} sm={5} md={5} lg={8}>
+          Humidity
+          <br />
+          <span className="dataNumber">{viewModel?.node?.humidity}</span>
+        </Col>
+        <Col xs={8} sm={5} md={5} lg={8}>
+          Pressure
+          <br />
+          <span className="dataNumber">{viewModel?.node?.pressure}</span>
+        </Col>
+        <Col xs={8} sm={5} md={5} lg={8}>
+          Temperature
+          <br />
+          <span className="dataNumber">{viewModel?.node?.temperature}</span>
+        </Col>
+        <Col xs={8} sm={5} md={5} lg={8}>
+          Voltage
+          <br />
+          <span className="dataNumber">{viewModel?.node?.voltage}</span>
+        </Col>
+        <Col xs={8} sm={4} md={4} lg={8}>
+          Motion
+          <br />
+          <span className="dataNumber">{viewModel?.node?.count}</span>
+        </Col>
       </Row>
     </Card>
   );
 };
 
 export default NodeCardComponent;
-

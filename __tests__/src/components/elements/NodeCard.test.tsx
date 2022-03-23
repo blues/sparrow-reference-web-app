@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import NodeCard from "../../../../src/components/elements/NodeCard";
 // eslint-disable-next-line jest/no-mocks-import
 import "../../../../__mocks__/matchMediaMock";
-import { NODE_MESSSAGE, SENSOR_MESSAGE } from "../../../../src/constants/ui";
+import { NODE_MESSAGE, SENSOR_MESSAGE } from "../../../../src/constants/ui";
 
 const mockNodeData = {
   name: "My Mocked Node",
@@ -57,7 +57,7 @@ describe("Node details card component", () => {
 
   it("should render fallback messages when all node details are not supplied", () => {
     render(<NodeCard nodeDetails={mockUndefinedNodeData} index={index} />);
-    expect(screen.getByText(NODE_MESSSAGE.NO_NAME)).toBeInTheDocument();
+    expect(screen.getByText(NODE_MESSAGE.NO_NAME)).toBeInTheDocument();
     expect(
       screen.getAllByText(SENSOR_MESSAGE.NO_HUMIDITY, { exact: false })[0]
     ).toBeInTheDocument();

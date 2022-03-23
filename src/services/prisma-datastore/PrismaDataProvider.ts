@@ -73,7 +73,7 @@ export class PrismaDataProvider implements DataProvider {
     private sparrowGateway(gw: Prisma.Gateway): GatewayDEPRECATED {
         return {
             uid: gw.deviceUID,
-            serialNumber: gw.name || '',                        // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
+            name: gw.name || '',                        // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
             location: gw.location || '',
             lastActivity: gw.lastSeenAt?.toDateString() || '',                  // todo - ideally this is simply cached
             voltage: 3.5,

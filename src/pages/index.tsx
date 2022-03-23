@@ -4,45 +4,23 @@ import { Carousel } from "antd";
 import { CarouselRef } from "antd/lib/carousel";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
-import GatewayDEPRECATED from "../components/models/Gateway";
+import Gateway from "../components/models/Gateway";
 import Node from "../components/models/Node";
 import { getErrorMessage } from "../constants/ui";
-import { ERROR_CODES, isError, MayError } from "../services/Errors";
+import { ERROR_CODES } from "../services/Errors";
 import CarouselArrowFixRight from "../components/elements/CarouselArrowFixRight";
 import CarouselArrowFixLeft from "../components/elements/CarouselArrowFixLeft";
 import { getCombinedGatewayNodeInfo } from "../components/presentation/gatewayNodeInfo";
 import styles from "../styles/Home.module.scss";
-import { Project } from "../services/AppModel";
 
-type HomeData = MayError<{
-  project: Project
-}, string>;
+type HomeData = {
+  gatewayNodeData: Gateway[];
+  err?: string;
+};
 
-const Home: NextPage<HomeData> = (homeData: HomeData) => {
+const Home: NextPage<HomeData> = ({ gatewayNodeData, err }) => {
   const carouselRef = useRef<CarouselRef>(null);
-  let body;
-  if (isError(homeData)) {
-    const err = homeData.err;
-    body = <h2 className={styles.errorMessage}>{err}</h2>;
-  }
-  else {
-    const { project } = homeData;
-    const gateways = project.gateways;
-    body = 
-    <>
-      <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
-        Gateway
-      </h2>
-        {gateways && gateways.map(( gateway, index) => (
-          <GatewayCard
-            key={gateway.id.gatewayDeviceUID}
-            index={index}
-            gateway={gateway}
-          />
-        ))}
-    </>
-  }
-  
+
   useEffect(() => {
     // auto focuses the carousel on component mount for keyboard accessibility
     carouselRef.current?.goTo(0);
@@ -50,33 +28,64 @@ const Home: NextPage<HomeData> = (homeData: HomeData) => {
 
   return (
     <div className={styles.container}>
-      {body}
+      {err ? (
+        <h2 className={styles.errorMessage}>{err}</h2>
+      ) : (
+        <>
+          <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
+            Gateway
+          </h2>
+          <Carousel
+            ref={carouselRef}
+            focusOnSelect
+            dots
+            arrows
+            nextArrow={<CarouselArrowFixRight />}
+            prevArrow={<CarouselArrowFixLeft />}
+          >
+            {gatewayNodeData.map((gateway, index) => (
+              <GatewayCard
+                key={gateway.uid}
+                index={index}
+                gatewayDetails={gateway}
+              />
+            ))}
+          </Carousel>
+        </>
+      )}
     </div>
   );
 };
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
+  let gateways: Gateway[] = [];
+  let latestNodeDataList: Node[] = [];
+  let gatewayNodeData: Gateway[] = [];
   try {
+    const appService = services().getAppService();
+    gateways = await appService.getGateways();
+    latestNodeDataList = await appService.getNodes(
+      gateways.map((gateway) => gateway.uid)
+    );
 
-    const appService = services().getAppService();    
-    const project = await appService.getLatestProjectReadings();
-    console.log(project);
+    gatewayNodeData = getCombinedGatewayNodeInfo(latestNodeDataList, gateways);
 
-    console.log(JSON.stringify(project));
     return {
-      props: { project },
+      props: { gatewayNodeData },
     };
   } catch (err) {
     if (err instanceof Error) {
       return {
         props: {
+          gatewayNodeData,
           err: getErrorMessage(err.message),
         },
       };
     }
     return {
       props: {
+        gatewayNodeData,
         err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
       },
     };
