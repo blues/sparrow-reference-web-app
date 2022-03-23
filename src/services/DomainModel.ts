@@ -58,13 +58,14 @@ export type ProjectHierarchy = Project & {
   gateways: Set<GatewayWithNodes>;
 }
 
+export type DomainDate = Date;
 
 export interface SensorHost {
   // Attributes
   name: string | null;
   descriptionBig: string | null;
   descriptionSmall: string | null;
-  lastSeen: Date | null;
+  lastSeen: DomainDate | null;
 }
 
 export type Sensors = Set<Sensor>;
@@ -96,10 +97,12 @@ export type LocationOLC = string;
 export interface Node extends SensorHost {
   readonly id: NodeID;
   // Attributes
-  // locationForMachines: LocationOLC | null;
-  // locationForHumans: string | null;
-  // Links
-  // gateway: Gateway;
+
+  /**
+   * The human-readable location.
+   */
+  location: string | null;
+
 }
 
 /**
@@ -117,7 +120,7 @@ export interface ReadingBySensorType {
   get(s: SensorType) : Reading | undefined;
 }
 
-type SensorTypes = Set<SensorType>;
+export type SensorTypes = Map<String, SensorType>;
 
 /**
  * Describes a point-in-time slice through the readings for a SensorHost. This represents the last known values at the time given
@@ -129,15 +132,17 @@ export interface SensorHostReadingsSnapshot {
 }
 
 export interface DateRange {
-  from: Date;
-  to: Date;
+  from: DomainDate;
+  to: DomainDate;
 }
+
+export type DurationInMinutes = number;
 
 /**
  * Shows the most recent data
  */
 export interface MostRecent {
-  duration: number;   // in minutes
+  duration: DurationInMinutes;
 }
 
 export type TimePeriod = DateRange | MostRecent;
@@ -156,96 +161,156 @@ export interface SensorHostReadingsSeries {
 }
 
 export interface SensorType {
-  readonly id: SensorTypeID;      // todo - do we really need the ID here? let's add it when it's needed.
 
-  name: string;             // 
-  measure: string;          // "measure" expressed as an identifier. 
+  // attributes
 
-  // Attributes
-  displayName: string;           // Outdoor Temperature, etc. (most specific name) - human readable
+  /**
+   * A unique name expressed as a javascript identifier for this sensor type in this project.
+   */
+  name: string;            
+  
+  /**
+   * A class name for this sensor type expressed as a javascript identifier. This is used to categorize sensors 
+   * that read the same type of information.
+   */
+  measure: string;
+
+  /**
+   * A presentable name for this type of sensor. For example, "Gateway Location". 
+   */
+  displayName: string;
+
+  /**
+   * A presentable name for the measurement read by this sensor, such as "Temperature".
+   */
   displayMeasure: string;        // Temperature, etc. Used as "class" identifier (general type name) - human readable
-  unit: string | null;    // Kelvin, Million, etc.
-  unitSymbol: string | null; // K, M, etc. null for no inut
 
-  spec: JSONObject;
+  /**
+   * The name of the unit this type of sensor measures in.
+   * E.g. K, C
+   * If the unit is dimensionless the unit is the empty string.
+   */
+  unit: string;            
+
+  /**
+   * Symbolic representation of the unit this type of sensor measures in. Can be null if the quantity is dimensionless. 
+   * If the unit is dimensionless the unit is the empty string.
+  */
+  unitSymbol: string; // K, M, etc.
+
+  /**
+   * The spec for the type of data produced by each reading.
+   */
+  spec: JSONValue;
   
 
-  // todo - how about including the json schema for the expected value?
-  // should we handle simple numeric values as a very common special case?
+  // todo - should we handle simple numeric values as a very common special case?
 }
 
+/**
+ * Describes a sensor reading. 
+ */
 export interface Reading {
-  when: Date;
+  /**
+   * When the reading was taken by the sensor.
+   */
+  when: DomainDate;
 
-  // Attributes
-  value: JSONObject;
+  /**
+   * The value of the sensor reading. 
+   */
+  value: JSONValue;
 
-  // todo - how do clients know what to do with "value", or what its expected structure is.
-  // I added spec to the SensorType
 
   // The simple numeric value for this sensor for simple numeric readings. This is too common a case for us to ignore and
   // makes handling simple numeric values much easier. (No need to reach into the json on some arbitrary key.)
+  // todo - make JSONObject a JSONValue so simple numbers can be stored in value.
   numericValue: number | null;
 
-  // Links
-  // sensorType: SensorType;   // todo - do we need both sensorType and sensor?
-  // sensor: Sensor;
 }
 
 export type JSONObject = { [key in string]?: JSONValue };
 
 export type JSONValue =
-  | null
   | string
   | number
   | boolean
   | JSONObject
   | Array<JSONValue>;
 
-
 /**
- * This is the datamodel for displaying the latest values for the whole project.
+ * This is the model for displaying the latest values for the whole project.
  */
- type ProjectReadingsShapshot = {
+ export type ProjectReadingsSnapshot = {
 
   /**
    * The timestamp of the snapshot. All readings will have been taken on or before the snapshot.
    */
-  when: number;
+  readonly when: DomainDate;
 
   /**
    * The sensor hierarchy.
    */
-  project: ProjectHierarchy;
+  readonly project: ProjectHierarchy;
 
   /**
-   * The readings for each sensor host. 
-   * todo - not so happy using a Map here. A higher-level interface would be preferred
+   * The readings for each sensor host. Each host is provided in the project hierarchy. 
+   * If the host does not correspond to one of the sensor hosts in the hierarchy, an exception is thrown.
    */
-  hostReadings: Map<SensorHost, SensorHostReadingsSnapshot>;
+  hostReadings(sensorHost: SensorHost): SensorHostReadingsSnapshot;
 
   /**
-   * Retrieve a reading for a sensor host, with the given name.
+   * Retrieve a reading for a sensor host, with the given name. This is intended to retrieve the known readings for a given type of sensorHost
+   * in contrast to 
    * @param sensorHost  The sensor host the reading is present on.
    * @param readingName The name of the reading to retrieve.
    */
-  findSensorReading(sensorHost: SensorHost, readingName: string): Reading;
+  hostReadingByName(sensorHost: SensorHost, readingName: SensorTypeNames): Reading | undefined;
 }
 
 /**
  * Historical data for gateways and nodes.
  **/
-type ProjectHistoricalData = {
+export type ProjectHistoricalData = {
   period: TimePeriod;
   hostReadings: Map<SensorHost, SensorHostReadingsSeries>; 
 }
 
 /**
- * Gateways have a handful of known sensor types. These are enumerated here so that they can be queried for.
+ * Gateways and Sensors have a handful of known sensor types.
+ * These are enumerated here so that they can be queried for.
+ * @see ProjectReadingsSnapshot.hostReadingByName
  */
-export enum GatewaySensorTypes {
-    VOLTAGE = "Gateway Voltage",
-    SIGNAL_STRENGTH = "Gateway Signal strength",
-    TEMPERATURE = "Gateway Temperature",
-    LOCATION = "Gateway Location"
+
+export const enum GatewaySensorTypeNames {
+    VOLTAGE = "gateway_voltage",
+    SIGNAL_STRENGTH = "gateway_signal_strength",
+    TEMPERATURE = "gateway_temperature",
+    LOCATION = "gateway_location",
+    LORA_SIGNAL_STRENGTH = "gateway_lora_rssi"
 }
+
+
+export const enum NodeSensorTypeNames {
+    VOLTAGE = "node_voltage",
+    LORA_SIGNAL_STRENGTH = "node_lora_rssi",
+    PIR_MOTION = "pir_motion",
+    HUMIDITY = "humidity",
+    TEMPERATURE = "temperature",
+    AIR_PRESSURE = "air_pressure"
+}
+
+export const enum GatewaySensorMeasure {
+  VOLTAGE = "voltage",
+  SIGNAL_STRENGTH = "bars",
+  RSSI = "rssi",
+  LOCATION = "location",
+  TEMPERATURE = "temperature"
+}
+
+export const enum NodeSensorMeasure {
+  RSSI = "rssi",
+  VOLTAGE = "voltage"
+}
+
+export type SensorTypeNames = GatewaySensorTypeNames | NodeSensorTypeNames;

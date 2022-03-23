@@ -103,6 +103,7 @@ model Sensor {
 
   @@unique([reading_source_id, schema_id])    // natural key
 
+
   @@map("sensor")
 
 }
@@ -135,6 +136,10 @@ enum ReadingSchemaValueType {
 model ReadingSchema {
   id                  Int           @id @default(autoincrement())
 
+  // Unique ID so that the other fields can change yet the db.init script can still update
+  // the business key.
+  uuid                String        @db.Uuid @default(uuid()) @unique
+
   displayMeasure      String?       @db.VarChar(200)
   displayName         String?       @db.VarChar(50)
 
@@ -149,8 +154,8 @@ model ReadingSchema {
   eventName           String        @map("event_name") @db.VarChar(32) // "*#air.qo"
   spec                Json          // type descriptor for the event schema. Most typically just `{ count: number }`.
 
-  unit                String?       @db.Char(10)
-  unitName            String?
+  unitSymbol          String?       @db.Char(10)
+  unit                String?
   valueType           ReadingSchemaValueType
   scale               Int           @default(1)
 
