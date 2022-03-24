@@ -132,7 +132,7 @@ class DomainAppModelBuilder implements AppModelBuilder {
     }
 
     private buildGateway(gateway: DomainModel.Gateway, visitor: Visitor): AppModel.Gateway {
-        return visitor.visitateway({
+        return visitor.visitGateway({
             id: gateway.id,
             name: gateway.name,
             lastSeen: this.buildDate(gateway.lastSeen),
