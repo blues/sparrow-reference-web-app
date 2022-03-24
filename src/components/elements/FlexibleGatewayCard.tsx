@@ -7,9 +7,11 @@ import {
   getFormattedVoltageData,
 } from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
+import { Gateway, SensorTypeCurrentReading, GatewaySensorTypeNames, NodeSensorTypeNames } from "../../services/AppModel";
+
 import styles from "../../styles/Home.module.scss";
 import cardStyles from "../../styles/Card.module.scss";
-import { Gateway, SensorTypeCurrentReading, GatewaySensorTypeNames, NodeSensorTypeNames } from "../../services/AppModel";
+
 
 interface GatewayProps {
   gateway: Gateway;

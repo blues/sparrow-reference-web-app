@@ -312,7 +312,7 @@ export const enum NodeSensorTypeNames {
 export const enum GatewaySensorMeasure {
   VOLTAGE = "voltage",
   SIGNAL_STRENGTH = "bars",
-  RSSI = "rssi",
+  RSSI = "rssi",            // Received Signal Strength Indicator
   LOCATION = "location",
   TEMPERATURE = "temperature"
 }

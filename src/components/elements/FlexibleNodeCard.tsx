@@ -35,8 +35,6 @@ const NodeCardComponent = (props: NodeProps) => {
   const lastActivity = node.lastSeen ? getFormattedLastSeenDate(new Date(node.lastSeen)) : NODE_MESSAGE.NEVER_SEEN;
   const nodeReadings = node.currentReadings || [];
 
-  console.log("nodeReadings.length", nodeReadings.length, node.id.nodeID, nodeReadings);
-
   const noContent = <>nothing</>;
 
   const renders = nodeReadings!.map((readingAndType, index) => {  

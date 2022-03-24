@@ -110,7 +110,6 @@ export default class PrismaDatastoreEventHandler implements SparrowEventHandler 
         return existingSensors;
     }
 
-    // really would like prisma to 
     private addSensorReading(sensor: SensorWithSchema, when: Date, value: Prisma.InputJsonValue) {        
         const schema = sensor.schema;
         const primaryValue = ((schema.spec as any)[__primary]);

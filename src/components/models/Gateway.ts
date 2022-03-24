@@ -15,8 +15,6 @@ interface Gateway {
   location?: string;
   voltage: number;
 
-  // todo add other sensor readings, e.g. temperature
-
   nodeList: Node[];
 }
 
