@@ -18,7 +18,7 @@ describe("NotehubEvents", () => {
                 expect(result.nodeID).toBeUndefined();
             });
 
-            it("returns the event name unmidifed", () => {
+            it("returns the event name unmodifed", () => {
                 expect(result.eventName).toBe(eventName);
             })
         });
