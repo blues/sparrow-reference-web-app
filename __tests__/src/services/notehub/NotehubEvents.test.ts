@@ -1,4 +1,4 @@
-import { parseSparrowEvent, normalizeSparrowEvent, NormalizedEventName } from "../../../../src/services/notehub/SparrowEvents";
+import { normalizeSparrowEvent, NormalizedEventName } from "../../../../src/services/notehub/SparrowEvents";
 
 
 
