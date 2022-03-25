@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "options": {
+        "env": {
+            "HUB_DEVICE_UID": "",
+            "HUB_PROJECTUID": "",
+            "HUB_AUTH_TOKEN": ""
+        }
+      },
+      "problemMatcher": [],
+      "label": "Sparrow (local dev)",
+      "detail": "Launch with Target Project Values"
+    }
+  ]
+}
