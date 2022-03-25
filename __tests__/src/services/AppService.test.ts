@@ -5,6 +5,10 @@ import AppService from "../../../src/services/AppService";
 import { DataProvider } from "../../../src/services/DataProvider";
 import { AttributeStore } from "../../../src/services/AttributeStore";
 import sparrowData from "./__serviceMocks__/sparrowData.json";
+import { IDBuilder } from "../../../src/services/IDBuilder";
+import * as AppModel from "../../../src/services/AppModel";
+
+const mockProjectUID = "app:123456";
 
 describe("App Service", () => {
   let dataProviderMock: DataProvider;
@@ -37,13 +41,33 @@ describe("App Service", () => {
       getNode: jest.fn().mockResolvedValueOnce(mockedNodeSparrowData),
       getNodes: jest.fn().mockResolvedValueOnce(mockedNodesSparrowData),
       getNodeData: jest.fn().mockResolvedValueOnce(mockedSparrowNodeData),
+      queryProjectLatestValues: jest.fn(),
+      queryProjectReadingSeries: jest.fn()
     };
     attributeStoreMock = {
       updateGatewayName: jest.fn(),
       updateNodeName: jest.fn(),
       updateNodeLocation: jest.fn(),
     };
-    appServiceMock = new AppService(dataProviderMock, attributeStoreMock);
+    const mockEventHandler = {
+      handleEvent: jest.fn()
+    }
+    const mockIDBuilder: IDBuilder = {
+      buildProjectID: (projectUID: string): AppModel.ProjectID => {
+          return { projectUID, type: "ProjectID" };
+      },
+      buildGatewayID: function (gatewayDeviceUID: string): AppModel.GatewayID {
+        throw new Error("Function not implemented.");
+      },
+      buildNodeID: function (nodeID: string): AppModel.NodeID {
+        throw new Error("Function not implemented.");
+      },
+      buildSensorTypeID: function (readingSchemaName: string): AppModel.SensorTypeID {
+        throw new Error("Function not implemented.");
+      }
+    } 
+    
+    appServiceMock = new AppService(mockProjectUID, mockIDBuilder, dataProviderMock, attributeStoreMock, mockEventHandler);
   });
 
   it("should return a single gateway when getGateway is called", async () => {

@@ -5,17 +5,22 @@
   "scripts": {
     "genv": "./generate-dotenv.sh | tee .env.production.local",
     "dev": "yarn && next dev -p 4000",
-    "build": "yarn genv; next build",
+    "build": "yarn genv; yarn prisma:generate; next build",
     "start": "next start",
     "lint": "next lint",
     "lint:all": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest --watch",
     "test:coverage": "jest --coverage",
     "cypress:open": "cypress install && cypress open --env configFile=development",
-    "cypress:run": "cypress install && cypress run --env configFile=development"
+    "cypress:run": "cypress install && cypress run --env configFile=development",
+    "prisma:generate": "prisma generate",
+    "db:reset": "prisma db push --force-reset",
+    "db:update": "prisma db push",
+    "db:init": "ts-node --project ./node.tsconfig.json src/services/prisma-datastore/db-init.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@prisma/client": "^3.9.2",
     "@types/lodash": "^4.14.178",
     "@types/react-slick": "^0.23.8",
     "antd": "^4.19.1",
@@ -28,11 +33,13 @@
     "next": "12.1.0",
     "next-plugin-antd-less": "^1.8.0",
     "pony-cause": "^1.1.1",
+    "prisma": "^3.9.2",
     "rc-field-form": "^1.22.0",
     "react": "17.0.2",
     "react-chartjs-2": "^4.0.0",
     "react-dom": "17.0.2",
-    "sass": "^1.43.4"
+    "sass": "^1.43.4",
+    "ts-node": "^10.5.0"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^4.2.1",
@@ -75,5 +82,8 @@
   "volta": {
     "node": "16.13.0",
     "yarn": "1.22.17"
+  },
+  "prisma": {
+    "schema": "src/services/prisma-datastore/schema.prisma"
   }
 }

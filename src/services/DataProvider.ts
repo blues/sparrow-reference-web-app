@@ -1,23 +1,71 @@
-import Gateway from "../components/models/Gateway";
-import Node from "../components/models/Node";
-import Reading from "../components/models/readings/Reading";
+import GatewayDEPRECATED from "../components/models/Gateway";
+import NodeDEPRECATED from "../components/models/Node";
+import ReadingDEPRECATED from "../components/models/readings/Reading";
+import { ProjectID, ProjectReadingsSnapshot, GatewayID, NodeID, Project, SensorTypeID, SensorHost, SensorHostReadingsSnapshot, TimePeriod, SensorHostReadingsSeries, ProjectWithGateways, SensorHostWithSensors, ProjectHierarchy, ProjectHistoricalData } from "./DomainModel";
+
+export type ProjectHierarchyFilter = { 
+  projectID: ProjectID,
+  gatewayID?: GatewayID,
+  nodeID?: NodeID
+}
+
+export type TimePeriodFilter = TimePeriod;
+
+export type QueryHistoricalReadings = {
+  projectFilter: ProjectHierarchyFilter,
+  timeFilter: TimePeriodFilter
+}
+
 
 // this interface shows gateway or node data - nothing more, nothing less
-interface DataProvider {
-  getGateways: () => Promise<Gateway[]>;
+export interface DataProvider {
+  getGateways: () => Promise<GatewayDEPRECATED[]>;
 
-  getGateway: (gatewayUID: string) => Promise<Gateway>;
+  getGateway: (gatewayUID: string) => Promise<GatewayDEPRECATED>;
 
-  getNodes: (gatewayUIDs: string[]) => Promise<Node[]>;
+  getNodes: (gatewayUIDs: string[]) => Promise<NodeDEPRECATED[]>;
 
-  getNode: (gatewayUID: string, nodeId: string) => Promise<Node>;
+  getNode: (gatewayUID: string, nodeId: string) => Promise<NodeDEPRECATED>;
 
   getNodeData: (
     gatewayUID: string,
     nodeId: string,
     minutesBeforeNow?: string
-  ) => Promise<Reading<unknown>[]>;
+  ) => Promise<ReadingDEPRECATED<unknown>[]>; 
+
+  //queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;
+
+  /**
+   * Retrieves the hierarchy of gateways and nodes, and the latest sensor readings for these.
+   * @param projectID The project to retrieve the latest values for
+   */
+  queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>>;
+
+  queryProjectReadingSeries(query: QueryHistoricalReadings): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>>;
+
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export type { DataProvider };
+
+// Query Interface - not using this for now.  May need it when we retrieve just a single gateway or single sensor data
+
+export type DateRange = { from: Date; to: Date };
+
+export const all = Symbol("All");
+export type All = typeof all;
+
+export const latest = Symbol("Latest");
+export type Latest = typeof latest;
+
+export type Nothing = undefined;
+
+export type SimpleFilter = {
+  gateways?: GatewayID | All | Nothing;
+  nodes?: NodeID | All | Nothing;
+  SensorTypes?: SensorTypeID | All | Nothing;
+  readingTimeframe?: DateRange | All | Nothing | Latest;
+};
+
+export interface QueryResult<R, P> {
+  request: R;
+  results: P;
+}

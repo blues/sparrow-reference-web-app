@@ -1,0 +1,108 @@
+
+## Setting a Route from Notehub to your local instance
+
+### ngrok
+
+#### Initial setup
+* sign up to ngrok (it's free, up to a point)
+* [install ngrok](https://dashboard.ngrok.com/get-started/setup) - I used `brew install ngrok` on OSX
+* [setup your ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken)
+
+#### Tunneling your local server to the internet
+* run `ngrok http 4000` to create a tunnel to your local hosted Sparrow Starter app
+* keep the console open as long as you can. Each time the tunnel is restarted the generated URL changes.
+
+### Create a notehub route in a shared project to your local host site
+
+* select Routes, then click "Create Route" on the right side
+* select General HTTP/HTTPS request/response
+* name the route, e.g. "<yourname> sparrow starter datastore" 
+* the URL of the route is the forwarded https url from ngrok, with the path `/api/datastore/ingest` for example
+    ```
+    https://aaab-73-92-215-121.ngrok.io/api/datastore/ingest
+    ```
+* When sensors post sensor events you should see the event body written to the console. This is just for the PoC. 
+
+
+### Prisma
+
+We're storing environment variables in `.env.local` so that secrets aren't checked in to version control. This creates a problem for
+the prisma client, which wants to load only `.env`.  
+
+This currently only applies to the `DATABASE_URL` environment variable.
+
+We have two options to fix this:
+
+1. use `export` to set the environment variable.
+2. use `dotenv` - https://www.prisma.io/docs/guides/development-environment/environment-variables/managing-env-files-and-setting-variables 
+
+### PostgreSQL 
+
+#### Visual Studio Code
+
+*  `PostgreSQL` extension by Microsoft for command line access.
+
+* [Visual Database explorer](https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-mysql-client2) extension, but
+I couldn't get it to connect using the credentials from Heroku.
+
+* using pgAdmin 
+    1. create a new connection
+    1. fill in the fields on the `connection` tab
+    1. on the `Advanced` tab, add the database name to `DB Restriction` to show only our database, otherwise you'll see thousands of databases in the database list.
+
+
+#### Heroku Shared Instance
+
+The credentials for the shared instance are stored in Notion under "Sparrow Starter Heroku Database Credentials".
+
+#### Local Database via docker
+
+Launch postgres in a docker instance
+
+```
+docker run --rm --name postgresql-container -p 5432:5432 -e POSTGRES_PASSWORD=somePassword -d postgres
+```
+
+ - Note that the data is empheral and is not saved when the container exits. 
+
+To connect to the local instance, set the DATABASE_URL environment variable in `.env.local`
+
+```
+DATABASE_URL=postgres://postgres:somePassword@0.0.0.0:5432/postgres
+```
+
+To run a docker image with the database stored on your host OS filesystem so that it persists
+
+```
+docker run --rm \
+  -d \
+  --name postgresql-container \
+  -p 5432:5432 \
+  -e POSTGRES_PASSWORD=somePassword \
+  -v ~/pgdata:/var/lib/postgresql/data \
+  postgres
+```
+
+#### Setting the required environment
+
+The databse scripts don't depend on next.js loading and so `.env.local` and related files aren't loaded. A quick workaround is to ensure `HUB_PROJECT_UID` and `DATABASE_URL` are defined in `.env.local` and then export these:
+
+```
+set -a && . .env.local && set +a
+```
+
+#### Reset the Datastore and generate the datastore tables
+
+```
+yarn run db:reset
+```
+
+#### Seed the datastore
+```
+yarn run db:init
+```
+
+#### Update the datastore schema
+```
+yarn run db:update
+```

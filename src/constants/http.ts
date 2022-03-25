@@ -5,6 +5,7 @@ const HTTP_STATUS = {
   INVALID_GATEWAY_NAME: "Invalid Gateway name",
   INVALID_NODE_CONFIG_BODY: "Invalid Node Config Body",
   INVALID_NODE_ID: "Invalid Node id",
+  INVALID_PROJECTUID: "Invalid ProjectUID",
   INTERNAL_ERR_GATEWAY: "Error while fetching Gateway",
   INTERNAL_ERR_CONFIG: "Error while fetching Node Config",
   NOT_FOUND_GATEWAY: "Unable to locate Gateway",

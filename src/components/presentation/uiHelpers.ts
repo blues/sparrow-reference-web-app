@@ -1,13 +1,19 @@
+
 import { formatDistanceToNow, sub } from "date-fns";
 import { sortBy, uniqBy } from "lodash";
+import { Gateway, SensorTypeCurrentReading } from "../../services/AppModel";
 import Reading from "../models/readings/Reading";
 import ReadingSchema from "../models/readings/ReadingSchema";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
-  formatDistanceToNow(new Date(date), {
+  getFormattedLastSeenDate(new Date(date));
+
+export const getFormattedLastSeenDate = (date: Date) =>
+  formatDistanceToNow(date, {
     addSuffix: true,
   });
+
 
 export const getFormattedChartData = (
   readings: Reading<unknown>[],
@@ -61,7 +67,7 @@ export const getFormattedPressureData = (pressure: number | undefined) => {
 };
 
 export const getFormattedVoltageData = (voltage: number | undefined) => {
-  if (voltage) {
+  if (voltage!==undefined) {
     const formattedData = `${voltage.toFixed(2)}V`;
     return formattedData;
   }
@@ -69,7 +75,7 @@ export const getFormattedVoltageData = (voltage: number | undefined) => {
 };
 
 export const getFormattedCountData = (count: number | undefined) => {
-  if (count) {
+  if (count!==undefined) {
     const formattedData = `${count}`;
     return formattedData;
   }
@@ -77,7 +83,7 @@ export const getFormattedCountData = (count: number | undefined) => {
 };
 
 export const getFormattedTotalData = (total: number | undefined) => {
-  if (total) {
+  if (total!==undefined) {
     const formattedData = `${total}`;
     return formattedData;
   }
@@ -92,3 +98,13 @@ export const getEpochChartDataDate = (minutesToConvert: number) => {
   ).toString();
   return formattedEpochDate;
 };
+
+
+export function findCurrentReadingWithName(gateway: Gateway, name: SensorTypeCurrentReading["sensorType"]["name"]) : SensorTypeCurrentReading | undefined {
+  return gateway.currentReadings?.find((sensorTypeReading) => name===sensorTypeReading.sensorType.name);
+}
+
+export function asNumber(value: unknown): number | undefined {
+  return typeof value==="number" ? Number(value) : undefined;
+}
+

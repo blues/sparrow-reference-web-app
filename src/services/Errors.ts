@@ -17,3 +17,12 @@ export enum ERROR_CODES {
   NODE_NOT_FOUND = "NODE_NOT_FOUND",
   INTERNAL_ERROR = "INTERNAL_ERROR",
 }
+
+
+type ErrorResponse<E> = { err: E };
+type NoErrorResponse = { err: undefined };
+export type MayError<M, E> = ( NoErrorResponse & M ) | ErrorResponse<E>;
+
+export function isError<E>(t: MayError<unknown, E>): t is ErrorResponse<E> {
+  return t.err!==undefined;
+}

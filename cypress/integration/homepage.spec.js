@@ -107,8 +107,7 @@ describe("Sparrow Application", () => {
     cy.get(".ant-form-item-required").should("contain", "Location");
     //Verify the Location field exists in the Details tab
     const nodeLocationInput = cy.get(
-      '[data-testid="form-input-node-location"]',
-      { timeout: 15000 }
+      '[data-testid="form-input-node-location"]'
     );
     nodeLocationInput.should("be.visible");
     // Enter a new node location
@@ -118,7 +117,7 @@ describe("Sparrow Application", () => {
     nodeSubmitButton.should("be.visible");
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Cypress Test Node"
-    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
+    cy.get('[data-testid="node-name"]').should(
       "contain",
       "Cypress Test Node"
     );
@@ -131,7 +130,7 @@ describe("Sparrow Application", () => {
     //Click the Submit button
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Other Node Name"
-    cy.get('[data-testid="node-name"]', { timeout: 50000 }).should(
+    cy.get('[data-testid="node-name"]').should(
       "contain",
       "Other Node Name"
     );

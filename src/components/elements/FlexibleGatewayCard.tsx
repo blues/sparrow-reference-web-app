@@ -1,41 +1,49 @@
 import { useRouter } from "next/router";
 import { Card, Col, Row, Typography } from "antd";
-import Gateway from "../models/Gateway";
-import NodeCard from "./NodeCard";
+import NodeCard from "./FlexibleNodeCard";
 import {
-  getFormattedLastSeen,
+  asNumber,
+  findCurrentReadingWithName,
+  getFormattedLastSeenDate,
   getFormattedVoltageData,
 } from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
+import { Gateway, GatewaySensorTypeNames } from "../../services/AppModel";
+
 import styles from "../../styles/Home.module.scss";
 import cardStyles from "../../styles/Card.module.scss";
 
 interface GatewayProps {
-  gatewayDetails: Gateway;
+  gateway: Gateway;
   index: number;
 }
 
 const GatewayCardComponent = (props: GatewayProps) => {
-  const { gatewayDetails, index } = props;
+  const { index, gateway } = props;
   const { Text } = Typography;
-  const formattedGatewayVoltage = getFormattedVoltageData(
-    gatewayDetails.voltage
-  );
+
 
   const router = useRouter();
-  const gatewayUrl = `/${gatewayDetails.uid}/details`;
+  // todo - use urlBuilder to create the correct URL
+  const gatewayUrl = `/${gateway.id.gatewayDeviceUID}/details`;
   const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     router.push(gatewayUrl);
   };
 
-  const formattedLocation = gatewayDetails?.location
-    ? gatewayDetails.location
-    : GATEWAY_MESSAGE.NO_LOCATION;
+  
+  // we hard code some of the gateway readings for now. We will make this more open-ended in future with the site redesign
+  const formattedGatewayVoltage = getFormattedVoltageData(
+    asNumber(findCurrentReadingWithName(gateway, GatewaySensorTypeNames.VOLTAGE)?.reading?.value)
+) || GATEWAY_MESSAGE.NO_VOLTAGE;
+
+
+  const formattedLocation = findCurrentReadingWithName(gateway, GatewaySensorTypeNames.LOCATION) || GATEWAY_MESSAGE.NO_LOCATION;
 
   return (
     <>
+      <span>Gateway</span>
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={24} lg={12}>
           <Card
@@ -49,23 +57,24 @@ const GatewayCardComponent = (props: GatewayProps) => {
                 <Text
                   ellipsis={{
                     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                    tooltip: `${gatewayDetails.name}`,
+                    tooltip: `${gateway.name}`,
                   }}
                   data-testid={`gateway[${index}]-details`}
                 >
-                  {gatewayDetails.name}
+                  {gateway.name}
                 </Text>
                 <span className={cardStyles.timestamp}>
                   Last updated{` `}
-                  {getFormattedLastSeen(gatewayDetails.lastActivity)}
+                  {gateway.lastSeen ? getFormattedLastSeenDate(new Date(gateway.lastSeen)) : GATEWAY_MESSAGE.NEVER_SEEN}
                 </span>
                 <div
                   data-testid="gateway-location"
                   className={cardStyles.locationWrapper}
                 >
+                  {/* todo - could have a LabelRenderer for a given sensor type/reading*/}
                   <span className={cardStyles.locationTitle}>
                     Location{` `}
-                  </span>
+                  </span>                  
                   <span className={cardStyles.location}>
                     {formattedLocation}
                   </span>
@@ -86,16 +95,17 @@ const GatewayCardComponent = (props: GatewayProps) => {
             </Row>
           </Card>
         </Col>
+
       </Row>
 
       <h2 data-testid="node-header" className={styles.sectionSubTitle}>
         Nodes
       </h2>
-      {gatewayDetails.nodeList.length ? (
+      {gateway.nodes && gateway.nodes.length ? (
         <Row gutter={[16, 16]}>
-          {gatewayDetails.nodeList.map((node, cardIndex) => (
-            <Col xs={24} sm={24} lg={12} key={node.nodeId}>
-              <NodeCard index={cardIndex} nodeDetails={node} />
+          {Array.from(gateway.nodes).map((node, cardIndex) => (
+            <Col xs={24} sm={24} lg={12} key={node.id.nodeID}>
+              <NodeCard index={cardIndex} gateway={gateway} node={node} />
             </Col>
           ))}
         </Row>

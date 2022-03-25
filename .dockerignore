@@ -5,7 +5,6 @@
 !public/
 !sample-data/
 !src/
-
 !.bablerc.js
 !.eslintrc.json
 !config.ts
