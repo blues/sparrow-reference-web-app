@@ -5,7 +5,7 @@ import { Gateway, Node, Reading, SensorType } from "../../services/AppModel";
 import { NODE_MESSAGE } from "../../constants/ui";
 import { getFormattedLastSeenDate } from "../presentation/uiHelpers";
 import registry from "../renderers/client";
-import { ReadingVisualization } from "../renderers/renderers";
+import { ReadingVisualization } from "../renderers/registry";
 import TextReadingRenderer from "./TextReadingRenderer";
 import TextReadingRendererComponent from "./TextReadingRenderer";
 
@@ -35,17 +35,6 @@ const NodeCardComponent = (props: NodeProps) => {
   const lastActivity = node.lastSeen ? getFormattedLastSeenDate(new Date(node.lastSeen)) : NODE_MESSAGE.NEVER_SEEN;
   const nodeReadings = node.currentReadings || [];
 
-  const noContent = <>nothing</>;
-
-  const renders = nodeReadings!.map((readingAndType, index) => {  
-      const Renderer = registry.findRenderer(readingAndType.sensorType, ReadingVisualization.CARD);
-      
-      if (!Renderer && readingAndType.reading) {
-        console.log(`warn: no renderer for type ${readingAndType.sensorType.name}`);
-      }
-    });
-  //console.log("renders length ", renders.length, gateway.id.gatewayDeviceUID, renders);
-  
   const sensorRenders = nodeReadings.map((readingAndType,index) => {
     console.log("rendering reading ",readingAndType);
     let Renderer = registry.findRenderer(readingAndType.sensorType, ReadingVisualization.CARD);

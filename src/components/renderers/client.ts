@@ -1,6 +1,6 @@
 import * as BuiltinRenderers from "./builtin";
 import * as CustomRenderers from "./custom";
-import { OverridingRendererRegistry } from "./renderers";
+import { OverridingRendererRegistry } from "./registry";
 
 const registry = new OverridingRendererRegistry();
 

@@ -3,7 +3,7 @@
  * 
  */
 
-import * as Renderers from './renderers';
+import * as Renderers from './registry';
 
 export function registerRenderers(rendererRegistry: Renderers.RendererRegistry) {
      

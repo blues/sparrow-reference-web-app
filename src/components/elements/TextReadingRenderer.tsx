@@ -2,7 +2,7 @@
 // this attempts to render readings based on their intrinsic data
 
 import { Reading, SensorType, SensorTypeCurrentReading } from "../../services/AppModel";
-import * as Renderer from "../renderers/renderers";
+import * as Renderer from "../renderers/registry";
 
 interface TextReadingRenderProps {
   sensorType: SensorType;
@@ -30,7 +30,7 @@ const TextReadingRendererComponent = (props: Renderer.RenderSensorReadingProps) 
    
     const render = (
       <>
-      <span className="sensorTypeName">{props.sensorType.displayMeasure}</span>
+      <span>{props.sensorType.displayMeasure}</span>
       <br />
       <span className="dataNumber">{value}</span>
       </>

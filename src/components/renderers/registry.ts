@@ -51,11 +51,19 @@ export type SensorReadingRenderer = (props: RenderSensorReadingProps) => JSX.Ele
 export type SensorReadingSeriesRenderer = (props: RenderSensorReadingSeriesProps) => JSX.Element|null;
 
 /**
- * The selector used to identify a sensor type or set of types.
+ * The scope that a registration applies to.
+ * This allows a renderer to apply to the type of measurement made by a sensor (and apply to all sensors
+ * that take that measurement, or to a more specific sensor type.
  */
-export const enum SensorTypeSelector {
+export const enum RegistrationScope {
+    /**
+     * Register the renderer for a specific named sensor type.
+     */
     NAME,
-    UNIT,
+
+    /**
+     * Register the renderer for a class of sensor types with the same measurement.
+     */
     MEASURE
 }
 
@@ -72,31 +80,42 @@ export const enum ReadingVisualization {
 }
 
 export const enum ReadingSeriesVisualization {
+    /**
+     * Render a reading series as a graph.
+     */
     GRAPH,
-    SPARKLINE
+
+    /**
+     * Render a reading series as a sparkline
+     */
+    SPARKLINE,
+
+    /**
+     * Render a reading series as a table
+     */
+    TABLE
 }
 
-export type RendererKey = {
-    selector: SensorTypeSelector,
-    selectorValue: string,
-    visualization: ReadingVisualization
-};
 
 
 export interface RendererRegistry {
     /**
      * Registers a renderer for a sensor type selectgor.
-     * @param rendererKey   The key used to register this renderer
-     * @param renderer      The renderer to register
+     * @param renderer      The renderer to register.
+     * @param visualization The visualization provided by the renderer.
+     * @param identifier    The identifier of the specific sensor type or class of sensor types to register.
+     * @param scope         The scope of the registration
      */
-    registerReadingRenderer(rendererKey: RendererKey, renderer: SensorReadingRenderer):void;
-    //registerReadingSeriesRenderer(name: SensorTypeDiscriminator, renderType: ReadingSeriesRenderType, renderer: SensorReadingRenderer):void;
+    registerReadingRenderer(renderer: SensorReadingRenderer, visualization: ReadingVisualization, identifier: string, scope?: RegistrationScope /*=RegistrationScope.NAME*/): void;
+
+    // todo - registration for a reading series renderer. 
+
 }
 
 export interface ReadingRendererLookup {
     /**
-     * Retrieves a visualization for 
-     * @param sensorType 
+     * Retrieves a visualization for a SensorType.
+     * @param sensorType    
      * @param visualization 
      */
     findRenderer(sensorType: SensorType, visualization: ReadingVisualization): SensorReadingRenderer|null;
@@ -105,35 +124,66 @@ export interface ReadingRendererLookup {
 // todo - it would be good to also be able to render nodes, gateways and other items, not just sensor readings.
 // That way the default renderers for gateway and nodes can also be plugged in. 
 
+type RegistrationKey = {
+    /**
+     * The level of specifity this registration applies to - a specific sensor type or a class of sensor types.
+     */    
+    scope: RegistrationScope,
+    
+    /**
+     * The name or measurement to associate this renderer with.
+     */
+    identifier: string,
+
+    /**
+     * The type of visualization provided by the renderer.
+     */
+    visualization: ReadingVisualization
+};
+
+function identifierFromSensorType(registrationScope: RegistrationScope, sensorType: SensorType): string {
+    switch (registrationScope) {
+        case RegistrationScope.NAME:
+            return sensorType.name;
+        case RegistrationScope.MEASURE:
+            return sensorType.measure;
+    }
+}
+
 /**
- * Allows more specific registrations to override
+ * Allows more specific registrations to override more general registrations.
  */
 export class OverridingRendererRegistry implements ReadingRendererLookup, RendererRegistry  {
     
     constructor(private readonly renderers = new Map<string, SensorReadingRenderer>()) {}
     
-    registerReadingRenderer(rendererKey: RendererKey, renderer: SensorReadingRenderer): void {
-        this.renderers.set(this.keyToString(rendererKey), renderer);        
+    registerReadingRenderer(renderer: SensorReadingRenderer, visualization: ReadingVisualization, identifier: string, scope: RegistrationScope = RegistrationScope.NAME): void {
+        const registrationKey: RegistrationKey = {
+            scope,
+            identifier,
+            visualization
+        };
+        this.renderers.set(this.keyToString(registrationKey), renderer); 
     }
-
+    
     findRenderer(sensorType: SensorType, visualization: ReadingVisualization): SensorReadingRenderer | null {
         // try from most specific to least specific
-        return  this.lookup(SensorTypeSelector.NAME, sensorType.name, visualization) ||
-                this.lookup(SensorTypeSelector.UNIT, sensorType.unit, visualization) ||
-                this.lookup(SensorTypeSelector.MEASURE, sensorType.measure, visualization) ||
+        return  this.lookup(RegistrationScope.NAME, sensorType, visualization) ||
+                this.lookup(RegistrationScope.MEASURE, sensorType, visualization) ||
                 null;
     }
 
 
-    private lookup(selector: SensorTypeSelector, selectorValue: string, visualization: ReadingVisualization): SensorReadingRenderer | undefined {
+    private lookup(scope: RegistrationScope, sensorType: SensorType, visualization: ReadingVisualization): SensorReadingRenderer | undefined {
+        const identifier = identifierFromSensorType(scope, sensorType);
         return this.renderers.get(this.keyToString({
-            selector, selectorValue, visualization
+            scope, identifier, visualization
         }));      
     }
 
     // have to convert the composite key to a string because Maps do not do "by value" quality for non-primitive types.
     // Object equality means reference equality. 
-    private keyToString(key: RendererKey) {
-        return `${key.selector}:${key.selectorValue}:${key.visualization}`;
+    private keyToString(key: RegistrationKey) {
+        return `${key.scope}:${key.identifier}:${key.visualization}`;
     }
 }
