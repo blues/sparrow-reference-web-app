@@ -2,24 +2,20 @@ import { useRouter } from "next/router";
 import { Card, Col, Row, Typography } from "antd";
 import NodeCard from "./FlexibleNodeCard";
 import {
-  getFormattedLastSeen,
+  asNumber,
+  findCurrentReadingWithName,
   getFormattedLastSeenDate,
   getFormattedVoltageData,
 } from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
-import { Gateway, SensorTypeCurrentReading, GatewaySensorTypeNames, NodeSensorTypeNames } from "../../services/AppModel";
+import { Gateway, GatewaySensorTypeNames } from "../../services/AppModel";
 
 import styles from "../../styles/Home.module.scss";
 import cardStyles from "../../styles/Card.module.scss";
 
-
 interface GatewayProps {
   gateway: Gateway;
   index: number;
-}
-
-function findCurrentReadingWithName(gateway: Gateway, name: SensorTypeCurrentReading["sensorType"]["name"]) : SensorTypeCurrentReading | undefined{
-  return gateway.currentReadings?.find((sensorTypeReading) => name===sensorTypeReading.sensorType.name);
 }
 
 const GatewayCardComponent = (props: GatewayProps) => {
@@ -39,8 +35,8 @@ const GatewayCardComponent = (props: GatewayProps) => {
   
   // we hard code some of the gateway readings for now. We will make this more open-ended in future with the site redesign
   const formattedGatewayVoltage = getFormattedVoltageData(
-    findCurrentReadingWithName(gateway, GatewaySensorTypeNames.VOLTAGE)?.reading?.numericValue || undefined
-  ) || GATEWAY_MESSAGE.NO_VOLTAGE;
+    asNumber(findCurrentReadingWithName(gateway, GatewaySensorTypeNames.VOLTAGE)?.reading?.value)
+) || GATEWAY_MESSAGE.NO_VOLTAGE;
 
 
   const formattedLocation = findCurrentReadingWithName(gateway, GatewaySensorTypeNames.LOCATION) || GATEWAY_MESSAGE.NO_LOCATION;
