@@ -164,6 +164,7 @@ const standardSchemas:BareReadingSchema[] = [
         uuid: "1824c8b0-2ef2-458b-802c-abd869429af0",
         displayName: referenceSensorName("PIR Motion"),
         displayMeasure: "Motion Count",
+        // todo - rename to notefileName?
         eventName: nodeEvent(motion.qo),
         valueType: ReadingSchemaValueType.SCALAR_INT,
         unit: "",

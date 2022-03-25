@@ -14,9 +14,7 @@ type SensorWithSchema = Sensor & { schema: ReadingSchema };
 
 export default class PrismaDatastoreEventHandler implements SparrowEventHandler {
 
-    constructor(private prisma: PrismaClient) {
-
-    }
+    constructor(private prisma: PrismaClient) {}
 
     /**
      * Handles a SparrowEvent relating to a gateway or a node. 

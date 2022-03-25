@@ -75,8 +75,6 @@ class DomainAppModelBuilder implements AppModelBuilder {
         return project;
     }
 
-
-
     buildHierarchy(gateways: Set<DomainModel.GatewayWithNodes>, visitor:Visitor): AppModel.Gateway[] {
         const result = this.buildGateways(gateways, visitor);
         let index = 0;
