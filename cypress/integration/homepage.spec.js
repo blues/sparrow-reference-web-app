@@ -58,7 +58,7 @@ describe("Sparrow Application", () => {
     );
   });
 
-  it.only("should be able to click on a node card and see more details about that node and update the name and location of that node", function () {
+  it("should be able to click on a node card and see more details about that node and update the name and location of that node", function () {
     // this keeps uncaught exceptions from failing Cypress tests
     Cypress.on("uncaught:exception", (err, runnable) => {
       return false;
