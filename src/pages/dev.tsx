@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { GetServerSideProps, NextPage } from "next";
 import { Carousel } from "antd";
 import { CarouselRef } from "antd/lib/carousel";
-import GatewayCard from "../components/elements/FlexibleGatewayCard";
+import FlexibleGatewayCard from "../components/elements/FlexibleGatewayCard";
 import { services } from "../services/ServiceLocator";
 import GatewayDEPRECATED from "../components/models/Gateway";
 import Node from "../components/models/Node";
@@ -34,7 +34,7 @@ const Home: NextPage<HomeData> = (homeData: HomeData) => {
         Gateway
       </h2>
         {gateways && gateways.map(( gateway, index) => (
-          <GatewayCard
+          <FlexibleGatewayCard
             key={gateway.id.gatewayDeviceUID}
             index={index}
             gateway={gateway}
