@@ -21,7 +21,7 @@ interface Visitor {
 
     visitProject(app: AppModel.Project, domain: DomainModel.Project):typeof app;
     visitNode(app: AppModel.Node, domain: DomainModel.Node):typeof app;
-    visitateway(app: AppModel.Gateway, domain: DomainModel.Gateway):typeof app;
+    visitGateway(app: AppModel.Gateway, domain: DomainModel.Gateway):typeof app;
     
 }
 
@@ -38,7 +38,7 @@ class ReadingsSnapshotBuilderVisitor implements Visitor {
         return this.buildSnapshotReadings(app, domain);
     }
 
-    visitateway(app: AppModel.Gateway, domain: DomainModel.Gateway): typeof app {
+    visitGateway(app: AppModel.Gateway, domain: DomainModel.Gateway): typeof app {
         return this.buildSnapshotReadings(app, domain);
     }
 
