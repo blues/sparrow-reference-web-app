@@ -1,9 +1,7 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable import/prefer-default-export */
-import Prisma, {
-  PrismaClient,
-  ReadingSource,
-  ReadingSourceType,
-} from "@prisma/client";
+import Prisma, { PrismaClient } from "@prisma/client";
 import { ErrorWithCause } from "pony-cause";
 import GatewayDEPRECATED from "../../components/models/Gateway";
 import ReadingDEPRECATED from "../../components/models/readings/Reading";
@@ -11,23 +9,77 @@ import NodeDEPRECATED from "../../components/models/Node";
 import {
   DataProvider,
   QueryResult,
-  SimpleFilter,
-  latest,
   QueryHistoricalReadings,
+  BulkImport,
 } from "../DataProvider";
 import {
   ProjectID,
-  Project,
   ProjectReadingsSnapshot,
   SensorHost,
   SensorHostReadingsSnapshot,
   SensorType,
   Reading,
-  SensorHostWithSensors,
   ProjectHistoricalData,
 } from "../DomainModel";
 import Mapper from "./PrismaDomainModelMapper";
+import {
+  serverLogError,
+  serverLogInfo,
+  serverLogProgress,
+} from "../../pages/api/log";
+import { NotehubAccessor } from "../notehub/NotehubAccessor";
+import { SparrowEventHandler } from "../SparrowEvent";
+import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
+import NotehubDataProvider from "../notehub/NotehubDataProvider";
+import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
 import { ERROR_CODES, getError } from "../Errors";
+
+// Todo: Should be dependency injected?
+async function manageGatewayImport(
+  bi: BulkImport,
+  p: PrismaClient,
+  project: Prisma.Project,
+  gateway: GatewayDEPRECATED
+) {
+  const b = bi;
+  serverLogInfo("gateway import", gateway.name, gateway.uid);
+  try {
+    b.itemCount += 1;
+    await p.gateway.upsert(gatewayTransformUpsert(gateway, project));
+  } catch (cause) {
+    b.errorCount += 1;
+    b.itemCount -= 1;
+    serverLogError(
+      `Failed to import gateway "${gateway.name}": ${cause}`.replaceAll(
+        `\n`,
+        " "
+      )
+    );
+  }
+}
+
+async function manageNodeImport(
+  bi: BulkImport,
+  p: PrismaClient,
+  project: Prisma.Project,
+  node: NodeDEPRECATED
+) {
+  const b = bi;
+  serverLogInfo("node import", node.name, node.nodeId, node.gatewayUID);
+  try {
+    b.itemCount += 1;
+    await p.node.upsert(nodeTransformUpsert(node));
+  } catch (cause) {
+    b.errorCount += 1;
+    b.itemCount -= 1;
+    serverLogError(
+      `Failed to import node "${node.name}" (${node.nodeId}): ${cause}`.replaceAll(
+        `\n`,
+        " "
+      )
+    );
+  }
+}
 
 /**
  * Implements the DataProvider service using Prisma ORM.
@@ -41,7 +93,70 @@ export class PrismaDataProvider implements DataProvider {
     private projectUID: ProjectID // todo - remove
   ) {}
 
-  private async currentProjectID(): Promise<ProjectID> {
+  async doBulkImport(
+    source?: NotehubAccessor,
+    target?: SparrowEventHandler
+  ): Promise<BulkImport> {
+    serverLogInfo("Bulk import starting");
+    const b: BulkImport = { itemCount: 0, errorCount: 0 };
+
+    if (!source)
+      throw new Error("PrismaDataProvider needs a source for bulk data import");
+    if (!target)
+      throw new Error("PrismaDataProvider needs a target for bulk data import");
+
+    const project = await this.currentProject();
+
+    // Some  details have to be fetched from the notehub api (because some
+    // gateway details like name are only available in environment variables)
+    const notehubProvider = new NotehubDataProvider(source, {
+      type: "ProjectID",
+      projectUID: project.projectUID,
+    });
+    const gateways = await notehubProvider.getGateways();
+    for (const gateway of gateways) {
+      await manageGatewayImport(b, this.prisma, project, gateway);
+    }
+
+    const nodes = await notehubProvider.getNodes(gateways.map((g) => g.uid));
+    for (const node of nodes) {
+      await manageNodeImport(b, this.prisma, project, node);
+    }
+
+    // Todo: Once this is working, remove time limit
+    const now = new Date(Date.now());
+    const hoursBack = 240;
+    const startDate = new Date(now);
+    startDate.setUTCHours(now.getUTCHours() - hoursBack);
+
+    serverLogInfo(`Loading events since ${startDate}`);
+    const startDateAsString = `${Math.round(startDate.getTime() / 1000)}`;
+
+    const events = await source.getEvents(startDateAsString);
+
+    const isHistorical = true;
+    let i = 0;
+    for (const event of events) {
+      i += 1;
+      try {
+        await target.handleEvent(
+          sparrowEventFromNotehubEvent(event, project.projectUID),
+          isHistorical
+        );
+        b.itemCount += 1;
+      } catch (cause) {
+        serverLogError(`Error loading event ${event.uid}. Cause: ${cause}`);
+        b.errorCount += 1;
+      }
+      serverLogProgress("Loaded", events.length, i);
+    }
+
+    serverLogInfo("Bulk import complete");
+
+    return b;
+  }
+
+  private currentProjectID(): ProjectID {
     return this.projectUID;
   }
 
@@ -49,7 +164,7 @@ export class PrismaDataProvider implements DataProvider {
     // this is intentionally oversimplified - later will need to consider the current logged in user
     // Project should be included in each method so that this interface is agnostic of the fact that the application
     // works with just one project.
-    const projectID = await this.currentProjectID();
+    const projectID = this.currentProjectID();
     return this.findProject(projectID);
   }
 
@@ -60,7 +175,7 @@ export class PrismaDataProvider implements DataProvider {
       },
     });
     if (project === null) {
-      throw this.error(
+      throw new Error(
         `Cannot find project with projectUID ${projectID.projectUID}`
       );
     }
@@ -86,7 +201,7 @@ export class PrismaDataProvider implements DataProvider {
       },
     });
     if (gateway === null) {
-      throw this.error(
+      throw new Error(
         `Cannot find gateway with DeviceUID ${gatewayUID} in project ${project.projectUID}`
       );
     }
@@ -102,7 +217,7 @@ export class PrismaDataProvider implements DataProvider {
     return {
       uid: gw.deviceUID,
       name: gw.name || "", // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
-      location: gw.location || "",
+      location: gw.locationName || "",
       lastActivity: gw.lastSeenAt?.toDateString() || "", // todo - ideally this is simply cached
       voltage: 3.5,
       nodeList: [],
@@ -147,6 +262,7 @@ export class PrismaDataProvider implements DataProvider {
         },
       },
     };
+
     // this retrieves the hiearachy of project/gateway/node with the latest reading for each
     return this.prisma.project.findUnique({
       where: {
@@ -168,29 +284,25 @@ export class PrismaDataProvider implements DataProvider {
     });
   }
 
-  // eslint-disable-next-line consistent-return
   async queryProjectLatestValues(
     projectID: ProjectID
   ): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
     let prismaProject;
     try {
       prismaProject = await this.retrieveLatestValues(projectID);
-    } catch (e: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      if (e.message.includes("Can't reach database server")) {
-        throw getError(ERROR_CODES.DATABASE_NOT_RUNNING, { cause: e as Error });
-      }
+    } catch (cause) {
+      throw new ErrorWithCause("Error getting latest values from database.", {
+        cause,
+      });
     }
 
-    if (!prismaProject) {
-      throw getError(ERROR_CODES.NO_PROJECT_ID);
-    }
     // get the types indirectly so loose coupling
     type P = typeof prismaProject;
     type G = P["gateways"][number];
     type N = G["nodes"][number];
     type RS = G["readingSource"];
     type S = RS["sensors"][number];
+
     // map the data to the domain model
     const hostReadings = new Map<SensorHost, SensorHostReadingsSnapshot>();
 
@@ -266,17 +378,21 @@ export class PrismaDataProvider implements DataProvider {
     };
   }
 
+  async queryProjectReadingCount(
+    projectID: ProjectID
+  ): Promise<QueryResult<ProjectID, number>> {
+    const count = await this.prisma.reading.count();
+    return {
+      request: projectID,
+      results: count,
+    };
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   queryProjectReadingSeries(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     query: QueryHistoricalReadings
   ): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>> {
     throw new Error("Method not implemented.");
-  }
-
-  private error<E>(msg: string, cause?: E) {
-    if (cause) {
-      return new ErrorWithCause(msg, cause);
-    }
-
-    return new Error(msg);
   }
 }

@@ -6,16 +6,15 @@ import { DataProvider } from "./DataProvider";
 import { AttributeStore } from "./AttributeStore";
 import { SparrowEventHandler } from "./SparrowEvent";
 import { SparrowEvent } from "./notehub/SparrowEvents";
-import { ProjectID, ProjectReadingsSnapshot } from "./DomainModel";
+import { ProjectID } from "./DomainModel";
 import { IDBuilder } from "./IDBuilder";
+// eslint-disable-next-line import/no-named-as-default
 import AppModelBuilder from "./AppModelBuilder";
 import * as AppModel from "./AppModel";
 
 // this class / interface combo passes data and functions to the service locator file
 interface AppServiceInterface {
-  
   getGateways: () => Promise<Gateway[]>;
-  // todo - make the interface less chatty.  
   getGateway: (gatewayUID: string) => Promise<Gateway>;
   setGatewayName: (gatewayUID: string, name: string) => Promise<void>;
   getNodes: (gatewayUIDs: string[]) => Promise<Node[]>;
@@ -36,18 +35,19 @@ interface AppServiceInterface {
     loc: string
   ) => Promise<void>;
 
+  getLatestProjectReadings(): Promise<AppModel.Project>;
+  getReadingCount(): Promise<number>;
 
-  getLatestProjectReadings() : Promise<AppModel.Project>;
-  
-    // todo - ingesting events should be on a separate service? could even be a separate app.
-  handleEvent(event: SparrowEvent) : Promise<void>;
+  handleEvent(event: SparrowEvent): Promise<void>;
+
+  performBulkDataImport(): Promise<AppModel.BulkDataImportStatus>;
 }
 
 export type { AppServiceInterface };
 
 export default class AppService implements AppServiceInterface {
   private projectID: ProjectID;
-  
+
   constructor(
     projectUID: string,
     private readonly idBuilder: IDBuilder,
@@ -115,13 +115,43 @@ export default class AppService implements AppServiceInterface {
     }
   }
 
-  async getLatestProjectReadings() : Promise<AppModel.Project> {
+  async getLatestProjectReadings(): Promise<AppModel.Project> {
     const projectID = this.currentProjectID();
     const latest = await this.dataProvider.queryProjectLatestValues(projectID);
     return AppModelBuilder.buildProjectReadingsSnapshot(latest.results);
   }
 
+  async getReadingCount(): Promise<number> {
+    const projectID = this.currentProjectID();
+    const count = await this.dataProvider.queryProjectReadingCount(projectID);
+    return count.results;
+  }
+
   private currentProjectID() {
     return this.projectID;
+  }
+
+  async performBulkDataImport(): Promise<AppModel.BulkDataImportStatus> {
+    const t0 = performance.now();
+    try {
+      const b = await this.dataProvider.doBulkImport();
+      const t1 = performance.now();
+      return {
+        elapsedTimeMs: t1 - t0,
+        erroredItemCount: b.errorCount,
+        importedItemCount: b.itemCount,
+        state: "done",
+      };
+    } catch (cause) {
+      const t1 = performance.now();
+      return {
+        elapsedTimeMs: t1 - t0,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        err: `Please Try Again. Cause: ${cause}`,
+        erroredItemCount: 0,
+        importedItemCount: 0,
+        state: "failed",
+      };
+    }
   }
 }

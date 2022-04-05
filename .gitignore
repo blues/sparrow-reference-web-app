@@ -26,8 +26,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*local*
+# env files
+.env*
+!.env*.example
 
 # vercel
 .vercel
@@ -39,6 +40,7 @@ yarn-error.log*
 cypress/screenshots/
 cypress/videos/
 cypress/downloads/
-cypress.env.json
+cypress..json
+
 # Local Netlify folder
 .netlify

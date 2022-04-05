@@ -9,8 +9,6 @@ import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
 import { services } from "../../../../src/services/ServiceLocator";
 
 const authToken = process.env.HUB_AUTH_TOKEN;
-const gatewayUIDs = process.env.HUB_DEVICE_UID;
-const gatewayUID = gatewayUIDs.split(",")[0];
 
 function mockRequestResponse(method: RequestMethod = "GET") {
   const { req, res }: { req: NextApiRequest; res: NextApiResponse } =
@@ -19,7 +17,7 @@ function mockRequestResponse(method: RequestMethod = "GET") {
     [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
     [HTTP_HEADER.SESSION_TOKEN]: authToken,
   };
-  req.query = { gatewayUID: `${gatewayUID}` };
+  req.query = { gatewayUID: `dev:11111111111` };
   return { req, res };
 }
 

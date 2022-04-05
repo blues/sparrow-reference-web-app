@@ -6,9 +6,8 @@
 // readings. You'll find `undefined` at the points in the tree that we don't
 // care about in the context of an active QueryFilter.
 
-// The convention is that fields that are entirely optional (and may be absent) are 
+// The convention is that fields that are entirely optional (and may be absent) are
 // marked with ?.  Fields that may have undefined values (e.g. no name set) can also be null.
-
 
 export interface GatewayID {
   readonly type: "GatewayID";
@@ -19,7 +18,6 @@ export interface GatewayID {
   readonly gatewayDeviceUID: string;
 }
 
-
 export interface NodeID {
   readonly type: "NodeID";
 
@@ -28,7 +26,6 @@ export interface NodeID {
    */
   readonly nodeID: string;
 }
-
 
 export interface SensorTypeID {
   readonly type: "SensorTypeID";
@@ -51,13 +48,13 @@ export interface Project {
 
 export type Gateways = Set<Gateway>;
 
-export type ProjectWithGateways = Project & { 
+export type ProjectWithGateways = Project & {
   gateways: Gateways;
-}
+};
 
-export type ProjectHierarchy = Project & { 
+export type ProjectHierarchy = Project & {
   gateways: Set<GatewayWithNodes>;
-}
+};
 
 /**
  * Seconds since the epoch
@@ -70,19 +67,13 @@ export interface SensorHost {
   descriptionBig: string | null;
   descriptionSmall: string | null;
   lastSeen: DomainDate | null;
+  locationName: string | null;
 }
 
 export type Sensors = Set<Sensor>;
-export type SensorHostWithSensors = SensorHost & {  
+export type SensorHostWithSensors = SensorHost & {
   sensors: Sensors;
-}
-
-// todo - doesn't belong here, but in a location dedicated to sensor formats.
-// i.e. location is not a property but a sensor reading. 
-export interface Location {
-  name: string;
-  country: string;
-}
+};
 
 export interface Gateway extends SensorHost {
   readonly id: GatewayID; // Reference across the whole system architecture
@@ -92,21 +83,11 @@ export interface Gateway extends SensorHost {
 export type Nodes = Set<Node>;
 export type GatewayWithNodes = Gateway & {
   nodes: Nodes;
-}
+};
 
-
-// OLC is a storage format. This doesn't beling here. Instead we should expose the location in meaningful form
-// and independent form the on-device format. 
-export type LocationOLC = string;
 export interface Node extends SensorHost {
   readonly id: NodeID;
   // Attributes
-
-  /**
-   * The human-readable location.
-   */
-  location: string | null;
-
 }
 
 /**
@@ -121,10 +102,10 @@ export interface Sensor {
 }
 
 export interface ReadingBySensorType {
-  get(s: SensorType) : Reading | undefined;
+  get(s: SensorType): Reading | undefined;
 }
 
-export type SensorTypes = Map<String, SensorType>;
+export type SensorTypes = Map<string, SensorType>;
 
 /**
  * Describes a point-in-time slice through the readings for a SensorHost. This represents the last known values at the time given
@@ -165,29 +146,28 @@ export interface SensorHostReadingsSeries {
 }
 
 export interface SensorType {
-
-  id: SensorTypeID,
+  id: SensorTypeID;
 
   /**
    * A unique name expressed as a javascript identifier for this sensor type in this project.
    */
-  name: string;            
-  
+  name: string;
+
   /**
-   * A class name for this sensor type expressed as a javascript identifier. This is used to categorize sensors 
+   * A class name for this sensor type expressed as a javascript identifier. This is used to categorize sensors
    * that read the same type of information.
    */
   measure: string;
 
   /**
-   * A presentable name for this type of sensor. For example, "Gateway Location". 
+   * A presentable name for this type of sensor. For example, "Outdoor Temperature".
    */
   displayName: string;
 
   /**
    * A presentable name for the measurement read by this sensor, such as "Temperature".
    */
-  displayMeasure: string;        // Temperature, etc. Used as "class" identifier (general type name) - human readable
+  displayMeasure: string; // Temperature, etc. Used as "class" identifier (general type name) - human readable
 
   /**
    * The name of the unit this type of sensor measures in.
@@ -197,22 +177,19 @@ export interface SensorType {
   unit: string;
 
   /**
-   * Symbolic representation of the unit this type of sensor measures in. Can be null if the quantity is dimensionless. 
+   * Symbolic representation of the unit this type of sensor measures in. Can be null if the quantity is dimensionless.
    * If the unit is dimensionless the unit is the empty string.
-  */
+   */
   unitSymbol: string; // K, M, etc.
 
   /**
    * The spec for the type of data produced by each reading.
    */
   spec: JSONValue;
-  
-
-  // todo - should we handle simple numeric values as a very common special case?
 }
 
 /**
- * Describes a sensor reading. 
+ * Describes a sensor reading.
  */
 export interface Reading {
   /**
@@ -221,10 +198,9 @@ export interface Reading {
   when: DomainDate;
 
   /**
-   * The value of the sensor reading. 
+   * The value of the sensor reading.
    */
-  value: JSONValue; 
-
+  value: JSONValue;
 }
 
 export type JSONObject = { [key in string]?: JSONValue };
@@ -239,8 +215,7 @@ export type JSONValue =
 /**
  * This is the model for displaying the latest values for the whole project.
  */
- export type ProjectReadingsSnapshot = {
-
+export type ProjectReadingsSnapshot = {
   /**
    * The timestamp of the snapshot. All readings will have been taken on or before the snapshot.
    */
@@ -252,7 +227,7 @@ export type JSONValue =
   readonly project: ProjectHierarchy;
 
   /**
-   * The readings for each sensor host. Each host is provided in the project hierarchy. 
+   * The readings for each sensor host. Each host is provided in the project hierarchy.
    * If the host does not correspond to one of the sensor hosts in the hierarchy, an exception is thrown.
    */
   hostReadings(sensorHost: SensorHost): SensorHostReadingsSnapshot;
@@ -263,26 +238,28 @@ export type JSONValue =
    * @param sensorHost  The sensor host the reading is present on.
    * @param readingName The name of the reading to retrieve.
    */
-  hostReadingByName(sensorHost: SensorHost, readingName: SensorTypeNames): Reading | undefined;
-
-}
+  hostReadingByName(
+    sensorHost: SensorHost,
+    readingName: SensorTypeNames
+  ): Reading | undefined;
+};
 
 /**
  * Historical data for gateways and nodes.
- **/
-export type ProjectHistoricalData = { 
+ */
+export type ProjectHistoricalData = {
   /**
    * The period of time the historical data is taken from.
-   */ 
+   */
   readonly period: TimePeriod;
 
   /**
    * The sensor hierarchy.
    */
   readonly project: ProjectHierarchy;
-  
-  readonly hostReadings: Map<SensorHost, SensorHostReadingsSeries>; 
-}
+
+  readonly hostReadings: Map<SensorHost, SensorHostReadingsSeries>;
+};
 
 /**
  * Gateways and Sensors have a handful of known sensor types.
@@ -291,35 +268,34 @@ export type ProjectHistoricalData = {
  */
 
 export const enum GatewaySensorTypeNames {
-    VOLTAGE = "gateway_voltage",
-    SIGNAL_STRENGTH = "gateway_signal_strength",
-    TEMPERATURE = "gateway_temperature",
-    LOCATION = "gateway_location",
-    LORA_SIGNAL_STRENGTH = "gateway_lora_rssi"
+  VOLTAGE = "gateway_voltage",
+  SIGNAL_STRENGTH = "gateway_signal_strength",
+  TEMPERATURE = "gateway_temperature",
+  LOCATION = "gateway_location",
+  LORA_SIGNAL_STRENGTH = "gateway_lora_rssi",
 }
 
-
 export const enum NodeSensorTypeNames {
-    VOLTAGE = "node_voltage",
-    LORA_SIGNAL_STRENGTH = "node_lora_rssi",
-    PIR_MOTION = "pir_motion",
-    PIR_MOTION_TOTAL = "pir_motion_total",
-    HUMIDITY = "humidity",
-    TEMPERATURE = "temperature",
-    AIR_PRESSURE = "air_pressure"
+  VOLTAGE = "node_voltage",
+  LORA_SIGNAL_STRENGTH = "node_lora_rssi",
+  PIR_MOTION = "pir_motion",
+  PIR_MOTION_TOTAL = "pir_motion_total",
+  HUMIDITY = "humidity",
+  TEMPERATURE = "temperature",
+  AIR_PRESSURE = "air_pressure",
 }
 
 export const enum GatewaySensorMeasure {
   VOLTAGE = "voltage",
   SIGNAL_STRENGTH = "bars",
-  RSSI = "rssi",            // Received Signal Strength Indicator
+  RSSI = "rssi", // Received Signal Strength Indicator
   LOCATION = "location",
-  TEMPERATURE = "temperature"
+  TEMPERATURE = "temperature",
 }
 
 export const enum NodeSensorMeasure {
   RSSI = "rssi",
-  VOLTAGE = "voltage"
+  VOLTAGE = "voltage",
 }
 
 export type SensorTypeNames = GatewaySensorTypeNames | NodeSensorTypeNames;

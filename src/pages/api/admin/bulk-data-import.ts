@@ -2,19 +2,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { ErrorWithCause } from "pony-cause";
+import { services } from "../../../services/ServiceLocator";
+import { BulkDataImportStatus } from "../../../services/AppModel";
+import { serverLogError } from "../log";
 
-import { services } from "../../../../services/ServiceLocator";
-import { HTTP_STATUS } from "../../../../constants/http";
-import { serverLogError } from "../../log";
+const IMPORT = "import";
 
 interface ValidRequest {
-  gatewayUID: string;
-  name: string;
+  action: typeof IMPORT;
 }
 
 function validateMethod(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", ["POST"]);
+  if (req.method !== "PUT") {
+    res.setHeader("Allow", ["PUT"]);
     res.status(StatusCodes.METHOD_NOT_ALLOWED);
     res.json({ err: `Method ${req.method || "is undefined."} Not Allowed` });
     return false;
@@ -26,35 +26,29 @@ function validateRequest(
   req: NextApiRequest,
   res: NextApiResponse
 ): false | ValidRequest {
-  const { gatewayUID } = req.query;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { name } = req.body;
+  const { action } = req.body;
 
-  // Gateway UID must be a string
-  if (typeof gatewayUID !== "string") {
+  // action must be
+  if (typeof action !== "string" || action !== IMPORT) {
     res.status(StatusCodes.BAD_REQUEST);
-    res.json({ err: HTTP_STATUS.INVALID_GATEWAY });
-    return false;
-  }
-  if (typeof name !== "string") {
-    res.status(StatusCodes.BAD_REQUEST);
-    res.json({ err: HTTP_STATUS.INVALID_GATEWAY_NAME });
+    res.json({ err: `action must be ${IMPORT}` });
     return false;
   }
 
-  return { gatewayUID, name };
+  return { action };
 }
 
-async function performRequest({ gatewayUID, name }: ValidRequest) {
+async function performRequest(): Promise<BulkDataImportStatus | undefined> {
   const app = services().getAppService();
   try {
-    await app.setGatewayName(gatewayUID, name);
+    return await app.performBulkDataImport();
   } catch (cause) {
     throw new ErrorWithCause("Could not perform request", { cause });
   }
 }
 
-export default async function gatewayNameHandler(
+export default async function bulkDataImportHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -67,12 +61,12 @@ export default async function gatewayNameHandler(
   }
 
   try {
-    await performRequest(validRequest);
-    res.status(StatusCodes.OK).json({});
+    const result = await performRequest();
+    res.status(StatusCodes.OK).json(result);
   } catch (cause) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
     res.json({ err: ReasonPhrases.INTERNAL_SERVER_ERROR });
-    const e = new ErrorWithCause("could not set gateway name", { cause });
+    const e = new ErrorWithCause("bulkDataImportHandler Error:", { cause });
     serverLogError(e);
     throw e;
   }

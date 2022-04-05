@@ -21,21 +21,21 @@ import VoltageSensorReading from "../../components/models/readings/VoltageSensor
 import CountSensorReading from "../../components/models/readings/CountSensorReading";
 import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
 import {
-  Project,
-  ProjectID,
-  ProjectReadingsSnapshot,
   Gateway,
-  Node,
-  SensorType,
-  ProjectHierarchy,
   Gateways,
   GatewayWithNodes,
+  Node,
+  Project,
+  ProjectHierarchy,
+  ProjectHistoricalData,
+  ProjectID,
+  ProjectReadingsSnapshot,
+  Reading,
   SensorHost,
   SensorHostReadingsSnapshot,
+  SensorType,
   SensorTypeNames,
-  ProjectHistoricalData,
   TimePeriod,
-  Reading,
 } from "../DomainModel";
 import Config from "../../../config";
 import {
@@ -82,6 +82,11 @@ export default class NotehubDataProvider implements DataProvider {
     private readonly projectID: ProjectID
   ) {}
 
+  // eslint-disable-next-line class-methods-use-this
+  doBulkImport(): Promise<never> {
+    throw new Error("It's not possible to do bulk import of data to Notehub");
+  }
+
   /**
    * We made the interface more general (accepting a projectID) but the implementation has the
    * ID fixed. This is a quick check to be sure the project ID is the one expected.
@@ -110,10 +115,12 @@ export default class NotehubDataProvider implements DataProvider {
     const results: ProjectReadingsSnapshot = {
       when: Date.now(),
       project,
-      hostReadings(sensorHost: SensorHost): SensorHostReadingsSnapshot {
+      hostReadings: function (
+        sensorHost: SensorHost
+      ): SensorHostReadingsSnapshot {
         throw new Error("Function not implemented.");
       },
-      hostReadingByName(
+      hostReadingByName: function (
         sensorHost: SensorHost,
         readingName: SensorTypeNames
       ): Reading | undefined {
@@ -133,6 +140,12 @@ export default class NotehubDataProvider implements DataProvider {
       project: await this.buildProjectHierarchy(request.projectFilter),
     };
     return { request, results };
+  }
+
+  queryProjectReadingCount(
+    projectID: ProjectID
+  ): Promise<QueryResult<ProjectID, number>> {
+    throw new Error("Method not implemented.");
   }
 
   private async buildProjectHierarchy(

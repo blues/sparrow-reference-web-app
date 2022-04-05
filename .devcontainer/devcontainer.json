@@ -13,13 +13,18 @@
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
-    "esbenp.prettier-vscode",
-    "eamodio.gitlens",
-    "dbaeumer.vscode-eslint",
+    "aaron-bond.better-comments",
     "ban.spellright",
     "christian-kohler.path-intellisense",
-    "aaron-bond.better-comments"
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "Prisma.prisma"
   ],
+
+  "features": {
+    "docker-from-docker": {}
+  },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   //"forwardPorts": [],

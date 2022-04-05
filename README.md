@@ -3,59 +3,128 @@
 An example web application to configure and view sensor data from Blues Wireless Sparrow devices.
 
 - [🐦 Sparrow Reference Web App](#-sparrow-reference-web-app)
-  - [Setup](#setup)
+  - [Development Overview](#development-overview)
     - [Clone This Repository](#clone-this-repository)
-    - [Environment Variables](#environment-variables)
-      - [HUB_AUTH_TOKEN](#hub_auth_token)
-      - [HUB_DEVICE_UID](#hub_device_uid)
-      - [HUB_PROJECTUID](#hub_projectuid)
     - [Dependencies](#dependencies)
-  - [Development](#development)
-  - [Testing](#testing)
-    - [Testing with Jest](#testing-with-jest)
-    - [Testing with Cypress](#testing-with-cypress)
-  - [Deploying](#deploying)
+      - [(Recommended) Visual Studio Code Dev Container](#recommended-visual-studio-code-dev-container)
+      - [(Not Recommended) Dependencies without VS Code](#not-recommended-dependencies-without-vs-code)
+    - [Configuration (Environment Variables)](#configuration-environment-variables)
+      - [HUB_AUTH_TOKEN](#hub_auth_token)
+      - [HUB_PROJECTUID](#hub_projectuid)
+      - [DATABASE_URL](#database_url)
+    - [Routing](#routing)
+    - [Create a tunnel to a server running the reference app](#create-a-tunnel-to-a-server-running-the-reference-app)
+      - [Localtunnel](#localtunnel)
+      - [Ngrok](#ngrok)
+    - [Set up a Notehub route to your tunnel](#set-up-a-notehub-route-to-your-tunnel)
+    - [Database](#database)
+      - [Create the database](#create-the-database)
+      - [Troubleshooting Sparrow getting data from Postgres](#troubleshooting-sparrow-getting-data-from-postgres)
+    - [Web App Development](#web-app-development)
+    - [Bulk Data Import](#bulk-data-import)
+  - [Cloud Deployment](#cloud-deployment)
     - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
     - [Deploy on Vercel](#deploy-on-vercel)
     - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
   - [Known Issues](#known-issues)
+    - [Security](#security)
+  - [Testing](#testing)
+    - [Testing with Jest](#testing-with-jest)
+    - [Testing with Cypress](#testing-with-cypress)
   - [Support](#support)
 
-## Setup
+## Development Overview
 
-To get started with running the Sparrow Reference Web App you need to:
+To get started you need to:
 
 - [Create a Notehub account](https://dev.blues.io/notehub/notehub-walkthrough/) if you don't already have one.
-- [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project) for your Sparrow devices.
+- [Create a Notehub project](https://dev.blues.io/notehub/notehub-walkthrough/#create-a-new-project)
+  for your Sparrow devices.
 - [Set up a Sparrow Gateway and one or more sensors](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/7733505/Sparrow+Quickstart+Guide).
-- [Clone this repository](#clone-this-repository) to your local development environment.
-- Configure the starter app’s Notehub settings via [environment variables](#environment-variables).
+- [Clone this repository](#clone-this-repository) to your local development
+  environment.
 - Install the project’s development [dependencies](#dependencies).
-- Launch the Sparrow Reference Web App app in [development mode](#development).
+- Configure this starter web app via [environment variables](#configuration-environment-variables).
+- Start up a local [database](#database).
+- Set up event [routing](#routing).
+- Launch the Sparrow Reference Web App app in [development
+  mode](#web-app-development).
 
 ### Clone This Repository
 
-To start using the Sparrow Reference Web App you must clone this repository to your local development machine. You can do this with `git clone`.
+To start using the Sparrow Reference Web App you must clone this repository to
+your local development machine. You can do this with `git clone`.
 
 ```
 git clone https://github.com/blues/sparrow-reference-web-app.git
 ```
 
-Next, change directories to the `sparrow-reference-web-app` folder, as that’s where you’ll need to run all subsequent commands.
+Next, change directories to the `sparrow-reference-web-app` folder, as that’s
+where you’ll need to run all subsequent commands.
 
 ```
 cd sparrow-reference-web-app
 ```
 
-With your local project downloaded, you’ll next want to open up the `sparrow-reference-web-app` folder in your text editor or IDE of choice. Once you have the project open in your editor you’re ready to configure the project’s environment variables.
+With your local project downloaded, you’ll next want to open up the
+`sparrow-reference-web-app` folder in your text editor or IDE of choice. Once
+you have the project open in your editor you’re ready to configure the project’s
+environment variables.
 
-### Environment Variables
+### Dependencies
 
-The Sparrow Reference Web App uses a series of environment variables to store project-specific configuration. You _must_ define your own values for these variables for the Sparrow Reference Web App to run. You can follow the following steps to do so.
+#### (Recommended) Visual Studio Code Dev Container
 
-1. Create a `.env.local` file in the root of your project.
-1. Copy the contents of this repo’s [.env.local.example](.env.local.example) file, and paste it into your new `.env.local` file.
-1. Change the required values in your `.env.local` to your own values using the steps below.
+Although this project is designed for development on Linux, [VS Code](vscode)
+can quickly create a Linux ["Dev Container"](dev-container) on Windows, Mac, or
+Linux, **assuming you have [Docker](get-docker) installed**. When you open this
+folder in VSCode you will see a box propts you to 'Reopen in Container'.
+
+![reopen](readme-reopen-in-container.png)
+
+The Dev Container will automatically install Linux and the project dependencies,
+no matter which kind of operating system your development machine uses.
+
+[container-dev]: https://code.visualstudio.com/docs/remote/containers
+[vscode]: https://code.visualstudio.com/
+[get-docker]: https://docs.docker.com/get-docker/
+
+#### (Not Recommended) Dependencies without VS Code
+
+If you choose **not** to use a Dev Container in VSCode, you can install the
+project dependencies as follows.
+
+The Sparrow Reference Web App uses [Node.js](https://nodejs.org/en/) as a
+runtime, [Yarn](https://yarnpkg.com/) as a package manager, and
+[Volta](https://volta.sh/) as a way of enforcing consistent versions of all
+JavaScript-based tools. You can install these dependencies by following the
+steps below.
+
+1. Install Volta by following its installation
+   [instructions](https://docs.volta.sh/guide/getting-started).
+2. Run the command below in a terminal to install the appropriate versions of
+   both Node.js and Yarn.
+   ```
+   volta install node yarn
+   ```
+3. Navigate to the root of the Sparrow Reference Web App in your terminal or
+   command prompt and run `yarn install`, which installs the starter’s npm
+   dependencies.
+   ```
+   yarn install
+   ```
+4. Install the [PostgreSQL](https://www.postgresql.org/download/) database engine.
+
+### Configuration (Environment Variables)
+
+The Sparrow Reference Web App uses a series of environment variables to store
+project-specific configuration. You _must_ define your own values for these
+variables for the Sparrow Reference Web App to run. You can follow the following
+steps to do so.
+
+1. Copy the [.env.example](.env.example) file, and name it `.env`.
+1. Change the required values in your `.env` to your own values using the steps
+   below.
 
 #### HUB_AUTH_TOKEN
 
@@ -80,20 +149,6 @@ Copy the value after the colon to set the environment variable in `.env.local`, 
 HUB_AUTH_TOKEN=BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD
 ```
 
-#### HUB_DEVICE_UID
-
-This is the unique identifier for your Sparrow Gateway’s Notecard device. You can find this by going to your Notehub project, clicking the **Devices** menu, and then double clicking your gateway in the list of devices.
-
-```
-HUB_DEVICE_UID=dev:038050040065363
-```
-
-For a project with multiple gateways, you can provide a comma separated list of device IDs.
-
-```
-HUB_DEVICE_UID=dev:038050040065363,dev:038050040065364,dev:038050040065365
-```
-
 #### HUB_PROJECTUID
 
 This is the unique identifier for your project in Notehub, and has the prefix `app:`. You can find this by going to your Notehub project, clicking the **Settings** menu, and then scrolling down to the **Project UID** heading.
@@ -102,40 +157,317 @@ This is the unique identifier for your project in Notehub, and has the prefix `a
 HUB_PROJECTUID=app:245dc5d9-f910-433d-a8ca-c66b35475689
 ```
 
-### Dependencies
+#### DATABASE_URL
 
-The Sparrow Reference Web App uses [Node.js](https://nodejs.org/en/) as a runtime, [Yarn](https://yarnpkg.com/) as a package manager, and [Volta](https://volta.sh/) as a way of enforcing consistent versions of all JavaScript-based tools. You can install these dependencies by following the steps below.
+The default for this variable is fine for development purposes. In a production
+environment you'll set it to point to your production database.
 
-1. Install Volta by following [its installation instructions](https://docs.volta.sh/guide/getting-started).
-2. Run the command below in a terminal to install the appropriate versions of both Node.js and Yarn.
+### Routing
+
+The Web App receives data from Notehub through a _Route_ created on Notehub.io
+and targeting the Web App.
+
+1. [Create a tunnel to a server running the reference app.](#create-a-tunnel-to-a-server-running-the-reference-app)
+   - Running the tunnel allows your local copy of the reference app to be accessible on the public internet. This is necessary for Notehub to route events to your local setup.
+2. [Set up a Notehub route to your tunnel.](#set-up-a-notehub-route-to-your-tunnel)
+   - When Notehub receives an event it can optionally route that event to other servers. In this step, you’ll have Notehub route events to your local setup via the tunnel you created in step #1.
+
+### Create a tunnel to a server running the reference app
+
+The Sparrow reference app contains logic to process incoming Notehub events. But in order for Notehub to forward data to your local app for processing, your local app must be accessible from the public internet.
+
+To make your local environment accessible you must set up a tunnel. You’re
+welcome to use any tunneling setup you’re comfortable using, but we recommend
+[localtunnel] or
+[ngrok](https://ngrok.com/).
+
+#### Localtunnel
+
+`localtunnel` is a simple free tunnel that gives you a consistent domain name,
+but not as reliable as ngrok, a oneliner:
+
+```sh
+$ npx localtunnel --port 4000 --subdomain acme
+Need to install the following packages:
+  localtunnel
+Ok to proceed? (y) y
+your url is: https://acme.loca.lt
+```
+
+#### Ngrok
+
+Ngrok is more reliable than localtunnel, and also free, but requires an e-mail
+signup, a modicum of setup, and worst of all does not give you a tunnel with a
+consistent domain name. **The inconsistent domain name will require you to
+update your [route](#routing) each time you start your tunnel.** To use ngrok
+you’ll first need to:
+
+- [Sign up for ngrok](https://dashboard.ngrok.com/signup). (It’s free to start.)
+- [Install ngrok](https://dashboard.ngrok.com/get-started/setup). (`brew install ngrok/ngrok/ngrok` works well for macOS users - yes 3 times is the recommended way by Ngrok itself.)
+- [Set up your ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken).
+
+Next, open a new VS Code terminal and run `ngrok http 4000`, which creates the tunnel itself.
 
 ```
-volta install node yarn
+ngrok http 4000
 ```
 
-3. Navigate to the root of the Sparrow Reference Web App in your terminal or command prompt and run `yarn install`, which installs the starter’s npm dependencies.
+If all went well, you should see a screen in your terminal that looks like the image below. ngrok is all now forwarding all requests to `https://<your-id>.ngrok.io` to `http://localhost:4000`. Copy the forwarding address (shown in the red box below) to your clipboard, as you’ll need it in the next step.
 
+![Example of ngrok running](https://user-images.githubusercontent.com/544280/161281285-0b20f600-3c88-4c81-98ea-aef7665f59d7.png)
+
+> **NOTE**: Your `ngrok` terminal needs to stay running for the tunnel to remain active. If you close and restart `ngrok` your URL will change.
+
+To verify everything worked correctly, you can try loading the URL you just copied in a web browser; you should see your reference app’s home page.
+
+### Set up a Notehub route to your tunnel
+
+With a tunnel in place, your next step is to create a route in Notehub that forwards events to your local app.
+
+To set up the route complete the following steps:
+
+- Visit [Notehub](https://notehub.io) and open the project you’re using for your Sparrow app.
+- Select **Routes** in the navigation on the left-hand side of the screen.
+- Click the **Create Route** link in the top right of the screen.
+- Find the **General HTTP/HTTPS Request/Response** route type, and click its **Select** button.
+- Give your route a name.
+- For the route **URL**, paste the ngrok URL you copied earlier, and append `/api/datastore/ingest`. For example your route should look something like `https://bb18-217-180-218-163.ngrok.io/api/datastore/ingest`.
+- Click the blue **Create new Route** button.
+
+And with that your route is now complete. When Notehub receives an event it should automatically route that event to your tunnel, and ultimately to your local app.
+
+> **NOTE** Event routing only happens when Notehub receives an event—therefore, your Sparrow hardware needs to generate new data and send it to Notehub for Notehub to invoke your route.
+
+Now that you have both a tunnel and route in place, your last step to get up and running is to create the database itself.
+
+### Database
+
+The Sparrow reference web app uses PostgreSQL to store data, including the data
+it receives from Notehub events. To set up your own PostgreSQL instance you need
+to complete the following steps.
+
+#### Create the database
+
+There are many different ways you might want to create a Postgres database. If
+you’re unsure how to start, we recommend running Postgres through Docker as
+follows.
+
+Open a terminal (VS Code: Terminal Menu > New Terminal) and run one of the
+following commands.
+
+```sh
+# Choose one:
+./dev.db.ephemeral.sh # Start a database which will delete its data when stopped
+./dev.db.persistent.sh # Start a database with data that persists after stopping and starting again.
 ```
-yarn install
+
+```sh
+$ ./dev.db.persistent.sh
+... elided ...
+Done in 2.65s.
+Database is now running the background. Use ./dev.db.stop.sh to stop it.
 ```
 
-With your environment variables set and dependencies installed, you’re now ready to start developing.
+This created a PostgreSQL database running in Docker. You can check by running
+the command `./dev.db.status.sh`.
 
-## Development
+```sh
+$ ./dev.db.status.sh
+398940737bae   postgres                                                                      "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   sparrow-postgresql-container
+```
 
-The Sparrow Reference Web App is built on top of [Next.js](https://nextjs.org/). You can start a Next.js development server using `yarn dev`.
+To stop the database
+
+```sh
+./dev.db.stop.sh # Stop the database (and delete the ephemeral data if any)
+```
+
+Stop the database
+
+```sh
+./dev.db.status.sh # Show whether the database is running
+./dev.db.delete.sh # to remove the persistent database data
+```
+
+If you'd like to connect to your locally running Postgres instance to ensure new
+Notehub events are being added, you can use the [Prisma
+Studio](https://www.prisma.io/studio) database management tool to easily
+explore.
+
+```sh
+./dev.db.manage.sh # Open a webpage at http://localhost:5555 that lets you explore the database
+```
+
+This will open up a new browser window at http://localhost:5555 where you can see your Prisma DB, its tables, and any data that currently resides therein, whether it's preseeded or has been routed in by Notehub.
+
+And just like any other database GUI, you can click into models to view data, manipulate data, filter, query, etc., etc.
+
+#### Troubleshooting Sparrow getting data from Postgres
+
+There's a number of gotchas that could be the reason your Notehub data's not making it to Postgres and your Sparrow app - try checking the following things:
+
+- Is Docker running the local Postgres instance on your machine?
+  - Currently there's no error message thrown if the Postgres Docker container's
+    not running
+- Does your Ngrok endpoint match what's in Notehub and have the suffix
+  `/api/datastore/ingest`?
+  - Be aware, every time the Ngrok connection is shut down and restarted, it
+    will be started up with a brand new URL, so you'll need to update the route
+    accordingly in Notehub to ensure data keeps flowing to it
+- Have you added the correct Postgres URL and Notehub project API env vars to
+  the `.env` file?
+
+### Web App Development
+
+The Sparrow Reference Web App uses the [Next.js](https://nextjs.org/) web
+framework to serve React-powered web pages and HTTP JSON APIs. You can start a
+Next.js development server using `yarn dev`.
 
 ```
 yarn dev
 ```
 
-With the development server running, open <http://localhost:4000> in your web browser to see your application.
+With the development server running, open <http://localhost:4000> in your web
+browser to see your application.
 
-Next.js automatically watches your project’s files, and updates your application as you make changes. To try it, open your app’s `src/pages/index.tsx` file, make a change, save the file, and notice how your browser automatically updates with the change.
+Next.js automatically watches your project’s files, and updates your application
+as you make changes. To try it, open your app’s `src/pages/index.tsx` file, make
+a change, save the file, and notice how your browser automatically updates with
+the change.
 
-The project’s `src/pages/api` directory are [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages. The Sparrow Reference Web App uses these routes in several places to access the [Notehub API](https://dev.blues.io/reference/notehub-api/api-introduction/).
+The project’s `src/pages/api` directory are
+[APIs](https://nextjs.org/docs/api-routes/introduction) as opposed to
+React-powered HTML pages.
+The Sparrow Reference Web App uses these routes in several places to access the
+[Notehub API](https://dev.blues.io/reference/notehub-api/api-introduction/)
+server without triggering a full-page reload.
 
-> **NOTE**: If you’re new to Next.js, the [Next.js official interactive tutorial](https://nextjs.org/learn/basics/create-nextjs-app) is a great way to learn the basics, and understand how the Sparrow Reference Web App works.
+> **NOTE**: If you’re new to Next.js, the [Next.js official interactive
+> tutorial](https://nextjs.org/learn/basics/create-nextjs-app) is a great way to
+> learn the basics, and understand how the Sparrow Reference Web App works.
+
+### Bulk Data Import
+
+The Sparrow Reference Web App can do a bulk import of historic data from Notehub
+to populate your database with any data from the past 10 days that might not
+have been routed due to, for example, your web app or database downtime.
+
+- Go to <http://localhost:4000/admin/bulk-data-import>
+- Click the button
+- Wait. If you're curious, watch the detailed log on the web app server logs
+  (terminal where you ran `yarn dev`).
+
+  ![Imported 3085 items in 1 minutes.](readme.bulk.data.import.png)
+
+## Cloud Deployment
+
+The Sparrow Reference Web App is a Next.js project, and is therefore easily deployable to any platform that supports Next.js applications. Below are specific instructions to deploy to a handful of common platforms.
+
+> **NOTE**: For all deployment options we recommend [creating a
+> fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) of this
+> repository, and performing all deployment steps on that fork.
+
+A PostgreSQL database will be required for any of the deployment methods below.
+Setting up a production PostgreSQL database is beyond the scope of this guide
+but, for a price, many cloud services such as [Azure Database
+Service](https://azure.microsoft.com/en-us/product-categories/databases/), [Heroku](https://www.heroku.com/postgres) or
+[Amazon AWS RDS](https://aws.amazon.com/rds/) can host a PostgreSQL database for
+you.
+
+### Deploy on Netlify (recommended)
+
+This repo contains [Netlify configuration](netlify.toml) that allows you to deploy to [Netlify](https://www.netlify.com/) with a simple button click! Click the button below to automatically fork this repo, set environment variables, and immediately to deploy to Netlify.
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-reference-web-app)
+
+Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Netlify](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4686203/Deploy+Sparrow+Reference+Web+App+with+Netlify) for more information.
+
+### Deploy on Vercel
+
+The next easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Vercel](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4817057/Deploy+the+Sparrow+Starter+Web+App+Using+Vercel) for more information.
+
+### Deploy on Microsoft Azure Cloud
+
+> **NOTE**: Running this site as Azure Container Instances will cost about $30/mo.
+
+Follow the steps below to deploy to [Microsoft Azure Cloud](https://azure.microsoft.com/en-us/). If you need more details on any of the steps, see
+[Docker’s documentation on deploying Docker containers on Azure](https://docs.docker.com/cloud/aci-integration/).
+
+**Build Machine and Cloud Setup**
+
+1. Sign up for [Azure](https://azure.microsoft.com/en-us/).
+1. Sign up for [Docker Hub](https://hub.docker.com/signup).
+1. Install [Docker](https://docs.docker.com/get-docker/).
+1. Install [docker-compose](https://docs.docker.com/compose/install/).
+1. Install the confusingly named [Compose
+   CLI](https://github.com/docker/compose-cli), which adds cloud-specific
+   compose-like support to `docker` via a wrapper of the standard `docker` cli.
+1. Check that _Compose CLI_ is working. `docker version | grep 'Cloud integration' && echo Yay || echo Boo`.
+1. Sign into Azure using `docker login azure`. See <https://docs.docker.com/cloud/aci-integration/>.
+1. Create a docker context on Azure named however you like. For example, `docker context create aci myacicontext`.
+
+**Configure the _sparrow-reference-web-app_ environment**
+
+1. `cp .env.example .env.production.local`
+2. Configure the _Required_ variables and the Azure variables.
+
+**Build and Deploy**
+
+`./deploy.sh`
+
+```
+...
+[+] Running 3/3
+ ⠿ Group sparrow-reference-web-app                   Created    6.3s
+ ⠿ sparrowreferencewebeapp-https-reverse-proxy  Created    113.8s
+ ⠿ sparrowreferencewebeapp                      Created    113.8s
+[deploy.sh] 🚀 Successful deployment.
+[deploy.sh] 🔃 To deploy new changes, simply run this script again.
+[deploy.sh] 🚮 To delete the deployment or see cloud details, visit the Azure Portal: https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.ContainerInstance%2FcontainerGroups
+[deploy.sh] ⏰ In a few minutes the site should be visible here:
+[deploy.sh] 🔜 https://mysparrowstarer.eastus.azurecontainer.io
+```
+
+## Known Issues
+
+**Performance**
+
+As the number of devices and readings increase, the loading time of the Sparrow
+Reference Web App’s pages increases as well. We are addressing this for the GA
+release.
+
+**Unable to change gateway name**
+
+Currently you cannot change the name of a gateway through the Sparrow Reference
+Web App user interface. If you would like to update a gateway’s name complete
+the following steps:
+
+1. Visit [Notehub](https://notehub.io) and open your project.
+1. Click **Devices** menu in the menu to view all devices on your project.
+1. Locate the device you would like to update in the device list, and double click it.
+1. Click the **Environment** tab to view the device’s environment variables.
+1. Update the value of the `_sn` environment variable to your new name.
+1. Click the **Save** button to save the name update.
+
+If you have the Sparrow Reference Web App already open you’ll have to refresh to
+see the name update in the UI. We are adding the ability to change a gateway’s
+name and environment variables for the GA release.
+
+**Incorrect “Last updated” date**
+
+Currently sensor nodes may display an incorrect “Last updated” date or time. You
+can see the node’s correct last-updated time by looking at the most recent
+reading on the node’s detail page. We are addressing this issue for the GA
+release.
+
+### Security
+
+Authentication and authorization are beyond the scope of this reference project.
+If you add basic auth or other auth that's based on HTTP headers you can easily
+add those headers to the notehub route to authorize it to route data to the web
+app.
 
 ## Testing
 
@@ -208,91 +540,8 @@ And `yarn cypress:open` launches the tests in the Cypress GUI.
 yarn cypress:open
 ```
 
-## Deploying
-
-The Sparrow Reference Web App is a Next.js project, and is therefore easily deployable to any platform that supports Next.js applications. Below are specific instructions to deploy to a handful of common platforms.
-
-> **NOTE**: For all deployment options we recommend [creating a fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) of this repository, and performing all deployment steps on that fork.
-
-### Deploy on Netlify (recommended)
-
-This repo contains [Netlify configuration](netlify.toml) that allows you to deploy to [Netlify](https://www.netlify.com/) with a simple button click! Click the button below to automatically fork this repo, set environment variables, and immediately to deploy to Netlify.
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-reference-web-app)
-
-Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Netlify](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4686203/Deploy+Sparrow+Reference+Web+App+with+Netlify) for more information.
-
-### Deploy on Vercel
-
-The next easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Vercel](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4817057/Deploy+the+Sparrow+Starter+Web+App+Using+Vercel) for more information.
-
-### Deploy on Microsoft Azure Cloud
-
-> **NOTE**: Running this site as Azure Container Instances will cost about $30/mo.
-
-Follow the steps below to deploy to [Microsoft Azure Cloud](https://azure.microsoft.com/en-us/). If you need more details on any of the steps, see
-[Docker’s documentation on deploying Docker containers on Azure](https://docs.docker.com/cloud/aci-integration/).
-
-**Build Machine and Cloud Setup**
-
-1. Sign up for [Azure](https://azure.microsoft.com/en-us/).
-1. Sign up for [Docker Hub](https://hub.docker.com/signup).
-1. Install [Docker](https://docs.docker.com/get-docker/).
-1. Install [docker-compose](https://docs.docker.com/compose/install/).
-1. Install the confusingly named [Compose
-   CLI](https://github.com/docker/compose-cli), which adds cloud-specific
-   compose-like support to `docker` via a wrapper of the standard `docker` cli.
-1. Check that _Compose CLI_ is working. `docker version | grep 'Cloud integration' && echo Yay || echo Boo`.
-1. Sign into Azure using `docker login azure`. See <https://docs.docker.com/cloud/aci-integration/>.
-1. Create a docker context on Azure named however you like. For example, `docker context create aci myacicontext`.
-
-**Configure the _sparrow-reference-web-app_ environment**
-
-1. `cp .env.local.example .env.production.local`
-2. Configure the _Required_ variables and the Azure variables.
-
-**Build and Deploy**
-
-`./deploy.sh`
-
-```
-...
-[+] Running 3/3
- ⠿ Group sparrow-reference-web-app                   Created    6.3s
- ⠿ sparrowreferencewebeapp-https-reverse-proxy  Created    113.8s
- ⠿ sparrowreferencewebeapp                      Created    113.8s
-[deploy.sh] 🚀 Successful deployment.
-[deploy.sh] 🔃 To deploy new changes, simply run this script again.
-[deploy.sh] 🚮 To delete the deployment or see cloud details, visit the Azure Portal: https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.ContainerInstance%2FcontainerGroups
-[deploy.sh] ⏰ In a few minutes the site should be visible here:
-[deploy.sh] 🔜 https://mysparrowstarer.eastus.azurecontainer.io
-```
-
-## Known Issues
-
-**Performance**
-
-As the number of devices and readings increase, the loading time of the Sparrow Reference Web App’s pages increases as well. We are addressing this for the GA release.
-
-**Unable to change gateway name**
-
-Currently you cannot change the name of a gateway through the Sparrow Reference Web App user interface. If you would like to update a gateway’s name complete the following steps:
-
-1. Visit [Notehub](https://notehub.io) and open your project.
-1. Click **Devices** menu in the menu to view all devices on your project.
-1. Locate the device you would like to update in the device list, and double click it.
-1. Click the **Environment** tab to view the device’s environment variables.
-1. Update the value of the `_sn` environment variable to your new name.
-1. Click the **Save** button to save the name update.
-
-If you have the Sparrow Reference Web App already open you’ll have to refresh to see the name update in the UI. We are adding the ability to change a gateway’s name and environment variables for the GA release.
-
-**Incorrect “Last updated” date**
-
-Currently sensor nodes may display an incorrect “Last updated” date or time. You can see the node’s correct last-updated time by looking at the most recent reading on the node’s detail page. We are addressing this issue for the GA release.
-
 ## Support
 
-If you run into any issues using this repo, feel free to [create an issue](/issues), or to [reach out on our developer forum](https://discuss.blues.io/).
+If you run into any issues using this repo, feel free to create an
+[issue](issues/new) on this repository, or to reach out on our developer
+[forum](https://discuss.blues.io/).

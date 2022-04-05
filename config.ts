@@ -8,19 +8,15 @@ const debugLog = console.log; // eslint-disable-line no-console
 */
 const env = {
   DEBUG_CONFIG: process.env.DEBUG_CONFIG,
-  HUB_APP_UID: process.env.HUB_APP_UID,
   HUB_AUTH_TOKEN: process.env.HUB_AUTH_TOKEN,
   HUB_BASE_URL: process.env.HUB_BASE_URL,
-  HUB_DEVICE_UID: process.env.HUB_DEVICE_UID,
+  HUB_GUI_URL: process.env.HUB_GUI_URL,
   HUB_PROJECTUID: process.env.HUB_PROJECTUID,
   NEXT_PUBLIC_BUILD_VERSION: process.env.NEXT_PUBLIC_BUILD_VERSION,
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
   DATABASE_URL: process.env.DATABASE_URL,
-  // TODO - delete when we're not making calls to the api from the server
-  APP_BASE_URL: process.env.APP_BASE_URL,
-  // TODO - delete when we're not making calls to the api from the server
-  DEPLOY_URL: process.env.DEPLOY_URL, // Netlify URL for an individual deploy
-  // todo delete in future - these values only exists so we can configure how far in the past we're pulling Notehub data
+  // todo delete in future - these values only exists so we can configure how
+  // far in the past we're pulling Notehub data
   HUB_HISTORICAL_DATA_RECENT_MINUTES:
     process.env.HUB_HISTORICAL_DATA_RECENT_MINUTES,
 };
@@ -35,9 +31,9 @@ const optionalEnvVar = (varName: keyof typeof env, defaultValue: string) => {
 
 const requiredEnvVar = (varName: keyof typeof env) => {
   const val = env[varName];
-  if (val === undefined) {
+  if (!val) {
     throw new Error(
-      `${varName} is not set in the environment. See .env.local.example for help.`
+      `${varName} is not set in the environment. See .env.example for help.`
     );
   }
   return val;
@@ -45,9 +41,6 @@ const requiredEnvVar = (varName: keyof typeof env) => {
 
 const Config = {
   // These are getters so undefined required variables do not throw errors at build time.
-  get appBaseUrl() {
-    return optionalEnvVar("DEPLOY_URL", "") || requiredEnvVar("APP_BASE_URL");
-  },
   get buildVersion() {
     return optionalEnvVar("NEXT_PUBLIC_BUILD_VERSION", "ver n/a");
   },
@@ -58,10 +51,7 @@ const Config = {
     return Boolean(optionalEnvVar("DEBUG_CONFIG", ""));
   },
   get hubProjectUID() {
-    return (
-      optionalEnvVar("HUB_APP_UID", "") || // TODO(carl) remove LOC once a-team devs shun HUB_APP_UID
-      requiredEnvVar("HUB_PROJECTUID")
-    );
+    return requiredEnvVar("HUB_PROJECTUID");
   },
   get hubAuthToken() {
     return requiredEnvVar("HUB_AUTH_TOKEN");
@@ -69,8 +59,8 @@ const Config = {
   get hubBaseURL() {
     return optionalEnvVar("HUB_BASE_URL", "https://api.notefile.net");
   },
-  get hubDeviceUID() {
-    return requiredEnvVar("HUB_DEVICE_UID");
+  get hubGuiURL() {
+    return optionalEnvVar("HUB_GUI_URL", "https://notehub.io");
   },
   get hubHistoricalDataRecentMinutes() {
     return parseInt(
@@ -81,7 +71,6 @@ const Config = {
   get databaseURL() {
     return optionalEnvVar("DATABASE_URL", "");
   },
-
 };
 
 const toString = (c: typeof Config | typeof env) => {

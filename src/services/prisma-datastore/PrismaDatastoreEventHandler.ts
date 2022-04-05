@@ -1,3 +1,4 @@
+/* eslint-disable prefer-rest-params */
 import {
   PrismaClient,
   Prisma,
@@ -11,6 +12,7 @@ import {
   Reading,
 } from "@prisma/client";
 import { ErrorWithCause } from "pony-cause";
+import { serverLogError, serverLogInfo } from "../../pages/api/log";
 import NotehubLocation from "../notehub/models/NotehubLocation";
 import { SparrowEvent, SparrowEventHandler } from "../SparrowEvent";
 
@@ -33,7 +35,15 @@ export default class PrismaDatastoreEventHandler
    * @param event
    * @returns
    */
-  public async handleEvent(event: SparrowEvent): Promise<void> {
+  public async handleEvent(
+    event: SparrowEvent,
+    isHistorical = false
+  ): Promise<void> {
+    const verbose = !isHistorical;
+    const verboseLog = verbose ? serverLogInfo : () => {};
+
+    verboseLog("handling event", event);
+
     // todo - should we validate the project? and create on demand?
     const project = await this.projectFromNaturalKey(event.projectUID);
 
@@ -79,9 +89,11 @@ export default class PrismaDatastoreEventHandler
         event.eventBody as Prisma.InputJsonValue
       )
     );
-    return Promise.all(promises).then((r: Reading[]) => {
-      console.log("added readings", r);
-    });
+    return Promise.all(promises)
+      .then((r: Reading[]) => {
+        verboseLog("added readings", r);
+      })
+      .catch((reason) => serverLogError(`Failed to add readings: ${reason}`));
   }
 
   private async sensorsForDeviceSchema(
@@ -118,7 +130,7 @@ export default class PrismaDatastoreEventHandler
       schemas
     );
     if (existingSensors.length !== schemas.length) {
-      console.log("adding missing sensors");
+      serverLogInfo("adding missing sensors");
       const sensorForSchema = new Map<number, Sensor>(); // map reading schema ID to sensor
       existingSensors.forEach((s) => {
         sensorForSchema.set(s.schema.id, s);
@@ -126,13 +138,11 @@ export default class PrismaDatastoreEventHandler
 
       // there are some sensors that need creating
       const toCreate = schemas.filter((s) => !sensorForSchema.has(s.id));
-      const batch = await this.prisma.sensor.createMany({
-        data: toCreate.map((schema) => {
-          return {
-            schema_id: schema.id,
-            reading_source_id: deviceReadingSource.id,
-          };
-        }),
+      await this.prisma.sensor.createMany({
+        data: toCreate.map((schema) => ({
+          schema_id: schema.id,
+          reading_source_id: deviceReadingSource.id,
+        })),
       });
       existingSensors = await this.sensorsForDeviceSchema(
         deviceReadingSource,
@@ -148,80 +158,45 @@ export default class PrismaDatastoreEventHandler
     when: Date,
     value: Prisma.InputJsonValue
   ) {
-    const schema = sensor.schema;
+    const { schema } = sensor;
+    let storedValue = value;
     const primaryValue = (schema.spec as any)[__primary];
     if (primaryValue) {
       switch (schema.valueType) {
         case ReadingSchemaValueType.SCALAR_INT:
-          value = (value as any)[primaryValue] as number;
+          storedValue = (value as any)[primaryValue] as number;
           break;
-
         case ReadingSchemaValueType.SCALAR_FLOAT:
-          value = (value as any)[primaryValue] as number;
+          storedValue = (value as any)[primaryValue] as number;
+          break;
+        case ReadingSchemaValueType.COMPOSITE:
+        default:
+          storedValue = value;
           break;
       }
     }
 
-    // update the latest reading.
-    // todo - this assumes readings are received in order. Check that the new reading is more recent than the existing one.
+    // update the latest reading. todo - this assumes readings are received in
+    // order. Check that the new reading is more recent than the existing one.
 
-    return this.prisma.reading
-      .create({
-        data: {
+    return this.prisma.reading.upsert({
+      where: {
+        sensor_id_when_value: {
           sensor_id: sensor.id,
           when,
-          value,
+          value: storedValue,
         },
-      })
-      .then((reading) => {
-        return this.prisma.sensor
-          .update({
-            where: {
-              id: sensor.id,
-            },
-            data: {
-              latest: {
-                connect: {
-                  id: reading.id,
-                },
-              },
-            },
-          })
-          .then(() => reading);
-      });
-  }
-
-  private async findNode(
-    project: Project,
-    deviceUID: string,
-    nodeEUI: string,
-    rejectOnNotFound = true
-  ) {
-    // todo - filter by project.
-    return await this.prisma.node.findUnique({
-      where: {
-        nodeEUI,
       },
-      include: {
-        readingSource: true,
+      create: {
+        sensor: { connect: { id: sensor.id } },
+        latest: { connect: { id: sensor.id } },
+        when,
+        value: storedValue,
       },
-      rejectOnNotFound,
-    });
-  }
-
-  private async findGateway(
-    project: Project,
-    deviceUID: string,
-    rejectOnNotFound = true
-  ) {
-    return await this.prisma.gateway.findUnique({
-      where: {
-        deviceUID,
+      update: {
+        // reading already exists
+        // no-op
       },
-      include: {
-        readingSource: true,
-      },
-      rejectOnNotFound,
     });
   }
 
@@ -239,12 +214,13 @@ export default class PrismaDatastoreEventHandler
   private upsertGateway(
     project: Project,
     deviceUID: string,
-    name: string,
+    gatewayName: string | undefined,
     lastSeenAt: Date,
     location?: NotehubLocation
   ) {
     const args = arguments;
-    name = name.substring(50);
+    const name = gatewayName;
+    const locationName = location?.name; // todo use structured location
 
     return this.prisma.gateway
       .upsert({
@@ -257,7 +233,7 @@ export default class PrismaDatastoreEventHandler
         create: {
           name,
           deviceUID,
-          location: location?.name,
+          locationName,
           project: {
             connect: {
               id: project.id,
@@ -272,7 +248,7 @@ export default class PrismaDatastoreEventHandler
         },
         update: {
           name,
-          location: location?.name, // todo use structured location
+          locationName,
           project: {
             connect: {
               id: project.id,
@@ -283,7 +259,7 @@ export default class PrismaDatastoreEventHandler
       })
       .catch((cause) => {
         throw new ErrorWithCause(
-          `error updating gateway ${deviceUID} ${JSON.stringify(args)}`,
+          `error upserting gateway ${deviceUID} ${JSON.stringify(args)}`,
           { cause }
         );
       });

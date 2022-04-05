@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+import { PrismaClient } from "@prisma/client";
 import AxiosHttpNotehubAccessor from "./notehub/AxiosHttpNotehubAccessor";
 import AppService, { AppServiceInterface } from "./AppService";
 import NotehubDataProvider from "./notehub/NotehubDataProvider";
@@ -6,48 +8,21 @@ import { UrlManager } from "../components/presentation/UrlManager";
 import { NextJsUrlManager } from "../adapters/nextjs-sparrow/NextJsUrlManager";
 import { AttributeStore } from "./AttributeStore";
 import { NotehubAccessor } from "./notehub/NotehubAccessor";
-import { DataProvider, QueryHistoricalReadings, QueryResult } from "./DataProvider";
+import { DataProvider } from "./DataProvider";
 import { NotehubAttributeStore } from "./notehub/NotehubAttributeStore";
 import PrismaDatastoreEventHandler from "./prisma-datastore/PrismaDatastoreEventHandler";
-import { PrismaClient } from "@prisma/client";
-import { NoopSparrowEventHandler, SparrowEventHandler } from "./SparrowEvent";
+import { SparrowEventHandler } from "./SparrowEvent";
+import NoopSparrowEventHandler from "./NoopSparrowEventHandler";
 import { PrismaDataProvider } from "./prisma-datastore/PrismaDataProvider";
+// eslint-disable-next-line import/no-named-as-default
 import IDBuilder, { SimpleIDBuilder } from "./IDBuilder";
-import Gateway from "../components/models/Gateway";
-import Node from "../components/models/Node";
-import ReadingDEPRECATED from "../components/models/readings/Reading";
-import { ProjectHistoricalData, ProjectID, ProjectReadingsSnapshot } from "./DomainModel";
+import CompositeDataProvider from "./prisma-datastore/CompositeDataProvider";
 
-// todo(must) - temporary. remove when notehub and datastore implementations are working
-class CompositeDataProvider implements DataProvider {
-  constructor(private notehubProvider: NotehubDataProvider, private prismaDataProvider: PrismaDataProvider) {}
-  
-  getGateways(): Promise<Gateway[]> {
-    return this.notehubProvider.getGateways();
-  }
-  getGateway(gatewayUID: string): Promise<Gateway> {
-    return this.notehubProvider.getGateway(gatewayUID);
-  }
-
-  getNodes(gatewayUIDs: string[]): Promise<Node[]> {
-    return this.notehubProvider.getNodes(gatewayUIDs);
-  }
-  getNode(gatewayUID: string, nodeId: string): Promise<Node> {
-    return this.notehubProvider.getNode(gatewayUID, nodeId);
-  }
-  getNodeData(gatewayUID: string, nodeId: string, minutesBeforeNow?: string | undefined): Promise<ReadingDEPRECATED<unknown>[]> {
-    return this.notehubProvider.getNodeData(gatewayUID, nodeId, minutesBeforeNow);
-  }
-
-  queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
-    return this.prismaDataProvider.queryProjectLatestValues(projectID);
-  }
-  queryProjectReadingSeries(query: QueryHistoricalReadings): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>> {
-    throw new Error("Method not implemented.");
-  }
-}
-
-// this class provides whatever service is needed to the React view component that needs it
+// ServiceLocator is the top-level consturction and dependency injection tool
+// for client-side (browser-side) and also server-side node code. It uses lazy
+// instanciation because some of these services are invalid to use browser-side.
+// Trying to instanciate them there would just throw an error about undefined
+// secret environment variables.
 class ServiceLocator {
   private appService?: AppServiceInterface;
 
@@ -64,7 +39,9 @@ class ServiceLocator {
   private eventHandler?: SparrowEventHandler;
 
   constructor() {
-    this.prisma = Config.databaseURL ? new PrismaClient({datasources: {db: { url: Config.databaseURL }}}) : undefined;
+    this.prisma = Config.databaseURL
+      ? new PrismaClient({ datasources: { db: { url: Config.databaseURL } } })
+      : undefined;
   }
 
   getAppService(): AppServiceInterface {
@@ -83,25 +60,34 @@ class ServiceLocator {
   private getDataProvider(): DataProvider {
     if (!this.dataProvider) {
       const projectID = IDBuilder.buildProjectID(Config.hubProjectUID);
-      const notehubProvider = new NotehubDataProvider(this.getNotehubAccessor(), projectID);
+      const notehubProvider = new NotehubDataProvider(
+        this.getNotehubAccessor(),
+        projectID
+      );
       if (this.prisma) {
-        const dataStoreProvider = new PrismaDataProvider(this.prisma, projectID);
-        const combinedProvider = new CompositeDataProvider(notehubProvider, dataStoreProvider);
+        const dataStoreProvider = new PrismaDataProvider(
+          this.prisma,
+          projectID
+        );
+        const combinedProvider = new CompositeDataProvider(
+          this.getEventHandler(),
+          this.getNotehubAccessor(),
+          notehubProvider,
+          dataStoreProvider
+        );
         this.dataProvider = combinedProvider;
-      }
-      else {
+      } else {
         this.dataProvider = notehubProvider;
       }
-      // todo factor this out so that we have clear separation of the notehub implementation from the datastore implementation
-      // lazy instantiation makes this harder - not sure why we have this since it's easier to just construct everything in a single method
-      // based on the configuration
     }
     return this.dataProvider;
   }
 
   private getEventHandler(): SparrowEventHandler {
-    if (!this.eventHandler) {      
-      this.eventHandler = this.prisma ? new PrismaDatastoreEventHandler(this.prisma) : new NoopSparrowEventHandler();
+    if (!this.eventHandler) {
+      this.eventHandler = this.prisma
+        ? new PrismaDatastoreEventHandler(this.prisma)
+        : new NoopSparrowEventHandler();
     }
     return this.eventHandler;
   }
@@ -110,7 +96,6 @@ class ServiceLocator {
     if (!this.notehubAccessor) {
       this.notehubAccessor = new AxiosHttpNotehubAccessor(
         Config.hubBaseURL,
-        Config.hubDeviceUID,
         Config.hubProjectUID,
         Config.hubAuthToken,
         Config.hubHistoricalDataRecentMinutes
@@ -133,7 +118,7 @@ class ServiceLocator {
       this.urlManager = NextJsUrlManager;
     }
     return this.urlManager;
-  }  
+  }
 }
 
 let Services: ServiceLocator | null = null;

@@ -5,6 +5,7 @@ interface NotehubEvent {
   captured: string;
   received: string;
   event_uid?: string;
+  note?: string;
   uid: string;
   device_uid?: string;
   body: {
