@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
 import { Layout } from "antd";
-import Header from "./Header";
 import Footer from "./Footer";
-import styles from "../../styles/Layout.module.scss";
+import Header from "./Header";
 import { LoadingSpinner } from "./LoadingSpinner";
+import Sider from "./Sider";
+import styles from "../../styles/Layout.module.scss";
 
 const LayoutComponent = ({
   children,
@@ -16,9 +17,12 @@ const LayoutComponent = ({
   return (
     <Layout>
       <Header />
-      <LoadingSpinner isLoading={isLoading}>
-        <Content className={styles.mainContent}>{children}</Content>
-      </LoadingSpinner>
+      <Layout>
+        <Sider />
+        <Content className={styles.mainContent}>
+          <LoadingSpinner isLoading={isLoading}>{children}</LoadingSpinner>
+        </Content>
+      </Layout>
       <Footer />
     </Layout>
   );

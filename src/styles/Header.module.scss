@@ -1,18 +1,16 @@
 @import "_variables.scss";
 
 .header {
-  display: flex;
-  justify-content: space-between;
   // required to override default Ant Design component styling
-  padding: 0 64px !important;
-
-  .logo {
-    display: flex;
-    align-items: center;
+  padding: 12px 30px !important;
+  height: 90px !important;
+  a {
+    display: block;
+    height: 35px;
   }
-
-  .headerText {
-    color: #fff;
-    font-size: 15px;
+  h2 {
+    color: $bw-color--brand1;
+    font-size: 1.1rem;
+    line-height: 1.1rem;
   }
 }

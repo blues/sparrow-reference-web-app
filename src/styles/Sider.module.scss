@@ -1,0 +1,33 @@
+@import "_variables.scss";
+
+.sider {
+  margin-right: 20px;
+  height: calc(100vh - 150px);
+}
+.menu {
+  height: 100%;
+
+  :global .ant-menu-submenu-title {
+    font-weight: bold;
+  }
+  // Ant uses !important for this so we have to as well
+  :global .ant-menu-item-disabled {
+    color: black !important;
+    cursor: default;
+  }
+}
+
+.otherLinks {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.notehubLink {
+  // Needed to override Ant rules
+  height: 60px !important;
+  display: flex;
+}
+
+.newPageIcon {
+  margin-bottom: 10px;
+}

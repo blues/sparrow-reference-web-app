@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Layout } from "antd";
 import Logo from "../../../public/images/sparrow_logo.svg";
 import styles from "../../styles/Header.module.scss";
-import config from "../../../config";
 
 const HeaderComponent = () => {
   const { Header } = Layout;
@@ -12,12 +11,10 @@ const HeaderComponent = () => {
     <Header className={styles.header}>
       <Link href="/">
         <a data-testid="logo">
-          <Image src={Logo} height={70} width={100} alt="Sparrow Logo" />
+          <Image src={Logo} width={100} alt="Sparrow Logo" />
         </a>
       </Link>
-      <h1 data-testid="company-name" className={styles.headerText}>
-        {config.companyName}
-      </h1>
+      <h2>powered by blues</h2>
     </Header>
   );
 };
