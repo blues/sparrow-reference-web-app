@@ -8,16 +8,21 @@ import AppContext from "../components/AppContext";
 import Layout from "../components/layout/Layout";
 import Gateway from "../components/models/Gateway";
 import { ERROR_MESSAGE } from "../constants/ui";
+import { services } from "../services/ServiceLocator";
 import "../styles/globals.css";
 
 require("../styles/antd-variables.less");
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+  const urlManager = services().getUrlManager();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [gateways, setGateways] = useState<Gateway[]>([]);
   const Router = useRouter();
-  const memoizedContext = useMemo(() => ({ error, gateways }), []);
+  const memoizedContext = useMemo(
+    () => ({ error, gateways }),
+    [error, gateways]
+  );
 
   useEffect(() => {
     Router.events.on("routeChangeStart", () => setIsLoading(true));
@@ -39,18 +44,20 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         data.sort((a, b) => (a.name > b.name ? 1 : -1));
         setGateways(data);
 
-        // If no gateway is currently selected, select the first one
+        // If no gateway is currently selected, navigate to the first one
         if (Router.pathname === "/") {
-          Router.push(`/${data[0].uid}/details`).catch(() => {});
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          Router.push(urlManager.gatewayDetailsPage(data[0].uid));
         } else {
           setIsLoading(false);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         setError(ERROR_MESSAGE.INTERNAL_ERROR);
         setIsLoading(false);
       });
-  }, [Router]);
+  }, [Router, urlManager]);
 
   return (
     <>

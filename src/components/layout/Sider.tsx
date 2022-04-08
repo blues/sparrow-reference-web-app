@@ -5,34 +5,38 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext } from "react";
 import AppContext from "../AppContext";
+import { services } from "../../services/ServiceLocator";
 import styles from "../../styles/Sider.module.scss";
 
 const { SubMenu } = Menu;
 
 const SiderComponent = () => {
+  const urlManager = services().getUrlManager();
   const { Sider } = Layout;
   const { gateways } = useContext(AppContext);
   const Router = useRouter();
 
-  let selectedKeys = [""];
+  let selectedKey = "";
   gateways.forEach((gateway) => {
     if (Router.asPath === `/${gateway.uid}/details`) {
-      selectedKeys = [gateway.uid];
+      selectedKey = gateway.uid;
     }
   });
 
   return (
     <Sider width={275} className={styles.sider}>
       <Menu
-        selectedKeys={selectedKeys}
-        openKeys={["gateways"]}
+        selectedKeys={[selectedKey]}
+        defaultOpenKeys={["gateways"]}
         mode="inline"
         className={styles.menu}
       >
         <SubMenu key="gateways" title="Gateways" icon={<GatewayOutlined />}>
           {gateways.map((gateway) => (
             <Menu.Item key={gateway.uid}>
-              <Link href={`/${gateway.uid}/details`}>{gateway.name}</Link>
+              <Link href={urlManager.gatewayDetailsPage(gateway.uid)}>
+                {gateway.name}
+              </Link>
             </Menu.Item>
           ))}
         </SubMenu>
@@ -42,7 +46,7 @@ const SiderComponent = () => {
         <Menu.Item key="notehubLink" className={styles.notehubLink}>
           {/* TODO: Link to the correct Notehub project */}
           <a
-            href="https://notehub.io/"
+            href="https://notehub.io"
             rel="noreferrer"
             target="_blank"
             className={styles.notehubLink}
