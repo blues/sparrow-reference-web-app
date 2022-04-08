@@ -1,21 +1,56 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react/jsx-props-no-spreading */
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
+import { getGateways } from "../api-client/gateway";
+import AppContext from "../components/AppContext";
 import Layout from "../components/layout/Layout";
+import Gateway from "../components/models/Gateway";
+import { ERROR_MESSAGE } from "../constants/ui";
 import "../styles/globals.css";
 
 require("../styles/antd-variables.less");
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [gateways, setGateways] = useState<Gateway[]>([]);
   const Router = useRouter();
+  const memoizedContext = useMemo(() => ({ error, gateways }), []);
 
   useEffect(() => {
     Router.events.on("routeChangeStart", () => setIsLoading(true));
     Router.events.on("routeChangeComplete", () => setIsLoading(false));
     Router.events.on("routeChangeError", () => setIsLoading(false));
   }, [Router.events]);
+
+  useEffect(() => {
+    getGateways()
+      .then((data: Gateway[]) => {
+        // If there are no gateways, show an error
+        if (data.length === 0) {
+          setError(ERROR_MESSAGE.GATEWAY_NOT_FOUND);
+          setIsLoading(false);
+          return;
+        }
+
+        // Sort the gateways in alphabetical order
+        data.sort((a, b) => (a.name > b.name ? 1 : -1));
+        setGateways(data);
+
+        // If no gateway is currently selected, select the first one
+        if (Router.pathname === "/") {
+          Router.push(`/${data[0].uid}/details`).catch(() => {});
+        } else {
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        setError(ERROR_MESSAGE.INTERNAL_ERROR);
+        setIsLoading(false);
+      });
+  }, [Router]);
 
   return (
     <>
@@ -35,9 +70,11 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           href="/favicon-16x16.png"
         />
       </Head>
-      <Layout isLoading={isLoading}>
-        <Component {...pageProps} />
-      </Layout>
+      <AppContext.Provider value={memoizedContext}>
+        <Layout isLoading={isLoading}>
+          <Component {...pageProps} />
+        </Layout>
+      </AppContext.Provider>
     </>
   );
 };

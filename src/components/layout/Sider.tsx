@@ -1,27 +1,40 @@
-import Image from "next/image";
-import React from "react";
-import { Layout, Menu } from "antd";
 import { GatewayOutlined } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useContext } from "react";
+import AppContext from "../AppContext";
 import styles from "../../styles/Sider.module.scss";
 
 const { SubMenu } = Menu;
 
 const SiderComponent = () => {
   const { Sider } = Layout;
+  const { gateways } = useContext(AppContext);
+  const Router = useRouter();
+
+  let selectedKeys = [""];
+  gateways.forEach((gateway) => {
+    if (Router.asPath === `/${gateway.uid}/details`) {
+      selectedKeys = [gateway.uid];
+    }
+  });
+
   return (
     <Sider width={275} className={styles.sider}>
       <Menu
-        onClick={() => {}}
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["gateways"]}
+        selectedKeys={selectedKeys}
+        openKeys={["gateways"]}
         mode="inline"
         className={styles.menu}
       >
         <SubMenu key="gateways" title="Gateways" icon={<GatewayOutlined />}>
-          {/* TODO: Get these dynamically. How? Good question! */}
-          <Menu.Item>tj-gateway</Menu.Item>
-          <Menu.Item>paige-gateway</Menu.Item>
-          <Menu.Item>zak-gateway</Menu.Item>
+          {gateways.map((gateway) => (
+            <Menu.Item key={gateway.uid}>
+              <Link href={`/${gateway.uid}/details`}>{gateway.name}</Link>
+            </Menu.Item>
+          ))}
         </SubMenu>
         <Menu.Item key="otherLinks" disabled className={styles.otherLinks}>
           Other Links
