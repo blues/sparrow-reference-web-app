@@ -8,26 +8,28 @@ In development, the Sparrow Reference Web App uses a local database to store inf
 
 To set up your own local database you must:
 
-1) [Create a tunnel to a server running the reference app.](#create-a-tunnel-to-a-server-running-the-reference-app)
-    * Running the tunnel allows your local copy of the reference app to be accessible on the public internet. This is necessary for Notehub to route events to your local setup.
+1. [Create a tunnel to a server running the reference app.](#create-a-tunnel-to-a-server-running-the-reference-app)
 
-2) [Set up a Notehub route to your tunnel.](#set-up-a-notehub-route-to-your-tunnel)
-    * When Notehub receives an event it can optionally route that event to other servers. In this step, you’ll have Notehub route events to your local setup via the tunnel you created in step #1.
+   - Running the tunnel allows your local copy of the reference app to be accessible on the public internet. This is necessary for Notehub to route events to your local setup.
 
-3) [Create a local Postgres database.](#create-a-local-postgres-database)
-    * The reference app uses a Postgres database to store the data it receives from Notehub. In this step you’ll set that up.
+2. [Set up a Notehub route to your tunnel.](#set-up-a-notehub-route-to-your-tunnel)
+
+   - When Notehub receives an event it can optionally route that event to other servers. In this step, you’ll have Notehub route events to your local setup via the tunnel you created in step #1.
+
+3. [Create a local Postgres database.](#create-a-local-postgres-database)
+   - The reference app uses a Postgres database to store the data it receives from Notehub. In this step you’ll set that up.
 
 ### Create a tunnel to a server running the reference app
 
-The Sparrow reference app contains logic to processes incoming Notehub events. But in order for Notehub to forward data to your local app for processing, your local app must be accessible from the public internet.
+The Sparrow reference app contains logic to process incoming Notehub events. But in order for Notehub to forward data to your local app for processing, your local app must be accessible from the public internet.
 
 To make your local environment accessible you must set up a tunnel. You’re welcome to use any tunneling setup you’re comfortable using, but we recommend [ngrok](https://ngrok.com/).
 
 To use ngrok you’ll first need to:
 
-* [Sign up for ngrok](https://dashboard.ngrok.com/signup). (It’s free to start.)
-* [Install ngrok](https://dashboard.ngrok.com/get-started/setup). (`brew install ngrok` works well for macOS users.)
-* [Set up your ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken).
+- [Sign up for ngrok](https://dashboard.ngrok.com/signup). (It’s free to start.)
+- [Install ngrok](https://dashboard.ngrok.com/get-started/setup). (`brew install ngrok/ngrok/ngrok` works well for macOS users - yes 3 times is the recommended way by Ngrok itself.)
+- [Set up your ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken).
 
 With ngrok set up, return to your Sparrow reference app and run `yarn dev` to start up the app.
 
@@ -55,13 +57,13 @@ With a tunnel in place, your next step is to create a route in Notehub that forw
 
 To set up the route complete the following steps:
 
-* Visit [Notehub](https://notehub.io) and open the project you’re using for your Sparrow app.
-* Select **Routes** in the navigation on the left-hand side of the screen.
-* Click the **Create Route** link in the top right of the screen.
-* Find the **General HTTP/HTTPS Request/Response** route type, and click its **Select** button.
-* Give your route a name.
-* For the route **URL**, paste the ngrok URL you copied earlier, and append `/api/datastore/ingest`. For example your route should look something like `https://bb18-217-180-218-163.ngrok.io/api/datastore/ingest`.
-* Click the blue **Create new Route** button.
+- Visit [Notehub](https://notehub.io) and open the project you’re using for your Sparrow app.
+- Select **Routes** in the navigation on the left-hand side of the screen.
+- Click the **Create Route** link in the top right of the screen.
+- Find the **General HTTP/HTTPS Request/Response** route type, and click its **Select** button.
+- Give your route a name.
+- For the route **URL**, paste the ngrok URL you copied earlier, and append `/api/datastore/ingest`. For example your route should look something like `https://bb18-217-180-218-163.ngrok.io/api/datastore/ingest`.
+- Click the blue **Create new Route** button.
 
 And with that your route is now complete. When Notehub receives an event it should automatically route that event to your tunnel, and ultimately to your local app.
 
@@ -73,9 +75,9 @@ Now that you have both a tunnel and route in place, your last step to get up and
 
 The Sparrow reference app uses Postgres to store data it receives from Notehub events. To set up your own Postgres instance you need to complete the following steps.
 
-1) [Create the database](#create-the-database).
-2) [Set environment variables](#set-environment-variables).
-3) [Seed and update the data store](#seed-and-update-the-data-store).
+1. [Create the database](#create-the-database).
+2. [Set environment variables](#set-environment-variables).
+3. [Seed and update the data store](#seed-and-update-the-data-store).
 
 #### Create the database
 
@@ -96,8 +98,9 @@ docker run --rm \
 ```
 
 > **NOTE**:
-> * The above command creates a database that persists the data after container shuts down. Specifically, the `-v` flag tells Docker to mount a volume at the path specified.
-> * If you’re running on Windows you’ll need to [change the path for the `-v` option to a Windows-friendly path](https://docs.docker.com/engine/reference/commandline/run/#mount-volume--v---read-only).
+>
+> - The above command creates a database that persists the data after container shuts down. Specifically, the `-v` flag tells Docker to mount a volume at the path specified.
+> - If you’re running on Windows you’ll need to [change the path for the `-v` option to a Windows-friendly path](https://docs.docker.com/engine/reference/commandline/run/#mount-volume--v---read-only).
 
 This creates a Postgres database running in Docker. If you return to your Docker app you can verify that the container is running as expected.
 
@@ -105,12 +108,16 @@ This creates a Postgres database running in Docker. If you return to your Docker
 
 #### Set environment variables
 
-The Sparrow reference app provides a series of scripts to help you initialize and seed a Postgres database. In order to run, the scripts require two variables to be set on your system.
+The Sparrow reference app provides a series of scripts to help you initialize and seed a Postgres database. In order to run, the scripts require two variables to be set on your system and in your `.env` file and your `.env.local` files.
 
-* `HUB_PROJECTUID`: The UID of the Notehub project that contains your Sparrow data.
-* `DATABASE_URL`: The URL of your Postgres database.
+- `HUB_PROJECTUID`: The UID of the Notehub project that contains your Sparrow data.
+- `DATABASE_URL`: The URL of your Postgres database.
 
-You can set these two variables using the `export` command on macOS/Linux, and the [`set` command on Windows](https://www.prisma.io/docs/guides/development-environment/environment-variables/managing-env-files-and-setting-variables#manually-set-an-environment-variable-on-a-windows-system). Start by running the following command in your terminal.
+Add both of these variables to your local `.env` and `.env.local` files.
+
+Prisma reads from the `.env` file, and Next.js reads from the `.env.local` file when running locally for development, hence the reason these variables are needed in both places to work.
+
+Additionally, set these two variables using the `export` command on macOS/Linux, and the [`set` command on Windows](https://www.prisma.io/docs/guides/development-environment/environment-variables/managing-env-files-and-setting-variables#manually-set-an-environment-variable-on-a-windows-system). Stop your currently running Sparrow app, and run the following commands in that same terminal instance.
 
 ```
 export DATABASE_URL=postgres://postgres:somePassword@0.0.0.0:5432/postgres
@@ -143,3 +150,33 @@ And finally, run `yarn run db:update` to update the datastore schema.
 ```
 yarn run db:update
 ```
+
+Now, start the app back up, and you should start seeing new data coming from Notehub to your new local Postgres instance.
+
+```
+yarn run dev
+```
+
+### Check the Postgres DB is receiving data
+
+If you'd like to connect to your locally running Postgres instance to ensure new Notehub events are being added, you can use the browser or local-based [Prisma Studio](https://www.prisma.io/studio) to easily check.
+
+In a new terminal window run the following command:
+
+```
+npx prisma studio
+```
+
+This will open up a new browser window at http://localhost:5555 where you can see your Prisma DB, its tables, and any data that currently resides therein, whether it's preseeded or has been routed in by Notehub.
+
+And just like any other database GUI, you can click into models to view data, manipulate data, filter, query, etc., etc.
+
+### Troubleshooting Sparrow getting data from Postgres
+
+There's a number of gotchas that could be the reason your Notehub data's not making it to Postgres and your Sparrow app - try checking the following things:
+
+- Is Docker running the local Postgres instance on your machine?
+  - Currently there's no error message thrown if the Postgres Docker container's not running
+- Does your Ngrok endpoint match what's in Notehub and have the suffix `/api/datastore/ingest`?
+  - Be aware, every time the Ngrok connection is shut down and restarted, it will be started up with a brand new URL, so you'll need to update the route according in Notehub to ensure data keeps flowing to it
+- Have you added the Postgres URL and Notehub project API env vars to _both_ the `.env` and `.env.local` files. Both are necessary for the Prisma database and the Sparrow app itself to be able to function
