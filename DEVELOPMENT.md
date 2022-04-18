@@ -117,6 +117,10 @@ Add both of these variables to your local `.env` and `.env.local` files.
 
 Prisma reads from the `.env` file, and Next.js reads from the `.env.local` file when running locally for development, hence the reason these variables are needed in both places to work.
 
+> **Beware checking .env with sensitive variables into source control!**
+> 
+> Although necessary for the local database setup, please be sure not to commit your personal Postgres connections via the `.env` file to GitHub - it is _not_ .gitignored.
+
 Additionally, set these two variables using the `export` command on macOS/Linux, and the [`set` command on Windows](https://www.prisma.io/docs/guides/development-environment/environment-variables/managing-env-files-and-setting-variables#manually-set-an-environment-variable-on-a-windows-system). Stop your currently running Sparrow app, and run the following commands in that same terminal instance.
 
 ```
@@ -178,5 +182,5 @@ There's a number of gotchas that could be the reason your Notehub data's not mak
 - Is Docker running the local Postgres instance on your machine?
   - Currently there's no error message thrown if the Postgres Docker container's not running
 - Does your Ngrok endpoint match what's in Notehub and have the suffix `/api/datastore/ingest`?
-  - Be aware, every time the Ngrok connection is shut down and restarted, it will be started up with a brand new URL, so you'll need to update the route according in Notehub to ensure data keeps flowing to it
+  - Be aware, every time the Ngrok connection is shut down and restarted, it will be started up with a brand new URL, so you'll need to update the route accordingly in Notehub to ensure data keeps flowing to it
 - Have you added the Postgres URL and Notehub project API env vars to _both_ the `.env` and `.env.local` files. Both are necessary for the Prisma database and the Sparrow app itself to be able to function
