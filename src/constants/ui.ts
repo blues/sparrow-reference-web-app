@@ -4,7 +4,7 @@ import { ERROR_CODES } from "../services/Errors";
 const NODE_MESSAGE = {
   NO_NAME: "(unnamed)",
   NO_LOCATION: "—",
-  NEVER_SEEN: "(never)"
+  NEVER_SEEN: "(never)",
 };
 
 // Sensor data fallbacks for empty data fields
@@ -15,7 +15,6 @@ const SENSOR_MESSAGE = {
   NO_TEMPERATURE: "—",
   NO_COUNT: "—",
   NO_TOTAL: "—",
-  
 };
 
 // Historical sensor data fallbacks for no historical sensor data to display
@@ -34,7 +33,7 @@ const GATEWAY_MESSAGE = {
   NO_NAME: "Unknown Gateway.",
   NO_LOCATION: "—",
   NO_VOLTAGE: "—",
-  NEVER_SEEN: "(never)"
+  NEVER_SEEN: "(never)",
 };
 
 // Error messages when the project fails to display for some reason
@@ -50,6 +49,8 @@ const ERROR_MESSAGE = {
   NODES_NOT_FOUND:
     "We were unable to locate any nodes. Ensure your events are registering in Notehub.",
   GATEWAY_NAME_CHANGE_FAILED: "An error occurred changing the name.",
+  DATABASE_NOT_RUNNING:
+    "Can't reach the database server. Please make sure your server is running.",
 };
 
 const getErrorMessage = (errorCode: string) => {
@@ -62,6 +63,8 @@ const getErrorMessage = (errorCode: string) => {
       return ERROR_MESSAGE.GATEWAY_NOT_FOUND;
     case ERROR_CODES.INTERNAL_ERROR:
       return ERROR_MESSAGE.INTERNAL_ERROR;
+    case ERROR_CODES.DATABASE_NOT_RUNNING:
+      return ERROR_MESSAGE.DATABASE_NOT_RUNNING;
     default:
       // eslint-disable-next-line no-console
       console.error(`Unknown error message code: ${errorCode}`);
