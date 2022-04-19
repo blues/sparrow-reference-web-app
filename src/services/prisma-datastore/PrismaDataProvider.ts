@@ -168,6 +168,7 @@ export class PrismaDataProvider implements DataProvider {
     });
   }
 
+  // eslint-disable-next-line consistent-return
   async queryProjectLatestValues(
     projectID: ProjectID
   ): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
@@ -188,80 +189,80 @@ export class PrismaDataProvider implements DataProvider {
       type N = G["nodes"][number];
       type RS = G["readingSource"];
       type S = RS["sensors"][number];
-    }
-    // map the data to the domain model
-    const hostReadings = new Map<SensorHost, SensorHostReadingsSnapshot>();
+      // map the data to the domain model
+      const hostReadings = new Map<SensorHost, SensorHostReadingsSnapshot>();
 
-    /**
-     * Walks the sensors associated with a ReadingSource, and converts the ReadingSchema and Reading to
-     * SensorType and Reading.
-     * @param rs
-     * @param sensorHost
-     */
-    const addReadingSource = (rs: RS, sensorHost: SensorHost) => {
-      // one reading per sensor type
-      const readings = new Map<SensorType, Reading>();
+      /**
+       * Walks the sensors associated with a ReadingSource, and converts the ReadingSchema and Reading to
+       * SensorType and Reading.
+       * @param rs
+       * @param sensorHost
+       */
+      const addReadingSource = (rs: RS, sensorHost: SensorHost) => {
+        // one reading per sensor type
+        const readings = new Map<SensorType, Reading>();
 
-      const snapshot: SensorHostReadingsSnapshot = {
-        sensorHost,
-        sensorTypes: new Map(),
-        readings,
+        const snapshot: SensorHostReadingsSnapshot = {
+          sensorHost,
+          sensorTypes: new Map(),
+          readings,
+        };
+
+        // maydo - could consider caching the ReadingSchema -> SensorType but it's not that much overhead with duplication per device
+        rs.sensors.map((s) => {
+          if (s.latest) {
+            const sensorType = Mapper.mapReadingSchema(s.schema);
+            const reading = Mapper.mapReading(s.latest);
+
+            snapshot.sensorTypes.set(sensorType.name, sensorType);
+            readings.set(sensorType, reading);
+          }
+        });
+
+        hostReadings.set(sensorHost, snapshot);
       };
 
-      // maydo - could consider caching the ReadingSchema -> SensorType but it's not that much overhead with duplication per device
-      rs.sensors.map((s) => {
-        if (s.latest) {
-          const sensorType = Mapper.mapReadingSchema(s.schema);
-          const reading = Mapper.mapReading(s.latest);
+      const deepMapNode = (n: N) => {
+        const result = Mapper.mapNode(n);
+        addReadingSource(n.readingSource, result);
+        return result;
+      };
 
-          snapshot.sensorTypes.set(sensorType.name, sensorType);
-          readings.set(sensorType, reading);
-        }
-      });
+      const deepMapGateway = (g: G) => {
+        // map nodes from Prisma to DomainModel
+        const nodes = new Set(g.nodes.map(deepMapNode));
+        const result = Mapper.mapGatewayWithNodes(g, nodes);
+        // add the reading source to provide the set of SensorType and Readings.
+        addReadingSource(g.readingSource, result);
+        return result;
+      };
 
-      hostReadings.set(sensorHost, snapshot);
-    };
+      // transform Prisma to DomainModel gateways
+      const gateways = new Set(prismaProject.gateways.map(deepMapGateway));
+      const project = Mapper.mapProjectHierarchy(prismaProject, gateways);
 
-    const deepMapNode = (n: N) => {
-      const result = Mapper.mapNode(n);
-      addReadingSource(n.readingSource, result);
-      return result;
-    };
+      const results: ProjectReadingsSnapshot = {
+        when: Date.now(),
+        project,
+        hostReadings: (sensorHost: SensorHost) => {
+          const reading = hostReadings.get(sensorHost);
+          if (reading == undefined) {
+            throw new Error("unknown sensorHost");
+          }
+          return reading;
+        },
+        hostReadingByName: (sensorHost: SensorHost, readingName: string) => {
+          const snapshot = hostReadings.get(sensorHost);
+          const sensorType = snapshot?.sensorTypes.get(readingName);
+          return sensorType && snapshot?.readings.get(sensorType);
+        },
+      };
 
-    const deepMapGateway = (g: G) => {
-      // map nodes from Prisma to DomainModel
-      const nodes = new Set(g.nodes.map(deepMapNode));
-      const result = Mapper.mapGatewayWithNodes(g, nodes);
-      // add the reading source to provide the set of SensorType and Readings.
-      addReadingSource(g.readingSource, result);
-      return result;
-    };
-
-    // transform Prisma to DomainModel gateways
-    const gateways = new Set(prismaProject.gateways.map(deepMapGateway));
-    const project = Mapper.mapProjectHierarchy(prismaProject, gateways);
-
-    const results: ProjectReadingsSnapshot = {
-      when: Date.now(),
-      project,
-      hostReadings: (sensorHost: SensorHost) => {
-        const reading = hostReadings.get(sensorHost);
-        if (reading == undefined) {
-          throw new Error("unknown sensorHost");
-        }
-        return reading;
-      },
-      hostReadingByName: (sensorHost: SensorHost, readingName: string) => {
-        const snapshot = hostReadings.get(sensorHost);
-        const sensorType = snapshot?.sensorTypes.get(readingName);
-        return sensorType && snapshot?.readings.get(sensorType);
-      },
-    };
-
-    return {
-      request: projectID,
-      results,
-    };
+      return {
+        request: projectID,
+        results,
+      };
+    }
   }
 
   queryProjectReadingSeries(
