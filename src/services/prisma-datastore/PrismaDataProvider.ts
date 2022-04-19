@@ -175,7 +175,6 @@ export class PrismaDataProvider implements DataProvider {
     try {
       prismaProject = await this.retrieveLatestValues(projectID);
     } catch (e: unknown) {
-      console.log("error ", e);
       if (e.message.includes("Can't reach database server")) {
         throw getError(ERROR_CODES.DATABASE_NOT_RUNNING);
       }

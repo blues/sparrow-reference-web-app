@@ -50,7 +50,7 @@ const ERROR_MESSAGE = {
     "We were unable to locate any nodes. Ensure your events are registering in Notehub.",
   GATEWAY_NAME_CHANGE_FAILED: "An error occurred changing the name.",
   DATABASE_NOT_RUNNING:
-    "Can't reach the database server. Please make sure your server is running.",
+    "Can't reach the database server. Please make sure your database is properly connected.",
 };
 
 const getErrorMessage = (errorCode: string) => {
