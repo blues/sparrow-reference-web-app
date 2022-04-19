@@ -174,19 +174,21 @@ export class PrismaDataProvider implements DataProvider {
     let prismaProject;
     try {
       prismaProject = await this.retrieveLatestValues(projectID);
-    } catch (e: unknown) {
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       if (e.message.includes("Can't reach database server")) {
-        throw getError(ERROR_CODES.DATABASE_NOT_RUNNING);
+        throw getError(ERROR_CODES.DATABASE_NOT_RUNNING, { cause: e as Error });
       }
     }
 
-    // get the types indirectly so loose coupling
-    type P = typeof prismaProject;
-    type G = P["gateways"][number];
-    type N = G["nodes"][number];
-    type RS = G["readingSource"];
-    type S = RS["sensors"][number];
-
+    if (prismaProject) {
+      // get the types indirectly so loose coupling
+      type P = typeof prismaProject;
+      type G = P["gateways"][number];
+      type N = G["nodes"][number];
+      type RS = G["readingSource"];
+      type S = RS["sensors"][number];
+    }
     // map the data to the domain model
     const hostReadings = new Map<SensorHost, SensorHostReadingsSnapshot>();
 
