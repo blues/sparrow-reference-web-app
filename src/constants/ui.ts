@@ -51,6 +51,8 @@ const ERROR_MESSAGE = {
   GATEWAY_NAME_CHANGE_FAILED: "An error occurred changing the name.",
   DATABASE_NOT_RUNNING:
     "Can't reach the database server. Please make sure your database is properly connected.",
+  NO_PROJECT_ID:
+    "A project ID is required, but none was found. Ensure your environment variables are configured correctly for HUB_PROJECTUID.",
 };
 
 const getErrorMessage = (errorCode: string) => {
@@ -65,6 +67,8 @@ const getErrorMessage = (errorCode: string) => {
       return ERROR_MESSAGE.INTERNAL_ERROR;
     case ERROR_CODES.DATABASE_NOT_RUNNING:
       return ERROR_MESSAGE.DATABASE_NOT_RUNNING;
+    case ERROR_CODES.NO_PROJECT_ID:
+      return ERROR_MESSAGE.NO_PROJECT_ID;
     default:
       // eslint-disable-next-line no-console
       console.error(`Unknown error message code: ${errorCode}`);
