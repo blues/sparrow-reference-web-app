@@ -1,19 +1,22 @@
 import Node from "./Node";
 
 interface Gateway {
-
   /**
    * The unique identifier for this gateway
    */
   uid: string;
 
   /**
-   * The name for this gateway. 
+   * The name for this gateway.
    */
   name: string;
   lastActivity: string;
   location?: string;
   voltage: number;
+  /**
+   * The signal strength for this gateway.
+   */
+  bars: number;
 
   nodeList: Node[];
 }

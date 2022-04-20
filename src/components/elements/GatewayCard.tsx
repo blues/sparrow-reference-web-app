@@ -1,10 +1,12 @@
 import { useRouter } from "next/router";
+import Image from "next/image";
 import { Card, Col, Row, Typography } from "antd";
 import Gateway from "../models/Gateway";
 import NodeCard from "./NodeCard";
 import {
   getFormattedLastSeen,
   getFormattedVoltageData,
+  calculateWiFiSignalStrength,
 } from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
@@ -45,32 +47,42 @@ const GatewayCardComponent = (props: GatewayProps) => {
             hoverable
             onClick={handleCardClick}
             title={
-              <>
-                <Text
-                  ellipsis={{
-                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                    tooltip: `${gatewayDetails.name}`,
-                  }}
-                  data-testid={`gateway[${index}]-details`}
-                >
-                  {gatewayDetails.name}
-                </Text>
-                <span className={cardStyles.timestamp}>
-                  Last updated{` `}
-                  {getFormattedLastSeen(gatewayDetails.lastActivity)}
+              <div className={cardStyles.headerSection}>
+                <span>
+                  <Text
+                    ellipsis={{
+                      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                      tooltip: `${gatewayDetails.name}`,
+                    }}
+                    data-testid={`gateway[${index}]-details`}
+                  >
+                    {gatewayDetails.name}
+                  </Text>
+                  <span className={cardStyles.timestamp}>
+                    Last updated{` `}
+                    {getFormattedLastSeen(gatewayDetails.lastActivity)}
+                  </span>
+                  <div
+                    data-testid="gateway-location"
+                    className={cardStyles.locationWrapper}
+                  >
+                    <span className={cardStyles.locationTitle}>
+                      Location{` `}
+                    </span>
+                    <span className={cardStyles.location}>
+                      {formattedLocation}
+                    </span>
+                  </div>
                 </span>
-                <div
-                  data-testid="gateway-location"
-                  className={cardStyles.locationWrapper}
-                >
-                  <span className={cardStyles.locationTitle}>
-                    Location{` `}
-                  </span>
-                  <span className={cardStyles.location}>
-                    {formattedLocation}
-                  </span>
-                </div>
-              </>
+                <span>
+                  <Image
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    src={calculateWiFiSignalStrength(gatewayDetails?.bars)}
+                    width={24}
+                    alt="Gateway Wi Fi signal strength"
+                  />
+                </span>
+              </div>
             }
           >
             <Row

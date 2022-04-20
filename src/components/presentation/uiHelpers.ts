@@ -1,9 +1,15 @@
-
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { formatDistanceToNow, sub } from "date-fns";
 import { sortBy, uniqBy } from "lodash";
 import { Gateway, SensorTypeCurrentReading } from "../../services/AppModel";
 import Reading from "../models/readings/Reading";
 import ReadingSchema from "../models/readings/ReadingSchema";
+import WifiOff from "../../../public/signal-strength-images/wi-fi/wifi-off.svg";
+import WifiOne from "../../../public/signal-strength-images/wi-fi/wifi-one-bar.svg";
+import WifiTwo from "../../../public/signal-strength-images/wi-fi/wifi-two-bars.svg";
+import WifiThree from "../../../public/signal-strength-images/wi-fi/wifi-three-bars.svg";
+import WifiFull from "../../../public/signal-strength-images/wi-fi/wifi-full.svg";
 
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
@@ -13,7 +19,6 @@ export const getFormattedLastSeenDate = (date: Date) =>
   formatDistanceToNow(date, {
     addSuffix: true,
   });
-
 
 export const getFormattedChartData = (
   readings: Reading<unknown>[],
@@ -67,7 +72,7 @@ export const getFormattedPressureData = (pressure: number | undefined) => {
 };
 
 export const getFormattedVoltageData = (voltage: number | undefined) => {
-  if (voltage!==undefined) {
+  if (voltage !== undefined) {
     const formattedData = `${voltage.toFixed(2)}V`;
     return formattedData;
   }
@@ -75,7 +80,7 @@ export const getFormattedVoltageData = (voltage: number | undefined) => {
 };
 
 export const getFormattedCountData = (count: number | undefined) => {
-  if (count!==undefined) {
+  if (count !== undefined) {
     const formattedData = `${count}`;
     return formattedData;
   }
@@ -83,7 +88,7 @@ export const getFormattedCountData = (count: number | undefined) => {
 };
 
 export const getFormattedTotalData = (total: number | undefined) => {
-  if (total!==undefined) {
+  if (total !== undefined) {
     const formattedData = `${total}`;
     return formattedData;
   }
@@ -99,12 +104,32 @@ export const getEpochChartDataDate = (minutesToConvert: number) => {
   return formattedEpochDate;
 };
 
+export const calculateWiFiSignalStrength = (signalBars: number) => {
+  if (!signalBars || signalBars === 0) {
+    return WifiOff;
+  }
+  if (signalBars > 4) {
+    return WifiFull;
+  }
+  const signalLookup = {
+    1: WifiOne,
+    2: WifiTwo,
+    3: WifiThree,
+    4: WifiFull,
+  };
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return signalLookup[signalBars as keyof typeof signalLookup];
+};
 
-export function findCurrentReadingWithName(gateway: Gateway, name: SensorTypeCurrentReading["sensorType"]["name"]) : SensorTypeCurrentReading | undefined {
-  return gateway.currentReadings?.find((sensorTypeReading) => name===sensorTypeReading.sensorType.name);
+export function findCurrentReadingWithName(
+  gateway: Gateway,
+  name: SensorTypeCurrentReading["sensorType"]["name"]
+): SensorTypeCurrentReading | undefined {
+  return gateway.currentReadings?.find(
+    (sensorTypeReading) => name === sensorTypeReading.sensorType.name
+  );
 }
 
 export function asNumber(value: unknown): number | undefined {
-  return typeof value==="number" ? Number(value) : undefined;
+  return typeof value === "number" ? Number(value) : undefined;
 }
-

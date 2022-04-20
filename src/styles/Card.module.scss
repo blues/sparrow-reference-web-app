@@ -16,6 +16,12 @@
     width: 100%;
   }
 
+  .headerSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .timestamp {
     color: $bw-color--grey4;
     font-size: 11px;
