@@ -16,13 +16,14 @@ export enum ERROR_CODES {
   DEVICE_NOT_FOUND = "DEVICE_NOT_FOUND",
   NODE_NOT_FOUND = "NODE_NOT_FOUND",
   INTERNAL_ERROR = "INTERNAL_ERROR",
+  DATABASE_NOT_RUNNING = "DATABASE_NOT_RUNNING",
+  NO_PROJECT_ID = "NO_PROJECT_ID",
 }
-
 
 type ErrorResponse<E> = { err: E };
 type NoErrorResponse = { err: undefined };
-export type MayError<M, E> = ( NoErrorResponse & M ) | ErrorResponse<E>;
+export type MayError<M, E> = (NoErrorResponse & M) | ErrorResponse<E>;
 
 export function isError<E>(t: MayError<unknown, E>): t is ErrorResponse<E> {
-  return t.err!==undefined;
+  return t.err !== undefined;
 }
