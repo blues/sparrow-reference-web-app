@@ -7,6 +7,7 @@ import {
   getFormattedLastSeen,
   getFormattedVoltageData,
   calculateWiFiSignalStrength,
+  calculateCellSignalStrength,
 } from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
@@ -75,12 +76,22 @@ const GatewayCardComponent = (props: GatewayProps) => {
                   </div>
                 </span>
                 <span>
-                  <Image
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    src={calculateWiFiSignalStrength(gatewayDetails?.bars)}
-                    width={24}
-                    alt="Gateway Wi Fi signal strength"
-                  />
+                  {gatewayDetails.cellBars ? (
+                    <Image
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                      src={calculateCellSignalStrength(gatewayDetails.cellBars)}
+                      width={24}
+                      alt="Gateway cell signal strength"
+                    />
+                  ) : null}
+                  {gatewayDetails.wifiBars ? (
+                    <Image
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                      src={calculateWiFiSignalStrength(gatewayDetails.wifiBars)}
+                      width={24}
+                      alt="Gateway Wi Fi signal strength"
+                    />
+                  ) : null}
                 </span>
               </div>
             }

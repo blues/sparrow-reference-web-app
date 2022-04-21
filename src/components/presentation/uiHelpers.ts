@@ -5,20 +5,30 @@ import { sortBy, uniqBy } from "lodash";
 import { Gateway, SensorTypeCurrentReading } from "../../services/AppModel";
 import Reading from "../models/readings/Reading";
 import ReadingSchema from "../models/readings/ReadingSchema";
-import WifiOff from "../../../public/signal-strength-images/wi-fi/wifi-off.svg";
-import WifiOne from "../../../public/signal-strength-images/wi-fi/wifi-one-bar.svg";
-import WifiTwo from "../../../public/signal-strength-images/wi-fi/wifi-two-bars.svg";
-import WifiThree from "../../../public/signal-strength-images/wi-fi/wifi-three-bars.svg";
-import WifiFull from "../../../public/signal-strength-images/wi-fi/wifi-full.svg";
-
-// eslint-disable-next-line import/prefer-default-export
-export const getFormattedLastSeen = (date: string) =>
-  getFormattedLastSeenDate(new Date(date));
+import WifiOff from "../elements/signal-strength-images/wi-fi/wifi-off.svg";
+import WifiOne from "../elements/signal-strength-images/wi-fi/wifi-one-bar.svg";
+import WifiTwo from "../elements/signal-strength-images/wi-fi/wifi-two-bars.svg";
+import WifiThree from "../elements/signal-strength-images/wi-fi/wifi-three-bars.svg";
+import WifiFull from "../elements/signal-strength-images/wi-fi/wifi-full.svg";
+import CellOff from "../elements/signal-strength-images/cell/cell-off.svg";
+import CellOne from "../elements/signal-strength-images/cell/cell-one-bar.svg";
+import CellTwo from "../elements/signal-strength-images/cell/cell-two-bars.svg";
+import CellThree from "../elements/signal-strength-images/cell/cell-three-bars.svg";
+import CellFull from "../elements/signal-strength-images/cell/cell-full.svg";
+import LoraOff from "../elements/signal-strength-images/lora/lora-off.svg";
+import LoraOne from "../elements/signal-strength-images/lora/lora-one-bar.svg";
+import LoraTwo from "../elements/signal-strength-images/lora/lora-two-bars.svg";
+import LoraThree from "../elements/signal-strength-images/lora/lora-three-bars.svg";
+import LoraFull from "../elements/signal-strength-images/lora/lora-full.svg";
 
 export const getFormattedLastSeenDate = (date: Date) =>
   formatDistanceToNow(date, {
     addSuffix: true,
   });
+
+// eslint-disable-next-line import/prefer-default-export
+export const getFormattedLastSeen = (date: string) =>
+  getFormattedLastSeenDate(new Date(date));
 
 export const getFormattedChartData = (
   readings: Reading<unknown>[],
@@ -116,6 +126,40 @@ export const calculateWiFiSignalStrength = (signalBars: number) => {
     2: WifiTwo,
     3: WifiThree,
     4: WifiFull,
+  };
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return signalLookup[signalBars as keyof typeof signalLookup];
+};
+
+export const calculateCellSignalStrength = (signalBars: number) => {
+  if (!signalBars || signalBars === 0) {
+    return CellOff;
+  }
+  if (signalBars > 4) {
+    return CellFull;
+  }
+  const signalLookup = {
+    1: CellOne,
+    2: CellTwo,
+    3: CellThree,
+    4: CellFull,
+  };
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return signalLookup[signalBars as keyof typeof signalLookup];
+};
+
+export const calculateLoraSignalStrength = (signalBars: string) => {
+  if (Number(signalBars) === 0) {
+    return LoraOff;
+  }
+  if (Number(signalBars) > 4) {
+    return LoraFull;
+  }
+  const signalLookup = {
+    "1": LoraOne,
+    "2": LoraTwo,
+    "3": LoraThree,
+    "4": LoraFull,
   };
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return signalLookup[signalBars as keyof typeof signalLookup];

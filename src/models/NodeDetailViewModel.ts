@@ -12,6 +12,7 @@ interface NodeDetailViewModel {
     voltage: string;
     count: string;
     total: string;
+    bars: string;
   };
   readings?: {
     temperature: { when: string; value: number }[];

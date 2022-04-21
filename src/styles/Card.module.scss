@@ -41,6 +41,15 @@
     }
   }
 
+  .signalWrapper {
+    display: flex;
+
+    .voltage {
+      padding-right: 8px;
+      font-size: 13px;
+    }
+  }
+
   :global .ant-card-body {
     padding: 0;
   }

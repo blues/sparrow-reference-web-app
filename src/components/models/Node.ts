@@ -10,6 +10,10 @@ interface Node {
   count?: number;
   total?: number;
   gatewayUID: string;
+  /**
+   * The signal strength for this node - lora bars.
+   */
+  bars?: number;
 }
 
 export default Node;

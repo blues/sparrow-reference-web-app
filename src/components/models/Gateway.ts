@@ -14,9 +14,10 @@ interface Gateway {
   location?: string;
   voltage: number;
   /**
-   * The signal strength for this gateway.
+   * The signal strength for this gateway - either cell bars or wifi bars.
    */
-  bars: number;
+  cellBars?: number;
+  wifiBars?: number;
 
   nodeList: Node[];
 }
