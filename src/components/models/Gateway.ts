@@ -16,8 +16,8 @@ interface Gateway {
   /**
    * The signal strength for this gateway - either cell bars or wifi bars.
    */
-  cellBars?: number;
-  wifiBars?: number;
+  cellBars?: string;
+  wifiBars?: string;
 
   nodeList: Node[];
 }

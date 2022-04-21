@@ -1,6 +1,11 @@
+import Image from "next/image";
 import { Col, Card, Row } from "antd";
 import EditInPlace from "./EditInPlace";
 import NodeCard from "./NodeCard";
+import {
+  calculateCellSignalStrength,
+  calculateWiFiSignalStrength,
+} from "../presentation/uiHelpers";
 import { ERROR_MESSAGE } from "../../constants/ui";
 import GatewayDetailViewModel from "../../models/GatewayDetailViewModel";
 import styles from "../../styles/Home.module.scss";
@@ -41,6 +46,24 @@ const GatewayDetails = ({
             className={detailsStyles.timestamp}
           >
             Last seen {viewModel.gateway.lastActivity}
+          </div>
+          <div className={detailsStyles.signalStrength}>
+            {viewModel.gateway.cellBars ? (
+              <Image
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                src={calculateCellSignalStrength(viewModel.gateway.cellBars)}
+                width={24}
+                alt="Gateway cell signal strength"
+              />
+            ) : null}
+            {viewModel.gateway.wifiBars ? (
+              <Image
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                src={calculateWiFiSignalStrength(viewModel.gateway.wifiBars)}
+                width={24}
+                alt="Gateway Wi Fi signal strength"
+              />
+            ) : null}
           </div>
 
           <Row gutter={[16, 16]}>

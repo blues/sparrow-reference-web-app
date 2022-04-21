@@ -7,6 +7,8 @@ interface GatewayDetailViewModel {
     lastActivity: string;
     location: string;
     voltage: string;
+    cellBars?: string;
+    wifiBars?: string;
   };
   nodes?: Node[];
 }

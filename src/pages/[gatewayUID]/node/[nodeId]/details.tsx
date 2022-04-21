@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { Card, Input, Button, Tabs, Row, Col, Tooltip, Select } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -12,6 +13,7 @@ import {
   HISTORICAL_SENSOR_DATA_MESSAGE,
   NODE_MESSAGE,
 } from "../../../../constants/ui";
+import { calculateLoraSignalStrength } from "../../../../components/presentation/uiHelpers";
 import { services } from "../../../../services/ServiceLocator";
 import NodeDetailsLineChart from "../../../../components/charts/NodeDetailsLineChart";
 import NodeDetailsBarChart from "../../../../components/charts/NodeDetailsBarChart";
@@ -174,6 +176,20 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
               >
                 Last updated {viewModel.node.lastActivity}
               </p>
+              <div className={detailsStyles.signalStrength}>
+                <span className={detailsStyles.voltage}>
+                  Voltage{` `}
+                  {viewModel?.node?.voltage}
+                </span>
+                {viewModel?.node?.bars ? (
+                  <Image
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    src={calculateLoraSignalStrength(viewModel.node.bars)}
+                    width={24}
+                    alt="Node Lora signal strength"
+                  />
+                ) : null}
+              </div>
 
               <Row
                 justify="start"

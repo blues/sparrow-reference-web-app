@@ -114,45 +114,45 @@ export const getEpochChartDataDate = (minutesToConvert: number) => {
   return formattedEpochDate;
 };
 
-export const calculateWiFiSignalStrength = (signalBars: number) => {
-  if (!signalBars || signalBars === 0) {
+export const calculateWiFiSignalStrength = (signalBars: string) => {
+  if (signalBars === "0") {
     return WifiOff;
   }
-  if (signalBars > 4) {
+  if (signalBars > "4") {
     return WifiFull;
   }
   const signalLookup = {
-    1: WifiOne,
-    2: WifiTwo,
-    3: WifiThree,
-    4: WifiFull,
+    "1": WifiOne,
+    "2": WifiTwo,
+    "3": WifiThree,
+    "4": WifiFull,
   };
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return signalLookup[signalBars as keyof typeof signalLookup];
 };
 
-export const calculateCellSignalStrength = (signalBars: number) => {
-  if (!signalBars || signalBars === 0) {
+export const calculateCellSignalStrength = (signalBars: string) => {
+  if (signalBars === "0") {
     return CellOff;
   }
-  if (signalBars > 4) {
+  if (signalBars > "4") {
     return CellFull;
   }
   const signalLookup = {
-    1: CellOne,
-    2: CellTwo,
-    3: CellThree,
-    4: CellFull,
+    "1": CellOne,
+    "2": CellTwo,
+    "3": CellThree,
+    "4": CellFull,
   };
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return signalLookup[signalBars as keyof typeof signalLookup];
 };
 
 export const calculateLoraSignalStrength = (signalBars: string) => {
-  if (Number(signalBars) === 0) {
+  if (signalBars === "0") {
     return LoraOff;
   }
-  if (Number(signalBars) > 4) {
+  if (signalBars > "4") {
     return LoraFull;
   }
   const signalLookup = {

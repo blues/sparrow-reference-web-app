@@ -19,6 +19,8 @@ export function getGatewayDetailsPresentation(
           voltage:
             getFormattedVoltageData(gateway.voltage) ||
             GATEWAY_MESSAGE.NO_VOLTAGE,
+          cellBars: gateway.cellBars || "",
+          wifiBars: gateway.wifiBars || "",
         }
       : undefined,
     nodes,

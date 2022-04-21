@@ -15,9 +15,24 @@
   margin-top: -7px;
 }
 
+.timestamp {
+  margin-bottom: 4px;
+}
+
+.signalStrength {
+  padding-bottom: 30px;
+  display: flex;
+
+  .voltage {
+    font-size: 13px;
+    padding-right: 8px;
+  }
+}
+
 .nodeTimestamp {
   font-size: 13px;
   margin-top: -3px;
+  margin-bottom: 0;
 }
 
 .nodeChartTimestamp,
