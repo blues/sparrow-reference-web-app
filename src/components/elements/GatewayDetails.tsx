@@ -53,6 +53,7 @@ const GatewayDetails = ({
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 src={calculateCellSignalStrength(viewModel.gateway.cellBars)}
                 width={24}
+                height={24}
                 alt="Gateway cell signal strength"
               />
             ) : null}
