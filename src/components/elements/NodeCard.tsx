@@ -58,7 +58,7 @@ const NodeCardComponent = (props: NodeProps) => {
             </div>
           </span>
           <span className={styles.signalWrapper}>
-            <span className={styles.voltage}>
+            <span data-testid="node-voltage" className={styles.voltage}>
               Voltage{` `}
               {viewModel?.node?.voltage}
             </span>
@@ -68,6 +68,7 @@ const NodeCardComponent = (props: NodeProps) => {
                 src={calculateLoraSignalStrength(viewModel.node.bars)}
                 width={24}
                 alt="Node Lora signal strength"
+                data-testid="node-signal-strength"
               />
             ) : null}
           </span>

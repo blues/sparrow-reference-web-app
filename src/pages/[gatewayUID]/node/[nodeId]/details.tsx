@@ -177,7 +177,10 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                 Last updated {viewModel.node.lastActivity}
               </p>
               <div className={detailsStyles.signalStrength}>
-                <span className={detailsStyles.voltage}>
+                <span
+                  data-testid="current-voltage"
+                  className={detailsStyles.voltage}
+                >
                   Voltage{` `}
                   {viewModel?.node?.voltage}
                 </span>
@@ -187,6 +190,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     src={calculateLoraSignalStrength(viewModel.node.bars)}
                     width={24}
                     alt="Node Lora signal strength"
+                    data-testid="signal-strength"
                   />
                 ) : null}
               </div>

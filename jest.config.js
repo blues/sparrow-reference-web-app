@@ -9,7 +9,7 @@ module.exports = {
     "!**/node_modules/**",
   ],
   globalSetup: "<rootDir>/jest/setupEnv.js",
-  setupFiles: ["<rootDir>/jest.setup.js"],
+  setupFiles: ["<rootDir>/jest/jest.setup.js"],
   moduleNameMapper: {
     /* Handle CSS imports (with CSS modules)
     https://jestjs.io/docs/webpack#mocking-css-modules */

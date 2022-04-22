@@ -47,7 +47,10 @@ const GatewayDetails = ({
           >
             Last seen {viewModel.gateway.lastActivity}
           </div>
-          <div className={detailsStyles.signalStrength}>
+          <div
+            data-testid="gateway-signal-strength"
+            className={detailsStyles.signalStrength}
+          >
             {viewModel.gateway.cellBars ? (
               <Image
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
