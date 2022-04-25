@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { Card, Row, Col, Typography } from "antd";
+import { Card, Row, Col, Tooltip, Typography } from "antd";
 import Node from "../models/Node";
 import { calculateLoraSignalStrength } from "../presentation/uiHelpers";
 import { getNodeDetailsPresentation } from "../presentation/nodeDetails";
@@ -63,13 +63,15 @@ const NodeCardComponent = (props: NodeProps) => {
               {viewModel?.node?.voltage}
             </span>
             {viewModel?.node?.bars ? (
-              <Image
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                src={calculateLoraSignalStrength(viewModel.node.bars)}
-                width={24}
-                alt="Node Lora signal strength"
-                data-testid="node-signal-strength"
-              />
+              <Tooltip title="Node LoRa signal strength">
+                <Image
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  src={calculateLoraSignalStrength(viewModel.node.bars)}
+                  width={24}
+                  alt="Node Lora signal strength"
+                  data-testid="node-signal-strength"
+                />
+              </Tooltip>
             ) : null}
           </span>
         </div>

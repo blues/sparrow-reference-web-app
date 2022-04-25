@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { Card, Col, Row, Typography } from "antd";
+import { Card, Col, Row, Tooltip, Typography } from "antd";
 import Gateway from "../models/Gateway";
 import NodeCard from "./NodeCard";
 import {
@@ -77,20 +77,28 @@ const GatewayCardComponent = (props: GatewayProps) => {
                 </span>
                 <span>
                   {gatewayDetails.cellBars ? (
-                    <Image
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                      src={calculateCellSignalStrength(gatewayDetails.cellBars)}
-                      width={24}
-                      alt="Gateway cell signal strength"
-                    />
+                    <Tooltip title="Gateway cell signal strength">
+                      <Image
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        src={calculateCellSignalStrength(
+                          gatewayDetails.cellBars
+                        )}
+                        width={24}
+                        alt="Gateway cell signal strength"
+                      />
+                    </Tooltip>
                   ) : null}
                   {gatewayDetails.wifiBars ? (
-                    <Image
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                      src={calculateWiFiSignalStrength(gatewayDetails.wifiBars)}
-                      width={24}
-                      alt="Gateway Wi Fi signal strength"
-                    />
+                    <Tooltip title="Gateway Wi Fi signal strength">
+                      <Image
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        src={calculateWiFiSignalStrength(
+                          gatewayDetails.wifiBars
+                        )}
+                        width={24}
+                        alt="Gateway Wi Fi signal strength"
+                      />
+                    </Tooltip>
                   ) : null}
                 </span>
               </div>

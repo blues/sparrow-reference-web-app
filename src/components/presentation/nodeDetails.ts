@@ -52,7 +52,7 @@ export function getNodeDetailsPresentation(
             getFormattedVoltageData(node.voltage) || SENSOR_MESSAGE.NO_VOLTAGE,
           count: getFormattedCountData(node.count) || SENSOR_MESSAGE.NO_COUNT,
           total: getFormattedTotalData(node.total) || SENSOR_MESSAGE.NO_TOTAL,
-          bars: node.bars?.toString() || "0",
+          bars: node.bars || "0",
         }
       : undefined,
     readings: readings

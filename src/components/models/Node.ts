@@ -13,7 +13,7 @@ interface Node {
   /**
    * The signal strength for this node - lora bars.
    */
-  bars?: number;
+  bars?: string;
 }
 
 export default Node;
