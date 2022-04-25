@@ -1,11 +1,7 @@
 import Image from "next/image";
-import { Col, Card, Row } from "antd";
+import { Col, Card, Row, Tooltip } from "antd";
 import EditInPlace from "./EditInPlace";
 import NodeCard from "./NodeCard";
-import {
-  calculateCellSignalStrength,
-  calculateWiFiSignalStrength,
-} from "../presentation/uiHelpers";
 import { ERROR_MESSAGE } from "../../constants/ui";
 import GatewayDetailViewModel from "../../models/GatewayDetailViewModel";
 import styles from "../../styles/Home.module.scss";
@@ -51,22 +47,24 @@ const GatewayDetails = ({
             data-testid="gateway-signal-strength"
             className={detailsStyles.signalStrength}
           >
-            {viewModel.gateway.cellBars ? (
-              <Image
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                src={calculateCellSignalStrength(viewModel.gateway.cellBars)}
-                width={24}
-                height={24}
-                alt="Gateway cell signal strength"
-              />
+            {viewModel.gateway.cellBarsIconPath ? (
+              <Tooltip title={viewModel.gateway.cellBarsTooltip}>
+                <Image
+                  src={viewModel.gateway.cellBarsIconPath}
+                  width={24}
+                  height={24}
+                  alt="Gateway cell signal strength"
+                />
+              </Tooltip>
             ) : null}
-            {viewModel.gateway.wifiBars ? (
-              <Image
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                src={calculateWiFiSignalStrength(viewModel.gateway.wifiBars)}
-                width={24}
-                alt="Gateway Wi Fi signal strength"
-              />
+            {viewModel.gateway.wifiBarsIconPath ? (
+              <Tooltip title={viewModel.gateway.cellBarsTooltip}>
+                <Image
+                  src={viewModel.gateway.wifiBarsIconPath}
+                  width={24}
+                  alt="Gateway Wi Fi signal strength"
+                />
+              </Tooltip>
             ) : null}
           </div>
 

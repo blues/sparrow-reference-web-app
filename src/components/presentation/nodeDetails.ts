@@ -13,6 +13,8 @@ import {
   getFormattedVoltageData,
   getFormattedCountData,
   getFormattedTotalData,
+  calculateLoraSignalStrength,
+  calculateSignalTooltip,
 } from "./uiHelpers";
 import Node from "../models/Node";
 import Gateway from "../models/Gateway";
@@ -53,6 +55,8 @@ export function getNodeDetailsPresentation(
           count: getFormattedCountData(node.count) || SENSOR_MESSAGE.NO_COUNT,
           total: getFormattedTotalData(node.total) || SENSOR_MESSAGE.NO_TOTAL,
           bars: node.bars || "0",
+          barsIconPath: calculateLoraSignalStrength(node.bars || "0"),
+          barsTooltip: calculateSignalTooltip(node.bars || "0"),
         }
       : undefined,
     readings: readings

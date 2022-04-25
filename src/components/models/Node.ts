@@ -1,3 +1,5 @@
+import { SignalStrengths } from "../presentation/uiHelpers";
+
 interface Node {
   name?: string;
   nodeId: string;
@@ -13,7 +15,7 @@ interface Node {
   /**
    * The signal strength for this node - lora bars.
    */
-  bars?: string;
+  bars: SignalStrengths;
 }
 
 export default Node;

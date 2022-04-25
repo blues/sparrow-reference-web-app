@@ -1,3 +1,4 @@
+import { SignalStrengths } from "../presentation/uiHelpers";
 import Node from "./Node";
 
 interface Gateway {
@@ -16,8 +17,8 @@ interface Gateway {
   /**
    * The signal strength for this gateway - either cell bars or wifi bars.
    */
-  cellBars?: string;
-  wifiBars?: string;
+  cellBars?: SignalStrengths;
+  wifiBars?: SignalStrengths;
 
   nodeList: Node[];
 }

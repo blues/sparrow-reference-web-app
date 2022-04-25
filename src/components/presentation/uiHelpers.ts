@@ -20,6 +20,7 @@ import LoraOne from "../elements/signal-strength-images/lora/lora-one-bar.svg";
 import LoraTwo from "../elements/signal-strength-images/lora/lora-two-bars.svg";
 import LoraThree from "../elements/signal-strength-images/lora/lora-three-bars.svg";
 import LoraFull from "../elements/signal-strength-images/lora/lora-full.svg";
+import { SIGNAL_STRENGTH_TOOLTIP } from "../../constants/ui";
 
 export const getFormattedLastSeenDate = (date: Date) =>
   formatDistanceToNow(date, {
@@ -105,6 +106,56 @@ export const getFormattedTotalData = (total: number | undefined) => {
   return null;
 };
 
+export type SignalStrengths = "N/A" | "0" | "1" | "2" | "3" | "4";
+
+export const calculateLoraSignalStrength = (signalBars: SignalStrengths) => {
+  const signalLookup = {
+    "N/A": undefined,
+    "0": LoraOff,
+    "1": LoraOne,
+    "2": LoraTwo,
+    "3": LoraThree,
+    "4": LoraFull,
+  };
+  return signalLookup[signalBars];
+};
+
+export const calculateWifiSignalStrength = (signalBars: SignalStrengths) => {
+  const signalLookup = {
+    "N/A": undefined,
+    "0": WifiOff,
+    "1": WifiOne,
+    "2": WifiTwo,
+    "3": WifiThree,
+    "4": WifiFull,
+  };
+  return signalLookup[signalBars];
+};
+
+export const calculateCellSignalStrength = (signalBars: SignalStrengths) => {
+  const signalLookup = {
+    "N/A": undefined,
+    "0": CellOff,
+    "1": CellOne,
+    "2": CellTwo,
+    "3": CellThree,
+    "4": CellFull,
+  };
+  return signalLookup[signalBars];
+};
+
+export const calculateSignalTooltip = (signalBars: SignalStrengths) => {
+  const tooltipStrength = {
+    "N/A": undefined,
+    "0": SIGNAL_STRENGTH_TOOLTIP.OFF,
+    "1": SIGNAL_STRENGTH_TOOLTIP.WEAK,
+    "2": SIGNAL_STRENGTH_TOOLTIP.FAIR,
+    "3": SIGNAL_STRENGTH_TOOLTIP.GOOD,
+    "4": SIGNAL_STRENGTH_TOOLTIP.EXCELLENT,
+  };
+  return tooltipStrength[signalBars];
+};
+
 export const getEpochChartDataDate = (minutesToConvert: number) => {
   const date = new Date();
   const rawEpochDate = sub(date, { minutes: minutesToConvert });
@@ -112,57 +163,6 @@ export const getEpochChartDataDate = (minutesToConvert: number) => {
     rawEpochDate.getTime() / 1000
   ).toString();
   return formattedEpochDate;
-};
-
-export const calculateWiFiSignalStrength = (signalBars: string) => {
-  if (signalBars === "0") {
-    return WifiOff;
-  }
-  if (signalBars > "4") {
-    return WifiFull;
-  }
-  const signalLookup = {
-    "1": WifiOne,
-    "2": WifiTwo,
-    "3": WifiThree,
-    "4": WifiFull,
-  };
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return signalLookup[signalBars as keyof typeof signalLookup];
-};
-
-export const calculateCellSignalStrength = (signalBars: string) => {
-  if (signalBars === "0") {
-    return CellOff;
-  }
-  if (signalBars > "4") {
-    return CellFull;
-  }
-  const signalLookup = {
-    "1": CellOne,
-    "2": CellTwo,
-    "3": CellThree,
-    "4": CellFull,
-  };
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return signalLookup[signalBars as keyof typeof signalLookup];
-};
-
-export const calculateLoraSignalStrength = (signalBars: string) => {
-  if (signalBars === "0") {
-    return LoraOff;
-  }
-  if (signalBars > "4") {
-    return LoraFull;
-  }
-  const signalLookup = {
-    "1": LoraOne,
-    "2": LoraTwo,
-    "3": LoraThree,
-    "4": LoraFull,
-  };
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return signalLookup[signalBars as keyof typeof signalLookup];
 };
 
 export function findCurrentReadingWithName(

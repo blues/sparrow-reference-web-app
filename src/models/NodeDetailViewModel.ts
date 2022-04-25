@@ -13,6 +13,8 @@ interface NodeDetailViewModel {
     count: string;
     total: string;
     bars: string;
+    barsIconPath: string;
+    barsTooltip: string;
   };
   readings?: {
     temperature: { when: string; value: number }[];

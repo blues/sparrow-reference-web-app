@@ -8,7 +8,11 @@ interface GatewayDetailViewModel {
     location: string;
     voltage: string;
     cellBars?: string;
+    cellBarsIconPath?: string;
+    cellBarsTooltip?: string;
     wifiBars?: string;
+    wifiBarsIconPath?: string;
+    wifiBarsTooltip?: string;
   };
   nodes?: Node[];
 }
