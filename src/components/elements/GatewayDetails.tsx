@@ -47,8 +47,11 @@ const GatewayDetails = ({
             data-testid="gateway-signal-strength"
             className={detailsStyles.signalStrength}
           >
-            {viewModel.gateway.cellBarsIconPath ? (
-              <Tooltip title={viewModel.gateway.cellBarsTooltip}>
+            {viewModel.gateway.cellBarsIconPath &&
+            viewModel.gateway.cellBarsTooltip ? (
+              <Tooltip
+                title={`Cell signal: ${viewModel.gateway.cellBarsTooltip}`}
+              >
                 <Image
                   src={viewModel.gateway.cellBarsIconPath}
                   width={24}
@@ -57,8 +60,11 @@ const GatewayDetails = ({
                 />
               </Tooltip>
             ) : null}
-            {viewModel.gateway.wifiBarsIconPath ? (
-              <Tooltip title={viewModel.gateway.cellBarsTooltip}>
+            {viewModel.gateway.wifiBarsIconPath &&
+            viewModel.gateway.wifiBarsTooltip ? (
+              <Tooltip
+                title={`Wi-Fi signal: ${viewModel.gateway.wifiBarsTooltip}`}
+              >
                 <Image
                   src={viewModel.gateway.wifiBarsIconPath}
                   width={24}
