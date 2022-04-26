@@ -15,8 +15,8 @@ interface NodeDetailViewModel {
     count: string;
     total: string;
     bars: SignalStrengths;
-    barsIconPath: string;
-    barsTooltip: string;
+    barsIconPath: string | null;
+    barsTooltip: string | null;
   };
   readings?: {
     temperature: { when: string; value: number }[];
