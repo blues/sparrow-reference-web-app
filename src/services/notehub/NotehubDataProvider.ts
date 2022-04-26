@@ -3,7 +3,12 @@ import { flattenDeep } from "lodash";
 import GatewayDEPRECATED from "../../components/models/Gateway";
 import NodeDEPRECATED from "../../components/models/Node";
 import NotehubDevice from "./models/NotehubDevice";
-import { DataProvider, ProjectHierarchyFilter, QueryHistoricalReadings, QueryResult } from "../DataProvider";
+import {
+  DataProvider,
+  ProjectHierarchyFilter,
+  QueryHistoricalReadings,
+  QueryResult,
+} from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
 import ReadingDEPRECATED from "../../components/models/readings/Reading";
@@ -15,9 +20,28 @@ import PressureSensorReading from "../../components/models/readings/PressureSens
 import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
 import CountSensorReading from "../../components/models/readings/CountSensorReading";
 import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
-import { Project, ProjectID, ProjectReadingsSnapshot, Gateway, Node, SensorType, ProjectHierarchy, Gateways, GatewayWithNodes, SensorHost, SensorHostReadingsSnapshot, SensorTypeNames, ProjectHistoricalData, TimePeriod, Reading } from "../DomainModel";
+import {
+  Project,
+  ProjectID,
+  ProjectReadingsSnapshot,
+  Gateway,
+  Node,
+  SensorType,
+  ProjectHierarchy,
+  Gateways,
+  GatewayWithNodes,
+  SensorHost,
+  SensorHostReadingsSnapshot,
+  SensorTypeNames,
+  ProjectHistoricalData,
+  TimePeriod,
+  Reading,
+} from "../DomainModel";
 import Config from "../../../config";
-import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
+import {
+  getEpochChartDataDate,
+  SignalStrengths,
+} from "../../components/presentation/uiHelpers";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
@@ -53,21 +77,25 @@ export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
 }
 
 export default class NotehubDataProvider implements DataProvider {
-
-  constructor(private readonly notehubAccessor: NotehubAccessor, private readonly projectID: ProjectID) {}
+  constructor(
+    private readonly notehubAccessor: NotehubAccessor,
+    private readonly projectID: ProjectID
+  ) {}
 
   /**
    * We made the interface more general (accepting a projectID) but the implementation has the
-   * ID fixed. This is a quick check to be sure the project ID is the one expected. 
-   * @param projectID 
+   * ID fixed. This is a quick check to be sure the project ID is the one expected.
+   * @param projectID
    */
   private checkProjectID(projectID: ProjectID) {
-    if (projectID.projectUID!==this.projectID.projectUID) {
+    if (projectID.projectUID !== this.projectID.projectUID) {
       throw new Error("Project ID does not match expected ID");
     }
   }
 
-  async queryProjectLatestValues(projectID: ProjectID): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
+  async queryProjectLatestValues(
+    projectID: ProjectID
+  ): Promise<QueryResult<ProjectID, ProjectReadingsSnapshot>> {
     this.checkProjectID(projectID);
 
     const gateways = new Set<GatewayWithNodes>();
@@ -76,36 +104,42 @@ export default class NotehubDataProvider implements DataProvider {
       id: projectID,
       name: Config.companyName,
       description: null,
-      gateways
+      gateways,
     };
 
     const results: ProjectReadingsSnapshot = {
       when: Date.now(),
       project,
-      hostReadings: function (sensorHost: SensorHost): SensorHostReadingsSnapshot {
+      hostReadings(sensorHost: SensorHost): SensorHostReadingsSnapshot {
         throw new Error("Function not implemented.");
       },
-      hostReadingByName: function (sensorHost: SensorHost, readingName: SensorTypeNames): Reading | undefined {
+      hostReadingByName(
+        sensorHost: SensorHost,
+        readingName: SensorTypeNames
+      ): Reading | undefined {
         throw new Error("Function not implemented.");
-      }
+      },
     };
 
-    return { request: projectID, results };    
+    return { request: projectID, results };
   }
 
-  async queryProjectReadingSeries(request: QueryHistoricalReadings): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>> {
+  async queryProjectReadingSeries(
+    request: QueryHistoricalReadings
+  ): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>> {
     const results: ProjectHistoricalData = {
       period: request.timeFilter,
       hostReadings: new Map(),
-      project: await this.buildProjectHierarchy(request.projectFilter)
+      project: await this.buildProjectHierarchy(request.projectFilter),
     };
-    return { request, results }
+    return { request, results };
   }
 
-  private async buildProjectHierarchy(projectFilter: ProjectHierarchyFilter): Promise<ProjectHierarchy> {
+  private async buildProjectHierarchy(
+    projectFilter: ProjectHierarchyFilter
+  ): Promise<ProjectHierarchy> {
     throw new Error("Method not implemented.");
   }
-
 
   // eventually this projectUID will need to be passed in - just not yet
   async getGateways() {
@@ -257,6 +291,8 @@ export default class NotehubDataProvider implements DataProvider {
         ...(gatewayNodeInfo.total && {
           total: gatewayNodeInfo.total,
         }),
+        // todo replace this with real bars data once calculation to turn notecard data into bars is implemented
+        bars: "0" as SignalStrengths,
       };
     };
 
