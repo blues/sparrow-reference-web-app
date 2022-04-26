@@ -13,7 +13,6 @@ import {
   HISTORICAL_SENSOR_DATA_MESSAGE,
   NODE_MESSAGE,
 } from "../../../../constants/ui";
-import { calculateLoraSignalStrength } from "../../../../components/presentation/uiHelpers";
 import { services } from "../../../../services/ServiceLocator";
 import NodeDetailsLineChart from "../../../../components/charts/NodeDetailsLineChart";
 import NodeDetailsBarChart from "../../../../components/charts/NodeDetailsBarChart";
@@ -424,6 +423,7 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
       nodeId,
       minutesBeforeNow
     );
+
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
 
     return {
