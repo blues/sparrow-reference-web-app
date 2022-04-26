@@ -184,14 +184,15 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   Voltage{` `}
                   {viewModel?.node?.voltage}
                 </span>
-                {viewModel?.node?.bars ? (
-                  <Image
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                    src={calculateLoraSignalStrength(viewModel.node.bars)}
-                    width={24}
-                    alt="Node Lora signal strength"
-                    data-testid="signal-strength"
-                  />
+                {viewModel.node?.barsIconPath ? (
+                  <Tooltip title={`LoRa signal: ${viewModel.node.barsTooltip}`}>
+                    <Image
+                      src={viewModel.node.barsIconPath}
+                      width={24}
+                      alt="Node Lora signal strength"
+                      data-testid="signal-strength"
+                    />
+                  </Tooltip>
                 ) : null}
               </div>
 
