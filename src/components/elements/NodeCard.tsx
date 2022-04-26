@@ -61,7 +61,7 @@ const NodeCardComponent = (props: NodeProps) => {
               Voltage{` `}
               {viewModel?.node?.voltage}
             </span>
-            {viewModel.node?.bars ? (
+            {viewModel.node?.barsIconPath && viewModel.node?.barsTooltip ? (
               <Tooltip title={`LoRa signal: ${viewModel.node.barsTooltip}`}>
                 <Image
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
