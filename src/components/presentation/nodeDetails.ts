@@ -13,6 +13,8 @@ import {
   getFormattedVoltageData,
   getFormattedCountData,
   getFormattedTotalData,
+  calculateLoraSignalStrength,
+  calculateSignalTooltip,
 } from "./uiHelpers";
 import Node from "../models/Node";
 import Gateway from "../models/Gateway";
@@ -52,6 +54,10 @@ export function getNodeDetailsPresentation(
             getFormattedVoltageData(node.voltage) || SENSOR_MESSAGE.NO_VOLTAGE,
           count: getFormattedCountData(node.count) || SENSOR_MESSAGE.NO_COUNT,
           total: getFormattedTotalData(node.total) || SENSOR_MESSAGE.NO_TOTAL,
+          bars: node.bars || "0",
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          barsIconPath: calculateLoraSignalStrength(node.bars || "0"),
+          barsTooltip: calculateSignalTooltip(node.bars || "0"),
         }
       : undefined,
     readings: readings

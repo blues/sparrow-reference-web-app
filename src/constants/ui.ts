@@ -76,11 +76,21 @@ const getErrorMessage = (errorCode: string) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const SIGNAL_STRENGTH_TOOLTIP = {
+  OFF: "Off",
+  WEAK: "Weak",
+  FAIR: "Fair",
+  GOOD: "Good",
+  EXCELLENT: "Excellent",
+};
+
 export {
   NODE_MESSAGE,
   SENSOR_MESSAGE,
   HISTORICAL_SENSOR_DATA_MESSAGE,
   GATEWAY_MESSAGE,
   ERROR_MESSAGE,
+  SIGNAL_STRENGTH_TOOLTIP,
   getErrorMessage,
 };

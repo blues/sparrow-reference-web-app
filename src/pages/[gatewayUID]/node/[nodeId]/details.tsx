@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { Card, Input, Button, Tabs, Row, Col, Tooltip, Select } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -174,6 +175,25 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
               >
                 Last updated {viewModel.node.lastActivity}
               </p>
+              <div className={detailsStyles.signalStrength}>
+                <span
+                  data-testid="current-voltage"
+                  className={detailsStyles.voltage}
+                >
+                  Voltage{` `}
+                  {viewModel?.node?.voltage}
+                </span>
+                {viewModel.node?.barsIconPath ? (
+                  <Tooltip title={`LoRa signal: ${viewModel.node.barsTooltip}`}>
+                    <Image
+                      src={viewModel.node.barsIconPath}
+                      width={24}
+                      alt="Node Lora signal strength"
+                      data-testid="signal-strength"
+                    />
+                  </Tooltip>
+                ) : null}
+              </div>
 
               <Row
                 justify="start"
@@ -403,6 +423,7 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
       nodeId,
       minutesBeforeNow
     );
+
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
 
     return {

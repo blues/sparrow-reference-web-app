@@ -18,6 +18,7 @@ const mockNodeData = {
   count: 2,
   lastActivity: "2022-01-01T15:28:38Z",
   gatewayUID: "abcdef",
+  bars: 2,
 };
 
 const mockedNodeDataLongName = {
@@ -25,9 +26,10 @@ const mockedNodeDataLongName = {
   nodeId: "9101",
   humidity: 46,
   temperature: 29,
-  voltage: 4.2,
+  voltage: 3.2,
   lastActivity: "2022-02-12T08:55:33Z",
   gatewayUID: "mnopqr",
+  bars: 3,
 };
 
 const mockUndefinedNodeData = {
@@ -50,7 +52,7 @@ describe("Node details card component", () => {
       screen.getByText(mockNodeData.temperature, { exact: false })
     ).toBeInTheDocument();
     expect(
-      screen.getByText(mockNodeData.voltage, { exact: false })
+      screen.getAllByText(mockNodeData.voltage, { exact: false })[0]
     ).toBeInTheDocument();
     expect(screen.getByText(mockNodeData.count)).toBeInTheDocument();
   });

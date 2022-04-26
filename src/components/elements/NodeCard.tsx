@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
-import { Card, Row, Col, Typography } from "antd";
+import Image from "next/image";
+import { Card, Row, Col, Tooltip, Typography } from "antd";
 import Node from "../models/Node";
 import { getNodeDetailsPresentation } from "../presentation/nodeDetails";
 import NodeDetailViewModel from "../../models/NodeDetailViewModel";
@@ -33,25 +34,46 @@ const NodeCardComponent = (props: NodeProps) => {
       onClick={handleCardClick}
       hoverable
       title={
-        <>
-          <Text
-            ellipsis={{
-              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-              tooltip: `${viewModel?.node?.name}`,
-            }}
-            data-testid={`node[${index}]-summary`}
-          >
-            {viewModel?.node?.name}
-          </Text>
-          <span data-testid="node-timestamp" className={styles.timestamp}>
-            Last updated{` `}
-            {viewModel?.node?.lastActivity}
+        <div className={styles.headerSection}>
+          <span>
+            <Text
+              ellipsis={{
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                tooltip: `${viewModel?.node?.name}`,
+              }}
+              data-testid={`node[${index}]-summary`}
+            >
+              {viewModel?.node?.name}
+            </Text>
+            <span data-testid="node-timestamp" className={styles.timestamp}>
+              Last updated{` `}
+              {viewModel?.node?.lastActivity}
+            </span>
+            <div data-testid="node-location" className={styles.locationWrapper}>
+              <span className={styles.locationTitle}>Location{` `}</span>
+              <span className={styles.location}>
+                {viewModel?.node?.location}
+              </span>
+            </div>
           </span>
-          <div data-testid="node-location" className={styles.locationWrapper}>
-            <span className={styles.locationTitle}>Location{` `}</span>
-            <span className={styles.location}>{viewModel?.node?.location}</span>
-          </div>
-        </>
+          <span className={styles.powerSignalWrapper}>
+            <span data-testid="node-voltage" className={styles.voltage}>
+              Voltage{` `}
+              {viewModel?.node?.voltage}
+            </span>
+            {viewModel.node?.barsIconPath && viewModel.node?.barsTooltip ? (
+              <Tooltip title={`LoRa signal: ${viewModel.node.barsTooltip}`}>
+                <Image
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                  src={viewModel.node.barsIconPath}
+                  width={24}
+                  alt="Node Lora signal strength"
+                  data-testid="node-signal-strength"
+                />
+              </Tooltip>
+            ) : null}
+          </span>
+        </div>
       }
     >
       <Row

@@ -1,4 +1,5 @@
-import { Col, Card, Row } from "antd";
+import Image from "next/image";
+import { Col, Card, Row, Tooltip } from "antd";
 import EditInPlace from "./EditInPlace";
 import NodeCard from "./NodeCard";
 import { ERROR_MESSAGE } from "../../constants/ui";
@@ -41,6 +42,36 @@ const GatewayDetails = ({
             className={detailsStyles.timestamp}
           >
             Last seen {viewModel.gateway.lastActivity}
+          </div>
+          <div
+            data-testid="gateway-signal-strength"
+            className={detailsStyles.signalStrength}
+          >
+            {viewModel.gateway.cellBarsIconPath &&
+            viewModel.gateway.cellBarsTooltip ? (
+              <Tooltip
+                title={`Cell signal: ${viewModel.gateway.cellBarsTooltip}`}
+              >
+                <Image
+                  src={viewModel.gateway.cellBarsIconPath}
+                  width={24}
+                  height={24}
+                  alt="Gateway cell signal strength"
+                />
+              </Tooltip>
+            ) : null}
+            {viewModel.gateway.wifiBarsIconPath &&
+            viewModel.gateway.wifiBarsTooltip ? (
+              <Tooltip
+                title={`Wi-Fi signal: ${viewModel.gateway.wifiBarsTooltip}`}
+              >
+                <Image
+                  src={viewModel.gateway.wifiBarsIconPath}
+                  width={24}
+                  alt="Gateway Wi Fi signal strength"
+                />
+              </Tooltip>
+            ) : null}
           </div>
 
           <Row gutter={[16, 16]}>

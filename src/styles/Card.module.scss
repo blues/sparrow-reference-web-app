@@ -16,6 +16,12 @@
     width: 100%;
   }
 
+  .headerSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .timestamp {
     color: $bw-color--grey4;
     font-size: 11px;
@@ -32,6 +38,15 @@
     .location {
       font-size: 13px;
       font-weight: 600;
+    }
+  }
+
+  .powerSignalWrapper {
+    display: flex;
+
+    .voltage {
+      padding-right: 8px;
+      font-size: 13px;
     }
   }
 

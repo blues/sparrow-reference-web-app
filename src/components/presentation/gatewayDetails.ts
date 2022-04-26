@@ -1,4 +1,11 @@
-import { getFormattedLastSeen, getFormattedVoltageData } from "./uiHelpers";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {
+  calculateCellSignalStrength,
+  calculateSignalTooltip,
+  calculateWifiSignalStrength,
+  getFormattedLastSeen,
+  getFormattedVoltageData,
+} from "./uiHelpers";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import Gateway from "../models/Gateway";
 import GatewayDetailViewModel from "../../models/GatewayDetailViewModel";
@@ -19,6 +26,27 @@ export function getGatewayDetailsPresentation(
           voltage:
             getFormattedVoltageData(gateway.voltage) ||
             GATEWAY_MESSAGE.NO_VOLTAGE,
+          ...(gateway.cellBars && { cellBars: gateway.cellBars }),
+          ...(gateway.cellBars
+            ? {
+                cellBarsIconPath: calculateCellSignalStrength(gateway.cellBars),
+              }
+            : {
+                cellBarsIconPath: calculateCellSignalStrength("N/A"),
+              }),
+          ...(gateway.cellBars && {
+            cellBarsTooltip: calculateSignalTooltip(gateway.cellBars),
+          }),
+
+          ...(gateway.wifiBars && { wifiBars: gateway.wifiBars }),
+          ...(gateway.wifiBars
+            ? {
+                wifiBarsIconPath: calculateWifiSignalStrength(gateway.wifiBars),
+              }
+            : { wifiBarsIconPath: calculateCellSignalStrength("N/A") }),
+          ...(gateway.wifiBars && {
+            wifiBarsTooltip: calculateSignalTooltip(gateway.wifiBars),
+          }),
         }
       : undefined,
     nodes,
