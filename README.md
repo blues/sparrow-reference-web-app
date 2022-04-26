@@ -59,13 +59,6 @@ your local development machine. You can do this with `git clone`.
 git clone https://github.com/blues/sparrow-reference-web-app.git
 ```
 
-Next, change directories to the `sparrow-reference-web-app` folder, as that’s
-where you’ll need to run all subsequent commands.
-
-```
-cd sparrow-reference-web-app
-```
-
 With your local project downloaded, you’ll next want to open up the
 `sparrow-reference-web-app` folder in your text editor or IDE of choice. Once
 you have the project open in your editor you’re ready to configure the project’s
@@ -88,6 +81,9 @@ no matter which kind of operating system your development machine uses.
 [container-dev]: https://code.visualstudio.com/docs/remote/containers
 [vscode]: https://code.visualstudio.com/
 [get-docker]: https://docs.docker.com/get-docker/
+
+Open a linux terminal to use throughout the rest of this guide:
+* VS Code > Menus > Terminal > New Terminal
 
 #### (Not Recommended) Dependencies without VS Code
 
@@ -143,7 +139,7 @@ When successful, you will see a response like
 {"session_token":"BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD"}
 ```
 
-Copy the value after the colon to set the environment variable in `.env.local`, e.g.
+Copy the value after the colon to set the environment variable in `.env`, e.g.
 
 ```
 HUB_AUTH_TOKEN=BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD
@@ -157,10 +153,10 @@ This is the unique identifier for your project in Notehub, and has the prefix `a
 HUB_PROJECTUID=app:245dc5d9-f910-433d-a8ca-c66b35475689
 ```
 
-#### DATABASE_URL
+#### POSTGRES_* and DATABASE_URL
 
-The default for this variable is fine for development purposes. In a production
-environment you'll set it to point to your production database.
+The default for these variables are fine for development purposes. In a production
+environment you'll set them to point to your production database.
 
 ### Routing
 
@@ -252,7 +248,7 @@ There are many different ways you might want to create a Postgres database. If
 you’re unsure how to start, we recommend running Postgres through Docker as
 follows.
 
-Open a terminal (VS Code: Terminal Menu > New Terminal) and run one of the
+Open a terminal (VS Code > Terminal Menu > New Terminal) and run one of the
 following commands.
 
 ```sh
@@ -273,7 +269,7 @@ the command `./dev.db.status.sh`.
 
 ```sh
 $ ./dev.db.status.sh
-398940737bae   postgres                                                                      "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   sparrow-postgresql-container
+398940737bae   postgres  "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   sparrow-postgresql-container
 ```
 
 To stop the database
@@ -333,7 +329,8 @@ browser to see your application.
 Next.js automatically watches your project’s files, and updates your application
 as you make changes. To try it, open your app’s `src/pages/index.tsx` file, make
 a change, save the file, and notice how your browser automatically updates with
-the change.
+the change. Changes to `.env`, **not** being automatically reloaded require you
+to stop the `yarn dev` with `ctrl+c` and to start `yarn dev` back up.
 
 The project’s `src/pages/api` directory are
 [APIs](https://nextjs.org/docs/api-routes/introduction) as opposed to
