@@ -18,11 +18,11 @@ interface Gateway {
    * The signal strength for this gateway - either cell bars or wifi bars.
    */
   cellBars?: SignalStrengths;
-  cellIconPath?: string;
-  cellTooltip?: string;
+  cellIconPath?: string | null;
+  cellTooltip?: string | null;
   wifiBars?: SignalStrengths;
-  wifiIconPath?: string;
-  wifiTooltip?: string;
+  wifiIconPath?: string | null;
+  wifiTooltip?: string | null;
 
   nodeList: Node[];
 }

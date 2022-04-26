@@ -106,11 +106,12 @@ export const getFormattedTotalData = (total: number | undefined) => {
   return null;
 };
 
+// used to determine which gateway / node signal strength icons and messaging to show (if any)
 export type SignalStrengths = "N/A" | "0" | "1" | "2" | "3" | "4";
 
 export const calculateLoraSignalStrength = (signalBars: SignalStrengths) => {
   const signalLookup = {
-    "N/A": undefined,
+    "N/A": null,
     "0": LoraOff,
     "1": LoraOne,
     "2": LoraTwo,
@@ -122,7 +123,7 @@ export const calculateLoraSignalStrength = (signalBars: SignalStrengths) => {
 
 export const calculateWifiSignalStrength = (signalBars: SignalStrengths) => {
   const signalLookup = {
-    "N/A": undefined,
+    "N/A": null,
     "0": WifiOff,
     "1": WifiOne,
     "2": WifiTwo,
@@ -134,7 +135,7 @@ export const calculateWifiSignalStrength = (signalBars: SignalStrengths) => {
 
 export const calculateCellSignalStrength = (signalBars: SignalStrengths) => {
   const signalLookup = {
-    "N/A": undefined,
+    "N/A": null,
     "0": CellOff,
     "1": CellOne,
     "2": CellTwo,
@@ -146,7 +147,7 @@ export const calculateCellSignalStrength = (signalBars: SignalStrengths) => {
 
 export const calculateSignalTooltip = (signalBars: SignalStrengths) => {
   const tooltipStrength = {
-    "N/A": undefined,
+    "N/A": null,
     "0": SIGNAL_STRENGTH_TOOLTIP.OFF,
     "1": SIGNAL_STRENGTH_TOOLTIP.WEAK,
     "2": SIGNAL_STRENGTH_TOOLTIP.FAIR,

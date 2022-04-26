@@ -1,3 +1,5 @@
+import { SignalStrengths } from "../components/presentation/uiHelpers";
+
 interface NodeDetailViewModel {
   gateway?: {
     name: string;
@@ -12,9 +14,9 @@ interface NodeDetailViewModel {
     voltage: string;
     count: string;
     total: string;
-    bars: string;
-    barsIconPath: string;
-    barsTooltip: string;
+    bars: SignalStrengths;
+    barsIconPath?: string;
+    barsTooltip?: string;
   };
   readings?: {
     temperature: { when: string; value: number }[];

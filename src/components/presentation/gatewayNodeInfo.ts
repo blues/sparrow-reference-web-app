@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Node from "../models/Node";
 import Gateway from "../models/Gateway";
 import {
   calculateCellSignalStrength,
   calculateSignalTooltip,
   calculateWifiSignalStrength,
-  SignalStrengths,
 } from "./uiHelpers";
 
 // eslint-disable-next-line import/prefer-default-export
@@ -19,14 +19,12 @@ export function getCombinedGatewayNodeInfo(
     const updatedNodeList = {
       nodeList: filterNodesByGateway,
     };
-    let gatewaySignalStrengthIconPath: string;
-    let gatewaySignalTooltip: string;
 
     if (gateway.cellBars) {
-      gatewaySignalStrengthIconPath = calculateCellSignalStrength(
+      const gatewaySignalStrengthIconPath = calculateCellSignalStrength(
         gateway.cellBars
       );
-      gatewaySignalTooltip = calculateSignalTooltip(gateway.cellBars);
+      const gatewaySignalTooltip = calculateSignalTooltip(gateway.cellBars);
 
       gateway = {
         ...gateway,
@@ -34,10 +32,10 @@ export function getCombinedGatewayNodeInfo(
         cellTooltip: gatewaySignalTooltip,
       };
     } else if (gateway.wifiBars) {
-      gatewaySignalStrengthIconPath = calculateWifiSignalStrength(
+      const gatewaySignalStrengthIconPath = calculateWifiSignalStrength(
         gateway.wifiBars
       );
-      gatewaySignalTooltip = calculateSignalTooltip(gateway.wifiBars);
+      const gatewaySignalTooltip = calculateSignalTooltip(gateway.wifiBars);
 
       gateway = {
         ...gateway,

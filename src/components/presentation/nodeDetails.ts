@@ -55,6 +55,7 @@ export function getNodeDetailsPresentation(
           count: getFormattedCountData(node.count) || SENSOR_MESSAGE.NO_COUNT,
           total: getFormattedTotalData(node.total) || SENSOR_MESSAGE.NO_TOTAL,
           bars: node.bars || "0",
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           barsIconPath: calculateLoraSignalStrength(node.bars || "0"),
           barsTooltip: calculateSignalTooltip(node.bars || "0"),
         }

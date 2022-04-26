@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   calculateCellSignalStrength,
   calculateSignalTooltip,
@@ -25,17 +26,27 @@ export function getGatewayDetailsPresentation(
           voltage:
             getFormattedVoltageData(gateway.voltage) ||
             GATEWAY_MESSAGE.NO_VOLTAGE,
-          cellBars: gateway.cellBars || "",
-          cellBarsIconPath: calculateCellSignalStrength(
-            gateway.cellBars || "N/A"
-          ),
-          cellBarsTooltip: calculateSignalTooltip(gateway.cellBars || "N/A"),
+          ...(gateway.cellBars && { cellBars: gateway.cellBars }),
+          ...(gateway.cellBars
+            ? {
+                cellBarsIconPath: calculateCellSignalStrength(gateway.cellBars),
+              }
+            : {
+                cellBarsIconPath: calculateCellSignalStrength("N/A"),
+              }),
+          ...(gateway.cellBars && {
+            cellBarsTooltip: calculateSignalTooltip(gateway.cellBars),
+          }),
 
-          wifiBars: gateway.wifiBars || "",
-          wifiBarsIconPath: calculateWifiSignalStrength(
-            gateway.wifiBars || "N/A"
-          ),
-          wifiBarsTooltip: calculateSignalTooltip(gateway.wifiBars || "N/A"),
+          ...(gateway.wifiBars && { wifiBars: gateway.wifiBars }),
+          ...(gateway.wifiBars
+            ? {
+                wifiBarsIconPath: calculateWifiSignalStrength(gateway.wifiBars),
+              }
+            : { wifiBarsIconPath: calculateCellSignalStrength("N/A") }),
+          ...(gateway.wifiBars && {
+            wifiBarsTooltip: calculateSignalTooltip(gateway.wifiBars),
+          }),
         }
       : undefined,
     nodes,
