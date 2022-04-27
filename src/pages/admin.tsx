@@ -5,9 +5,10 @@ import { Breadcrumb, Card, Space } from "antd";
 import { services } from "../services/ServiceLocator";
 import { getErrorMessage } from "../constants/ui";
 import { ERROR_CODES, isError, MayError } from "../services/Errors";
-import styles from "../styles/Home.module.scss";
 import { Project } from "../services/AppModel";
 import Config from "../../config";
+// CSS
+import styles from "../styles/Home.module.scss";
 
 type HomeData = MayError<
   {

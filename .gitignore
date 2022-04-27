@@ -46,7 +46,7 @@ yarn-error.log*
 cypress/screenshots/
 cypress/videos/
 cypress/downloads/
-cypress..json
+cypress.env.json
 
 # Local Netlify folder
 .netlify

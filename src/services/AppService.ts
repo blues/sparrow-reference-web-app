@@ -132,20 +132,20 @@ export default class AppService implements AppServiceInterface {
   }
 
   async performBulkDataImport(): Promise<AppModel.BulkDataImportStatus> {
-    const t0 = performance.now();
+    const startTime = performance.now();
     try {
       const b = await this.dataProvider.doBulkImport();
-      const t1 = performance.now();
+      const finishTime = performance.now();
       return {
-        elapsedTimeMs: t1 - t0,
+        elapsedTimeMs: finishTime - startTime,
         erroredItemCount: b.errorCount,
         importedItemCount: b.itemCount,
         state: "done",
       };
     } catch (cause) {
-      const t1 = performance.now();
+      const finishTime = performance.now();
       return {
-        elapsedTimeMs: t1 - t0,
+        elapsedTimeMs: finishTime - startTime,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         err: `Please Try Again. Cause: ${cause}`,
         erroredItemCount: 0,

@@ -123,9 +123,9 @@ export class PrismaDataProvider implements DataProvider {
       await manageNodeImport(b, this.prisma, project, node);
     }
 
-    // Todo: Once this is working, remove time limit
     const now = new Date(Date.now());
-    const hoursBack = 240;
+    const pilotBulkImportDays = 10;
+    const hoursBack = 24 * pilotBulkImportDays;
     const startDate = new Date(now);
     startDate.setUTCHours(now.getUTCHours() - hoursBack);
 

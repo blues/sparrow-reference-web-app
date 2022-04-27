@@ -2,10 +2,7 @@ import {
   PrismaClient,
   Project,
   Gateway,
-  ReadingSchema,
-  Reading,
   Prisma,
-  Node,
   ReadingSource,
   ReadingSourceType,
   ReadingSchemaValueType as ReadingSchemaValueType,
@@ -15,7 +12,6 @@ import {
   GatewaySensorMeasure,
   GatewaySensorTypeNames,
   NodeSensorTypeNames,
-  SensorTypeNames,
 } from "../DomainModel";
 
 const prisma = new PrismaClient();
@@ -301,34 +297,13 @@ const standardSchemas: BareReadingSchema[] = [
  * @param projectUID
  */
 async function createTypicalProject(prisma: PrismaClient, projectUID: string) {
-  const gateways = [
-    {
-      deviceUID: "dev:fake",
-      name: "fake.name",
-      locationName: "fake.location",
-      nodes: [
-        {
-          nodeEUI: "fake.deviceEUI.1",
-          name: "fake.name.1",
-          locationName: "fake.location.1",
-        },
-        {
-          nodeEUI: "fake.deviceEUI.2",
-          name: "fake.name.2",
-          locationName: "fake.location.2",
-        },
-      ],
-    },
-  ];
-
   const project = await upsertProject({
     prisma,
     projectUID,
-    name: "faker.something",
+    name: "typicalProject",
   });
   const schemas = standardSchemas.map(readingSchemaDefaults);
   await upsertReadingSchemas(prisma, project.readingSource, schemas);
-  await upsertGatewaysAndNodes(prisma, project, gateways);
   return project;
 }
 
@@ -343,76 +318,6 @@ type BareNode = {
   name: string;
   locationName: string;
 };
-
-type BareGatewayAndNodes = BareGateway & {
-  nodes?: BareNode[];
-};
-
-async function upsertGatewaysAndNodes(
-  prisma: PrismaClient,
-  project: Project,
-  gateways: BareGatewayAndNodes[]
-) {
-  const doall = gateways.map(async (gateway) => {
-    const nodes = gateway.nodes || [];
-    delete gateway.nodes;
-    const upsertedGateway = await prisma.gateway.upsert({
-      where: {
-        deviceUID: gateway.deviceUID,
-      },
-      update: gateway as BareGateway,
-      create: {
-        ...gateway,
-        readingSource: {
-          create: {
-            type: ReadingSourceType.GATEWAY,
-          },
-        },
-        project: {
-          connect: {
-            id: project.id,
-          },
-        },
-      },
-    });
-    const upsertedNodes = await upsertNodes(prisma, upsertedGateway, nodes);
-  });
-  return Promise.all(doall);
-}
-
-async function upsertNodes(
-  prisma: PrismaClient,
-  gateway: Gateway,
-  nodes: BareNode[]
-) {
-  const connectGateway = {
-    connect: {
-      id: gateway.id,
-    },
-  };
-
-  const doall = nodes.map((node) => {
-    return prisma.node.upsert({
-      where: {
-        nodeEUI: node.nodeEUI,
-      },
-      create: {
-        readingSource: {
-          create: {
-            type: ReadingSourceType.NODE,
-          },
-        },
-        gateway: connectGateway,
-        ...node,
-      },
-      update: {
-        gateway: connectGateway,
-        ...node,
-      },
-    });
-  });
-  return Promise.all(doall);
-}
 
 async function upsertReadingSchemas(
   prisma: PrismaClient,

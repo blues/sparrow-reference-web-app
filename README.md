@@ -11,7 +11,7 @@ An example web application to configure and view sensor data from Blues Wireless
     - [Configuration (Environment Variables)](#configuration-environment-variables)
       - [HUB_AUTH_TOKEN](#hub_auth_token)
       - [HUB_PROJECTUID](#hub_projectuid)
-      - [DATABASE_URL](#database_url)
+      - [POSTGRES\_\* and DATABASE_URL](#postgres_-and-database_url)
     - [Routing](#routing)
     - [Create a tunnel to a server running the reference app](#create-a-tunnel-to-a-server-running-the-reference-app)
       - [Localtunnel](#localtunnel)
@@ -70,10 +70,20 @@ environment variables.
 
 Although this project is designed for development on Linux, [VS Code](vscode)
 can quickly create a Linux ["Dev Container"](dev-container) on Windows, Mac, or
-Linux, **assuming you have [Docker](get-docker) installed**. When you open this
-folder in VSCode you will see a box propts you to 'Reopen in Container'.
+Linux, **assuming you have [Docker](get-docker) installed**.
 
-![reopen](readme-reopen-in-container.png)
+To verify that the Docker engine is running
+
+- On Windows: Check the docker (whale) icon in the system tray.
+- On Linux/Mac: you can use this command `$ docker run hello-world`
+
+When you open the folder contaiing this readme in VSCode you will see boxes that
+prompt you to Install the extension _Remote - Containers_ and then to 'Reopen in
+Container'.
+
+![install Remote Containers](readme-install-remote-containers-extention.png)
+
+![reopen in container](readme-reopen-in-container.png)
 
 The Dev Container will automatically install Linux and the project dependencies,
 no matter which kind of operating system your development machine uses.
@@ -83,7 +93,8 @@ no matter which kind of operating system your development machine uses.
 [get-docker]: https://docs.docker.com/get-docker/
 
 Open a linux terminal to use throughout the rest of this guide:
-* VS Code > Menus > Terminal > New Terminal
+
+- VS Code > Menus > Terminal > New Terminal
 
 #### (Not Recommended) Dependencies without VS Code
 
@@ -124,9 +135,13 @@ steps to do so.
 
 #### HUB_AUTH_TOKEN
 
-The Sparrow Reference Web App needs access to your Notehub project in order to show the gateway and sensor nodes in your project. An access token is used to authenticate the app.
+The Sparrow Reference Web App needs access to your Notehub project in order to
+show the gateway and sensor nodes in your project. An access token is used to
+authenticate the app.
 
-To find retrieve an authentication token, put this in your command line, replacing `YOUR_NOTEHUB_EMAIL` & `NOTEHUB_PASSWORD` with your own:
+To find retrieve an authentication token, put this in your command line (VS Code
+Menu > Terminal > New Terminal), replacing `YOUR_NOTEHUB_EMAIL` &
+`NOTEHUB_PASSWORD` with your own:
 
 ```
 curl -X POST -L 'https://api.notefile.net/auth/login' \
@@ -153,7 +168,7 @@ This is the unique identifier for your project in Notehub, and has the prefix `a
 HUB_PROJECTUID=app:245dc5d9-f910-433d-a8ca-c66b35475689
 ```
 
-#### POSTGRES_* and DATABASE_URL
+#### POSTGRES\_\* and DATABASE_URL
 
 The default for these variables are fine for development purposes. In a production
 environment you'll set them to point to your production database.
@@ -179,8 +194,8 @@ welcome to use any tunneling setup you’re comfortable using, but we recommend
 
 #### Localtunnel
 
-`localtunnel` is a simple free tunnel that gives you a consistent domain name,
-but not as reliable as ngrok, a oneliner:
+`localtunnel` is a simple free tunnel that can be run as follows. Replace `acme`
+with the name of your choice.
 
 ```sh
 $ npx localtunnel --port 4000 --subdomain acme
@@ -190,10 +205,12 @@ Ok to proceed? (y) y
 your url is: https://acme.loca.lt
 ```
 
+You can close the tunnel with `ctrl+c`.
+
 #### Ngrok
 
-Ngrok is more reliable than localtunnel, and also free, but requires an e-mail
-signup, a modicum of setup, and worst of all does not give you a tunnel with a
+Ngrok is a freemium alternative to localtunnel, which requires an e-mail
+signup, a modicum of setup, and in free-mode does not give you a tunnel with a
 consistent domain name. **The inconsistent domain name will require you to
 update your [route](#routing) each time you start your tunnel.** To use ngrok
 you’ll first need to:
@@ -202,7 +219,8 @@ you’ll first need to:
 - [Install ngrok](https://dashboard.ngrok.com/get-started/setup). (`brew install ngrok/ngrok/ngrok` works well for macOS users - yes 3 times is the recommended way by Ngrok itself.)
 - [Set up your ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken).
 
-Next, open a new VS Code terminal and run `ngrok http 4000`, which creates the tunnel itself.
+Next, open a new terminal outside VS Code and run `ngrok http 4000`, which
+creates the tunnel itself.
 
 ```
 ngrok http 4000
@@ -257,6 +275,9 @@ following commands.
 ./dev.db.persistent.sh # Start a database with data that persists after stopping and starting again.
 ```
 
+On Windows you may need to `Allow access` when the Windows Defender Firewall
+asks you to allow `com.docker.backend.exe`.
+
 ```sh
 $ ./dev.db.persistent.sh
 ... elided ...
@@ -294,7 +315,9 @@ explore.
 ./dev.db.manage.sh # Open a webpage at http://localhost:5555 that lets you explore the database
 ```
 
-This will open up a new browser window at http://localhost:5555 where you can see your Prisma DB, its tables, and any data that currently resides therein, whether it's preseeded or has been routed in by Notehub.
+This will open up a new browser window at http://localhost:5555 where you can
+see your Prisma DB, its tables, and any data that currently resides therein,
+whether it came from bulk data import or was routed in by Notehub.
 
 And just like any other database GUI, you can click into models to view data, manipulate data, filter, query, etc., etc.
 

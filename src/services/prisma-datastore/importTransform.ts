@@ -1,17 +1,5 @@
-import {
-  PrismaClient,
-  Prisma,
-  ReadingSource,
-  ReadingSchema,
-  ReadingSchemaValueType,
-  Project,
-  Sensor,
-  ReadingSourceType,
-  Gateway,
-  Reading,
-} from "@prisma/client";
+import { Prisma, Project, ReadingSourceType } from "@prisma/client";
 import GatewayDEPRECATED from "../../components/models/Gateway";
-import ReadingDEPRECATED from "../../components/models/readings/Reading";
 import NodeDEPRECATED from "../../components/models/Node";
 
 export function gatewayTransformUpsert(
@@ -51,13 +39,7 @@ export function nodeTransformUpsert({
   name,
   nodeId,
   location,
-  humidity,
-  pressure,
-  temperature,
-  voltage,
   lastActivity,
-  count,
-  total,
   gatewayUID,
 }: NodeDEPRECATED): Prisma.NodeUpsertArgs {
   return {
@@ -88,5 +70,3 @@ export function nodeTransformUpsert({
 
 const DEFAULT = { gatewayTransformUpsert, nodeTransformUpsert };
 export default DEFAULT;
-
-// TODO(carl) probably delete this whole file
