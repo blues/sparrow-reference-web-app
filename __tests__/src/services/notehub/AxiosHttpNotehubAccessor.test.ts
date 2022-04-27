@@ -81,8 +81,10 @@ describe("Device handling", () => {
   });
 
   it("should return a valid response when getting all devices", async () => {
-    mock.onGet(API_DEVICES_URL).reply(200,{devices: [mockNotehubDeviceData,]});
-    
+    mock
+      .onGet(API_DEVICES_URL)
+      .reply(200, { devices: [mockNotehubDeviceData] });
+
     const res = await axiosHttpNotehubAccessorMock.getDevices();
     expect(res).toEqual([mockNotehubDeviceData]);
   });

@@ -4,7 +4,13 @@
 /node_modules
 /.pnp
 .pnp.js
-.vscode/settings.json
+
+### VisualStudioCode ###
+.vscode/**/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
 # testing
 /coverage
