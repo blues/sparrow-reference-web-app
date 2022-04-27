@@ -30,8 +30,8 @@ model Gateway {
   deviceUID         String @unique @map("device_uid") @db.VarChar(64)
 
   // device serial number (cached)
-  name              String? @db.VarChar(50) // cached
-  location          String? @db.VarChar(200) // cached
+  name              String? @db.VarChar(80) // cached
+  locationName      String? @db.VarChar(200) // cached
   lastSeenAt        DateTime? @map("last_seen_at") // the last time an event was heard from this device
 
   // the project the device belongs to
@@ -60,7 +60,7 @@ model Node {
   nodeEUI           String    @unique @map("node_eui") @db.VarChar(24)
 
   name              String?   @db.VarChar(49) // cached
-  location          String?   @db.VarChar(15) // cached
+  locationName      String?   @db.VarChar(200) // cached
   label             String?   @db.VarChar(50) // max 50
   comment           String?   @db.VarChar(3000)
   lastSeenAt        DateTime? @map("last_seen_at") // the last time an event was heard from this device
@@ -180,6 +180,7 @@ model Reading {
 
   latest            Sensor?         @relation(name: "latest")
 
+  @@unique([sensor_id, when, value])    // natural key
   @@index([sensor_id])
   @@map("reading")
 }

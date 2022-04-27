@@ -6,9 +6,7 @@
       "script": "dev",
       "options": {
         "env": {
-            "HUB_DEVICE_UID": "",
-            "HUB_PROJECTUID": "",
-            "HUB_AUTH_TOKEN": ""
+          "REACT_EDITOR": "code"
         }
       },
       "problemMatcher": [],

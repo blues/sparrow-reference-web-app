@@ -11,8 +11,6 @@ import TestConfig from "../../TestConfig";
 
 describe("/api/gateway/[gatewayUID]/node/[nodeId]/config API Endpoint", () => {
   const authToken = process.env.HUB_AUTH_TOKEN;
-  const gatewayUIDs = process.env.HUB_DEVICE_UID;
-  const gatewayUID = gatewayUIDs.split(",")[0];
   const nodeId = TestConfig.testNodeId;
 
   function mockRequestResponse(method: RequestMethod = "GET") {
@@ -22,7 +20,7 @@ describe("/api/gateway/[gatewayUID]/node/[nodeId]/config API Endpoint", () => {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
       [HTTP_HEADER.SESSION_TOKEN]: authToken,
     };
-    req.query = { gatewayUID, nodeId };
+    req.query = { gatewayUID: "dev:11111", nodeId };
     return { req, res };
   }
 

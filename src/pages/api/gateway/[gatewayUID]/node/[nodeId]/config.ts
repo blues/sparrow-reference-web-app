@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { services } from "../../../../../../services/ServiceLocator";
 import { HTTP_STATUS } from "../../../../../../constants/http";
+import { serverLogError } from "../../../../log";
 
 interface ValidRequest {
   gatewayUID: string;
@@ -31,7 +32,7 @@ function validateRequest(
   // typechecking. All the code below feels terrible to write when we've already specified the API
   // in typescript. Maybe we should really use a different language to specify the API and generate
   // the typescript and typechecking code?
-  const { name, location } = req.body;
+  const { name, location } = req.body as ValidRequest;
 
   if (typeof gatewayUID !== "string") {
     res.status(StatusCodes.BAD_REQUEST);
@@ -96,7 +97,7 @@ export default async function nodeConfigHandler(
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
     res.json({ err: ReasonPhrases.INTERNAL_SERVER_ERROR });
     const e = new ErrorWithCause("could not handle node config", { cause });
-    console.error(e);
+    serverLogError(e);
     throw e;
   }
 }

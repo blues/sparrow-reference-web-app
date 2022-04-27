@@ -10,7 +10,7 @@ import NotehubNodeConfig from "../../../../src/services/notehub/models/NotehubNo
 import notehubData from "../__serviceMocks__/notehubData.json";
 
 let mock: MockAdapter;
-const mockBaseURL = "http://blues.io";
+const mockBaseURL = "http://example.io";
 const mockProjectUID = "app:1234";
 const mockDeviceUID = "dev:1234";
 const mockHubHistoricalDataRecentMinutes = 1440;
@@ -20,6 +20,7 @@ const mockedStartDate = sub(new Date(), {
 const mockedEpochTimeValue = Math.round(mockedStartDate.getTime() / 1000);
 
 const API_DEVICE_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}`;
+const API_DEVICES_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices`;
 const API_CONFIG_URL = `${mockBaseURL}/req?project=${mockProjectUID}&device=${mockDeviceUID}`;
 const API_ENV_VAR_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}/environment_variables`;
 const API_LATEST_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}/devices/${mockDeviceUID}/latest`;
@@ -27,7 +28,6 @@ const API_INITIAL_ALL_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}
 
 const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
   mockBaseURL,
-  mockDeviceUID,
   mockProjectUID,
   "",
   mockHubHistoricalDataRecentMinutes
@@ -81,7 +81,9 @@ describe("Device handling", () => {
   });
 
   it("should return a valid response when getting all devices", async () => {
-    mock.onGet(API_DEVICE_URL).reply(200, mockNotehubDeviceData);
+    mock
+      .onGet(API_DEVICES_URL)
+      .reply(200, { devices: [mockNotehubDeviceData] });
 
     const res = await axiosHttpNotehubAccessorMock.getDevices();
     expect(res).toEqual([mockNotehubDeviceData]);

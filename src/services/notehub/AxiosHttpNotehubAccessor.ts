@@ -12,12 +12,11 @@ import NotehubResponse from "./models/NotehubResponse";
 import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
 import NotehubEnvVars from "./models/NotehubEnvVars";
 import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
+import { serverLogInfo } from "../../pages/api/log";
 
 // this class directly interacts with Notehub via HTTP calls
 export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
   hubBaseURL: string;
-
-  hubDeviceUID: string;
 
   hubProjectUID: string;
 
@@ -27,13 +26,11 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   constructor(
     hubBaseURL: string,
-    hubDeviceUID: string,
     hubProjectUID: string,
     hubAuthToken: string,
     hubHistoricalDataRecentMinutes: number
   ) {
     this.hubBaseURL = hubBaseURL;
-    this.hubDeviceUID = hubDeviceUID;
     this.hubProjectUID = hubProjectUID;
     this.hubHistoricalDataRecentMinutes = hubHistoricalDataRecentMinutes;
     this.commonHeaders = {
@@ -46,20 +43,26 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     return Promise.all(deviceUIDs.map((device) => this.getDevice(device)));
   }
 
-  // Eventually we’ll want to find all valid gateways in a Notehub project.
-  // For now, just take the hardcoded list of gateway UID from the starter’s
-  // environment variables and use that.
   async getDevices() {
-    const deviceUIDs = this.hubDeviceUID.split(",");
-    const allDeviceData = await this.getAllDevices(deviceUIDs);
-    return allDeviceData;
+    const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices`;
+    const resp = await axios.get<{
+      devices: NotehubDevice[];
+      has_more: boolean;
+    }>(endpoint, { headers: this.commonHeaders });
+    if (resp.data.has_more)
+      throw new Error(
+        `Response from ${endpoint} says has_more=${resp.data.has_more} but this function getDevices() doesn't support fetching more yet.`
+      );
+    return resp.data.devices;
   }
 
   async getDevice(hubDeviceUID: string) {
     const endpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/devices/${hubDeviceUID}`;
     try {
-      const resp = await axios.get(endpoint, { headers: this.commonHeaders });
-      return resp.data as NotehubDevice;
+      const resp = await axios.get<NotehubDevice>(endpoint, {
+        headers: this.commonHeaders,
+      });
+      return resp.data;
     } catch (e) {
       throw this.errorWithCode(e);
     }
@@ -123,8 +126,14 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
           events = [...events, ...recurringResponse.data.events];
         }
         if (recurringResponse.data.has_more) {
+          serverLogInfo(
+            `Extracted ${events.length} Events from Notehub through ${
+              events.at(-1)?.received || ""
+            }...`
+          );
           resp.data.through = recurringResponse.data.through;
         } else {
+          serverLogInfo(`Extracted ${events.length} Events from Notehub. Done`);
           resp.data.has_more = false;
         }
       }
