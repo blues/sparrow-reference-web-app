@@ -51,7 +51,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     }>(endpoint, { headers: this.commonHeaders });
     if (resp.data.has_more)
       throw new Error(
-        `Response from ${endpoint} says has_more=${resp.data.has_more} but we don't support that.`
+        `Response from ${endpoint} says has_more=${resp.data.has_more} but this function getDevices() doesn't support fetching more yet.`
       );
     return resp.data.devices;
   }

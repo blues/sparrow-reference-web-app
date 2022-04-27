@@ -1,11 +1,6 @@
-# Container for hosting dev.blues.io locally
+# Container for developing Sparrow Reference Web App locally
 
-# Build development environment
-# $ docker build . --tag dev.blues.io
-
-# Launch development environment
-# $ docker run --interactive --net host --rm --tty \
-#   --volume $(pwd):/var/www/ dev.blues.io
+# Used by VS Code Dev Container (devcontainer.json)
 
 # Define global arguments
 ARG DEBIAN_FRONTEND="noninteractive"
