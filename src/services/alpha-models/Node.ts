@@ -1,4 +1,4 @@
-import { SignalStrengths } from "../presentation/uiHelpers";
+import { SignalStrengths } from "../../components/presentation/uiHelpers";
 
 interface Node {
   name?: string;

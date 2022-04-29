@@ -1,5 +1,5 @@
-import Gateway from "../../../src/components/models/Gateway";
-import Node from "../../../src/components/models/Node";
+import Gateway from "../../../src/services/alpha-models/Gateway";
+import Node from "../../../src/services/alpha-models/Node";
 import NodeDetailViewModel from "../../../src/models/NodeDetailViewModel";
 import AppService from "../../../src/services/AppService";
 import { DataProvider } from "../../../src/services/DataProvider";
@@ -42,7 +42,7 @@ describe("App Service", () => {
       getNodes: jest.fn().mockResolvedValueOnce(mockedNodesSparrowData),
       getNodeData: jest.fn().mockResolvedValueOnce(mockedSparrowNodeData),
       queryProjectLatestValues: jest.fn(),
-      queryProjectReadingSeries: jest.fn()
+      queryProjectReadingSeries: jest.fn(),
     };
     attributeStoreMock = {
       updateGatewayName: jest.fn(),
@@ -50,11 +50,11 @@ describe("App Service", () => {
       updateNodeLocation: jest.fn(),
     };
     const mockEventHandler = {
-      handleEvent: jest.fn()
-    }
+      handleEvent: jest.fn(),
+    };
     const mockIDBuilder: IDBuilder = {
       buildProjectID: (projectUID: string): AppModel.ProjectID => {
-          return { projectUID, type: "ProjectID" };
+        return { projectUID, type: "ProjectID" };
       },
       buildGatewayID: function (gatewayDeviceUID: string): AppModel.GatewayID {
         throw new Error("Function not implemented.");
@@ -62,12 +62,20 @@ describe("App Service", () => {
       buildNodeID: function (nodeID: string): AppModel.NodeID {
         throw new Error("Function not implemented.");
       },
-      buildSensorTypeID: function (readingSchemaName: string): AppModel.SensorTypeID {
+      buildSensorTypeID: function (
+        readingSchemaName: string
+      ): AppModel.SensorTypeID {
         throw new Error("Function not implemented.");
-      }
-    } 
-    
-    appServiceMock = new AppService(mockProjectUID, mockIDBuilder, dataProviderMock, attributeStoreMock, mockEventHandler);
+      },
+    };
+
+    appServiceMock = new AppService(
+      mockProjectUID,
+      mockIDBuilder,
+      dataProviderMock,
+      attributeStoreMock,
+      mockEventHandler
+    );
   });
 
   it("should return a single gateway when getGateway is called", async () => {

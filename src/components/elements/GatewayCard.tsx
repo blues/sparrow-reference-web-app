@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { Card, Col, Row, Tooltip, Typography } from "antd";
-import Gateway from "../models/Gateway";
+import Gateway from "../../services/alpha-models/Gateway";
 import NodeCard from "./NodeCard";
 import {
   getFormattedLastSeen,

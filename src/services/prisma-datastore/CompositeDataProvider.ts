@@ -6,9 +6,9 @@ import {
 } from "../DataProvider";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { PrismaDataProvider } from "./PrismaDataProvider";
-import Gateway from "../../components/models/Gateway";
-import Node from "../../components/models/Node";
-import ReadingDEPRECATED from "../../components/models/readings/Reading";
+import Gateway from "../alpha-models/Gateway";
+import Node from "../alpha-models/Node";
+import ReadingDEPRECATED from "../alpha-models/readings/Reading";
 import {
   ProjectHistoricalData,
   ProjectID,

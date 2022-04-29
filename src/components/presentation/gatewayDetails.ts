@@ -7,9 +7,9 @@ import {
   getFormattedVoltageData,
 } from "./uiHelpers";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
-import Gateway from "../models/Gateway";
+import Gateway from "../../services/alpha-models/Gateway";
 import GatewayDetailViewModel from "../../models/GatewayDetailViewModel";
-import Node from "../models/Node";
+import Node from "../../services/alpha-models/Node";
 
 // eslint-disable-next-line import/prefer-default-export
 export function getGatewayDetailsPresentation(

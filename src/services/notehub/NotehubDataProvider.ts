@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { flattenDeep } from "lodash";
-import GatewayDEPRECATED from "../../components/models/Gateway";
-import NodeDEPRECATED from "../../components/models/Node";
+import GatewayDEPRECATED from "../alpha-models/Gateway";
+import NodeDEPRECATED from "../alpha-models/Node";
 import NotehubDevice from "./models/NotehubDevice";
 import {
   DataProvider,
@@ -11,15 +11,15 @@ import {
 } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
-import ReadingDEPRECATED from "../../components/models/readings/Reading";
+import ReadingDEPRECATED from "../alpha-models/readings/Reading";
 import { ERROR_CODES, getError } from "../Errors";
 import NotehubLocation from "./models/NotehubLocation";
-import TemperatureSensorReading from "../../components/models/readings/TemperatureSensorReading";
-import HumiditySensorReading from "../../components/models/readings/HumiditySensorReading";
-import PressureSensorReading from "../../components/models/readings/PressureSensorReading";
-import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
-import CountSensorReading from "../../components/models/readings/CountSensorReading";
-import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
+import TemperatureSensorReading from "../alpha-models/readings/TemperatureSensorReading";
+import HumiditySensorReading from "../alpha-models/readings/HumiditySensorReading";
+import PressureSensorReading from "../alpha-models/readings/PressureSensorReading";
+import VoltageSensorReading from "../alpha-models/readings/VoltageSensorReading";
+import CountSensorReading from "../alpha-models/readings/CountSensorReading";
+import TotalSensorReading from "../alpha-models/readings/TotalSensorReading";
 import {
   Gateway,
   Gateways,
@@ -154,7 +154,6 @@ export default class NotehubDataProvider implements DataProvider {
     throw new Error("Method not implemented.");
   }
 
-  // eventually this projectUID will need to be passed in - just not yet
   async getGateways() {
     const gateways: GatewayDEPRECATED[] = [];
     const rawDevices = await this.notehubAccessor.getDevices();

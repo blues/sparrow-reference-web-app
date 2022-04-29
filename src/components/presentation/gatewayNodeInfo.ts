@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import Node from "../models/Node";
-import Gateway from "../models/Gateway";
+import Node from "../../services/alpha-models/Node";
+import Gateway from "../../services/alpha-models/Gateway";
 import {
   calculateCellSignalStrength,
   calculateSignalTooltip,

@@ -3,9 +3,9 @@
 /* eslint-disable import/prefer-default-export */
 import Prisma, { PrismaClient } from "@prisma/client";
 import { ErrorWithCause } from "pony-cause";
-import GatewayDEPRECATED from "../../components/models/Gateway";
-import ReadingDEPRECATED from "../../components/models/readings/Reading";
-import NodeDEPRECATED from "../../components/models/Node";
+import GatewayDEPRECATED from "../alpha-models/Gateway";
+import ReadingDEPRECATED from "../alpha-models/readings/Reading";
+import NodeDEPRECATED from "../alpha-models/Node";
 import {
   DataProvider,
   QueryResult,

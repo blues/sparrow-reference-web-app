@@ -1,6 +1,6 @@
 import { Prisma, Project, ReadingSourceType } from "@prisma/client";
-import GatewayDEPRECATED from "../../components/models/Gateway";
-import NodeDEPRECATED from "../../components/models/Node";
+import GatewayDEPRECATED from "../alpha-models/Gateway";
+import NodeDEPRECATED from "../alpha-models/Node";
 
 export function gatewayTransformUpsert(
   { uid, name, location, lastActivity }: GatewayDEPRECATED,

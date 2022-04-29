@@ -14,12 +14,12 @@ import {
   Legend,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import CountSensorSchema from "../models/readings/CountSensorSchema";
-import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
-import PressureSensorSchema from "../models/readings/PressureSensorSchema";
-import ReadingSchema from "../models/readings/ReadingSchema";
-import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
-import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
+import CountSensorSchema from "../../services/alpha-models/readings/CountSensorSchema";
+import HumiditySensorSchema from "../../services/alpha-models/readings/HumiditySensorSchema";
+import PressureSensorSchema from "../../services/alpha-models/readings/PressureSensorSchema";
+import ReadingSchema from "../../services/alpha-models/readings/ReadingSchema";
+import TemperatureSensorSchema from "../../services/alpha-models/readings/TemperatureSensorSchema";
+import VoltageSensorSchema from "../../services/alpha-models/readings/VoltageSensorSchema";
 import {
   getFormattedCountData,
   getFormattedHumidityData,

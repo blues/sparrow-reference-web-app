@@ -19,11 +19,11 @@ import NodeDetailsBarChart from "../../../../components/charts/NodeDetailsBarCha
 import NodeDetailViewModel from "../../../../models/NodeDetailViewModel";
 import { getNodeDetailsPresentation } from "../../../../components/presentation/nodeDetails";
 import { ERROR_CODES } from "../../../../services/Errors";
-import TemperatureSensorSchema from "../../../../components/models/readings/TemperatureSensorSchema";
-import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
-import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
-import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
-import CountSensorSchema from "../../../../components/models/readings/CountSensorSchema";
+import TemperatureSensorSchema from "../../../../services/alpha-models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../services/alpha-models/readings/HumiditySensorSchema";
+import VoltageSensorSchema from "../../../../services/alpha-models/readings/VoltageSensorSchema";
+import PressureSensorSchema from "../../../../services/alpha-models/readings/PressureSensorSchema";
+import CountSensorSchema from "../../../../services/alpha-models/readings/CountSensorSchema";
 import styles from "../../../../styles/Home.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 

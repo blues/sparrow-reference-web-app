@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { Card, Row, Col, Tooltip, Typography } from "antd";
-import Node from "../models/Node";
+import Node from "../../services/alpha-models/Node";
 import { getNodeDetailsPresentation } from "../presentation/nodeDetails";
 import NodeDetailViewModel from "../../models/NodeDetailViewModel";
 import styles from "../../styles/Card.module.scss";

@@ -1,7 +1,7 @@
 import { ErrorWithCause } from "pony-cause";
-import Gateway from "../components/models/Gateway";
-import Node from "../components/models/Node";
-import Reading from "../components/models/readings/Reading";
+import Gateway from "./alpha-models/Gateway";
+import Node from "./alpha-models/Node";
+import Reading from "./alpha-models/readings/Reading";
 import { DataProvider } from "./DataProvider";
 import { AttributeStore } from "./AttributeStore";
 import { SparrowEventHandler } from "./SparrowEvent";

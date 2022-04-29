@@ -3,8 +3,8 @@
 import { formatDistanceToNow, sub } from "date-fns";
 import { sortBy, uniqBy } from "lodash";
 import { Gateway, SensorTypeCurrentReading } from "../../services/AppModel";
-import Reading from "../models/readings/Reading";
-import ReadingSchema from "../models/readings/ReadingSchema";
+import Reading from "../../services/alpha-models/readings/Reading";
+import ReadingSchema from "../../services/alpha-models/readings/ReadingSchema";
 import WifiOff from "../elements/signal-strength-images/wi-fi/wifi-off.svg";
 import WifiOne from "../elements/signal-strength-images/wi-fi/wifi-one-bar.svg";
 import WifiTwo from "../elements/signal-strength-images/wi-fi/wifi-two-bars.svg";
