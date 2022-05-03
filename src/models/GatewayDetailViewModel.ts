@@ -1,5 +1,5 @@
 import Node from "../services/alpha-models/Node";
-import { SignalStrengths } from "../components/presentation/uiHelpers";
+import { SignalStrengths } from "../services/alpha-models/SignalStrengths";
 
 interface GatewayDetailViewModel {
   gateway?: {

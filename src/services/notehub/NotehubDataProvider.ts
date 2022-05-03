@@ -38,10 +38,8 @@ import {
   TimePeriod,
 } from "../DomainModel";
 import Config from "../../../config";
-import {
-  getEpochChartDataDate,
-  SignalStrengths,
-} from "../../components/presentation/uiHelpers";
+import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
+import { SignalStrengths } from "../alpha-models/SignalStrengths";
 
 interface HasNotehubLocation {
   gps_location?: NotehubLocation;
