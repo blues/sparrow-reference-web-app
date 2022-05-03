@@ -1,6 +1,7 @@
 import NotehubLocation from "./NotehubLocation";
+import { SessionMetadata } from "./SessionMetadata";
 
-interface NotehubEvent {
+interface NotehubEvent extends SessionMetadata {
   file: string;
   captured: string;
   received: string;

@@ -32,8 +32,23 @@ import { SparrowEventHandler } from "../SparrowEvent";
 import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
-import { ERROR_CODES, getError } from "../Errors";
+import { sparrowGatewayFromPrismaGateway } from "./prismaToSparrow";
 
+type GatewayWithLatestReadings = Prisma.Gateway & {
+  readingSource: Prisma.ReadingSource & {
+    sensors: (Prisma.Sensor & {
+      latest: Prisma.Reading | null;
+      schema: Prisma.ReadingSchema;
+    })[];
+  };
+};
+
+function getGatewayVoltage(gw: GatewayWithLatestReadings): number {
+  const voltageSensor = gw.readingSource.sensors.filter(
+    (sensor) => sensor.schema.name === "gateway_voltage"
+  )[0];
+  return Number(voltageSensor?.latest?.value || 0); // TODO Put a better default? Undefined?
+}
 // Todo: Should be dependency injected?
 async function manageGatewayImport(
   bi: BulkImport,
@@ -182,15 +197,65 @@ export class PrismaDataProvider implements DataProvider {
     return project;
   }
 
+  // nodeVoltageReadingSchema: Prisma.ReadingSchema | null = null;
+
+  // async getNodeVoltageReadingSchema(): Promise<Prisma.ReadingSchema> {
+  //   if (!this.nodeVoltageReadingSchema) {
+  //     this.nodeVoltageReadingSchema =
+  //       await this.prisma.readingSchema.findUnique({
+  //         where: { name: "node_voltage" },
+  //       });
+  //     if (!this.nodeVoltageReadingSchema)
+  //       throw new Error("Could not find node voltage reading schema.");
+  //   }
+  //   return this.nodeVoltageReadingSchema;
+  // }
+
+  // gatewayVoltageReadingSchema: Prisma.ReadingSchema | null = null;
+
+  // async getGatewayVoltageReadingSchema(): Promise<Prisma.ReadingSchema> {
+  //   if (!this.gatewayVoltageReadingSchema) {
+  //     this.gatewayVoltageReadingSchema =
+  //       await this.prisma.readingSchema.findUnique({
+  //         where: { name: "gateway_voltage" },
+  //       });
+  //     if (!this.gatewayVoltageReadingSchema)
+  //       throw new Error("Could not find gateway voltage reading schema.");
+  //   }
+  //   return this.gatewayVoltageReadingSchema;
+  // }
+
+  // private getGatewayVoltage(gw: GatewayWithLatestReadings): number {
+  //   const sensor = await this.prisma.sensor.findUnique({
+  //     where: {
+  //       reading_source_id_schema_id: {
+  //         reading_source_id: gw.reading_source_id,
+  //         schema_id: (await this.getGatewayVoltageReadingSchema()).id,
+  //       },
+  //     },
+  //   });
+  //   if (!sensor) throw new Error("Could not find gateway voltage sensor.");
+  //   const voltageReading = await this.prisma.reading.findFirst({
+  //     where: { sensor_id: sensor.id },
+  //   });
+  //   return Number(voltageReading?.value);
+  // }
+
   async getGateways(): Promise<GatewayDEPRECATED[]> {
     const project = await this.currentProject();
     const gateways = await this.prisma.gateway.findMany({
       where: {
         project,
       },
+      include: {
+        readingSource: {
+          include: { sensors: { include: { latest: true, schema: true } } },
+        },
+      },
     });
-
-    return gateways.map((gw) => this.sparrowGateway(gw));
+    return gateways.map((gw) =>
+      sparrowGatewayFromPrismaGateway(gw, getGatewayVoltage(gw))
+    );
   }
 
   async getGateway(gatewayUID: string): Promise<GatewayDEPRECATED> {
@@ -199,29 +264,18 @@ export class PrismaDataProvider implements DataProvider {
       where: {
         deviceUID: gatewayUID,
       },
+      include: {
+        readingSource: {
+          include: { sensors: { include: { latest: true, schema: true } } },
+        },
+      },
     });
     if (gateway === null) {
       throw new Error(
         `Cannot find gateway with DeviceUID ${gatewayUID} in project ${project.projectUID}`
       );
     }
-    return this.sparrowGateway(gateway);
-  }
-
-  /**
-   * Converts a prisma gateway to the old domain model.
-   * @param gw
-   * @returns
-   */
-  private sparrowGateway(gw: Prisma.Gateway): GatewayDEPRECATED {
-    return {
-      uid: gw.deviceUID,
-      name: gw.name || "", // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
-      location: gw.locationName || "",
-      lastActivity: gw.lastSeenAt?.toDateString() || "", // todo - ideally this is simply cached
-      voltage: 3.5,
-      nodeList: [],
-    };
+    return sparrowGatewayFromPrismaGateway(gateway, getGatewayVoltage(gateway));
   }
 
   getNodes(gatewayUIDs: string[]): Promise<NodeDEPRECATED[]> {

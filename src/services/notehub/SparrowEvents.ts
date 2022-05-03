@@ -1,3 +1,4 @@
+import { serverLogInfo } from "../../pages/api/log";
 import { BasicSparrowEvent, SparrowEvent } from "../SparrowEvent";
 import NotehubEvent from "./models/NotehubEvent";
 import NotehubLocation from "./models/NotehubLocation";
@@ -26,6 +27,17 @@ export function eventLocation(event: {
         name: event.best_location,
       }
     : undefined;
+}
+
+function bodyAugmentedWithMetadata(event: NotehubEvent | NotehubRoutedEvent) {
+  const { body } = event;
+  if (event.file === "_session.qo") {
+    (body as { voltage?: number }).voltage ??= event.voltage;
+    (body as { temperature?: number }).temperature ??= event.temp;
+    (body as { bars?: number }).bars ??= event.bars;
+    serverLogInfo("augmented body", body);
+  }
+  return body;
 }
 
 /**
@@ -69,6 +81,7 @@ export function sparrowEventFromNotehubRoutedEvent(
   }
   const normalized = normalizeSparrowEvent(event.file, event.note);
   const location = eventLocation(event);
+  const body = bodyAugmentedWithMetadata(event);
 
   return new BasicSparrowEvent(
     event.project.id,
@@ -77,7 +90,7 @@ export function sparrowEventFromNotehubRoutedEvent(
     normalized.eventName,
     normalized.nodeID,
     location,
-    event.body,
+    body,
     event.sn
   );
 }
@@ -93,6 +106,7 @@ export function sparrowEventFromNotehubEvent(
   const normalized = normalizeSparrowEvent(event.file, event.note);
   const location =
     event.gps_location || event.triangulated_location || event.tower_location;
+  const body = bodyAugmentedWithMetadata(event);
 
   return new BasicSparrowEvent(
     projectUID,
@@ -101,7 +115,7 @@ export function sparrowEventFromNotehubEvent(
     normalized.eventName,
     normalized.nodeID,
     location,
-    event.body
+    body
   );
 }
 
