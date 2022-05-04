@@ -32,16 +32,9 @@ import { SparrowEventHandler } from "../SparrowEvent";
 import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
-import { sparrowGatewayFromPrismaGateway } from "./prismaToSparrow";
+import { GatewayWithLatestReadings, sparrowGatewayFromPrismaGateway, sparrowNodeFromPrismaNode } from "./prismaToSparrow";
+import { SignalStrengths } from "../alpha-models/SignalStrengths";
 
-type GatewayWithLatestReadings = Prisma.Gateway & {
-  readingSource: Prisma.ReadingSource & {
-    sensors: (Prisma.Sensor & {
-      latest: Prisma.Reading | null;
-      schema: Prisma.ReadingSchema;
-    })[];
-  };
-};
 
 function getGatewayVoltage(gw: GatewayWithLatestReadings): number {
   const voltageSensor = gw.readingSource.sensors.filter(
@@ -49,6 +42,7 @@ function getGatewayVoltage(gw: GatewayWithLatestReadings): number {
   )[0];
   return Number(voltageSensor?.latest?.value || 0); // TODO Put a better default? Undefined?
 }
+
 // Todo: Should be dependency injected?
 async function manageGatewayImport(
   bi: BulkImport,
@@ -285,15 +279,55 @@ export class PrismaDataProvider implements DataProvider {
     ).then((nodes) => nodes.flat());
   }
 
+  /**
+   * Retrieve the nodes for a given gatway.
+   * @param gatewayUID  The ID of the gateway to retrieve.
+   * @returns 
+   */
   async getGatewayNodes(gatewayUID: string): Promise<NodeDEPRECATED[]> {
-    return Promise.resolve([]);
-  }
+    // todo - use a query to retrieve many nodes from the db rather than iterate if performance doesn't scale.
+    const project = await this.currentProject();
+    const nodes = await this.prisma.node.findMany({
+      where: {
+        gateway: {
+          deviceUID: gatewayUID
+        },
+      },
+      include: {
+        readingSource: {
+          include: { sensors: { include: { latest: true, schema: true } } },
+        },
+      },
+    });
 
+    return nodes.map(node => sparrowNodeFromPrismaNode(gatewayUID, node));
+  }
+  
   async getNode(
     gatewayUID: string,
     sensorUID: string
   ): Promise<NodeDEPRECATED> {
-    return Promise.reject();
+    const project = await this.currentProject();
+    const node = await this.prisma.node.findUnique({
+      where: {
+        nodeEUI: sensorUID
+      },
+      include: {
+        gateway: true, 
+        readingSource: {
+          include: { sensors: { include: { latest: true, schema: true } } },
+        },
+      },
+    });
+
+    // todo - validate the gatewayUID matches the one expected
+
+    if (node?.gateway.deviceUID!==gatewayUID) {
+      throw new Error(
+        `Cannot find node with NodeID ${sensorUID} in project ${project.projectUID}`
+      );
+    }
+    return sparrowNodeFromPrismaNode(gatewayUID, node);
   }
 
   async getNodeData(
@@ -301,7 +335,7 @@ export class PrismaDataProvider implements DataProvider {
     sensorUID: string,
     minutesBeforeNow?: string
   ): Promise<ReadingDEPRECATED<unknown>[]> {
-    return Promise.reject();
+    return Promise.resolve([]);
   }
 
   private retrieveLatestValues({ projectUID }: { projectUID: string }) {
@@ -450,3 +484,4 @@ export class PrismaDataProvider implements DataProvider {
     throw new Error("Method not implemented.");
   }
 }
+

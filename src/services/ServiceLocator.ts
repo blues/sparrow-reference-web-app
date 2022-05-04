@@ -17,6 +17,8 @@ import { PrismaDataProvider } from "./prisma-datastore/PrismaDataProvider";
 // eslint-disable-next-line import/no-named-as-default
 import IDBuilder, { SimpleIDBuilder } from "./IDBuilder";
 import CompositeDataProvider from "./prisma-datastore/CompositeDataProvider";
+import PrismaAttributeStore from "./prisma-datastore/PrismaAttributeStore";
+import CompositeAttributeStore from "./prisma-datastore/CompositeAttributeStore";
 
 // ServiceLocator is the top-level consturction and dependency injection tool
 // for client-side (browser-side) and also server-side node code. It uses lazy
@@ -75,7 +77,7 @@ class ServiceLocator {
           notehubProvider,
           dataStoreProvider
         );
-        this.dataProvider = combinedProvider;
+        this.dataProvider = dataStoreProvider;
       } else {
         this.dataProvider = notehubProvider;
       }
@@ -106,9 +108,22 @@ class ServiceLocator {
 
   getAttributeStore(): AttributeStore {
     if (!this.attributeStore) {
-      this.attributeStore = new NotehubAttributeStore(
+
+      const notehubStore: AttributeStore = new NotehubAttributeStore(
         this.getNotehubAccessor()
       );
+
+      if (this.prisma) {
+        const dataStore = new PrismaAttributeStore(
+          this.prisma
+        );
+        const compositeStore = new CompositeAttributeStore(       
+          [notehubStore, dataStore]
+        );
+        this.attributeStore = compositeStore;
+      } else {
+        this.attributeStore = notehubStore;
+      }
     }
     return this.attributeStore;
   }

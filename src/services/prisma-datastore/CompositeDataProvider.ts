@@ -42,11 +42,11 @@ export default class CompositeDataProvider implements DataProvider {
   }
 
   getNodes(gatewayUIDs: string[]): Promise<Node[]> {
-    return this.notehubProvider.getNodes(gatewayUIDs);
+    return this.prismaDataProvider.getNodes(gatewayUIDs);
   }
 
   getNode(gatewayUID: string, nodeId: string): Promise<Node> {
-    return this.notehubProvider.getNode(gatewayUID, nodeId);
+    return this.prismaDataProvider.getNode(gatewayUID, nodeId);
   }
 
   getNodeData(

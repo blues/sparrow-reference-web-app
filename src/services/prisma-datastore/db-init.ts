@@ -292,7 +292,7 @@ const standardSchemas: BareReadingSchema[] = [
  * Creates a new project.
  * @param projectUID
  */
-async function createTypicalProject(prisma: PrismaClient, projectUID: string) {
+async function createProject(prisma: PrismaClient, projectUID: string) {
   const project = await upsertProject({
     prisma,
     projectUID,
@@ -381,7 +381,7 @@ async function init() {
 
   const prisma = new PrismaClient();
 
-  createTypicalProject(prisma, Config.hubProjectUID);
+  createProject(prisma, Config.hubProjectUID);
 }
 
 init()
