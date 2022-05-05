@@ -77,9 +77,9 @@ To verify that the Docker engine is running
 - On Windows: Check the docker (whale) icon in the system tray.
 - On Linux/Mac: you can use this command `$ docker run hello-world`
 
-When you open the folder contaiing this readme in VSCode you will see boxes that
-prompt you to Install the extension _Remote - Containers_ and then to 'Reopen in
-Container'.
+When you open the folder containing this readme in VSCode you will see boxes
+that prompt you to Install the extension _Remote - Containers_ and then to
+'Reopen in Container'.
 
 ![install Remote Containers](readme-install-remote-containers-extention.png)
 
@@ -121,6 +121,7 @@ steps below.
    yarn install
    ```
 4. Install the [PostgreSQL](https://www.postgresql.org/download/) database engine.
+5. On Mac, remove `--net=host` in `dev.db.ephemeral.sh` & `dev.db.persistent.sh`
 
 ### Configuration (Environment Variables)
 
