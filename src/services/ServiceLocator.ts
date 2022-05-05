@@ -77,7 +77,9 @@ class ServiceLocator {
           notehubProvider,
           dataStoreProvider
         );
-        this.dataProvider = dataStoreProvider;
+        // this is needed because the combinedProvider has a sideeffect of maintaining the 
+        // event handler and notehub accessor. These should be brought into the PrismaDataProvider
+        this.dataProvider = combinedProvider;
       } else {
         this.dataProvider = notehubProvider;
       }
