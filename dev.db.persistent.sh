@@ -21,6 +21,15 @@ docker run --rm \
   -v "sparrow.db.persistence.volume":/var/lib/postgresql/data \
   postgres
 
+#### Wait for database to come up.
+readonly timeout_seconds=5
+timeout $timeout_seconds bash -c \
+  'until printf "" 2>>/dev/null >>/dev/tcp/localhost/$0; do sleep 1; done' $POSTGRES_PORT ||
+  (
+    echo "Err: database did not come up. Use ./dev.db.stop.sh and try again." && 
+    exit 10
+  )
+
 #### Update the datastore schema
 yarn run db:update
 
