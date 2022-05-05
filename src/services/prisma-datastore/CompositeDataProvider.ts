@@ -54,7 +54,7 @@ export default class CompositeDataProvider implements DataProvider {
     nodeId: string,
     minutesBeforeNow?: string | undefined
   ): Promise<ReadingDEPRECATED<unknown>[]> {
-    return this.notehubProvider.getNodeData(
+    return this.prismaDataProvider.getNodeData(
       gatewayUID,
       nodeId,
       minutesBeforeNow

@@ -20,6 +20,7 @@ import {
   SensorType,
   Reading,
   ProjectHistoricalData,
+  NodeSensorTypeNames,
 } from "../DomainModel";
 import Mapper from "./PrismaDomainModelMapper";
 import {
@@ -33,6 +34,13 @@ import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
 import { GatewayWithLatestReadings, sparrowGatewayFromPrismaGateway, sparrowNodeFromPrismaNode } from "./prismaToSparrow";
+import ReadingSchema from "../alpha-models/readings/ReadingSchema";
+import VoltageSensorSchema from "../alpha-models/readings/VoltageSensorSchema";
+import HumiditySensorSchema from "../alpha-models/readings/HumiditySensorSchema";
+import CountSensorSchema from "../alpha-models/readings/CountSensorSchema";
+import TemperatureSensorSchema from "../alpha-models/readings/TemperatureSensorSchema";
+import TotalSensorSchema from "../alpha-models/readings/TotalSensorSchema";
+import PressureSensorSchema from "../alpha-models/readings/PressureSensorSchema";
 
 
 function getGatewayVoltage(gw: GatewayWithLatestReadings): number {
@@ -275,8 +283,6 @@ export class PrismaDataProvider implements DataProvider {
       },
     });
 
-    // todo - validate the gatewayUID matches the one expected
-
     if (node?.gateway.deviceUID!==gatewayUID) {
       throw new Error(
         `Cannot find node with NodeID ${sensorUID} in project ${project.projectUID}`
@@ -288,9 +294,64 @@ export class PrismaDataProvider implements DataProvider {
   async getNodeData(
     gatewayUID: string,
     sensorUID: string,
-    minutesBeforeNow?: string
+    minutesBeforeNow?: string   // todo - this should be a number to avoid casting and ambiguity of the format used.
   ): Promise<ReadingDEPRECATED<unknown>[]> {
-    return Promise.resolve([]);
+    
+    const from: Date = minutesBeforeNow ? new Date(Date.now() - (Number(minutesBeforeNow) * 60000)) : new Date(0);
+
+    // retrieve all the readings for the given sensor
+    const readings = await this.prisma.reading.findMany({
+      where: {
+        when: {
+          gte: from
+        },
+        sensor: {
+          readingSource: {
+            node: {
+              nodeEUI: sensorUID
+            }
+          }
+        } 
+      },
+      include: {
+        sensor: {
+          include: {
+            schema: {
+              select: {
+                name: true,
+                scale: true,
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const map = new Map<string, ReadingSchema<unknown>>();
+    map.set(NodeSensorTypeNames.VOLTAGE, VoltageSensorSchema);
+    map.set(NodeSensorTypeNames.TEMPERATURE, TemperatureSensorSchema);
+    map.set(NodeSensorTypeNames.HUMIDITY, HumiditySensorSchema);
+    map.set(NodeSensorTypeNames.AIR_PRESSURE, PressureSensorSchema);
+    map.set(NodeSensorTypeNames.PIR_MOTION, CountSensorSchema);
+    map.set(NodeSensorTypeNames.PIR_MOTION_TOTAL, TotalSensorSchema);
+
+    const result: ReadingDEPRECATED<unknown>[] = [];
+    
+    readings.forEach(reading => {
+      const alphaSchema = map.get(reading.sensor.schema.name);
+      if (alphaSchema) {
+        const scale = reading.sensor.schema.scale;
+      
+        const alphaReading = {
+          value: scale ? Number(reading.value) / scale : reading.value,
+          captured: reading.when.toISOString(),
+          schema: alphaSchema
+        }
+        result.push(alphaReading);
+      }
+    });
+
+    return result;
   }
 
   private retrieveLatestValues({ projectUID }: { projectUID: string }) {
