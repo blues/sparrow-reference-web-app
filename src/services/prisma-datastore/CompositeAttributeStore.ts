@@ -1,21 +1,20 @@
-import Gateway from "../../components/models/Gateway";
-import Node from "../../components/models/Node";
 import { AttributeStore } from "../AttributeStore";
 
-
+// would be nice to generify this and implement as a generic proxy
 export default class CompositeAttributeStore implements AttributeStore {
 
     constructor(private stores: AttributeStore[]) {}
 
-    private apply(fn:(store: AttributeStore) => Promise<void>): Promise<void> {
+    private apply2(fn:(store: AttributeStore) => Promise<void>): Promise<void> {
         if (this.stores.length==0) {
-            return Promise.reject();
+            return Promise.resolve();
         }
 
-        const tail = async (p:Promise<void>, index: number): Promise<void> => {
+        const tail = (p:Promise<void>, index: number): Promise<void> => {
             if (index<this.stores.length) {
-                await p;
-                return await tail(fn(this.stores[index]), index++);
+                return p.then(() => {
+                    return tail(fn(this.stores[index]), index+1);
+                })
             }
             else {
                 return p;
@@ -23,6 +22,12 @@ export default class CompositeAttributeStore implements AttributeStore {
         };
 
         return tail(fn(this.stores[0]), 1);
+    }
+
+    // Retrieves a promise that is resolved when all delegates have completed
+    private apply(fn:(store: AttributeStore) => Promise<void>): Promise<void> {
+        const all = this.stores.map(store => fn(store));
+        return Promise.all(all).then();
     }
 
     updateGatewayName(gatewayUID: string, name: string): Promise<void> {
