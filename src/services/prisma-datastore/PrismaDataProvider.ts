@@ -33,7 +33,6 @@ import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
 import { GatewayWithLatestReadings, sparrowGatewayFromPrismaGateway, sparrowNodeFromPrismaNode } from "./prismaToSparrow";
-import { SignalStrengths } from "../alpha-models/SignalStrengths";
 
 
 function getGatewayVoltage(gw: GatewayWithLatestReadings): number {

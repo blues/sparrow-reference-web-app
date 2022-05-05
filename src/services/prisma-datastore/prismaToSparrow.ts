@@ -1,8 +1,6 @@
 import Prisma from "@prisma/client";
 import Gateway from "../alpha-models/Gateway";
-import Reading from "../alpha-models/readings/Reading";
 import Node from "../alpha-models/Node";
-import { find, map } from "lodash";
 import { NodeSensorTypeNames } from "../DomainModel";
 import { SignalStrengths } from "../alpha-models/SignalStrengths";
 
@@ -25,8 +23,7 @@ export type NodeWithLatestReadings = Prisma.Node & LatestReadingSourceReadings;
 
 interface LoRaSignalMetrics {
   rssi: number;
-  snr: number | null;
-  txp: number | null;
+  snr?: number;
 }
 
 
@@ -41,7 +38,7 @@ function loraSignalMetricsToSignalStrengths(metrics?: LoRaSignalMetrics) : Signa
 
 function loraSignalMetricsToBars(metrics: LoRaSignalMetrics): number {
   const bars = rssiToBars(metrics.rssi);
-  const snrOffset = metrics.snr!==null ? snrBarsOffset(metrics.snr) : 0;
+  const snrOffset = metrics.snr!==undefined ? snrBarsOffset(metrics.snr) : 0;
   return bars+snrOffset;
 }
 
@@ -143,15 +140,20 @@ function sparrowNodeFromPrismaNode(gatewayUID: string, prismaNode: NodeWithLates
     location: prismaNode.locationName || "",
     gatewayUID,
     lastActivity: prismaNode.lastSeenAt?.toDateString() || "",
-    bars: "N/A",
+    bars: loraSignalMetricsToSignalStrengths(),
     temperature: asNumber(findReading(map, NodeSensorTypeNames.TEMPERATURE)),
     humidity: asNumber(findReading(map, NodeSensorTypeNames.HUMIDITY)),
-    // todo - this should be driven by the sensor reading schema, but for now hard-coding to 100
+    // todo - scaling should be driven by the sensor reading schema, but for now hard-coding to 100
     pressure: downscale(asNumber(findReading(map, NodeSensorTypeNames.AIR_PRESSURE)), 100),
     voltage: asNumber(findReading(map, NodeSensorTypeNames.VOLTAGE)),
     total: asNumber(findReading(map, NodeSensorTypeNames.PIR_MOTION_TOTAL)),
     count: asNumber(findReading(map, NodeSensorTypeNames.PIR_MOTION))
   };
+
+  const rssi = asNumber(findReading(map, NodeSensorTypeNames.LORA_SIGNAL_STRENGTH));
+  if (rssi!==undefined) {
+    node.bars = loraSignalMetricsToSignalStrengths({rssi});
+  }
 
   if (node.temperature===undefined) delete node.temperature;
   if (node.humidity===undefined) delete node.humidity;
