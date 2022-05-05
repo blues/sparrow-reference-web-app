@@ -49,7 +49,7 @@ function getGatewayVoltage(gw: GatewayWithLatestReadings): number {
   )[0];
   return Number(voltageSensor?.latest?.value || 0); // TODO Put a better default? Undefined?
 }
-// Todo: Should be dependency injected?
+
 async function manageGatewayImport(
   bi: BulkImport,
   p: PrismaClient,
@@ -65,7 +65,7 @@ async function manageGatewayImport(
     b.errorCount += 1;
     b.itemCount -= 1;
     serverLogError(
-      `Failed to import gateway "${gateway.name}": ${cause}`.replaceAll(
+      `Failed to import gateway "${gateway.name}": ${String(cause)}`.replaceAll(
         `\n`,
         " "
       )
@@ -88,10 +88,9 @@ async function manageNodeImport(
     b.errorCount += 1;
     b.itemCount -= 1;
     serverLogError(
-      `Failed to import node "${node.name}" (${node.nodeId}): ${cause}`.replaceAll(
-        `\n`,
-        " "
-      )
+      `Failed to import node "${String(node.name)}" (${node.nodeId}): ${String(
+        cause
+      )}`.replaceAll(`\n`, " ")
     );
   }
 }
@@ -160,7 +159,9 @@ export class PrismaDataProvider implements DataProvider {
         );
         b.itemCount += 1;
       } catch (cause) {
-        serverLogError(`Error loading event ${event.uid}. Cause: ${cause}`);
+        serverLogError(
+          `Error loading event ${event.uid}. Cause: ${String(cause)}`
+        );
         b.errorCount += 1;
       }
       serverLogProgress("Loaded", events.length, i);
@@ -196,50 +197,6 @@ export class PrismaDataProvider implements DataProvider {
     }
     return project;
   }
-
-  // nodeVoltageReadingSchema: Prisma.ReadingSchema | null = null;
-
-  // async getNodeVoltageReadingSchema(): Promise<Prisma.ReadingSchema> {
-  //   if (!this.nodeVoltageReadingSchema) {
-  //     this.nodeVoltageReadingSchema =
-  //       await this.prisma.readingSchema.findUnique({
-  //         where: { name: "node_voltage" },
-  //       });
-  //     if (!this.nodeVoltageReadingSchema)
-  //       throw new Error("Could not find node voltage reading schema.");
-  //   }
-  //   return this.nodeVoltageReadingSchema;
-  // }
-
-  // gatewayVoltageReadingSchema: Prisma.ReadingSchema | null = null;
-
-  // async getGatewayVoltageReadingSchema(): Promise<Prisma.ReadingSchema> {
-  //   if (!this.gatewayVoltageReadingSchema) {
-  //     this.gatewayVoltageReadingSchema =
-  //       await this.prisma.readingSchema.findUnique({
-  //         where: { name: "gateway_voltage" },
-  //       });
-  //     if (!this.gatewayVoltageReadingSchema)
-  //       throw new Error("Could not find gateway voltage reading schema.");
-  //   }
-  //   return this.gatewayVoltageReadingSchema;
-  // }
-
-  // private getGatewayVoltage(gw: GatewayWithLatestReadings): number {
-  //   const sensor = await this.prisma.sensor.findUnique({
-  //     where: {
-  //       reading_source_id_schema_id: {
-  //         reading_source_id: gw.reading_source_id,
-  //         schema_id: (await this.getGatewayVoltageReadingSchema()).id,
-  //       },
-  //     },
-  //   });
-  //   if (!sensor) throw new Error("Could not find gateway voltage sensor.");
-  //   const voltageReading = await this.prisma.reading.findFirst({
-  //     where: { sensor_id: sensor.id },
-  //   });
-  //   return Number(voltageReading?.value);
-  // }
 
   async getGateways(): Promise<GatewayDEPRECATED[]> {
     const project = await this.currentProject();
@@ -355,7 +312,6 @@ export class PrismaDataProvider implements DataProvider {
     type G = P["gateways"][number];
     type N = G["nodes"][number];
     type RS = G["readingSource"];
-    type S = RS["sensors"][number];
 
     // map the data to the domain model
     const hostReadings = new Map<SensorHost, SensorHostReadingsSnapshot>();
@@ -377,7 +333,7 @@ export class PrismaDataProvider implements DataProvider {
       };
 
       // maydo - could consider caching the ReadingSchema -> SensorType but it's not that much overhead with duplication per device
-      rs.sensors.map((s) => {
+      rs.sensors.forEach((s) => {
         if (s.latest) {
           const sensorType = Mapper.mapReadingSchema(s.schema);
           const reading = Mapper.mapReading(s.latest);
@@ -414,7 +370,7 @@ export class PrismaDataProvider implements DataProvider {
       project,
       hostReadings: (sensorHost: SensorHost) => {
         const reading = hostReadings.get(sensorHost);
-        if (reading == undefined) {
+        if (reading === undefined) {
           throw new Error("unknown sensorHost");
         }
         return reading;

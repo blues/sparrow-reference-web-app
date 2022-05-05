@@ -13,7 +13,7 @@ import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
 import ReadingDEPRECATED from "../alpha-models/readings/Reading";
 import { ERROR_CODES, getError } from "../Errors";
-import NotehubLocation from "./models/NotehubLocation";
+import { NotehubLocationAlternatives } from "./models/NotehubLocation";
 import TemperatureSensorReading from "../alpha-models/readings/TemperatureSensorReading";
 import HumiditySensorReading from "../alpha-models/readings/HumiditySensorReading";
 import PressureSensorReading from "../alpha-models/readings/PressureSensorReading";
@@ -41,25 +41,14 @@ import Config from "../../../config";
 import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
 import { SignalStrengths } from "../alpha-models/SignalStrengths";
 
-interface HasNotehubLocation {
-  gps_location?: NotehubLocation;
-  triangulated_location?: NotehubLocation;
-  tower_location?: NotehubLocation;
-}
-
 interface HasNodeId {
   nodeId: string;
 }
 
-export function getBestLocation(object: HasNotehubLocation) {
-  if (object.triangulated_location) {
-    return object.triangulated_location;
-  }
-  if (object.gps_location) {
-    return object.gps_location;
-  }
-  return object.tower_location;
-}
+// N.B.: Noteub defines 'best' location with more nuance than we do here (e.g
+// considering staleness). Also this algorthm is copy-pasted in a couple places.
+export const getBestLocation = (object: NotehubLocationAlternatives) =>
+  object.gps_location || object.triangulated_location || object.tower_location;
 
 export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
