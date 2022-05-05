@@ -64,7 +64,7 @@ const Config = {
   },
   get hubHistoricalDataRecentMinutes() {
     return parseInt(
-      optionalEnvVar("HUB_HISTORICAL_DATA_RECENT_MINUTES", "2880"),
+      optionalEnvVar("HUB_HISTORICAL_DATA_RECENT_MINUTES", "1440"),
       10
     );
   },

@@ -89,7 +89,7 @@ export default class AppService implements AppServiceInterface {
     nodeId: string,
     minutesBeforeNow?: string
   ) {
-    return this.dataProvider.getNodeData(gatewayUID, nodeId, minutesBeforeNow);
+    return this.dataProvider.getNodeData(gatewayUID, nodeId, minutesBeforeNow || "1440");
   }
 
   async handleEvent(event: SparrowEvent) {
