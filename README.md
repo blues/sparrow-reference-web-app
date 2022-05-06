@@ -67,26 +67,22 @@ environment variables.
 
 #### (Recommended) Visual Studio Code Dev Container
 
-Although this project is designed for development on Linux, [Visual Studio Code](https://code.visualstudio.com/) (VS Code)
-can quickly create a Linux ["Dev Container"](https://code.visualstudio.com/docs/remote/containers) on Windows, Mac, or
-Linux. To use this workflow **you must have both VS Code and Docker installed**.
+Although this project is designed for development on Linux,
+[Visual Studio Code](https://code.visualstudio.com/) (VS Code) can quickly create a 
+Linux ["Dev Container"](https://code.visualstudio.com/docs/remote/containers) on Windows, Mac, or Linux. To use this workflow **you must install both VS Code and Docker**, if
+you haven’t already.
 
 * [Install VS Code](https://code.visualstudio.com/)
 * [Install Docker](https://docs.docker.com/get-docker/)
 
-Before continuing make sure Docker is running, which you can do by checking the following.
+Before continuing, additionally make sure Docker is running, which you can do by
+checking the following.
 
-<<<<<<< Updated upstream
-When you open the folder containing this readme in VSCode you will see boxes
-that prompt you to Install the extension _Remote - Containers_ and then to
-'Reopen in Container'.
-=======
 - **Windows**: Check for the docker (whale) icon in the system tray.
-- **Linux/Mac**: Run the command `docker run hello-world` from your terminal. If everything is working correctly you should see a confirmation message.
+- **Linux/Mac**: Run the command `docker run hello-world` from your terminal. If everything is working correctly you’ll see a confirmation message.
 
 When you open the folder containing this README in VS Code you will see boxes that
-prompt you to Install the extension **Remote - Containers**, and then to “Reopen in Container”.
->>>>>>> Stashed changes
+prompt you to install the extension **Remote - Containers**, and then to “Reopen in Container”.  Do both.
 
 ![install Remote Containers](readme-install-remote-containers-extention.png)
 
@@ -95,7 +91,7 @@ prompt you to Install the extension **Remote - Containers**, and then to “Reop
 The Dev Container will automatically install Linux and the project dependencies,
 no matter which kind of operating system your development machine uses.
 
-As a final step open a Linux terminal in VS Code, as you’ll need it to run commands throughout the rest of this guide:
+As a final step, open a Linux terminal in VS Code, as you’ll need it to run commands throughout the rest of this guide:
 
 - VS Code > Menus > Terminal > New Terminal
 
@@ -222,7 +218,7 @@ update your [route](#routing) each time you start your tunnel.** To use ngrok
 you’ll first need to:
 
 - [Sign up for ngrok](https://dashboard.ngrok.com/signup). (It’s free to start.)
-- [Install ngrok](https://dashboard.ngrok.com/get-started/setup). (`brew install ngrok/ngrok/ngrok` works well for macOS users—and yes, 3 times is the recommended way by Ngrok itself.)
+- [Install ngrok](https://dashboard.ngrok.com/get-started/setup). (`brew install ngrok/ngrok/ngrok` works well for macOS users—and yes, `ngrok/ngrok/ngrok` is the package name recommended by Ngrok itself.)
 - [Set up your ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken).
 
 Next, open a new terminal outside VS Code and run `ngrok http 4000`, which
@@ -384,7 +380,7 @@ the following steps.
 
 - Go to <http://localhost:4000/admin/bulk-data-import>.
 - Click the **Import** button.
-- Wait. If you're curious, watch the detailed log on the web app server logs
+- Wait. If you're curious, watch the detailed information in your web app’s server logs
   (in the terminal where you ran `yarn dev`).
 
   ![Imported 3085 items in 1 minutes.](readme.bulk.data.import.png)
@@ -464,7 +460,7 @@ Follow the steps below to deploy to [Microsoft Azure Cloud](https://azure.micros
 
 Authentication and authorization are beyond the scope of this reference project.
 If you add basic auth or other HTTP-header-based auth, you can
-add those headers to the Notehub route to authorize it to route data to the web
+add those headers to your Notehub route to authorize it to route data to your web
 app.
 
 ## Testing
