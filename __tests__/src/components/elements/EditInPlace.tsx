@@ -13,6 +13,7 @@ describe("EditInPlace handling", () => {
         initialText="my-gateway"
         onChange={() => Promise.resolve(false)}
         errorMessage={ERROR_MESSAGE.GATEWAY_NAME_CHANGE_FAILED}
+        enabled
       />
     );
 
@@ -33,6 +34,7 @@ describe("EditInPlace handling", () => {
         initialText="my-gateway"
         onChange={() => Promise.resolve(true)}
         errorMessage={ERROR_MESSAGE.GATEWAY_NAME_CHANGE_FAILED}
+        enabled
       />
     );
 
@@ -45,5 +47,31 @@ describe("EditInPlace handling", () => {
         exact: false,
       })
     ).not.toBeInTheDocument();
+  });
+
+  it("should allow edits when enabled", () => {
+    render(
+      <EditInPlace
+        initialText="my-gateway"
+        onChange={() => Promise.resolve(true)}
+        errorMessage=""
+        enabled
+      />
+    );
+
+    expect(screen.getByRole("button", { name: /edit/i }));
+  });
+
+  it("should NOT allow edits when disabled", () => {
+    render(
+      <EditInPlace
+        initialText="my-gateway"
+        onChange={() => Promise.resolve(true)}
+        errorMessage=""
+        enabled={false}
+      />
+    );
+
+    expect(screen.queryByRole("button", { name: /edit/i })).toBeNull();
   });
 });

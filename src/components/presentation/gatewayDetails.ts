@@ -10,6 +10,7 @@ import { GATEWAY_MESSAGE } from "../../constants/ui";
 import Gateway from "../../services/alpha-models/Gateway";
 import GatewayDetailViewModel from "../../models/GatewayDetailViewModel";
 import Node from "../../services/alpha-models/Node";
+import Config from "../../../config";
 
 // eslint-disable-next-line import/prefer-default-export
 export function getGatewayDetailsPresentation(
@@ -50,5 +51,6 @@ export function getGatewayDetailsPresentation(
         }
       : undefined,
     nodes,
+    readOnly: Config.readOnly,
   };
 }

@@ -95,6 +95,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
           placeholder="Name of node"
           maxLength={49}
           showCount
+          disabled={viewModel.readOnly}
         />
       ),
     },
@@ -115,12 +116,18 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
           placeholder="Node location"
           maxLength={15}
           showCount
+          disabled={viewModel.readOnly}
         />
       ),
     },
     {
       contents: (
-        <Button data-testid="form-submit" htmlType="submit" type="primary">
+        <Button
+          data-testid="form-submit"
+          htmlType="submit"
+          type="primary"
+          disabled={viewModel.readOnly}
+        >
           Save Changes
         </Button>
       ),
@@ -414,6 +421,7 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
     query as SparrowQueryInterface;
   const appService = services().getAppService();
   let viewModel: NodeDetailViewModel = {};
+  let err = "";
 
   try {
     const gateway = await appService.getGateway(gatewayUID);
@@ -425,24 +433,13 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
     );
 
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
-
-    return {
-      props: { viewModel },
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      return {
-        props: {
-          viewModel,
-          err: getErrorMessage(err.message),
-        },
-      };
-    }
-    return {
-      props: {
-        viewModel,
-        err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
-      },
-    };
+  } catch (e) {
+    err = getErrorMessage(
+      e instanceof Error ? e.message : ERROR_CODES.INTERNAL_ERROR
+    );
   }
+
+  return {
+    props: { viewModel, err },
+  };
 };

@@ -31,10 +31,12 @@ const GatewayDetailsPage: NextPage<GatewayDetailsData> = ({
   const changeName = async (name: string) => {
     if (name === viewModel.gateway?.name) return true;
     setIsLoading(true);
-    const isSuccessful = await changeGatewayName(
-      viewModel.gateway?.uid || "",
-      name
-    );
+    let isSuccessful = true;
+    try {
+      await changeGatewayName(viewModel.gateway?.uid || "", name);
+    } catch (e) {
+      isSuccessful = false;
+    }
     setIsLoading(false);
     await refreshData();
     return isSuccessful;

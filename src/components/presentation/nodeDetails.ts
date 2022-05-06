@@ -25,6 +25,7 @@ import PressureSensorSchema from "../../services/alpha-models/readings/PressureS
 import VoltageSensorSchema from "../../services/alpha-models/readings/VoltageSensorSchema";
 import CountSensorSchema from "../../services/alpha-models/readings/CountSensorSchema";
 import TotalSensorSchema from "../../services/alpha-models/readings/TotalSensorSchema";
+import Config from "../../../config";
 
 // eslint-disable-next-line import/prefer-default-export
 export function getNodeDetailsPresentation(
@@ -70,5 +71,6 @@ export function getNodeDetailsPresentation(
           total: getFormattedChartData(readings, TotalSensorSchema),
         }
       : undefined,
+    readOnly: Config.readOnly,
   };
 }
