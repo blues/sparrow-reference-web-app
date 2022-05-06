@@ -20,19 +20,11 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   hubProjectUID: string;
 
-  hubHistoricalDataRecentMinutes: number;
-
   commonHeaders;
 
-  constructor(
-    hubBaseURL: string,
-    hubProjectUID: string,
-    hubAuthToken: string,
-    hubHistoricalDataRecentMinutes: number
-  ) {
+  constructor(hubBaseURL: string, hubProjectUID: string, hubAuthToken: string) {
     this.hubBaseURL = hubBaseURL;
     this.hubProjectUID = hubProjectUID;
-    this.hubHistoricalDataRecentMinutes = hubHistoricalDataRecentMinutes;
     this.commonHeaders = {
       [HTTP_HEADER.CONTENT_TYPE]: HTTP_HEADER.CONTENT_TYPE_JSON,
       [HTTP_HEADER.SESSION_TOKEN]: hubAuthToken,
@@ -102,8 +94,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
   async getEvents(startDate?: string) {
     // start date is an epoch time string to avoid TS error when it's passed into Notehub URL
-    const startDateValue =
-      startDate || getEpochChartDataDate(this.hubHistoricalDataRecentMinutes);
+    const startDateValue = startDate || getEpochChartDataDate(1440);
 
     // Take the start date from the argument first, but fall back to the environment
     // variable.
