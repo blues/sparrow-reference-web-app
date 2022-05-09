@@ -26,8 +26,7 @@ An example web application to configure and view sensor data from Blues Wireless
     - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
     - [Deploy on Vercel](#deploy-on-vercel)
     - [Deploy on Microsoft Azure Cloud](#deploy-on-microsoft-azure-cloud)
-  - [Known Issues](#known-issues)
-    - [Security](#security)
+  - [Security](#security)
   - [Testing](#testing)
     - [Testing with Jest](#testing-with-jest)
     - [Testing with Cypress](#testing-with-cypress)
@@ -68,18 +67,22 @@ environment variables.
 
 #### (Recommended) Visual Studio Code Dev Container
 
-Although this project is designed for development on Linux, [VS Code](vscode)
-can quickly create a Linux ["Dev Container"](dev-container) on Windows, Mac, or
-Linux, **assuming you have [Docker](get-docker) installed**.
+Although this project is designed for development on Linux,
+[Visual Studio Code](https://code.visualstudio.com/) (VS Code) can quickly create a 
+Linux ["Dev Container"](https://code.visualstudio.com/docs/remote/containers) on Windows, Mac, or Linux. To use this workflow **you must install both VS Code and Docker**, if
+you haven’t already.
 
-To verify that the Docker engine is running
+* [Install VS Code](https://code.visualstudio.com/)
+* [Install Docker](https://docs.docker.com/get-docker/)
 
-- On Windows: Check the docker (whale) icon in the system tray.
-- On Linux/Mac: you can use this command `$ docker run hello-world`
+Before continuing, additionally make sure Docker is running, which you can do by
+checking the following.
 
-When you open the folder containing this readme in VSCode you will see boxes
-that prompt you to Install the extension _Remote - Containers_ and then to
-'Reopen in Container'.
+- **Windows**: Check for the docker (whale) icon in the system tray.
+- **Linux/Mac**: Run the command `docker run hello-world` from your terminal. If everything is working correctly you’ll see a confirmation message.
+
+When you open the folder containing this README in VS Code you will see boxes that
+prompt you to install the extension **Remote - Containers**, and then to “Reopen in Container”.  Do both.
 
 ![install Remote Containers](readme-install-remote-containers-extention.png)
 
@@ -88,17 +91,13 @@ that prompt you to Install the extension _Remote - Containers_ and then to
 The Dev Container will automatically install Linux and the project dependencies,
 no matter which kind of operating system your development machine uses.
 
-[container-dev]: https://code.visualstudio.com/docs/remote/containers
-[vscode]: https://code.visualstudio.com/
-[get-docker]: https://docs.docker.com/get-docker/
-
-Open a linux terminal to use throughout the rest of this guide:
+As a final step, open a Linux terminal in VS Code, as you’ll need it to run commands throughout the rest of this guide:
 
 - VS Code > Menus > Terminal > New Terminal
 
 #### (Not Recommended) Dependencies without VS Code
 
-If you choose **not** to use a Dev Container in VSCode, you can install the
+If you choose **not** to use a Dev Container in VS Code, you can install the
 project dependencies as follows.
 
 The Sparrow Reference Web App uses [Node.js](https://nodejs.org/en/) as a
@@ -127,13 +126,14 @@ steps below.
 
 The Sparrow Reference Web App uses a series of environment variables to store
 project-specific configuration. You _must_ define your own values for these
-variables for the Sparrow Reference Web App to run. You can follow the following
+variables for the Sparrow Reference Web App to run. You can complete the following
 steps to do so.
 
-1. Copy the [.env.example](.env.example) file, and name it `.env`.
+1. Create a new `.env` file in the root folder of your project.
+1. Copy the contents of this repo’s [.env.example](.env.example) file, and paste it in your new `.env` file.
 1. Change the required values in your `.env` to your own values using the steps
    below.
-
+  
 #### HUB_AUTH_TOKEN
 
 The Sparrow Reference Web App needs access to your Notehub project in order to
@@ -177,7 +177,8 @@ environment you'll set them to point to your production database.
 ### Routing
 
 The Web App receives data from Notehub through a _Route_ created on Notehub.io
-and targeting the Web App.
+and targeting the Web App. To set up your own route you’ll need to complete the
+following two steps.
 
 1. [Create a tunnel to a server running the reference app.](#create-a-tunnel-to-a-server-running-the-reference-app)
    - Running the tunnel allows your local copy of the reference app to be accessible on the public internet. This is necessary for Notehub to route events to your local setup.
@@ -190,12 +191,12 @@ The Sparrow reference app contains logic to process incoming Notehub events. But
 
 To make your local environment accessible you must set up a tunnel. You’re
 welcome to use any tunneling setup you’re comfortable using, but we recommend
-[localtunnel] or
+[localtunnel](https://github.com/localtunnel/localtunnel) or
 [ngrok](https://ngrok.com/).
 
 #### Localtunnel
 
-`localtunnel` is a simple free tunnel that can be run as follows. Replace `acme`
+`localtunnel` is a simple free tunnel that you can run as follows. Replace `acme`
 with the name of your choice.
 
 ```sh
@@ -217,7 +218,7 @@ update your [route](#routing) each time you start your tunnel.** To use ngrok
 you’ll first need to:
 
 - [Sign up for ngrok](https://dashboard.ngrok.com/signup). (It’s free to start.)
-- [Install ngrok](https://dashboard.ngrok.com/get-started/setup). (`brew install ngrok/ngrok/ngrok` works well for macOS users - yes 3 times is the recommended way by Ngrok itself.)
+- [Install ngrok](https://dashboard.ngrok.com/get-started/setup). (`brew install ngrok/ngrok/ngrok` works well for macOS users—and yes, `ngrok/ngrok/ngrok` is the package name recommended by Ngrok itself.)
 - [Set up your ngrok auth token](https://dashboard.ngrok.com/get-started/your-authtoken).
 
 Next, open a new terminal outside VS Code and run `ngrok http 4000`, which
@@ -227,7 +228,7 @@ creates the tunnel itself.
 ngrok http 4000
 ```
 
-If all went well, you should see a screen in your terminal that looks like the image below. ngrok is all now forwarding all requests to `https://<your-id>.ngrok.io` to `http://localhost:4000`. Copy the forwarding address (shown in the red box below) to your clipboard, as you’ll need it in the next step.
+If all went well, you should see a screen in your terminal that looks like the image below. ngrok is now forwarding all requests to `https://<your-id>.ngrok.io` to `http://localhost:4000`. Copy the forwarding address (shown in the red box below) to your clipboard, as you’ll need it in the next step.
 
 ![Example of ngrok running](https://user-images.githubusercontent.com/544280/161281285-0b20f600-3c88-4c81-98ea-aef7665f59d7.png)
 
@@ -286,21 +287,21 @@ Done in 2.65s.
 Database is now running the background. Use ./dev.db.stop.sh to stop it.
 ```
 
-This created a PostgreSQL database running in Docker. You can check by running
-the command `./dev.db.status.sh`.
+This creates a PostgreSQL database running in Docker. You can ensure the database is
+running as expected with the `./dev.db.status.sh` command.
 
 ```sh
 $ ./dev.db.status.sh
 398940737bae   postgres  "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   sparrow-postgresql-container
 ```
 
-To stop the database
+To stop the database you can use `./dev.db.stop.sh`.
 
 ```sh
 ./dev.db.stop.sh # Stop the database (and delete the ephemeral data if any)
 ```
 
-Stop the database
+And you can delete the database’s data with `./dev.db.delete.sh`.
 
 ```sh
 ./dev.db.status.sh # Show whether the database is running
@@ -317,25 +318,25 @@ explore.
 ```
 
 This will open up a new browser window at http://localhost:5555 where you can
-see your Prisma DB, its tables, and any data that currently resides therein,
-whether it came from bulk data import or was routed in by Notehub.
+see your Prisma DB, its tables, and any data that currently resides therein—
+whether it came from a bulk data import or was routed in by Notehub.
 
-And just like any other database GUI, you can click into models to view data, manipulate data, filter, query, etc., etc.
+And just like any other database GUI, you can click into models to view data, manipulate data, filter, query, etc.
 
 #### Troubleshooting Sparrow getting data from Postgres
 
-There's a number of gotchas that could be the reason your Notehub data's not making it to Postgres and your Sparrow app - try checking the following things:
+There are a number of gotchas that could prevent your Notehub data from making it to Postgres and your Sparrow app. If you’re having issues try the following things:
 
 - Is Docker running the local Postgres instance on your machine?
   - Currently there's no error message thrown if the Postgres Docker container's
-    not running
+    not running.
 - Does your Ngrok endpoint match what's in Notehub and have the suffix
   `/api/datastore/ingest`?
   - Be aware, every time the Ngrok connection is shut down and restarted, it
     will be started up with a brand new URL, so you'll need to update the route
     accordingly in Notehub to ensure data keeps flowing to it
-- Have you added the correct Postgres URL and Notehub project API env vars to
-  the `.env` file?
+- Have you added the correct Postgres URL and Notehub project API environment variables to
+  your `.env` file?
 
 ### Web App Development
 
@@ -370,13 +371,17 @@ server without triggering a full-page reload.
 ### Bulk Data Import
 
 The Sparrow Reference Web App can do a bulk import of historic data from Notehub
-to populate your database with any data from the past 10 days that might not
-have been routed due to, for example, your web app or database downtime.
+to populate your database with any data from the past 10 days. This can help
+when you’re first getting started, or if you want to import events you might
+have missed during web app or database downtime.
 
-- Go to <http://localhost:4000/admin/bulk-data-import>
-- Click the button
-- Wait. If you're curious, watch the detailed log on the web app server logs
-  (terminal where you ran `yarn dev`).
+To run the bulk import first make sure your web app is running, and then complete
+the following steps.
+
+- Go to <http://localhost:4000/admin/bulk-data-import>.
+- Click the **Import** button.
+- Wait. If you're curious, watch the detailed information in your web app’s server logs
+  (in the terminal where you ran `yarn dev`).
 
   ![Imported 3085 items in 1 minutes.](readme.bulk.data.import.png)
 
@@ -451,43 +456,11 @@ Follow the steps below to deploy to [Microsoft Azure Cloud](https://azure.micros
 [deploy.sh] 🔜 https://mysparrowstarer.eastus.azurecontainer.io
 ```
 
-## Known Issues
-
-**Performance**
-
-As the number of devices and readings increase, the loading time of the Sparrow
-Reference Web App’s pages increases as well. We are addressing this for the GA
-release.
-
-**Unable to change gateway name**
-
-Currently you cannot change the name of a gateway through the Sparrow Reference
-Web App user interface. If you would like to update a gateway’s name complete
-the following steps:
-
-1. Visit [Notehub](https://notehub.io) and open your project.
-1. Click **Devices** menu in the menu to view all devices on your project.
-1. Locate the device you would like to update in the device list, and double click it.
-1. Click the **Environment** tab to view the device’s environment variables.
-1. Update the value of the `_sn` environment variable to your new name.
-1. Click the **Save** button to save the name update.
-
-If you have the Sparrow Reference Web App already open you’ll have to refresh to
-see the name update in the UI. We are adding the ability to change a gateway’s
-name and environment variables for the GA release.
-
-**Incorrect “Last updated” date**
-
-Currently sensor nodes may display an incorrect “Last updated” date or time. You
-can see the node’s correct last-updated time by looking at the most recent
-reading on the node’s detail page. We are addressing this issue for the GA
-release.
-
-### Security
+## Security
 
 Authentication and authorization are beyond the scope of this reference project.
-If you add basic auth or other auth that's based on HTTP headers you can easily
-add those headers to the notehub route to authorize it to route data to the web
+If you add basic auth or other HTTP-header-based auth, you can
+add those headers to your Notehub route to authorize it to route data to your web
 app.
 
 ## Testing
