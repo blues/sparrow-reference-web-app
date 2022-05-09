@@ -102,8 +102,7 @@ class ServiceLocator {
       this.notehubAccessor = new AxiosHttpNotehubAccessor(
         Config.hubBaseURL,
         Config.hubProjectUID,
-        Config.hubAuthToken,
-        Config.hubHistoricalDataRecentMinutes
+        Config.hubAuthToken
       );
     }
     return this.notehubAccessor;

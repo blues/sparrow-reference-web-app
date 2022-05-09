@@ -26,6 +26,7 @@ interface NodeDetailViewModel {
     count: { when: string; value: number }[];
     total: { when: string; value: number }[];
   };
+  readOnly?: boolean;
 }
 
 export default NodeDetailViewModel;
