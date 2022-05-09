@@ -33,7 +33,11 @@ import { SparrowEventHandler } from "../SparrowEvent";
 import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
-import { GatewayWithLatestReadings, sparrowGatewayFromPrismaGateway, sparrowNodeFromPrismaNode } from "./prismaToSparrow";
+import {
+  GatewayWithLatestReadings,
+  sparrowGatewayFromPrismaGateway,
+  sparrowNodeFromPrismaNode,
+} from "./prismaToSparrow";
 import ReadingSchema from "../alpha-models/readings/ReadingSchema";
 import VoltageSensorSchema from "../alpha-models/readings/VoltageSensorSchema";
 import HumiditySensorSchema from "../alpha-models/readings/HumiditySensorSchema";
@@ -41,7 +45,6 @@ import CountSensorSchema from "../alpha-models/readings/CountSensorSchema";
 import TemperatureSensorSchema from "../alpha-models/readings/TemperatureSensorSchema";
 import TotalSensorSchema from "../alpha-models/readings/TotalSensorSchema";
 import PressureSensorSchema from "../alpha-models/readings/PressureSensorSchema";
-
 
 function getGatewayVoltage(gw: GatewayWithLatestReadings): number {
   const voltageSensor = gw.readingSource.sensors.filter(
@@ -245,15 +248,14 @@ export class PrismaDataProvider implements DataProvider {
   /**
    * Retrieve the nodes for a given gatway.
    * @param gatewayUID  The ID of the gateway to retrieve.
-   * @returns 
+   * @returns
    */
   async getGatewayNodes(gatewayUID: string): Promise<NodeDEPRECATED[]> {
     // todo - use a query to retrieve many nodes from the db rather than iterate if performance doesn't scale.
-    const project = await this.currentProject();
     const nodes = await this.prisma.node.findMany({
       where: {
         gateway: {
-          deviceUID: gatewayUID
+          deviceUID: gatewayUID,
         },
       },
       include: {
@@ -263,9 +265,9 @@ export class PrismaDataProvider implements DataProvider {
       },
     });
 
-    return nodes.map(node => sparrowNodeFromPrismaNode(gatewayUID, node));
+    return nodes.map((node) => sparrowNodeFromPrismaNode(gatewayUID, node));
   }
-  
+
   async getNode(
     gatewayUID: string,
     sensorUID: string
@@ -273,17 +275,17 @@ export class PrismaDataProvider implements DataProvider {
     const project = await this.currentProject();
     const node = await this.prisma.node.findUnique({
       where: {
-        nodeEUI: sensorUID
+        nodeEUI: sensorUID,
       },
       include: {
-        gateway: true, 
+        gateway: true,
         readingSource: {
           include: { sensors: { include: { latest: true, schema: true } } },
         },
       },
     });
 
-    if (node?.gateway.deviceUID!==gatewayUID) {
+    if (node?.gateway.deviceUID !== gatewayUID) {
       throw new Error(
         `Cannot find node with NodeID ${sensorUID} in project ${project.projectUID}`
       );
@@ -294,24 +296,25 @@ export class PrismaDataProvider implements DataProvider {
   async getNodeData(
     gatewayUID: string,
     sensorUID: string,
-    minutesBeforeNow?: string   // todo - this should be a number to avoid casting and ambiguity of the format used.
+    minutesBeforeNow?: string // todo - this should be a number to avoid casting and ambiguity of the format used.
   ): Promise<ReadingDEPRECATED<unknown>[]> {
-    
-    const from: Date = minutesBeforeNow ? new Date(Date.now() - (Number(minutesBeforeNow) * 60000)) : new Date(0);
+    const from: Date = minutesBeforeNow
+      ? new Date(Date.now() - Number(minutesBeforeNow) * 60000)
+      : new Date(0);
 
     // retrieve all the readings for the given sensor
     const readings = await this.prisma.reading.findMany({
       where: {
         when: {
-          gte: from
+          gte: from,
         },
         sensor: {
           readingSource: {
             node: {
-              nodeEUI: sensorUID
-            }
-          }
-        } 
+              nodeEUI: sensorUID,
+            },
+          },
+        },
       },
       include: {
         sensor: {
@@ -320,11 +323,11 @@ export class PrismaDataProvider implements DataProvider {
               select: {
                 name: true,
                 scale: true,
-              }
-            }
-          }
-        }
-      }
+              },
+            },
+          },
+        },
+      },
     });
 
     const map = new Map<string, ReadingSchema<unknown>>();
@@ -336,17 +339,17 @@ export class PrismaDataProvider implements DataProvider {
     map.set(NodeSensorTypeNames.PIR_MOTION_TOTAL, TotalSensorSchema);
 
     const result: ReadingDEPRECATED<unknown>[] = [];
-    
-    readings.forEach(reading => {
+
+    readings.forEach((reading) => {
       const alphaSchema = map.get(reading.sensor.schema.name);
       if (alphaSchema) {
         const scale = reading.sensor.schema.scale;
-      
+
         const alphaReading = {
           value: scale ? Number(reading.value) / scale : reading.value,
           captured: reading.when.toISOString(),
-          schema: alphaSchema
-        }
+          schema: alphaSchema,
+        };
         result.push(alphaReading);
       }
     });
@@ -499,4 +502,3 @@ export class PrismaDataProvider implements DataProvider {
     throw new Error("Method not implemented.");
   }
 }
-
