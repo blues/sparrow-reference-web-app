@@ -19,6 +19,7 @@ An example web application to configure and view sensor data from Blues Wireless
     - [Set up a Notehub route to your tunnel](#set-up-a-notehub-route-to-your-tunnel)
     - [Database](#database)
       - [Create the database](#create-the-database)
+      - [Custom PostgreSQL Server](#custom-postgresql-server)
       - [Troubleshooting Sparrow getting data from Postgres](#troubleshooting-sparrow-getting-data-from-postgres)
     - [Web App Development](#web-app-development)
     - [Bulk Data Import](#bulk-data-import)
@@ -68,12 +69,12 @@ environment variables.
 #### (Recommended) Visual Studio Code Dev Container
 
 Although this project is designed for development on Linux,
-[Visual Studio Code](https://code.visualstudio.com/) (VS Code) can quickly create a 
+[Visual Studio Code](https://code.visualstudio.com/) (VS Code) can quickly create a
 Linux ["Dev Container"](https://code.visualstudio.com/docs/remote/containers) on Windows, Mac, or Linux. To use this workflow **you must install both VS Code and Docker**, if
 you haven’t already.
 
-* [Install VS Code](https://code.visualstudio.com/)
-* [Install Docker](https://docs.docker.com/get-docker/)
+- [Install VS Code](https://code.visualstudio.com/)
+- [Install Docker](https://docs.docker.com/get-docker/)
 
 Before continuing, additionally make sure Docker is running, which you can do by
 checking the following.
@@ -82,7 +83,7 @@ checking the following.
 - **Linux/Mac**: Run the command `docker run hello-world` from your terminal. If everything is working correctly you’ll see a confirmation message.
 
 When you open the folder containing this README in VS Code you will see boxes that
-prompt you to install the extension **Remote - Containers**, and then to “Reopen in Container”.  Do both.
+prompt you to install the extension **Remote - Containers**, and then to “Reopen in Container”. Do both.
 
 ![install Remote Containers](readme-install-remote-containers-extention.png)
 
@@ -133,7 +134,7 @@ steps to do so.
 1. Copy the contents of this repo’s [.env.example](.env.example) file, and paste it in your new `.env` file.
 1. Change the required values in your `.env` to your own values using the steps
    below.
-  
+
 #### HUB_AUTH_TOKEN
 
 The Sparrow Reference Web App needs access to your Notehub project in order to
@@ -321,7 +322,24 @@ This will open up a new browser window at http://localhost:5555 where you can
 see your Prisma DB, its tables, and any data that currently resides therein—
 whether it came from a bulk data import or was routed in by Notehub.
 
-And just like any other database GUI, you can click into models to view data, manipulate data, filter, query, etc.
+And just like any other database GUI, you can click into models to view data,
+manipulate data, filter, query, etc.
+
+#### Custom PostgreSQL Server
+
+If you manually created your PostgreSQL database instead of using one of the
+scripts above to automatically create one in Docker you will want to configure
+the `DATABASE_*` environment varialbes in `.env` and then use the
+`./prod.db.init.sh` script to initialize the database.
+
+```
+$ ./prod.db.init.sh
+This script will clear your database and reinitialize it.
+Continue (y/n)?y
+yes
+Done in 10.36s.
+Database has been reinitialized.
+```
 
 #### Troubleshooting Sparrow getting data from Postgres
 
