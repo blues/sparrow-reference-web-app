@@ -22,7 +22,7 @@ interface AppServiceInterface {
   getNodeData: (
     gatewayUID: string,
     nodeId: string,
-    minutesBeforeNow?: string
+    minutesBeforeNow: number
   ) => Promise<Reading<unknown>[]>;
   setNodeName: (
     gatewayUID: string,
@@ -87,9 +87,9 @@ export default class AppService implements AppServiceInterface {
   async getNodeData(
     gatewayUID: string,
     nodeId: string,
-    minutesBeforeNow?: string
+    minutesBeforeNow: number
   ) {
-    return this.dataProvider.getNodeData(gatewayUID, nodeId, minutesBeforeNow || "1440");
+    return this.dataProvider.getNodeData(gatewayUID, nodeId, minutesBeforeNow);
   }
 
   async handleEvent(event: SparrowEvent) {

@@ -315,13 +315,11 @@ export default class NotehubDataProvider implements DataProvider {
   async getNodeData(
     gatewayUID: string,
     nodeId: string,
-    minutesBeforeNow?: string
+    minutesBeforeNow: number
   ) {
     let nodeEvents: NotehubEvent[];
     if (minutesBeforeNow) {
-      const epochDateString: string = getEpochChartDataDate(
-        Number(minutesBeforeNow)
-      );
+      const epochDateString: string = getEpochChartDataDate(minutesBeforeNow);
       nodeEvents = await this.notehubAccessor.getEvents(epochDateString);
     } else {
       nodeEvents = await this.notehubAccessor.getEvents();

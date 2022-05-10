@@ -43,6 +43,8 @@ describe("App Service", () => {
       getNodeData: jest.fn().mockResolvedValueOnce(mockedSparrowNodeData),
       queryProjectLatestValues: jest.fn(),
       queryProjectReadingSeries: jest.fn(),
+      doBulkImport: jest.fn(),
+      queryProjectReadingCount: jest.fn(),
     };
     attributeStoreMock = {
       updateGatewayName: jest.fn(),
@@ -110,7 +112,8 @@ describe("App Service", () => {
   it("should return a list of node data when getNodeData is called", async () => {
     const res = await appServiceMock.getNodeData(
       mockedGatewayUID,
-      mockedNodeId
+      mockedNodeId,
+      1000
     );
     expect(res).toEqual(mockedSparrowNodeData);
   });

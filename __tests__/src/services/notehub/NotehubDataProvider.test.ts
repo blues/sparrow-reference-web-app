@@ -83,7 +83,8 @@ describe("Notehub data provider service functions", () => {
   it("should return a list of sparrow sensor readings when a gateway UID, node id and optional start date is to getNodeData", async () => {
     const res = await notehubDataProviderMock.getNodeData(
       sparrowData.mockedGatewayUID2,
-      sparrowData.mockedNodeId2
+      sparrowData.mockedNodeId2,
+      1000
     );
 
     expect(JSON.stringify(res[0].schema)).toEqual(

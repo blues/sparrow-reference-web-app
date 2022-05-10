@@ -296,10 +296,10 @@ export class PrismaDataProvider implements DataProvider {
   async getNodeData(
     gatewayUID: string,
     sensorUID: string,
-    minutesBeforeNow?: string // todo - this should be a number to avoid casting and ambiguity of the format used.
+    minutesBeforeNow: number
   ): Promise<ReadingDEPRECATED<unknown>[]> {
     const from: Date = minutesBeforeNow
-      ? new Date(Date.now() - Number(minutesBeforeNow) * 60000)
+      ? new Date(Date.now() - minutesBeforeNow * 60000)
       : new Date(0);
 
     // retrieve all the readings for the given sensor

@@ -52,7 +52,7 @@ export default class CompositeDataProvider implements DataProvider {
   getNodeData(
     gatewayUID: string,
     nodeId: string,
-    minutesBeforeNow?: string | undefined
+    minutesBeforeNow: number
   ): Promise<ReadingDEPRECATED<unknown>[]> {
     return this.prismaDataProvider.getNodeData(
       gatewayUID,

@@ -44,7 +44,7 @@ export interface DataProvider {
   getNodeData: (
     gatewayUID: string,
     nodeId: string,
-    minutesBeforeNow?: string
+    minutesBeforeNow: number
   ) => Promise<ReadingDEPRECATED<unknown>[]>;
 
   // queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;

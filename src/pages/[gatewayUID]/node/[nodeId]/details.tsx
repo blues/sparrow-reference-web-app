@@ -429,7 +429,7 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
     const readings = await appService.getNodeData(
       gatewayUID,
       nodeId,
-      minutesBeforeNow
+      Number(minutesBeforeNow)
     );
 
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
