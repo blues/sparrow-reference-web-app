@@ -13,7 +13,7 @@ interface Gateway {
   name: string;
   lastActivity: string;
   location?: string;
-  voltage: number;
+  voltage: number | null;
   /**
    * The signal strength for this gateway - either cell bars or wifi bars.
    */

@@ -26,14 +26,14 @@ export type NodeWithLatestReadings = Prisma.Node & LatestReadingSourceReadings;
  */
 export function sparrowGatewayFromPrismaGateway(
   pGateway: Prisma.Gateway,
-  voltage: number
+  voltage?: number
 ): Gateway {
   return {
     uid: pGateway.deviceUID,
     name: pGateway.name || "", // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
     location: pGateway.locationName || "",
     lastActivity: pGateway.lastSeenAt?.toString() || "", // todo - ideally this is simply cached
-    voltage,
+    voltage: voltage===undefined ? null : voltage,
     nodeList: [],
   };
 }
