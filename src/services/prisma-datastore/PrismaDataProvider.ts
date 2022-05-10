@@ -46,11 +46,12 @@ import TemperatureSensorSchema from "../alpha-models/readings/TemperatureSensorS
 import TotalSensorSchema from "../alpha-models/readings/TotalSensorSchema";
 import PressureSensorSchema from "../alpha-models/readings/PressureSensorSchema";
 
-function getGatewayVoltage(gw: GatewayWithLatestReadings): number {
+function getGatewayVoltage(gw: GatewayWithLatestReadings): number | undefined {
   const voltageSensor = gw.readingSource.sensors.filter(
     (sensor) => sensor.schema.name === "gateway_voltage"
   )[0];
-  return Number(voltageSensor?.latest?.value || 0); // TODO Put a better default? Undefined?
+  const value = voltageSensor?.latest?.value;
+  return value===undefined ? undefined : Number(value);
 }
 
 async function manageGatewayImport(

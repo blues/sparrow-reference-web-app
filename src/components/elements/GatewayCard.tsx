@@ -20,8 +20,8 @@ const GatewayCardComponent = (props: GatewayProps) => {
   const { gatewayDetails, index } = props;
   const { Text } = Typography;
   const formattedGatewayVoltage = getFormattedVoltageData(
-    gatewayDetails.voltage
-  );
+    gatewayDetails.voltage===null ? undefined : gatewayDetails.voltage
+  ) || GATEWAY_MESSAGE.NO_VOLTAGE;
 
   const router = useRouter();
   const gatewayUrl = `/${gatewayDetails.uid}/details`;

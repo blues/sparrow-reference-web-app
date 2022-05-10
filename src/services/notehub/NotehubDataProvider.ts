@@ -141,7 +141,7 @@ export default class NotehubDataProvider implements DataProvider {
     throw new Error("Method not implemented.");
   }
 
-  async getGateways() {
+  async getGateways() : Promise<GatewayDEPRECATED[]> {
     const gateways: GatewayDEPRECATED[] = [];
     const rawDevices = await this.notehubAccessor.getDevices();
     rawDevices.forEach((device) => {
@@ -150,7 +150,7 @@ export default class NotehubDataProvider implements DataProvider {
     return gateways;
   }
 
-  async getGateway(gatewayUID: string) {
+  async getGateway(gatewayUID: string): Promise<GatewayDEPRECATED> {
     const singleGatewayJson = await this.notehubAccessor.getDevice(gatewayUID);
 
     const singleGateway = notehubDeviceToSparrowGateway(singleGatewayJson);
@@ -291,7 +291,7 @@ export default class NotehubDataProvider implements DataProvider {
           total: gatewayNodeInfo.total,
         }),
         // todo replace this with real bars data once calculation to turn notecard data into bars is implemented
-        bars: "0" as SignalStrengths,
+        bars: "N/A" as SignalStrengths,
       };
     };
 

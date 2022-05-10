@@ -16,24 +16,6 @@ import {
 
 const prisma = new PrismaClient();
 
-// project
-//   hard-coded sensor schema (don't need so many)
-// factory project properties,
-//  factories for gateways
-//    factories for nodes (attributes)
-//       factories for sensor readings for a set of schema
-
-// default factories, and supplied factories, so individual elements can be overridden
-//
-
-// create a default schema. random number of everything
-// each mock data has one purpose?
-
-// project: no gateways
-
-// from the faker objects, we then run through and populate the project, create gateways in the project,
-// in prisma format.  Could have the mocker create the data in prisma format.
-//
 
 /**
  * Event processing:
@@ -309,10 +291,11 @@ const standardSchemas: BareReadingSchema[] = [
  * @param projectUID
  */
 async function createProject(prisma: PrismaClient, projectUID: string) {
+  console.log(`Creating project with PROJECT_UID ${projectUID}`);
   const project = await upsertProject({
     prisma,
     projectUID,
-    name: "typicalProject",
+    name: Config.companyName,
   });
   const schemas = standardSchemas.map(readingSchemaDefaults);
   await upsertReadingSchemas(prisma, project.readingSource, schemas);
