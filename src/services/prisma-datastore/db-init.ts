@@ -53,10 +53,6 @@ const prisma = new PrismaClient();
  * @param userID
  */
 
-const session = {
-  qo: "session.qo",
-};
-
 const motion = {
   qo: "motion.qo",
 };
@@ -70,7 +66,7 @@ const sensors = {
 };
 
 const _session = {
-  db: "_session.db",
+  qo: "_session.qo",
 };
 
 function nodeEvent(event: string) {
@@ -112,7 +108,7 @@ const standardSchemas: BareReadingSchema[] = [
     displayMeasure: "Voltage",
     unitSymbol: "V",
     unit: "Voltage",
-    eventName: session.qo,
+    eventName: _session.qo,
     valueType: ReadingSchemaValueType.SCALAR_FLOAT, // if type not filled in, it is inferred from the data
     spec: {
       voltage: 1.0,
@@ -126,7 +122,7 @@ const standardSchemas: BareReadingSchema[] = [
     displayMeasure: "Signal Strength",
     unitSymbol: "",
     unit: "bars",
-    eventName: session.qo,
+    eventName: _session.qo,
     valueType: ReadingSchemaValueType.SCALAR_INT,
     spec: {
       bars: 1,
@@ -140,7 +136,7 @@ const standardSchemas: BareReadingSchema[] = [
     displayMeasure: "Temperature",
     unitSymbol: "°C",
     unit: "degrees Celcius",
-    eventName: session.qo,
+    eventName: _session.qo,
     valueType: ReadingSchemaValueType.SCALAR_FLOAT,
     spec: {
       temp: 36.7,
@@ -154,19 +150,35 @@ const standardSchemas: BareReadingSchema[] = [
     uuid: "89fce756-a7aa-4b81-8848-1ec6797a5fa7",
     displayName: "Location",
     displayMeasure: "Location",
-    eventName: session.qo,
+    eventName: _session.qo,
     unit: "",
     unitSymbol: "",
     valueType: ReadingSchemaValueType.COMPOSITE,
     spec: {
-      tri_when: 1644251539,
-      tri_lat: 42.76392871,
-      tri_lon: -84.64847525,
-      tri_location: "Waverly, MI",
-      tri_country: "US",
-      tri_timezone: "America/Detroit",
-      tri_points: 8,
-      __primary: "tri_location",
+      gps_location: {
+        when: 1644251539,
+        name: "Waverly, MI",
+        country: "US",
+        timezone: "America/Detroit",
+        latitude: 42.76392871,
+        longitude: -84.64847525,
+      },
+      tower_location: {
+        when: 1644251539,
+        name: "Waverly, MI",
+        country: "US",
+        timezone: "America/Detroit",
+        latitude: 42.76392871,
+        longitude: -84.64847525,
+      },
+      triangulated_location: {
+        when: 1644251539,
+        name: "Waverly, MI",
+        country: "US",
+        timezone: "America/Detroit",
+        latitude: 42.76392871,
+        longitude: -84.64847525,
+      },
     },
   },
 
@@ -296,7 +308,7 @@ const standardSchemas: BareReadingSchema[] = [
  * Creates a new project.
  * @param projectUID
  */
-async function createTypicalProject(prisma: PrismaClient, projectUID: string) {
+async function createProject(prisma: PrismaClient, projectUID: string) {
   const project = await upsertProject({
     prisma,
     projectUID,
@@ -385,7 +397,7 @@ async function init() {
 
   const prisma = new PrismaClient();
 
-  createTypicalProject(prisma, Config.hubProjectUID);
+  createProject(prisma, Config.hubProjectUID);
 }
 
 init()

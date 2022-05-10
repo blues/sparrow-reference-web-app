@@ -1,4 +1,4 @@
-import Gateway from "../../../../src/components/models/Gateway";
+import Gateway from "../../../../src/services/alpha-models/Gateway";
 import { getGatewayDetailsPresentation } from "../../../../src/components/presentation/gatewayDetails";
 import { GATEWAY_MESSAGE } from "../../../../src/constants/ui";
 

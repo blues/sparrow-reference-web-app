@@ -1,5 +1,5 @@
-import Node from "../components/models/Node";
-import { SignalStrengths } from "../components/presentation/uiHelpers";
+import Node from "../services/alpha-models/Node";
+import { SignalStrengths } from "../services/alpha-models/SignalStrengths";
 
 interface GatewayDetailViewModel {
   gateway?: {
@@ -16,6 +16,7 @@ interface GatewayDetailViewModel {
     wifiBarsTooltip?: string | null;
   };
   nodes?: Node[];
+  readOnly?: boolean;
 }
 
 export default GatewayDetailViewModel;

@@ -5,15 +5,15 @@ import NotehubDataProvider, {
 import sparrowData from "../__serviceMocks__/sparrowData.json"; // mocked data to do with Sparrow portion of app goes here (i.e. gateways and nodes)
 import notehubData from "../__serviceMocks__/notehubData.json"; // mocked data to do with Notehub portion of app goes here (i.e. devices and events)
 import NotehubDevice from "../../../../src/services/notehub/models/NotehubDevice";
-import TemperatureSensorSchema from "../../../../src/components/models/readings/TemperatureSensorSchema";
-import HumiditySensorSchema from "../../../../src/components/models/readings/HumiditySensorSchema";
-import PressureSensorSchema from "../../../../src/components/models/readings/PressureSensorSchema";
-import VoltageSensorSchema from "../../../../src/components/models/readings/VoltageSensorSchema";
+import TemperatureSensorSchema from "../../../../src/services/alpha-models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../src/services/alpha-models/readings/HumiditySensorSchema";
+import PressureSensorSchema from "../../../../src/services/alpha-models/readings/PressureSensorSchema";
+import VoltageSensorSchema from "../../../../src/services/alpha-models/readings/VoltageSensorSchema";
 import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
 import NotehubSensorConfig from "../../../../src/services/notehub/models/NotehubNodeConfig";
 import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";
-import Gateway from "../../../../src/components/models/Gateway";
-import Node from "../../../../src/components/models/Node";
+import Gateway from "../../../../src/services/alpha-models/Gateway";
+import Node from "../../../../src/services/alpha-models/Node";
 
 describe("Notehub data provider service functions", () => {
   const mockedGatewayJson =
@@ -83,7 +83,8 @@ describe("Notehub data provider service functions", () => {
   it("should return a list of sparrow sensor readings when a gateway UID, node id and optional start date is to getNodeData", async () => {
     const res = await notehubDataProviderMock.getNodeData(
       sparrowData.mockedGatewayUID2,
-      sparrowData.mockedNodeId2
+      sparrowData.mockedNodeId2,
+      1000
     );
 
     expect(JSON.stringify(res[0].schema)).toEqual(

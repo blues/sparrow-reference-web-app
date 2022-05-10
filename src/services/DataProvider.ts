@@ -1,6 +1,6 @@
-import GatewayDEPRECATED from "../components/models/Gateway";
-import NodeDEPRECATED from "../components/models/Node";
-import ReadingDEPRECATED from "../components/models/readings/Reading";
+import GatewayDEPRECATED from "./alpha-models/Gateway";
+import NodeDEPRECATED from "./alpha-models/Node";
+import ReadingDEPRECATED from "./alpha-models/readings/Reading";
 import {
   ProjectID,
   ProjectReadingsSnapshot,
@@ -44,7 +44,7 @@ export interface DataProvider {
   getNodeData: (
     gatewayUID: string,
     nodeId: string,
-    minutesBeforeNow?: string
+    minutesBeforeNow: number
   ) => Promise<ReadingDEPRECATED<unknown>[]>;
 
   // queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;

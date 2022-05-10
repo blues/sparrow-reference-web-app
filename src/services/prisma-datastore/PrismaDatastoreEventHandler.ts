@@ -90,7 +90,7 @@ export default class PrismaDatastoreEventHandler
       )
     );
     return Promise.all(promises)
-      .then((r: Reading[]) => {
+      .then((r) => {
         verboseLog("added readings", r);
       })
       .catch((reason) => serverLogError(`Failed to add readings: ${reason}`));
@@ -157,10 +157,10 @@ export default class PrismaDatastoreEventHandler
     sensor: SensorWithSchema,
     when: Date,
     value: Prisma.InputJsonValue
-  ) {
+  ): Promise<Reading | "skipped"> {
     const { schema } = sensor;
     let storedValue = value;
-    const primaryValue = (schema.spec as any)[__primary];
+    const primaryValue = (schema.spec as { [__primary]: string })[__primary];
     if (primaryValue) {
       switch (schema.valueType) {
         case ReadingSchemaValueType.SCALAR_INT:
@@ -174,6 +174,20 @@ export default class PrismaDatastoreEventHandler
           storedValue = value;
           break;
       }
+    }
+
+    if (!storedValue) {
+      if (schema.eventName === "_session.qo") {
+        // It's known that _session.qo shows values when routed that aren't
+        // shown when fetched via API. If this event came from the API then
+        // it might have missing values. So let's be quiet about it.
+        return Promise.resolve("skipped");
+      }
+      throw new Error(
+        `Could not find primary value ${primaryValue} to store for sensor ${
+          sensor.schema.name
+        } with value ${JSON.stringify(value)} at ${when}`
+      );
     }
 
     // update the latest reading. todo - this assumes readings are received in

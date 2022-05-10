@@ -1,6 +1,6 @@
 /* eslint-disable react/require-default-props */
 import { ChartData, ChartOptions } from "chart.js";
-import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
+import VoltageSensorSchema from "../../services/alpha-models/readings/VoltageSensorSchema";
 import { CHART_DATE_FORMAT, getTooltipDisplayText } from "./chartHelper";
 import type { NodeDetailsChartProps } from "./chartHelper";
 import LineChart from "./LineChart";

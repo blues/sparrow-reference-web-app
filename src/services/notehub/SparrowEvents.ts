@@ -1,31 +1,92 @@
 import { BasicSparrowEvent, SparrowEvent } from "../SparrowEvent";
 import NotehubEvent from "./models/NotehubEvent";
-import NotehubLocation from "./models/NotehubLocation";
-import NotehubRoutedEvent from "./models/NotehubRoutedEvent";
+import { NotehubLocationAlternatives } from "./models/NotehubLocation";
+import NotehubRoutedEvent, {
+  NotehubRoutedEventLocationFields,
+} from "./models/NotehubRoutedEvent";
 
 function eventError(msg: string, event: NotehubRoutedEvent | NotehubEvent) {
   return new Error(msg);
 }
 
-export function eventLocation(event: {
-  best_location: string;
-  best_lat: number;
-  best_lon: number;
-  best_country: string;
-  best_timezone: string;
-  when: number;
-}): NotehubLocation | undefined {
-  return event.best_location
-    ? {
-        latitude: event.best_lat,
-        longitude: event.best_lon,
-        // todo - there isn't a `best_when` but `tri_when`.
-        when: event.when,
-        country: event.best_country,
-        timezone: event.best_timezone,
-        name: event.best_location,
-      }
-    : undefined;
+export function locationAlternativesFromRoutedEvent(
+  event: NotehubRoutedEventLocationFields
+): NotehubLocationAlternatives {
+  const alternatives: NotehubLocationAlternatives = {};
+  if (
+    event.tower_when &&
+    event.tower_location &&
+    event.tower_country &&
+    event.tower_timezone &&
+    event.tower_lat &&
+    event.tower_lon
+  ) {
+    alternatives.tower_location = {
+      when: event.tower_when,
+      name: event.tower_location,
+      country: event.tower_country,
+      timezone: event.tower_timezone,
+      latitude: event.tower_lat,
+      longitude: event.tower_lon,
+    };
+  }
+  if (
+    event.when &&
+    event.where_location &&
+    event.where_country &&
+    event.where_timezone &&
+    event.where_lat &&
+    event.where_lon
+  ) {
+    alternatives.gps_location = {
+      when: event.where_when || event.when,
+      name: event.where_location,
+      country: event.where_country,
+      timezone: event.where_timezone,
+      latitude: event.where_lat,
+      longitude: event.where_lon,
+    };
+  }
+  if (
+    event.tri_when &&
+    event.tri_location &&
+    event.tri_country &&
+    event.tri_timezone &&
+    event.tri_lat &&
+    event.tri_lon
+  ) {
+    alternatives.triangulated_location = {
+      when: event.tri_when,
+      name: event.tri_location,
+      country: event.tri_country,
+      timezone: event.tri_timezone,
+      latitude: event.tri_lat,
+      longitude: event.tri_lon,
+    };
+  }
+  return alternatives;
+}
+
+// N.B.: Noteub defines 'best' location with more nuance than we do here (e.g
+// considering staleness). Also this algorthm is copy-pasted in a couple places.
+export const bestLocation = (object: NotehubLocationAlternatives) =>
+  object.gps_location || object.triangulated_location || object.tower_location;
+
+function bodyAugmentedWithMetadata(
+  event: NotehubEvent | NotehubRoutedEvent,
+  locations: NotehubLocationAlternatives
+) {
+  // eslint-disable-next-line prefer-destructuring
+  const body: { [key: string]: any } = event.body;
+  if (event.file === "_session.qo") {
+    body.voltage ??= event.voltage;
+    body.temp ??= event.temp;
+    body.bars ??= event.bars;
+    body.gps_location ??= locations.gps_location;
+    body.tower_location ??= locations.tower_location;
+    body.triangulated_location ??= locations.triangulated_location;
+  }
+  return body;
 }
 
 /**
@@ -68,7 +129,9 @@ export function sparrowEventFromNotehubRoutedEvent(
     throw eventError("project.id is not defined", event);
   }
   const normalized = normalizeSparrowEvent(event.file, event.note);
-  const location = eventLocation(event);
+  const locations = locationAlternativesFromRoutedEvent(event);
+  const location = bestLocation(locations);
+  const body = bodyAugmentedWithMetadata(event, locations);
 
   return new BasicSparrowEvent(
     event.project.id,
@@ -77,7 +140,7 @@ export function sparrowEventFromNotehubRoutedEvent(
     normalized.eventName,
     normalized.nodeID,
     location,
-    event.body,
+    body,
     event.sn
   );
 }
@@ -91,8 +154,8 @@ export function sparrowEventFromNotehubEvent(
   }
 
   const normalized = normalizeSparrowEvent(event.file, event.note);
-  const location =
-    event.gps_location || event.triangulated_location || event.tower_location;
+  const location = bestLocation(event);
+  const body = bodyAugmentedWithMetadata(event, event);
 
   return new BasicSparrowEvent(
     projectUID,
@@ -101,7 +164,7 @@ export function sparrowEventFromNotehubEvent(
     normalized.eventName,
     normalized.nodeID,
     location,
-    event.body
+    body
   );
 }
 

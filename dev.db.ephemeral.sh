@@ -20,6 +20,14 @@ docker run --rm \
   -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
   postgres
 
+#### Wait for database to come up.
+readonly timeout_seconds=5
+timeout $timeout_seconds bash -c \
+  'until printf "" 2>>/dev/null >>/dev/tcp/localhost/$0; do sleep 1; done' $POSTGRES_PORT ||
+  (
+    echo "Err: database did not come up. Use ./dev.db.stop.sh and try again." && 
+    exit 10
+  )
 
 #### Reset the Datastore and generate the datastore tables
 yarn db:reset

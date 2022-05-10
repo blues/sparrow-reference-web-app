@@ -1,6 +1,7 @@
-import NotehubLocation from "./NotehubLocation";
+import { NotehubLocationAlternatives } from "./NotehubLocation";
+import { SessionMetadata } from "./SessionMetadata";
 
-interface NotehubEvent {
+interface NotehubEvent extends SessionMetadata, NotehubLocationAlternatives {
   file: string;
   captured: string;
   received: string;
@@ -23,9 +24,6 @@ interface NotehubEvent {
     loc?: string;
     name?: string;
   };
-  tower_location?: NotehubLocation;
-  triangulated_location?: NotehubLocation;
-  gps_location?: NotehubLocation;
 }
 
 export default NotehubEvent;

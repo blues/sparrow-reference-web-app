@@ -4,9 +4,9 @@ import { Carousel } from "antd";
 import { CarouselRef } from "antd/lib/carousel";
 import GatewayCard from "../components/elements/GatewayCard";
 import { services } from "../services/ServiceLocator";
-import Gateway from "../components/models/Gateway";
-import Node from "../components/models/Node";
-import { getErrorMessage } from "../constants/ui";
+import Gateway from "../services/alpha-models/Gateway";
+import Node from "../services/alpha-models/Node";
+import { ERROR_MESSAGE, getErrorMessage } from "../constants/ui";
 import { ERROR_CODES } from "../services/Errors";
 import CarouselArrowFixRight from "../components/elements/CarouselArrowFixRight";
 import CarouselArrowFixLeft from "../components/elements/CarouselArrowFixLeft";
@@ -62,6 +62,7 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   let gateways: Gateway[] = [];
   let latestNodeDataList: Node[] = [];
   let gatewayNodeData: Gateway[] = [];
+  let err = "";
   try {
     const appService = services().getAppService();
     gateways = await appService.getGateways();
@@ -70,24 +71,20 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
     );
 
     gatewayNodeData = getCombinedGatewayNodeInfo(latestNodeDataList, gateways);
+    if (gatewayNodeData.length === 0) {
+      err = ERROR_MESSAGE.NO_GATEWAYS_FOUND;
+    }
 
     return {
-      props: { gatewayNodeData },
+      props: { gatewayNodeData, err },
     };
-  } catch (err) {
-    if (err instanceof Error) {
-      return {
-        props: {
-          gatewayNodeData,
-          err: getErrorMessage(err.message),
-        },
-      };
-    }
-    return {
-      props: {
-        gatewayNodeData,
-        err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
-      },
-    };
+  } catch (e) {
+    err = getErrorMessage(
+      e instanceof Error ? e.message : ERROR_CODES.INTERNAL_ERROR
+    );
   }
+
+  return {
+    props: { gatewayNodeData, err },
+  };
 };

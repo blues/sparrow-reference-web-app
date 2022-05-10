@@ -19,11 +19,11 @@ import NodeDetailsBarChart from "../../../../components/charts/NodeDetailsBarCha
 import NodeDetailViewModel from "../../../../models/NodeDetailViewModel";
 import { getNodeDetailsPresentation } from "../../../../components/presentation/nodeDetails";
 import { ERROR_CODES } from "../../../../services/Errors";
-import TemperatureSensorSchema from "../../../../components/models/readings/TemperatureSensorSchema";
-import HumiditySensorSchema from "../../../../components/models/readings/HumiditySensorSchema";
-import VoltageSensorSchema from "../../../../components/models/readings/VoltageSensorSchema";
-import PressureSensorSchema from "../../../../components/models/readings/PressureSensorSchema";
-import CountSensorSchema from "../../../../components/models/readings/CountSensorSchema";
+import TemperatureSensorSchema from "../../../../services/alpha-models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../../../services/alpha-models/readings/HumiditySensorSchema";
+import VoltageSensorSchema from "../../../../services/alpha-models/readings/VoltageSensorSchema";
+import PressureSensorSchema from "../../../../services/alpha-models/readings/PressureSensorSchema";
+import CountSensorSchema from "../../../../services/alpha-models/readings/CountSensorSchema";
 import styles from "../../../../styles/Home.module.scss";
 import detailsStyles from "../../../../styles/Details.module.scss";
 
@@ -95,6 +95,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
           placeholder="Name of node"
           maxLength={49}
           showCount
+          disabled={viewModel.readOnly}
         />
       ),
     },
@@ -115,12 +116,18 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
           placeholder="Node location"
           maxLength={15}
           showCount
+          disabled={viewModel.readOnly}
         />
       ),
     },
     {
       contents: (
-        <Button data-testid="form-submit" htmlType="submit" type="primary">
+        <Button
+          data-testid="form-submit"
+          htmlType="submit"
+          type="primary"
+          disabled={viewModel.readOnly}
+        >
           Save Changes
         </Button>
       ),
@@ -414,6 +421,7 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
     query as SparrowQueryInterface;
   const appService = services().getAppService();
   let viewModel: NodeDetailViewModel = {};
+  let err = "";
 
   try {
     const gateway = await appService.getGateway(gatewayUID);
@@ -421,28 +429,17 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
     const readings = await appService.getNodeData(
       gatewayUID,
       nodeId,
-      minutesBeforeNow
+      Number(minutesBeforeNow)
     );
 
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
-
-    return {
-      props: { viewModel },
-    };
-  } catch (err) {
-    if (err instanceof Error) {
-      return {
-        props: {
-          viewModel,
-          err: getErrorMessage(err.message),
-        },
-      };
-    }
-    return {
-      props: {
-        viewModel,
-        err: getErrorMessage(ERROR_CODES.INTERNAL_ERROR),
-      },
-    };
+  } catch (e) {
+    err = getErrorMessage(
+      e instanceof Error ? e.message : ERROR_CODES.INTERNAL_ERROR
+    );
   }
+
+  return {
+    props: { viewModel, err },
+  };
 };

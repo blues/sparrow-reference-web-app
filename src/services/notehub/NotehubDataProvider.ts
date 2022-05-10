@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { flattenDeep } from "lodash";
-import GatewayDEPRECATED from "../../components/models/Gateway";
-import NodeDEPRECATED from "../../components/models/Node";
+import GatewayDEPRECATED from "../alpha-models/Gateway";
+import NodeDEPRECATED from "../alpha-models/Node";
 import NotehubDevice from "./models/NotehubDevice";
 import {
   DataProvider,
@@ -11,15 +11,15 @@ import {
 } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
 import NotehubEvent from "./models/NotehubEvent";
-import ReadingDEPRECATED from "../../components/models/readings/Reading";
+import ReadingDEPRECATED from "../alpha-models/readings/Reading";
 import { ERROR_CODES, getError } from "../Errors";
-import NotehubLocation from "./models/NotehubLocation";
-import TemperatureSensorReading from "../../components/models/readings/TemperatureSensorReading";
-import HumiditySensorReading from "../../components/models/readings/HumiditySensorReading";
-import PressureSensorReading from "../../components/models/readings/PressureSensorReading";
-import VoltageSensorReading from "../../components/models/readings/VoltageSensorReading";
-import CountSensorReading from "../../components/models/readings/CountSensorReading";
-import TotalSensorReading from "../../components/models/readings/TotalSensorReading";
+import { NotehubLocationAlternatives } from "./models/NotehubLocation";
+import TemperatureSensorReading from "../alpha-models/readings/TemperatureSensorReading";
+import HumiditySensorReading from "../alpha-models/readings/HumiditySensorReading";
+import PressureSensorReading from "../alpha-models/readings/PressureSensorReading";
+import VoltageSensorReading from "../alpha-models/readings/VoltageSensorReading";
+import CountSensorReading from "../alpha-models/readings/CountSensorReading";
+import TotalSensorReading from "../alpha-models/readings/TotalSensorReading";
 import {
   Gateway,
   Gateways,
@@ -38,30 +38,17 @@ import {
   TimePeriod,
 } from "../DomainModel";
 import Config from "../../../config";
-import {
-  getEpochChartDataDate,
-  SignalStrengths,
-} from "../../components/presentation/uiHelpers";
-
-interface HasNotehubLocation {
-  gps_location?: NotehubLocation;
-  triangulated_location?: NotehubLocation;
-  tower_location?: NotehubLocation;
-}
+import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
+import { SignalStrengths } from "../alpha-models/SignalStrengths";
 
 interface HasNodeId {
   nodeId: string;
 }
 
-export function getBestLocation(object: HasNotehubLocation) {
-  if (object.triangulated_location) {
-    return object.triangulated_location;
-  }
-  if (object.gps_location) {
-    return object.gps_location;
-  }
-  return object.tower_location;
-}
+// N.B.: Noteub defines 'best' location with more nuance than we do here (e.g
+// considering staleness). Also this algorthm is copy-pasted in a couple places.
+export const getBestLocation = (object: NotehubLocationAlternatives) =>
+  object.gps_location || object.triangulated_location || object.tower_location;
 
 export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
@@ -154,7 +141,6 @@ export default class NotehubDataProvider implements DataProvider {
     throw new Error("Method not implemented.");
   }
 
-  // eventually this projectUID will need to be passed in - just not yet
   async getGateways() {
     const gateways: GatewayDEPRECATED[] = [];
     const rawDevices = await this.notehubAccessor.getDevices();
@@ -329,13 +315,11 @@ export default class NotehubDataProvider implements DataProvider {
   async getNodeData(
     gatewayUID: string,
     nodeId: string,
-    minutesBeforeNow?: string
+    minutesBeforeNow: number
   ) {
     let nodeEvents: NotehubEvent[];
     if (minutesBeforeNow) {
-      const epochDateString: string = getEpochChartDataDate(
-        Number(minutesBeforeNow)
-      );
+      const epochDateString: string = getEpochChartDataDate(minutesBeforeNow);
       nodeEvents = await this.notehubAccessor.getEvents(epochDateString);
     } else {
       nodeEvents = await this.notehubAccessor.getEvents();

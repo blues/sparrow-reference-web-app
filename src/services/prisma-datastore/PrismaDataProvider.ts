@@ -3,9 +3,9 @@
 /* eslint-disable import/prefer-default-export */
 import Prisma, { PrismaClient } from "@prisma/client";
 import { ErrorWithCause } from "pony-cause";
-import GatewayDEPRECATED from "../../components/models/Gateway";
-import ReadingDEPRECATED from "../../components/models/readings/Reading";
-import NodeDEPRECATED from "../../components/models/Node";
+import GatewayDEPRECATED from "../alpha-models/Gateway";
+import ReadingDEPRECATED from "../alpha-models/readings/Reading";
+import NodeDEPRECATED from "../alpha-models/Node";
 import {
   DataProvider,
   QueryResult,
@@ -20,6 +20,7 @@ import {
   SensorType,
   Reading,
   ProjectHistoricalData,
+  NodeSensorTypeNames,
 } from "../DomainModel";
 import Mapper from "./PrismaDomainModelMapper";
 import {
@@ -32,9 +33,26 @@ import { SparrowEventHandler } from "../SparrowEvent";
 import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
-import { ERROR_CODES, getError } from "../Errors";
+import {
+  GatewayWithLatestReadings,
+  sparrowGatewayFromPrismaGateway,
+  sparrowNodeFromPrismaNode,
+} from "./prismaToSparrow";
+import ReadingSchema from "../alpha-models/readings/ReadingSchema";
+import VoltageSensorSchema from "../alpha-models/readings/VoltageSensorSchema";
+import HumiditySensorSchema from "../alpha-models/readings/HumiditySensorSchema";
+import CountSensorSchema from "../alpha-models/readings/CountSensorSchema";
+import TemperatureSensorSchema from "../alpha-models/readings/TemperatureSensorSchema";
+import TotalSensorSchema from "../alpha-models/readings/TotalSensorSchema";
+import PressureSensorSchema from "../alpha-models/readings/PressureSensorSchema";
 
-// Todo: Should be dependency injected?
+function getGatewayVoltage(gw: GatewayWithLatestReadings): number {
+  const voltageSensor = gw.readingSource.sensors.filter(
+    (sensor) => sensor.schema.name === "gateway_voltage"
+  )[0];
+  return Number(voltageSensor?.latest?.value || 0); // TODO Put a better default? Undefined?
+}
+
 async function manageGatewayImport(
   bi: BulkImport,
   p: PrismaClient,
@@ -50,7 +68,7 @@ async function manageGatewayImport(
     b.errorCount += 1;
     b.itemCount -= 1;
     serverLogError(
-      `Failed to import gateway "${gateway.name}": ${cause}`.replaceAll(
+      `Failed to import gateway "${gateway.name}": ${String(cause)}`.replaceAll(
         `\n`,
         " "
       )
@@ -73,10 +91,9 @@ async function manageNodeImport(
     b.errorCount += 1;
     b.itemCount -= 1;
     serverLogError(
-      `Failed to import node "${node.name}" (${node.nodeId}): ${cause}`.replaceAll(
-        `\n`,
-        " "
-      )
+      `Failed to import node "${String(node.name)}" (${node.nodeId}): ${String(
+        cause
+      )}`.replaceAll(`\n`, " ")
     );
   }
 }
@@ -145,7 +162,9 @@ export class PrismaDataProvider implements DataProvider {
         );
         b.itemCount += 1;
       } catch (cause) {
-        serverLogError(`Error loading event ${event.uid}. Cause: ${cause}`);
+        serverLogError(
+          `Error loading event ${event.uid}. Cause: ${String(cause)}`
+        );
         b.errorCount += 1;
       }
       serverLogProgress("Loaded", events.length, i);
@@ -188,9 +207,15 @@ export class PrismaDataProvider implements DataProvider {
       where: {
         project,
       },
+      include: {
+        readingSource: {
+          include: { sensors: { include: { latest: true, schema: true } } },
+        },
+      },
     });
-
-    return gateways.map((gw) => this.sparrowGateway(gw));
+    return gateways.map((gw) =>
+      sparrowGatewayFromPrismaGateway(gw, getGatewayVoltage(gw))
+    );
   }
 
   async getGateway(gatewayUID: string): Promise<GatewayDEPRECATED> {
@@ -199,29 +224,18 @@ export class PrismaDataProvider implements DataProvider {
       where: {
         deviceUID: gatewayUID,
       },
+      include: {
+        readingSource: {
+          include: { sensors: { include: { latest: true, schema: true } } },
+        },
+      },
     });
     if (gateway === null) {
       throw new Error(
         `Cannot find gateway with DeviceUID ${gatewayUID} in project ${project.projectUID}`
       );
     }
-    return this.sparrowGateway(gateway);
-  }
-
-  /**
-   * Converts a prisma gateway to the old domain model.
-   * @param gw
-   * @returns
-   */
-  private sparrowGateway(gw: Prisma.Gateway): GatewayDEPRECATED {
-    return {
-      uid: gw.deviceUID,
-      name: gw.name || "", // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
-      location: gw.locationName || "",
-      lastActivity: gw.lastSeenAt?.toDateString() || "", // todo - ideally this is simply cached
-      voltage: 3.5,
-      nodeList: [],
-    };
+    return sparrowGatewayFromPrismaGateway(gateway, getGatewayVoltage(gateway));
   }
 
   getNodes(gatewayUIDs: string[]): Promise<NodeDEPRECATED[]> {
@@ -231,23 +245,116 @@ export class PrismaDataProvider implements DataProvider {
     ).then((nodes) => nodes.flat());
   }
 
+  /**
+   * Retrieve the nodes for a given gatway.
+   * @param gatewayUID  The ID of the gateway to retrieve.
+   * @returns
+   */
   async getGatewayNodes(gatewayUID: string): Promise<NodeDEPRECATED[]> {
-    return Promise.resolve([]);
+    // todo - use a query to retrieve many nodes from the db rather than iterate if performance doesn't scale.
+    const nodes = await this.prisma.node.findMany({
+      where: {
+        gateway: {
+          deviceUID: gatewayUID,
+        },
+      },
+      include: {
+        readingSource: {
+          include: { sensors: { include: { latest: true, schema: true } } },
+        },
+      },
+    });
+
+    return nodes.map((node) => sparrowNodeFromPrismaNode(gatewayUID, node));
   }
 
   async getNode(
     gatewayUID: string,
     sensorUID: string
   ): Promise<NodeDEPRECATED> {
-    return Promise.reject();
+    const project = await this.currentProject();
+    const node = await this.prisma.node.findUnique({
+      where: {
+        nodeEUI: sensorUID,
+      },
+      include: {
+        gateway: true,
+        readingSource: {
+          include: { sensors: { include: { latest: true, schema: true } } },
+        },
+      },
+    });
+
+    if (node?.gateway.deviceUID !== gatewayUID) {
+      throw new Error(
+        `Cannot find node with NodeID ${sensorUID} in project ${project.projectUID}`
+      );
+    }
+    return sparrowNodeFromPrismaNode(gatewayUID, node);
   }
 
   async getNodeData(
     gatewayUID: string,
     sensorUID: string,
-    minutesBeforeNow?: string
+    minutesBeforeNow: number
   ): Promise<ReadingDEPRECATED<unknown>[]> {
-    return Promise.reject();
+    const from: Date = minutesBeforeNow
+      ? new Date(Date.now() - minutesBeforeNow * 60000)
+      : new Date(0);
+
+    // retrieve all the readings for the given sensor
+    const readings = await this.prisma.reading.findMany({
+      where: {
+        when: {
+          gte: from,
+        },
+        sensor: {
+          readingSource: {
+            node: {
+              nodeEUI: sensorUID,
+            },
+          },
+        },
+      },
+      include: {
+        sensor: {
+          include: {
+            schema: {
+              select: {
+                name: true,
+                scale: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const map = new Map<string, ReadingSchema<unknown>>();
+    map.set(NodeSensorTypeNames.VOLTAGE, VoltageSensorSchema);
+    map.set(NodeSensorTypeNames.TEMPERATURE, TemperatureSensorSchema);
+    map.set(NodeSensorTypeNames.HUMIDITY, HumiditySensorSchema);
+    map.set(NodeSensorTypeNames.AIR_PRESSURE, PressureSensorSchema);
+    map.set(NodeSensorTypeNames.PIR_MOTION, CountSensorSchema);
+    map.set(NodeSensorTypeNames.PIR_MOTION_TOTAL, TotalSensorSchema);
+
+    const result: ReadingDEPRECATED<unknown>[] = [];
+
+    readings.forEach((reading) => {
+      const alphaSchema = map.get(reading.sensor.schema.name);
+      if (alphaSchema) {
+        const scale = reading.sensor.schema.scale;
+
+        const alphaReading = {
+          value: scale ? Number(reading.value) / scale : reading.value,
+          captured: reading.when.toISOString(),
+          schema: alphaSchema,
+        };
+        result.push(alphaReading);
+      }
+    });
+
+    return result;
   }
 
   private retrieveLatestValues({ projectUID }: { projectUID: string }) {
@@ -301,7 +408,6 @@ export class PrismaDataProvider implements DataProvider {
     type G = P["gateways"][number];
     type N = G["nodes"][number];
     type RS = G["readingSource"];
-    type S = RS["sensors"][number];
 
     // map the data to the domain model
     const hostReadings = new Map<SensorHost, SensorHostReadingsSnapshot>();
@@ -323,7 +429,7 @@ export class PrismaDataProvider implements DataProvider {
       };
 
       // maydo - could consider caching the ReadingSchema -> SensorType but it's not that much overhead with duplication per device
-      rs.sensors.map((s) => {
+      rs.sensors.forEach((s) => {
         if (s.latest) {
           const sensorType = Mapper.mapReadingSchema(s.schema);
           const reading = Mapper.mapReading(s.latest);
@@ -360,7 +466,7 @@ export class PrismaDataProvider implements DataProvider {
       project,
       hostReadings: (sensorHost: SensorHost) => {
         const reading = hostReadings.get(sensorHost);
-        if (reading == undefined) {
+        if (reading === undefined) {
           throw new Error("unknown sensorHost");
         }
         return reading;

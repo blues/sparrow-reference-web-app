@@ -29,8 +29,7 @@ const API_INITIAL_ALL_EVENTS_URL = `${mockBaseURL}/v1/projects/${mockProjectUID}
 const axiosHttpNotehubAccessorMock = new AxiosHttpNotehubAccessor(
   mockBaseURL,
   mockProjectUID,
-  "",
-  mockHubHistoricalDataRecentMinutes
+  ""
 );
 
 describe("Device handling", () => {

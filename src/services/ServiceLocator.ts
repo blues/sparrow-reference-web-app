@@ -17,6 +17,9 @@ import { PrismaDataProvider } from "./prisma-datastore/PrismaDataProvider";
 // eslint-disable-next-line import/no-named-as-default
 import IDBuilder, { SimpleIDBuilder } from "./IDBuilder";
 import CompositeDataProvider from "./prisma-datastore/CompositeDataProvider";
+import PrismaAttributeStore from "./prisma-datastore/PrismaAttributeStore";
+import CompositeAttributeStore from "./prisma-datastore/CompositeAttributeStore";
+import { getPrismaClient } from "./prisma-datastore/prisma-util";
 
 // ServiceLocator is the top-level consturction and dependency injection tool
 // for client-side (browser-side) and also server-side node code. It uses lazy
@@ -40,7 +43,7 @@ class ServiceLocator {
 
   constructor() {
     this.prisma = Config.databaseURL
-      ? new PrismaClient({ datasources: { db: { url: Config.databaseURL } } })
+      ? getPrismaClient(Config.databaseURL)
       : undefined;
   }
 
@@ -75,6 +78,8 @@ class ServiceLocator {
           notehubProvider,
           dataStoreProvider
         );
+        // this is needed because the combinedProvider has a sideeffect of maintaining the
+        // event handler and notehub accessor. These should be brought into the PrismaDataProvider
         this.dataProvider = combinedProvider;
       } else {
         this.dataProvider = notehubProvider;
@@ -97,8 +102,7 @@ class ServiceLocator {
       this.notehubAccessor = new AxiosHttpNotehubAccessor(
         Config.hubBaseURL,
         Config.hubProjectUID,
-        Config.hubAuthToken,
-        Config.hubHistoricalDataRecentMinutes
+        Config.hubAuthToken
       );
     }
     return this.notehubAccessor;
@@ -106,9 +110,20 @@ class ServiceLocator {
 
   getAttributeStore(): AttributeStore {
     if (!this.attributeStore) {
-      this.attributeStore = new NotehubAttributeStore(
+      const notehubStore: AttributeStore = new NotehubAttributeStore(
         this.getNotehubAccessor()
       );
+
+      if (this.prisma) {
+        const prismaStore = new PrismaAttributeStore(this.prisma);
+        const compositeStore = new CompositeAttributeStore([
+          notehubStore,
+          prismaStore,
+        ]);
+        this.attributeStore = compositeStore;
+      } else {
+        this.attributeStore = notehubStore;
+      }
     }
     return this.attributeStore;
   }

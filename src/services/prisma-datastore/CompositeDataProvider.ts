@@ -6,9 +6,9 @@ import {
 } from "../DataProvider";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { PrismaDataProvider } from "./PrismaDataProvider";
-import Gateway from "../../components/models/Gateway";
-import Node from "../../components/models/Node";
-import ReadingDEPRECATED from "../../components/models/readings/Reading";
+import Gateway from "../alpha-models/Gateway";
+import Node from "../alpha-models/Node";
+import ReadingDEPRECATED from "../alpha-models/readings/Reading";
 import {
   ProjectHistoricalData,
   ProjectID,
@@ -34,27 +34,27 @@ export default class CompositeDataProvider implements DataProvider {
   }
 
   getGateways(): Promise<Gateway[]> {
-    return this.notehubProvider.getGateways();
+    return this.prismaDataProvider.getGateways();
   }
 
   getGateway(gatewayUID: string): Promise<Gateway> {
-    return this.notehubProvider.getGateway(gatewayUID);
+    return this.prismaDataProvider.getGateway(gatewayUID);
   }
 
   getNodes(gatewayUIDs: string[]): Promise<Node[]> {
-    return this.notehubProvider.getNodes(gatewayUIDs);
+    return this.prismaDataProvider.getNodes(gatewayUIDs);
   }
 
   getNode(gatewayUID: string, nodeId: string): Promise<Node> {
-    return this.notehubProvider.getNode(gatewayUID, nodeId);
+    return this.prismaDataProvider.getNode(gatewayUID, nodeId);
   }
 
   getNodeData(
     gatewayUID: string,
     nodeId: string,
-    minutesBeforeNow?: string | undefined
+    minutesBeforeNow: number
   ): Promise<ReadingDEPRECATED<unknown>[]> {
-    return this.notehubProvider.getNodeData(
+    return this.prismaDataProvider.getNodeData(
       gatewayUID,
       nodeId,
       minutesBeforeNow

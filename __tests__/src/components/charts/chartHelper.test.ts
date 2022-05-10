@@ -3,11 +3,11 @@ import {
   getChartOptions,
   getTooltipDisplayText,
 } from "../../../../src/components/charts/chartHelper";
-import CountSensorSchema from "../../../../src/components/models/readings/CountSensorSchema";
-import HumiditySensorSchema from "../../../../src/components/models/readings/HumiditySensorSchema";
-import PressureSensorSchema from "../../../../src/components/models/readings/PressureSensorSchema";
-import TemperatureSensorSchema from "../../../../src/components/models/readings/TemperatureSensorSchema";
-import VoltageSensorSchema from "../../../../src/components/models/readings/VoltageSensorSchema";
+import CountSensorSchema from "../../../../src/services/alpha-models/readings/CountSensorSchema";
+import HumiditySensorSchema from "../../../../src/services/alpha-models/readings/HumiditySensorSchema";
+import PressureSensorSchema from "../../../../src/services/alpha-models/readings/PressureSensorSchema";
+import TemperatureSensorSchema from "../../../../src/services/alpha-models/readings/TemperatureSensorSchema";
+import VoltageSensorSchema from "../../../../src/services/alpha-models/readings/VoltageSensorSchema";
 
 describe("Chart options handling", () => {
   it("Returns the chart options when they're called", () => {

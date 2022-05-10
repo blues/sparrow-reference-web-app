@@ -1,4 +1,4 @@
-import { SignalStrengths } from "../presentation/uiHelpers";
+import { SignalStrengths } from "./SignalStrengths";
 import Node from "./Node";
 
 interface Gateway {

@@ -16,15 +16,16 @@ import {
   calculateLoraSignalStrength,
   calculateSignalTooltip,
 } from "./uiHelpers";
-import Node from "../models/Node";
-import Gateway from "../models/Gateway";
-import Reading from "../models/readings/Reading";
-import TemperatureSensorSchema from "../models/readings/TemperatureSensorSchema";
-import HumiditySensorSchema from "../models/readings/HumiditySensorSchema";
-import PressureSensorSchema from "../models/readings/PressureSensorSchema";
-import VoltageSensorSchema from "../models/readings/VoltageSensorSchema";
-import CountSensorSchema from "../models/readings/CountSensorSchema";
-import TotalSensorSchema from "../models/readings/TotalSensorSchema";
+import Node from "../../services/alpha-models/Node";
+import Gateway from "../../services/alpha-models/Gateway";
+import Reading from "../../services/alpha-models/readings/Reading";
+import TemperatureSensorSchema from "../../services/alpha-models/readings/TemperatureSensorSchema";
+import HumiditySensorSchema from "../../services/alpha-models/readings/HumiditySensorSchema";
+import PressureSensorSchema from "../../services/alpha-models/readings/PressureSensorSchema";
+import VoltageSensorSchema from "../../services/alpha-models/readings/VoltageSensorSchema";
+import CountSensorSchema from "../../services/alpha-models/readings/CountSensorSchema";
+import TotalSensorSchema from "../../services/alpha-models/readings/TotalSensorSchema";
+import Config from "../../../config";
 
 // eslint-disable-next-line import/prefer-default-export
 export function getNodeDetailsPresentation(
@@ -70,5 +71,6 @@ export function getNodeDetailsPresentation(
           total: getFormattedChartData(readings, TotalSensorSchema),
         }
       : undefined,
+    readOnly: Config.readOnly,
   };
 }
