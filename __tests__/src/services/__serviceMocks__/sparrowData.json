@@ -23,7 +23,7 @@
       "temperature": 22.6,
       "total": 281,
       "count": 1,
-      "bars": "0"
+      "bars": "N/A"
     },
     {
       "nodeId": "456789b",
@@ -33,7 +33,7 @@
       "pressure": 101.95,
       "temperature": 24.3,
       "count": 3,
-      "bars": "0"
+      "bars": "N/A"
     }
   ],
   "successfulNodeDataSparrowDataResponse": [
