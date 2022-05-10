@@ -14,6 +14,9 @@ import NotehubSensorConfig from "../../../../src/services/notehub/models/Notehub
 import NotehubResponse from "../../../../src/services/notehub/models/NotehubResponse";
 import Gateway from "../../../../src/services/alpha-models/Gateway";
 import Node from "../../../../src/services/alpha-models/Node";
+import IDBuilder from "../../../../src/services/IDBuilder";
+
+const mockProjectID = IDBuilder.buildProjectID("app:mockID");
 
 describe("Notehub data provider service functions", () => {
   const mockedGatewayJson =
@@ -42,7 +45,7 @@ describe("Notehub data provider service functions", () => {
       setConfig: jest.fn().mockResolvedValueOnce({}),
       setEnvironmentVariables: jest.fn().mockResolvedValueOnce({}),
     };
-    notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock);
+    notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock, mockProjectID);
   });
 
   it("should convert a Notehub device to a Sparrow gateway", async () => {

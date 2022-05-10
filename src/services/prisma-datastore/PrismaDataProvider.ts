@@ -51,7 +51,7 @@ function getGatewayVoltage(gw: GatewayWithLatestReadings): number | undefined {
     (sensor) => sensor.schema.name === "gateway_voltage"
   )[0];
   const value = voltageSensor?.latest?.value;
-  return value==undefined ? undefined : Number(value);
+  return value===undefined ? undefined : Number(value);
 }
 
 async function manageGatewayImport(
