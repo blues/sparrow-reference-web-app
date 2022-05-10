@@ -115,10 +115,10 @@ class ServiceLocator {
       );
 
       if (this.prisma) {
-        const dataStore = new PrismaAttributeStore(this.prisma);
+        const prismaStore = new PrismaAttributeStore(this.prisma);
         const compositeStore = new CompositeAttributeStore([
           notehubStore,
-          dataStore,
+          prismaStore,
         ]);
         this.attributeStore = compositeStore;
       } else {
