@@ -25,15 +25,13 @@ export type NodeWithLatestReadings = Prisma.Node & LatestReadingSourceReadings;
  * @returns
  */
 export function sparrowGatewayFromPrismaGateway(
-  pGateway: Prisma.Gateway,
-  voltage?: number
+  pGateway: Prisma.Gateway
 ): Gateway {
   return {
     uid: pGateway.deviceUID,
     name: pGateway.name || "", // todo - we will be reworking the Gateway/Sensor(Node) models. name should be optional
     location: pGateway.locationName || "",
     lastActivity: pGateway.lastSeenAt?.toString() || "", // todo - ideally this is simply cached
-    voltage: voltage===undefined ? null : voltage,
     nodeList: [],
   };
 }
@@ -61,7 +59,7 @@ function findReading(
 }
 
 function asNumber(reading?: Prisma.Reading): number | undefined {
-  let result = undefined;
+  let result;
   if (typeof reading?.value === "number") {
     result = reading.value;
   }
@@ -69,7 +67,7 @@ function asNumber(reading?: Prisma.Reading): number | undefined {
 }
 
 function asString(reading?: Prisma.Reading): string | undefined {
-  let result = undefined;
+  let result;
   if (typeof reading?.value === "string") {
     result = reading.value;
   }
