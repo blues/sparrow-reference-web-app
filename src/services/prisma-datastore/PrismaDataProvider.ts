@@ -34,7 +34,6 @@ import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
 import {
-  GatewayWithLatestReadings,
   sparrowGatewayFromPrismaGateway,
   sparrowNodeFromPrismaNode,
 } from "./prismaToSparrow";
@@ -45,14 +44,6 @@ import CountSensorSchema from "../alpha-models/readings/CountSensorSchema";
 import TemperatureSensorSchema from "../alpha-models/readings/TemperatureSensorSchema";
 import TotalSensorSchema from "../alpha-models/readings/TotalSensorSchema";
 import PressureSensorSchema from "../alpha-models/readings/PressureSensorSchema";
-
-function getGatewayVoltage(gw: GatewayWithLatestReadings): number | undefined {
-  const voltageSensor = gw.readingSource.sensors.filter(
-    (sensor) => sensor.schema.name === "gateway_voltage"
-  )[0];
-  const value = voltageSensor?.latest?.value;
-  return value===undefined ? undefined : Number(value);
-}
 
 async function manageGatewayImport(
   bi: BulkImport,
@@ -214,9 +205,7 @@ export class PrismaDataProvider implements DataProvider {
         },
       },
     });
-    return gateways.map((gw) =>
-      sparrowGatewayFromPrismaGateway(gw, getGatewayVoltage(gw))
-    );
+    return gateways.map((gw) => sparrowGatewayFromPrismaGateway(gw));
   }
 
   async getGateway(gatewayUID: string): Promise<GatewayDEPRECATED> {
@@ -236,7 +225,7 @@ export class PrismaDataProvider implements DataProvider {
         `Cannot find gateway with DeviceUID ${gatewayUID} in project ${project.projectUID}`
       );
     }
-    return sparrowGatewayFromPrismaGateway(gateway, getGatewayVoltage(gateway));
+    return sparrowGatewayFromPrismaGateway(gateway);
   }
 
   getNodes(gatewayUIDs: string[]): Promise<NodeDEPRECATED[]> {
@@ -344,7 +333,7 @@ export class PrismaDataProvider implements DataProvider {
     readings.forEach((reading) => {
       const alphaSchema = map.get(reading.sensor.schema.name);
       if (alphaSchema) {
-        const scale = reading.sensor.schema.scale;
+        const { scale } = reading.sensor.schema;
 
         const alphaReading = {
           value: scale ? Number(reading.value) / scale : reading.value,

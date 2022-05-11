@@ -4,7 +4,6 @@ import {
   calculateSignalTooltip,
   calculateWifiSignalStrength,
   getFormattedLastSeen,
-  getFormattedVoltageData,
 } from "./uiHelpers";
 import { GATEWAY_MESSAGE } from "../../constants/ui";
 import Gateway from "../../services/alpha-models/Gateway";
@@ -24,9 +23,6 @@ export function getGatewayDetailsPresentation(
           lastActivity: getFormattedLastSeen(gateway.lastActivity || ""),
           location: gateway.location || GATEWAY_MESSAGE.NO_LOCATION,
           name: gateway.name || GATEWAY_MESSAGE.NO_NAME,
-          voltage:
-            getFormattedVoltageData(gateway.voltage===null ? undefined : gateway.voltage) ||
-            GATEWAY_MESSAGE.NO_VOLTAGE,
           ...(gateway.cellBars && { cellBars: gateway.cellBars }),
           ...(gateway.cellBars
             ? {

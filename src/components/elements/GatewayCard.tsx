@@ -3,10 +3,7 @@ import Image from "next/image";
 import { Card, Col, Row, Tooltip, Typography } from "antd";
 import Gateway from "../../services/alpha-models/Gateway";
 import NodeCard from "./NodeCard";
-import {
-  getFormattedLastSeen,
-  getFormattedVoltageData,
-} from "../presentation/uiHelpers";
+import { getFormattedLastSeen } from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
 import styles from "../../styles/Home.module.scss";
 import cardStyles from "../../styles/Card.module.scss";
@@ -19,9 +16,6 @@ interface GatewayProps {
 const GatewayCardComponent = (props: GatewayProps) => {
   const { gatewayDetails, index } = props;
   const { Text } = Typography;
-  const formattedGatewayVoltage = getFormattedVoltageData(
-    gatewayDetails.voltage===null ? undefined : gatewayDetails.voltage
-  ) || GATEWAY_MESSAGE.NO_VOLTAGE;
 
   const router = useRouter();
   const gatewayUrl = `/${gatewayDetails.uid}/details`;
@@ -41,8 +35,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
         <Col xs={24} sm={24} lg={12}>
           <Card
             headStyle={{ padding: "0" }}
-            bodyStyle={{ padding: "0" }}
-            className={cardStyles.cardStyle}
+            className={cardStyles.gatewayCardStyle}
             hoverable
             onClick={handleCardClick}
             title={
@@ -99,19 +92,7 @@ const GatewayCardComponent = (props: GatewayProps) => {
                 </span>
               </div>
             }
-          >
-            <Row
-              justify="start"
-              gutter={[16, 16]}
-              className={cardStyles.cardContents}
-            >
-              <Col span={8}>
-                Voltage
-                <br />
-                <span className="dataNumber">{formattedGatewayVoltage}</span>
-              </Col>
-            </Row>
-          </Card>
+          />
         </Col>
       </Row>
 

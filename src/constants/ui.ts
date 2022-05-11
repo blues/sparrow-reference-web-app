@@ -32,7 +32,6 @@ const HISTORICAL_SENSOR_DATA_MESSAGE = {
 const GATEWAY_MESSAGE = {
   NO_NAME: "Unknown Gateway.",
   NO_LOCATION: "—",
-  NO_VOLTAGE: "—",
   NEVER_SEEN: "(never)",
 };
 
