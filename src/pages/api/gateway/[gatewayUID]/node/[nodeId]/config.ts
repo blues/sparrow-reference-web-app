@@ -28,10 +28,6 @@ function validateRequest(
   res: NextApiResponse
 ): false | ValidRequest {
   const { gatewayUID, nodeId } = req.query;
-  // TODO: figure out what to do about this unsafe assignment of any. I really want runtime
-  // typechecking. All the code below feels terrible to write when we've already specified the API
-  // in typescript. Maybe we should really use a different language to specify the API and generate
-  // the typescript and typechecking code?
   const { name, location } = req.body as ValidRequest;
 
   if (typeof gatewayUID !== "string") {
