@@ -87,14 +87,6 @@ const GatewayDetails = ({
                 </span>
               </Card>
             </Col>
-            <Col xs={12} sm={12} lg={8}>
-              <Card className={detailsStyles.card}>
-                <div className={detailsStyles.cardTitle}>Voltage</div>
-                <span className={detailsStyles.dataNumber}>
-                  {viewModel.gateway.voltage}
-                </span>
-              </Card>
-            </Col>
           </Row>
 
           {viewModel.nodes && viewModel.nodes.length > 0 ? (

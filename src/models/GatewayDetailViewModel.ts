@@ -7,7 +7,6 @@ interface GatewayDetailViewModel {
     name: string;
     lastActivity: string;
     location: string;
-    voltage: string;
     cellBars?: SignalStrengths;
     cellBarsIconPath?: string | null;
     cellBarsTooltip?: string | null;

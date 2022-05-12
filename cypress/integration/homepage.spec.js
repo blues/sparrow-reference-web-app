@@ -37,7 +37,6 @@ describe("Sparrow Application", () => {
     cy.get('[data-testid="gateway-location"]', { timeout: 90000 }).should(
       "be.visible"
     );
-    cy.get(".ant-card-body").should("contain", "Voltage");
     cy.get('[data-testid="gateway-last-seen"]').should("contain", "Last seen");
     // check for nodes related to gateway
     cy.get('[data-testid="gateway-node-header"]').should("contain", "Nodes");
@@ -117,10 +116,7 @@ describe("Sparrow Application", () => {
     nodeSubmitButton.should("be.visible");
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Cypress Test Node"
-    cy.get('[data-testid="node-name"]').should(
-      "contain",
-      "Cypress Test Node"
-    );
+    cy.get('[data-testid="node-name"]').should("contain", "Cypress Test Node");
     // Enter a second new node name
     cy.get('[data-testid="form-input-node-name"]')
       .clear()
@@ -130,10 +126,7 @@ describe("Sparrow Application", () => {
     //Click the Submit button
     cy.get(".ant-form").submit();
     // Verify the node name is now updated to "Other Node Name"
-    cy.get('[data-testid="node-name"]').should(
-      "contain",
-      "Other Node Name"
-    );
+    cy.get('[data-testid="node-name"]').should("contain", "Other Node Name");
   });
 
   it.skip("should be able to paginate through the carousel for multiple gateways", function () {

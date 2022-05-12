@@ -10,7 +10,6 @@ const mockGatewayData = {
   uid: "My Mocked Gateway",
   name: "67890",
   location: "Gainesville, FL",
-  voltage: 3.7,
   lastActivity: "2022-01-05T07:36:55Z",
   nodeList: [
     {
@@ -32,7 +31,6 @@ const mockedGatewayDataLongName = {
   uid: "Another Mocked Gateway",
   name: "My Mocked Gateway With an Unbelievably Long Serial Number, Seriously You'll be Amazed",
   location: "San Diego, CA",
-  voltage: 4.0,
   lastActivity: "2022-02-11T08:48:01Z",
   nodeList: [],
 };
@@ -40,7 +38,6 @@ const mockedGatewayDataLongName = {
 const mockUndefinedGatewayData = {
   uid: "My Other Mocked Gateway",
   name: "13579",
-  voltage: 2.8,
   lastActivity: "2022-01-07T09:12:00Z",
   nodeList: [],
 };
@@ -57,9 +54,6 @@ describe("Gateway card component", () => {
         exact: false,
       })
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(mockGatewayData.voltage, { exact: false })
-    ).toBeInTheDocument();
   });
 
   it("should render the card when particular gateway data is missing", () => {
@@ -70,9 +64,6 @@ describe("Gateway card component", () => {
     expect(screen.getByText(mockUndefinedGatewayData.name)).toBeInTheDocument();
     expect(
       screen.getByText(GATEWAY_MESSAGE.NO_LOCATION, { exact: false })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(mockUndefinedGatewayData.voltage, { exact: false })
     ).toBeInTheDocument();
   });
 

@@ -2,10 +2,8 @@ import { useRouter } from "next/router";
 import { Card, Col, Row, Typography } from "antd";
 import NodeCard from "./FlexibleNodeCard";
 import {
-  asNumber,
   findCurrentReadingWithName,
   getFormattedLastSeenDate,
-  getFormattedVoltageData,
 } from "../presentation/uiHelpers";
 import { GATEWAY_MESSAGE, ERROR_MESSAGE } from "../../constants/ui";
 import { Gateway, GatewaySensorTypeNames } from "../../services/AppModel";
@@ -22,7 +20,6 @@ const GatewayCardComponent = (props: GatewayProps) => {
   const { index, gateway } = props;
   const { Text } = Typography;
 
-
   const router = useRouter();
   // todo - use urlBuilder to create the correct URL
   const gatewayUrl = `/${gateway.id.gatewayDeviceUID}/details`;
@@ -32,14 +29,9 @@ const GatewayCardComponent = (props: GatewayProps) => {
     router.push(gatewayUrl);
   };
 
-  
-  // we hard code some of the gateway readings for now. We will make this more open-ended in future with the site redesign
-  const formattedGatewayVoltage = getFormattedVoltageData(
-    asNumber(findCurrentReadingWithName(gateway, GatewaySensorTypeNames.VOLTAGE)?.reading?.value)
-) || GATEWAY_MESSAGE.NO_VOLTAGE;
-
-
-  const formattedLocation = findCurrentReadingWithName(gateway, GatewaySensorTypeNames.LOCATION) || GATEWAY_MESSAGE.NO_LOCATION;
+  const formattedLocation =
+    findCurrentReadingWithName(gateway, GatewaySensorTypeNames.LOCATION) ||
+    GATEWAY_MESSAGE.NO_LOCATION;
 
   return (
     <>
@@ -65,37 +57,26 @@ const GatewayCardComponent = (props: GatewayProps) => {
                 </Text>
                 <span className={cardStyles.timestamp}>
                   Last updated{` `}
-                  {gateway.lastSeen ? getFormattedLastSeenDate(new Date(gateway.lastSeen)) : GATEWAY_MESSAGE.NEVER_SEEN}
+                  {gateway.lastSeen
+                    ? getFormattedLastSeenDate(new Date(gateway.lastSeen))
+                    : GATEWAY_MESSAGE.NEVER_SEEN}
                 </span>
                 <div
                   data-testid="gateway-location"
                   className={cardStyles.locationWrapper}
                 >
-                  {/* todo - could have a LabelRenderer for a given sensor type/reading*/}
+                  {/* todo - could have a LabelRenderer for a given sensor type/reading */}
                   <span className={cardStyles.locationTitle}>
                     Location{` `}
-                  </span>                  
+                  </span>
                   <span className={cardStyles.location}>
                     {formattedLocation}
                   </span>
                 </div>
               </>
             }
-          >
-            <Row
-              justify="start"
-              gutter={[16, 16]}
-              className={cardStyles.cardContents}
-            >
-              <Col span={8}>
-                Voltage
-                <br />
-                <span className="dataNumber">{formattedGatewayVoltage}</span>
-              </Col>
-            </Row>
-          </Card>
+          />
         </Col>
-
       </Row>
 
       <h2 data-testid="node-header" className={styles.sectionSubTitle}>
