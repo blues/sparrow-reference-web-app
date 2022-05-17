@@ -16,6 +16,7 @@ const env = {
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
   DATABASE_URL: process.env.DATABASE_URL,
   READ_ONLY: process.env.READ_ONLY,
+  NOTEHUB_PROVIDER: process.env.NOTEHUB_PROVIDER
 };
 
 const optionalEnvVar = (varName: keyof typeof env, defaultValue: string) => {
@@ -60,11 +61,15 @@ const Config = {
     return optionalEnvVar("HUB_GUI_URL", "https://notehub.io");
   },
   get databaseURL() {
-    return optionalEnvVar("DATABASE_URL", "");
+    const getVar = this.notehubProvider ? optionalEnvVar : requiredEnvVar;
+    return getVar("DATABASE_URL", "");
   },
   get readOnly() {
     return Boolean(optionalEnvVar("READ_ONLY", ""));
   },
+  get notehubProvider() {
+    return Boolean(optionalEnvVar("NOTEHUB_PROVIDER", ""));
+  }
 };
 
 const toString = (c: typeof Config | typeof env) => {
