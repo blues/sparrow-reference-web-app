@@ -37,6 +37,7 @@ jobs:
           HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
           HUB_PROJECTUID: ${{ secrets.HUB_PROJECTUID }}
           TEST_NODE_ID: ${{ secrets.TEST_NODE_ID }}
+          NOTEHUB_PROVIDER: 1
         run: yarn test:coverage
       - run: yarn lint
       - name: Cypress run
@@ -49,6 +50,7 @@ jobs:
           HUB_BASE_URL: ${{ secrets.HUB_BASE_URL }}
           HUB_PROJECTUID: ${{ secrets.HUB_PROJECTUID }}
           TEST_NODE_ID: ${{ secrets.TEST_NODE_ID }}
+          NOTEHUB_PROVIDER: 1
   docker-build:
     runs-on: ubuntu-latest
     steps:

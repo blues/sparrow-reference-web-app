@@ -20,6 +20,7 @@ import CompositeDataProvider from "./prisma-datastore/CompositeDataProvider";
 import PrismaAttributeStore from "./prisma-datastore/PrismaAttributeStore";
 import CompositeAttributeStore from "./prisma-datastore/CompositeAttributeStore";
 import { getPrismaClient } from "./prisma-datastore/prisma-util";
+import { serverLogInfo, serverLogProgress } from "../pages/api/log";
 
 // ServiceLocator is the top-level consturction and dependency injection tool
 // for client-side (browser-side) and also server-side node code. It uses lazy
@@ -42,9 +43,13 @@ class ServiceLocator {
   private eventHandler?: SparrowEventHandler;
 
   constructor() {
-    this.prisma = Config.databaseURL
-      ? getPrismaClient(Config.databaseURL)
+    const notehubProvider = Config.notehubProvider;
+    const databaseURL = Config.databaseURL;
+    this.prisma = !notehubProvider
+      ? getPrismaClient(databaseURL)
       : undefined;
+    const message = this.prisma ? `Connecting to database at ${databaseURL}` : 'Using Notehub provider';
+    serverLogInfo(message);
   }
 
   getAppService(): AppServiceInterface {
