@@ -48,8 +48,8 @@ class ServiceLocator {
     this.prisma = !notehubProvider
       ? getPrismaClient(databaseURL)
       : undefined;
-    const msg = this.prisma ? `Connecting to database at ${databaseURL}` : 'Using Notehub provider';
-    serverLogInfo(msg);
+    const message = this.prisma ? `Connecting to database at ${databaseURL}` : 'Using Notehub provider';
+    serverLogInfo(message);
   }
 
   getAppService(): AppServiceInterface {
