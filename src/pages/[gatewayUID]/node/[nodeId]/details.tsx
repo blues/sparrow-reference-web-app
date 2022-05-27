@@ -39,6 +39,8 @@ type NodeDetailsData = {
   err?: string;
 };
 
+const DEFAULT_MINUTES_BEFORE_NOW = "1440";
+
 const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   const { TabPane } = Tabs;
   const { Option } = Select;
@@ -275,7 +277,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                     defaultValue={
                       query.minutesBeforeNow
                         ? query.minutesBeforeNow.toString()
-                        : "1440"
+                        : DEFAULT_MINUTES_BEFORE_NOW
                     }
                     style={{ width: "100%" }}
                     onChange={handleDateRangeChange}
@@ -429,7 +431,7 @@ export const getServerSideProps: GetServerSideProps<NodeDetailsData> = async ({
     const readings = await appService.getNodeData(
       gatewayUID,
       nodeId,
-      Number(minutesBeforeNow)
+      Number(minutesBeforeNow || DEFAULT_MINUTES_BEFORE_NOW)
     );
 
     viewModel = getNodeDetailsPresentation(node, gateway, readings);
