@@ -6,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { createMocks, RequestMethod } from "node-mocks-http";
 import gatewayNameHandler from "../../../../src/pages/api/gateway/[gatewayUID]/name";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
-import { services } from "../../../../src/services/ServiceLocator";
+import { services } from "../../../../src/services/ServiceLocatorServer";
 
 const authToken = process.env.HUB_AUTH_TOKEN;
 

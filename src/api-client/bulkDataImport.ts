@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BulkDataImportStatus } from "../services/AppModel";
-import { services } from "../services/ServiceLocator";
+import { services } from "../services/ServiceLocatorClient";
 
 export async function performBulkDataImport() {
   const endpoint = services().getUrlManager().performBulkDataImportApi();

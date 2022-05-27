@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { ErrorWithCause } from "pony-cause";
 
-import { services } from "../../../../services/ServiceLocator";
+import { services } from "../../../../services/ServiceLocatorServer";
 import { HTTP_STATUS } from "../../../../constants/http";
 import { serverLogError } from "../../log";
 

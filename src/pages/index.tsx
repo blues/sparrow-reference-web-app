@@ -3,7 +3,7 @@ import { GetServerSideProps, NextPage } from "next";
 import { Carousel } from "antd";
 import { CarouselRef } from "antd/lib/carousel";
 import GatewayCard from "../components/elements/GatewayCard";
-import { services } from "../services/ServiceLocator";
+import { services } from "../services/ServiceLocatorServer";
 import Gateway from "../services/alpha-models/Gateway";
 import Node from "../services/alpha-models/Node";
 import { ERROR_MESSAGE, getErrorMessage } from "../constants/ui";

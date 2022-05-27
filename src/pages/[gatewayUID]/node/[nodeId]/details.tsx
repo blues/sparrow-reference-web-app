@@ -13,7 +13,7 @@ import {
   HISTORICAL_SENSOR_DATA_MESSAGE,
   NODE_MESSAGE,
 } from "../../../../constants/ui";
-import { services } from "../../../../services/ServiceLocator";
+import { services } from "../../../../services/ServiceLocatorServer";
 import NodeDetailsLineChart from "../../../../components/charts/NodeDetailsLineChart";
 import NodeDetailsBarChart from "../../../../components/charts/NodeDetailsBarChart";
 import NodeDetailViewModel from "../../../../models/NodeDetailViewModel";

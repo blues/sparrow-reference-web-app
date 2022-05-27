@@ -20,14 +20,11 @@ import CompositeDataProvider from "./prisma-datastore/CompositeDataProvider";
 import PrismaAttributeStore from "./prisma-datastore/PrismaAttributeStore";
 import CompositeAttributeStore from "./prisma-datastore/CompositeAttributeStore";
 import { getPrismaClient } from "./prisma-datastore/prisma-util";
-import { serverLogInfo, serverLogProgress } from "../pages/api/log";
+import { serverLogInfo } from "../pages/api/log";
 
 // ServiceLocator is the top-level consturction and dependency injection tool
-// for client-side (browser-side) and also server-side node code. It uses lazy
-// instanciation because some of these services are invalid to use browser-side.
-// Trying to instanciate them there would just throw an error about undefined
-// secret environment variables.
-class ServiceLocator {
+// for server-side node code.
+class ServiceLocatorServer {
   private appService?: AppServiceInterface;
 
   private urlManager?: UrlManager;
@@ -45,10 +42,10 @@ class ServiceLocator {
   constructor() {
     const notehubProvider = Config.notehubProvider;
     const databaseURL = Config.databaseURL;
-    this.prisma = !notehubProvider
-      ? getPrismaClient(databaseURL)
-      : undefined;
-    const message = this.prisma ? `Connecting to database at ${databaseURL}` : 'Using Notehub provider';
+    this.prisma = !notehubProvider ? getPrismaClient(databaseURL) : undefined;
+    const message = this.prisma
+      ? `Connecting to database at ${databaseURL}`
+      : "Using Notehub provider";
     serverLogInfo(message);
   }
 
@@ -141,13 +138,13 @@ class ServiceLocator {
   }
 }
 
-let Services: ServiceLocator | null = null;
+let Services: ServiceLocatorServer | null = null;
 
 function services() {
   // Don’t create a ServiceLocator until it’s needed. This prevents all service
   // initialization steps from happening as soon as you import this module.
   if (!Services) {
-    Services = new ServiceLocator();
+    Services = new ServiceLocatorServer();
   }
   return Services;
 }

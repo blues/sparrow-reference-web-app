@@ -1,5 +1,5 @@
 import { BulkDataImportStatus } from "../services/AppModel";
-import { services } from "../services/ServiceLocator";
+import { services } from "../services/ServiceLocatorServer";
 
 export type BulkDataImportViewModel = {
   readingCount: string;

@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from "next";
 import Title from "antd/lib/typography/Title";
 import Link from "next/link";
 import { Breadcrumb, Card, Space } from "antd";
-import { services } from "../services/ServiceLocator";
+import { services } from "../services/ServiceLocatorServer";
 import { getErrorMessage } from "../constants/ui";
 import { ERROR_CODES, isError, MayError } from "../services/Errors";
 import { Project } from "../services/AppModel";

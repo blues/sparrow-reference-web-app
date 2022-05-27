@@ -6,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { StatusCodes } from "http-status-codes";
 import nodeConfigHandler from "../../../../src/pages/api/gateway/[gatewayUID]/node/[nodeId]/config";
 import { HTTP_STATUS, HTTP_HEADER } from "../../../../src/constants/http";
-import { services } from "../../../../src/services/ServiceLocator";
+import { services } from "../../../../src/services/ServiceLocatorServer";
 import TestConfig from "../../TestConfig";
 
 describe("/api/gateway/[gatewayUID]/node/[nodeId]/config API Endpoint", () => {

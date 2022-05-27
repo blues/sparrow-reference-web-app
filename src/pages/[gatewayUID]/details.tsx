@@ -6,7 +6,7 @@ import { useState } from "react";
 import { changeGatewayName } from "../../api-client/gateway";
 import GatewayDetails from "../../components/elements/GatewayDetails";
 import { LoadingSpinner } from "../../components/layout/LoadingSpinner";
-import { services } from "../../services/ServiceLocator";
+import { services } from "../../services/ServiceLocatorServer";
 import { getErrorMessage } from "../../constants/ui";
 import { ERROR_CODES } from "../../services/Errors";
 
