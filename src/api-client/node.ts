@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { services } from "../services/ServiceLocator";
+import { services } from "../services/ServiceLocatorServer";
 
 export async function changeNodeName(
   gatewayUID: string,

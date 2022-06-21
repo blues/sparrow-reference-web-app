@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { HTTP_STATUS } from "../../../constants/http";
 import NotehubRoutedEvent from "../../../services/notehub/models/NotehubRoutedEvent";
 import { sparrowEventFromNotehubRoutedEvent } from "../../../services/notehub/SparrowEvents";
-import { services } from "../../../services/ServiceLocator";
+import { services } from "../../../services/ServiceLocatorServer";
 import { serverLogInfo } from "../log";
 
 async function ingestEvent(notehubEvent: NotehubRoutedEvent) {
