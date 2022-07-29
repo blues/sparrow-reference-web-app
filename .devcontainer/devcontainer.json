@@ -36,5 +36,8 @@
   // Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
   // "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
   // Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
-  "remoteUser": "node"
+  "remoteUser": "node",
+
+  // forward the default port the app runs on so we can see it from the host OS
+  "forwardPorts": [4000]
 }
