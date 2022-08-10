@@ -196,7 +196,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   <Tooltip title={`LoRa signal: ${viewModel.node.barsTooltip}`}>
                     <Image
                       src={viewModel.node.barsIconPath}
-                      width={24}
+                      width={20}
                       alt="Node Lora signal strength"
                       data-testid="signal-strength"
                     />
