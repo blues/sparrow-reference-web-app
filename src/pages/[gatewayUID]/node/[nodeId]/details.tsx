@@ -156,7 +156,12 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
 
   return (
     <>
-      {err && <h2 className={styles.errorMessage}>{err}</h2>}
+      {err && (
+        <h2
+          className={styles.errorMessage}
+          dangerouslySetInnerHTML={{ __html: err }}
+        />
+      )}
       {viewModel.node && (
         <div>
           <h2 data-testid="node-name" className={styles.sectionTitle}>
