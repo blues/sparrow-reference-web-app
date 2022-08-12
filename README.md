@@ -121,7 +121,6 @@ steps below.
    yarn install
    ```
 4. Install the [PostgreSQL](https://www.postgresql.org/download/) database engine.
-5. On Mac, remove `--net=host` in `dev.db.ephemeral.sh` & `dev.db.persistent.sh`
 
 ### Configuration (Environment Variables)
 
