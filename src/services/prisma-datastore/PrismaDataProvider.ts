@@ -34,6 +34,8 @@ import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
 import {
+  NodeWithGateway,
+  NodeWithLatestReadings,
   sparrowGatewayFromPrismaGateway,
   sparrowNodeFromPrismaNode,
 } from "./prismaToSparrow";
@@ -209,7 +211,17 @@ export class PrismaDataProvider implements DataProvider {
   }
 
   async getGateway(gatewayUID: string): Promise<GatewayDEPRECATED> {
-    const project = await this.currentProject();
+    const gateway = await this.fetchGateway(gatewayUID);
+    if (gateway === null) {
+      const project = await this.currentProject();
+      throw new Error(
+        `Cannot find gateway with DeviceUID ${gatewayUID} in project ${project.projectUID}`
+      );
+    }
+    return sparrowGatewayFromPrismaGateway(gateway);
+  }
+
+  async fetchGateway(gatewayUID: string) {
     const gateway = await this.prisma.gateway.findUnique({
       where: {
         deviceUID: gatewayUID,
@@ -220,12 +232,7 @@ export class PrismaDataProvider implements DataProvider {
         },
       },
     });
-    if (gateway === null) {
-      throw new Error(
-        `Cannot find gateway with DeviceUID ${gatewayUID} in project ${project.projectUID}`
-      );
-    }
-    return sparrowGatewayFromPrismaGateway(gateway);
+    return gateway;
   }
 
   getNodes(gatewayUIDs: string[]): Promise<NodeDEPRECATED[]> {
@@ -259,10 +266,24 @@ export class PrismaDataProvider implements DataProvider {
   }
 
   async getNode(
-    gatewayUID: string,
+    gatewayUID: string | null,
     sensorUID: string
   ): Promise<NodeDEPRECATED> {
-    const project = await this.currentProject();
+    const node = await this.fetchNode(sensorUID);
+    if (!node || (gatewayUID && node.gateway.deviceUID !== gatewayUID)) {
+      const project = await this.currentProject();
+      throw new Error(
+        `Cannot find node with NodeID ${sensorUID} in project ${project.projectUID}`
+      );
+    }
+    return sparrowNodeFromPrismaNode(node.gateway.deviceUID, node);
+  }
+
+  async fetchNode(
+    sensorUID: string
+  ): Promise<(NodeWithGateway & NodeWithLatestReadings) | null> {
+    // const project = await this.currentProject();
+    // todo - constraint to the project
     const node = await this.prisma.node.findUnique({
       where: {
         nodeEUI: sensorUID,
@@ -274,13 +295,7 @@ export class PrismaDataProvider implements DataProvider {
         },
       },
     });
-
-    if (node?.gateway.deviceUID !== gatewayUID) {
-      throw new Error(
-        `Cannot find node with NodeID ${sensorUID} in project ${project.projectUID}`
-      );
-    }
-    return sparrowNodeFromPrismaNode(gatewayUID, node);
+    return node;
   }
 
   async getNodeData(

@@ -39,9 +39,11 @@ class ServiceLocatorServer {
 
   private eventHandler?: SparrowEventHandler;
 
+  private prismaDataProvider?: PrismaDataProvider;
+
   constructor() {
-    const notehubProvider = Config.notehubProvider;
-    const databaseURL = Config.databaseURL;
+    const { notehubProvider } = Config;
+    const { databaseURL } = Config;
     this.prisma = !notehubProvider ? getPrismaClient(databaseURL) : undefined;
     const message = this.prisma
       ? `Connecting to database at ${databaseURL}`
@@ -62,6 +64,17 @@ class ServiceLocatorServer {
     return this.appService;
   }
 
+  private getPrismaDataProvider(): PrismaDataProvider {
+    if (!this.prisma) {
+      throw new Error("Prisma is not enabled in the current deployment.");
+    }
+    if (!this.prismaDataProvider) {
+      const projectID = IDBuilder.buildProjectID(Config.hubProjectUID);
+      this.prismaDataProvider = new PrismaDataProvider(this.prisma, projectID);
+    }
+    return this.prismaDataProvider;
+  }
+
   private getDataProvider(): DataProvider {
     if (!this.dataProvider) {
       const projectID = IDBuilder.buildProjectID(Config.hubProjectUID);
@@ -70,10 +83,7 @@ class ServiceLocatorServer {
         projectID
       );
       if (this.prisma) {
-        const dataStoreProvider = new PrismaDataProvider(
-          this.prisma,
-          projectID
-        );
+        const dataStoreProvider = this.getPrismaDataProvider();
         const combinedProvider = new CompositeDataProvider(
           this.getEventHandler(),
           this.getNotehubAccessor(),
@@ -117,11 +127,16 @@ class ServiceLocatorServer {
       );
 
       if (this.prisma) {
-        const prismaStore = new PrismaAttributeStore(this.prisma);
+        const prismaStore = new PrismaAttributeStore(
+          this.prisma,
+          this.getPrismaDataProvider()
+        );
         const compositeStore = new CompositeAttributeStore([
           notehubStore,
           prismaStore,
         ]);
+        compositeStore.updateDevicePin =
+          prismaStore.updateDevicePin.bind(prismaStore);
         this.attributeStore = compositeStore;
       } else {
         this.attributeStore = notehubStore;

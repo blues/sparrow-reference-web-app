@@ -19,6 +19,8 @@ export type GatewayWithLatestReadings = Prisma.Gateway &
   LatestReadingSourceReadings;
 export type NodeWithLatestReadings = Prisma.Node & LatestReadingSourceReadings;
 
+export type NodeWithGateway = Prisma.Node & { gateway: Prisma.Gateway };
+
 /**
  * Converts a prisma gateway to the old domain model.
  * @param gw

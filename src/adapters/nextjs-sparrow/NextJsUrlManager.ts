@@ -8,6 +8,10 @@ export const NextJsUrlManager: UrlManager = {
     `/api/gateway/${gatewayUID}/node/${nodeId}/config`,
   notehubProject: (notehubUrl, projectUID) =>
     `${notehubUrl}/project/${projectUID}`,
+
+  gatewayDetails: (gatewayUID: string) => `/${gatewayUID}/details`,
+  nodeDetails: (gatewayUID: string, nodeId: string) =>
+    `/${gatewayUID}/node/${nodeId}/details`,
 };
 const DEFAULT = { NextJsUrlManager };
 export default DEFAULT;

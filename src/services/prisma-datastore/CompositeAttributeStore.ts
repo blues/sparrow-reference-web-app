@@ -1,11 +1,11 @@
-import { AttributeStore } from "../AttributeStore";
+import { AttributeStore, GatewayOrNode } from "../AttributeStore";
 
 // would be nice to generify this and implement as a generic proxy
 export default class CompositeAttributeStore implements AttributeStore {
   constructor(private stores: AttributeStore[]) {}
 
   // Retrieves a promise that is resolved when all delegates have completed
-  private apply(fn: (store: AttributeStore) => Promise<void>): Promise<void> {
+  private apply<T>(fn: (store: AttributeStore) => Promise<T>): Promise<T> {
     const all = this.stores.map((store) => fn(store));
     return Promise.all(all).then();
   }
@@ -32,5 +32,12 @@ export default class CompositeAttributeStore implements AttributeStore {
     return this.apply((store) =>
       store.updateNodeLocation(gatewayUID, nodeId, location)
     );
+  }
+
+  updateDevicePin(
+    deviceUID: string,
+    pin: string
+  ): Promise<GatewayOrNode | null> {
+    return this.apply((store) => store.updateDevicePin(deviceUID, pin));
   }
 }
