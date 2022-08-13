@@ -15,15 +15,16 @@ set +o allexport
 docker run --rm \
   -d `# detached` \
   --net=sparrow-net \
-  --name "$POSTGRES_HOST" \
+  --name sparrow-postgresql-container \
   -p $POSTGRES_PORT:5432 \
   -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
   -v "sparrow.db.persistence.volume":/var/lib/postgresql/data \
   postgres
 
 #### Wait for database to come up.
-readonly wait_for_port_cmd=(sh -c 'until nc -z $0 $1; do sleep 1; done')
 readonly seconds=45
+echo "Waiting for database to come up. Will timeout in $seconds seconds."
+readonly wait_for_port_cmd=(sh -c 'until nc -z $0 $1; do sleep 1; done')
 timeout $seconds sh -c 'until nc -z $0 $1; do sleep 1; done' "$POSTGRES_HOST" "$POSTGRES_PORT" ||
   (
     echo "Err: database did not come up. Use ./dev.db.stop.sh and try again." && 
