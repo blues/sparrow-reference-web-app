@@ -66,7 +66,7 @@ const NodeCardComponent = (props: NodeProps) => {
                 <Image
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                   src={viewModel.node.barsIconPath}
-                  width={24}
+                  width={20}
                   alt="Node Lora signal strength"
                   data-testid="node-signal-strength"
                 />
