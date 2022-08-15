@@ -32,6 +32,7 @@ interface SparrowQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
   nodeId: string;
   minutesBeforeNow?: string; // this value is a string to it can be a query param
+  showDetails?: string;
 }
 
 type NodeDetailsData = {
@@ -47,7 +48,8 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   const { query } = useRouter();
 
   // neither of these values will ever be null because the URL path depends on them to render this page
-  const { gatewayUID, nodeId } = query as SparrowQueryInterface;
+  const { gatewayUID, nodeId, showDetails } = query as SparrowQueryInterface;
+  // todo - can we use the UrlManager here?
   const nodeUrl = `/${gatewayUID}/node/${nodeId}/details`;
 
   const router = useRouter();
@@ -175,7 +177,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
             Gateway:{` `}
             {viewModel?.gateway?.name && viewModel.gateway.name}
           </h3>
-          <Tabs defaultActiveKey="1">
+          <Tabs defaultActiveKey={showDetails ? "2" : "1"}>
             <TabPane tab="Summary" key="1">
               <h3
                 data-testid="current-readings"

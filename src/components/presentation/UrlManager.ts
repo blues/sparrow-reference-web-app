@@ -7,4 +7,5 @@ export interface UrlManager {
 
   gatewayDetails(gatewayUID: string): string;
   nodeDetails(gatewayUID: string, nodeId: string): string;
+  nodeSummary(gatewayUID: string, nodeId: string): string;
 }

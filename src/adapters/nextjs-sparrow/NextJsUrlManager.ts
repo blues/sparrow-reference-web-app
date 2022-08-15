@@ -10,8 +10,10 @@ export const NextJsUrlManager: UrlManager = {
     `${notehubUrl}/project/${projectUID}`,
 
   gatewayDetails: (gatewayUID: string) => `/${gatewayUID}/details`,
-  nodeDetails: (gatewayUID: string, nodeId: string) =>
+  nodeSummary: (gatewayUID: string, nodeId: string) =>
     `/${gatewayUID}/node/${nodeId}/details`,
+  nodeDetails: (gatewayUID: string, nodeId: string) =>
+    `/${gatewayUID}/node/${nodeId}/details?showDetails=1`,
 };
 const DEFAULT = { NextJsUrlManager };
 export default DEFAULT;
