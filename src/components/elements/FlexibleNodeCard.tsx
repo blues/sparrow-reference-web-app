@@ -18,9 +18,9 @@ interface NodeProps {
 const NodeCardComponent = (props: NodeProps) => {
   const { gateway, node, index } = props;
   const { Text } = Typography;
- 
+
   const router = useRouter();
-  // todo - use urlManager to construct the URL from the gateway/node. 
+  // todo - use urlManager to construct the URL from the gateway/node.
   const nodeUrl = `/${gateway.id.gatewayDeviceUID}/node/${node.id.nodeID}/details`;
   const handleCardClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -32,24 +32,37 @@ const NodeCardComponent = (props: NodeProps) => {
 
   // todo - fix up location. Either as a property on Node or as a known sensor type
   const location = NODE_MESSAGE.NO_LOCATION;
-  const lastActivity = node.lastSeen ? getFormattedLastSeenDate(new Date(node.lastSeen)) : NODE_MESSAGE.NEVER_SEEN;
+  const lastActivity = node.lastSeen
+    ? getFormattedLastSeenDate(new Date(node.lastSeen))
+    : NODE_MESSAGE.NEVER_SEEN;
   const nodeReadings = node.currentReadings || [];
 
-  const sensorRenders = nodeReadings.map((readingAndType,index) => {
-    console.log("rendering reading ",readingAndType);
-    let Renderer = registry.findRenderer(readingAndType.sensorType, ReadingVisualization.CARD);
+  const sensorRenders = nodeReadings.map((readingAndType, index) => {
+    console.log("rendering reading ", readingAndType);
+    let Renderer = registry.findRenderer(
+      readingAndType.sensorType,
+      ReadingVisualization.CARD
+    );
     if (!Renderer) {
       console.log("no renderer for ", readingAndType.sensorType.name);
       Renderer = TextReadingRendererComponent;
     }
-    const content = (<Renderer 
-          sensorType={readingAndType.sensorType} reading={readingAndType.reading} 
-          node={node} gateway={gateway}/>);
+    const content = (
+      <Renderer
+        sensorType={readingAndType.sensorType}
+        reading={readingAndType.reading}
+        node={node}
+        gateway={gateway}
+      />
+    );
 
-      return content===null ? content :
-     (<Col key={index} xs={8} sm={5} md={5} lg={8}>                      
+    return content === null ? (
+      content
+    ) : (
+      <Col key={index} xs={8} sm={5} md={5} lg={8}>
         {content}
-      </Col>)
+      </Col>
+    );
   });
 
   return (
@@ -85,7 +98,7 @@ const NodeCardComponent = (props: NodeProps) => {
         justify="start"
         gutter={[16, 16]}
         className={styles.cardContentsSensor}
-      >     
+      >
         <>{sensorRenders}</>
       </Row>
     </Card>
@@ -93,4 +106,3 @@ const NodeCardComponent = (props: NodeProps) => {
 };
 
 export default NodeCardComponent;
-
