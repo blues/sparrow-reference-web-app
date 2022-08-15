@@ -183,6 +183,14 @@ export default class PrismaDatastoreEventHandler
         // it might have missing values. So let's be quiet about it.
         return Promise.resolve("skipped");
       }
+      // check that the value meets the prerequisites. This acts as a filter
+      if (
+        typeof schema?.prereq !== "object" ||
+        typeof value !== "object" ||
+        { ...schema.prereq, ...value } !== value
+      ) {
+        return Promise.resolve("skipped");
+      }
       throw new Error(
         `Could not find primary value ${primaryValue} to store for sensor ${
           sensor.schema.name

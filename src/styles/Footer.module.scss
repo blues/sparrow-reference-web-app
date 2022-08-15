@@ -19,4 +19,19 @@
     margin: auto;
     padding: 16px 0 64px 0;
   }
+
+  /* this hides the disclosure widget triangle: https://stackoverflow.com/a/56649741 */
+  details > summary {
+    list-style: none;
+  }
+
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+@media screen and (max-width: $breakpoints-sm) {
+  .footer span {
+    display: block;
+  }
 }

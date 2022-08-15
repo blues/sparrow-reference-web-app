@@ -22,7 +22,12 @@ type HomeData = MayError<
 const Home: NextPage<HomeData> = (homeData: HomeData) => {
   if (isError(homeData)) {
     const { err } = homeData;
-    return <h2 className={styles.errorMessage}>{err}</h2>;
+    return (
+      <h2
+        className={styles.errorMessage}
+        dangerouslySetInnerHTML={{ __html: err }}
+      />
+    );
   }
 
   const { project, bulkDataImportUrl, notehubProjectURL } = homeData;

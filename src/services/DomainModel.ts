@@ -283,6 +283,7 @@ export const enum NodeSensorTypeNames {
   HUMIDITY = "humidity",
   TEMPERATURE = "temperature",
   AIR_PRESSURE = "air_pressure",
+  PROVISIONING = "provisioning",
 }
 
 export const enum GatewaySensorMeasure {

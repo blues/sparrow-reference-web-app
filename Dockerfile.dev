@@ -28,6 +28,7 @@ RUN ["dash", "-c", "\
       libxss1          `# for cypress` \
       libxtst6         `# for cypress` \
       nano             `# for git commit --amend` \
+      netcat           `# for dev.db.ephemeral.sh and friends` \
       ssh              `# for git push` \
       xauth            `# for cypress` \
       xvfb             `# for cypress` \
