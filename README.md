@@ -121,7 +121,6 @@ steps below.
    yarn install
    ```
 4. Install the [PostgreSQL](https://www.postgresql.org/download/) database engine.
-5. On Mac, remove `--net=host` in `dev.db.ephemeral.sh` & `dev.db.persistent.sh`
 
 ### Configuration (Environment Variables)
 
@@ -164,7 +163,7 @@ HUB_AUTH_TOKEN=BYj0bhMJwd3JucXE18f14Y3zMjQIoRfD
 
 #### HUB_PROJECTUID
 
-This is the unique identifier for your project in Notehub, and has the prefix `app:`. You can find this by going to your Notehub project, clicking the **Settings** menu, and then scrolling down to the **Project UID** heading.
+This is the unique identifier for your project in Notehub, and has the prefix `app:`. You can find this by going to your Notehub project, clicking the **Settings** menu, and finding the **Project Information** heading which contains **Project UID**. Click the copy icon to copy this to the clipboard.
 
 ```
 HUB_PROJECTUID=app:245dc5d9-f910-433d-a8ca-c66b35475689
@@ -248,8 +247,8 @@ To set up the route complete the following steps:
 - Click the **Create Route** link in the top right of the screen.
 - Find the **General HTTP/HTTPS Request/Response** route type, and click its **Select** button.
 - Give your route a name.
-- For the route **URL**, paste the ngrok URL you copied earlier, and append `/api/datastore/ingest`. For example your route should look something like `https://bb18-217-180-218-163.ngrok.io/api/datastore/ingest`.
-- Click the blue **Create new Route** button.
+- For the route **URL**, paste the localtunnel or ngrok URL you copied earlier, and append `/api/datastore/ingest`. For example your route should look something like `https://bb18-217-180-218-163.ngrok.io/api/datastore/ingest`.
+- Scroll down, and click the blue **Create new Route** button at the bottom right of the page.
 
 And with that your route is now complete. When Notehub receives an event it should automatically route that event to your tunnel, and ultimately to your local app.
 

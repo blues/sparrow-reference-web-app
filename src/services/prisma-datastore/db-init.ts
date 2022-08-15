@@ -16,7 +16,6 @@ import {
 
 const prisma = new PrismaClient();
 
-
 /**
  * Event processing:
  * * normalize event name (this tells us also if it's a node event or not.) based on it matching a <EUI>*event.name
@@ -49,6 +48,10 @@ const sensors = {
 
 const _session = {
   qo: "_session.qo",
+};
+
+const _health = {
+  qo: "_health.qo",
 };
 
 function nodeEvent(event: string) {
@@ -282,6 +285,23 @@ const standardSchemas: BareReadingSchema[] = [
     unit: "dBm",
     spec: {
       gateway_rssi: 1,
+    },
+  },
+  {
+    name: NodeSensorTypeNames.PROVISIONING,
+    measure: "provisioning",
+    uuid: "5c59bd9d-b56e-4faf-bfde-2de836cf39da",
+    displayName: referenceSensorName("Provisioning"),
+    displayMeasure: "Provisioning",
+    eventName: nodeEvent(_health.qo),
+    valueType: ReadingSchemaValueType.SCALAR_INT,
+    unitSymbol: "",
+    unit: "",
+    prereq: {
+      method: "sensor-provision",
+    },
+    spec: {
+      provisioned: 1,
     },
   },
 ];
