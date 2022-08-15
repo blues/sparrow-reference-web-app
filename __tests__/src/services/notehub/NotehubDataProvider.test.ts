@@ -45,7 +45,10 @@ describe("Notehub data provider service functions", () => {
       setConfig: jest.fn().mockResolvedValueOnce({}),
       setEnvironmentVariables: jest.fn().mockResolvedValueOnce({}),
     };
-    notehubDataProviderMock = new NotehubDataProvider(notehubAccessorMock, mockProjectID);
+    notehubDataProviderMock = new NotehubDataProvider(
+      notehubAccessorMock,
+      mockProjectID
+    );
   });
 
   it("should convert a Notehub device to a Sparrow gateway", async () => {
