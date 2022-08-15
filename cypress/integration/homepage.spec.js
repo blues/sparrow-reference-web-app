@@ -92,7 +92,7 @@ describe("Sparrow Application", () => {
     //Verify the Motion Count header
     cy.get('[data-testid="motion-count"]').should("contain", "Motion");
     //Click the Details tab
-    cy.clickTabByText("Device Details");
+    cy.clickTabByText("Settings");
     //Check for the Name label
     cy.get(".ant-form-item-required").should("contain", "Name");
     //Verify the Name field exists in the Details tab
