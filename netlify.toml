@@ -14,3 +14,4 @@
 
 [context.production]
   command = "sed -i \"s|process.env.DEPLOY_URL|'${DEPLOY_URL}'|g\" config.ts && yarn build && yarn db:update && yarn db:init"
+  
