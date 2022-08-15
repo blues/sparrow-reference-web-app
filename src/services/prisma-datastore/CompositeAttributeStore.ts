@@ -35,9 +35,12 @@ export default class CompositeAttributeStore implements AttributeStore {
   }
 
   updateDevicePin(
-    deviceUID: string,
+    gatewayUID: string,
+    sensorUID: string,
     pin: string
   ): Promise<GatewayOrNode | null> {
-    return this.apply((store) => store.updateDevicePin(deviceUID, pin));
+    return this.apply((store) =>
+      store.updateDevicePin(gatewayUID, sensorUID, pin)
+    );
   }
 }

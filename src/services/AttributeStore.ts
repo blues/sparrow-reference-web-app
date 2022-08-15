@@ -22,7 +22,8 @@ export interface AttributeStore {
    * the deviceID. For nodes, this includes the corresponding gatewayID.
    */
   updateDevicePin: (
-    deviceUID: string,
+    gatewayUID: string,
+    sensorUID: string,
     pin: string
   ) => Promise<GatewayOrNode | null>;
 }

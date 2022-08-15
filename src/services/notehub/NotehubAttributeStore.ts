@@ -28,7 +28,7 @@ export class NotehubAttributeStore implements AttributeStore {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, class-methods-use-this
-  async updateDevicePin(_deviceUID: string, _pin: string) {
+  async updateDevicePin(_gatewayUID: string, _sensorUID: string, _pin: string) {
     return Promise.resolve(null);
   }
 }

@@ -3,6 +3,7 @@ import { AttributeStore, GatewayOrNode } from "../AttributeStore";
 import { PrismaDataProvider } from "./PrismaDataProvider";
 
 type HasPin = { pin: string | null };
+export const MAX_PIN_LENGTH = 20;
 
 /**
  * This class wraps a store to also populate
@@ -67,47 +68,53 @@ export default class PrismaAttributeStore implements AttributeStore {
     return !!device && !!pin && (!device?.pin || device?.pin === pin);
   }
 
+  async updateNodePin(nodeEUI: string, pin: string) {
+    await this.prisma.node.update({
+      where: {
+        nodeEUI,
+      },
+      data: {
+        pin,
+      },
+    });
+  }
+
+  async updateGatewayPin(deviceUID: string, pin: string) {
+    await this.prisma.gateway.update({
+      where: {
+        deviceUID,
+      },
+      data: {
+        pin,
+      },
+    });
+  }
+
   async updateDevicePin(
-    deviceUID: string,
+    gatewayUID: string,
+    sensorUID: string,
     pin: string
   ): Promise<GatewayOrNode | null> {
-    // todo - sanitize the pin more fully?
-    if (!pin || pin.length > 20) {
+    if (!pin || pin.length > MAX_PIN_LENGTH) {
       return null;
     }
 
-    const node = await this.dataProvider.fetchNode(deviceUID);
-    if (node) {
-      if (this.validatePin(node, pin)) {
+    if (sensorUID) {
+      const node = await this.dataProvider.fetchNode(sensorUID);
+      if (node && this.validatePin(node, pin)) {
         // update the pin if it is needed
         if (!node.pin) {
-          await this.prisma.node.update({
-            where: {
-              nodeEUI: node.nodeEUI,
-            },
-            data: {
-              pin,
-            },
-          });
+          await this.updateNodePin(node.nodeEUI, pin);
         }
         return { gatewayUID: node.gateway.deviceUID, nodeID: node.nodeEUI };
       }
     } else {
-      const gateway = await this.dataProvider.fetchGateway(deviceUID);
-      if (gateway) {
-        if (this.validatePin(gateway, pin)) {
-          if (!gateway.pin) {
-            await this.prisma.gateway.update({
-              where: {
-                deviceUID,
-              },
-              data: {
-                pin,
-              },
-            });
-          }
-          return { gatewayUID: gateway.deviceUID };
+      const gateway = await this.dataProvider.fetchGateway(gatewayUID);
+      if (gateway && this.validatePin(gateway, pin)) {
+        if (!gateway.pin) {
+          await this.updateGatewayPin(gateway.deviceUID, pin);
         }
+        return { gatewayUID: gateway.deviceUID };
       }
     }
     return null;

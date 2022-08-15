@@ -11,15 +11,14 @@ function isString(x: unknown): x is string {
 async function handleRedirect(req: NextApiRequest, res: NextApiResponse) {
   const { pin, sensor, gateway } = req.query;
   // query params can be arrays too, though we don't support multiple values here.
-  const deviceUID = sensor || gateway;
-  if (!isString(deviceUID) || !isString(pin)) {
+  if (isString(gateway) === isString(sensor) || !isString(pin)) {
     res.status(400).json({ err: HTTP_STATUS.INVALID_REQUEST });
     return;
   }
 
   const device: GatewayOrNode | null = await services()
     .getAttributeStore()
-    .updateDevicePin(deviceUID, pin);
+    .updateDevicePin(gateway, sensor, pin);
   if (device?.gatewayUID) {
     const urlManager = services().getUrlManager();
     const url = device.nodeID

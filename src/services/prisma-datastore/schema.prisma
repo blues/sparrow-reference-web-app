@@ -49,7 +49,7 @@ model Gateway {
   readingSource     ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
   reading_source_id Int           @unique
 
-  pin               String?   @db.VarChar(20)
+  pin               String?   @db.VarChar(20) // MAX_PIN_LENGTH
 
   @@index([project_id])
   @@index([deviceUID])
@@ -74,7 +74,7 @@ model Node {
   readingSource     ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
   reading_source_id Int           @unique
 
-  pin               String?   @db.VarChar(20)
+  pin               String?   @db.VarChar(20)   // MAX_PIN_LENGTH
 
   @@index([gateway_id])
   @@map("node")
