@@ -13,5 +13,5 @@
   DEBUG_CONFIG = "(optional) Debug config? If not '', log environment and config on server"
 
 [context.production]
-  command = "sed -i \"s|process.env.DEPLOY_URL|'${DEPLOY_URL}'|g\" config.ts && yarn build && yarn db:update && yarn db:init"
+  command = "sed -i \"s|process.env.DEPLOY_URL|'${DEPLOY_URL}'|g\" config.ts && yarn build && yarn run prisma db push --accept-data-loss && yarn db:init"
   
