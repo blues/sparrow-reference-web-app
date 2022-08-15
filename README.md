@@ -423,7 +423,12 @@ This repo contains [Netlify configuration](netlify.toml) that allows you to depl
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/blues/sparrow-reference-web-app)
 
-Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Netlify](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4686203/Deploy+Sparrow+Reference+Web+App+with+Netlify) for more information.
+Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Netlify](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4686203/Deploy+Sparrow+Reference+Web+App+with+Netlify) for more
+information.
+
+> Note: Timeouts happen after 10 seconds on Netlify web requests. If you want
+> to run a long Bulk Data Iimport you will want to run it on your local dev
+> machine with your local `.env` file pointed at your cloud database.
 
 ### Deploy on Vercel
 
