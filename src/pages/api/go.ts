@@ -15,7 +15,7 @@ function asString(x: unknown): string {
 async function handleRedirect(req: NextApiRequest, res: NextApiResponse) {
   const { pin, sensor, gateway, settings } = req.query;
   // query params can be arrays too, though we don't support multiple values here.
-  if (isString(gateway) === isString(sensor) || !isString(pin)) {
+  if ((isString(gateway) === isString(sensor)) || !isString(pin)) {
     res.status(400).json({ err: HTTP_STATUS.INVALID_REQUEST });
     return;
   }
