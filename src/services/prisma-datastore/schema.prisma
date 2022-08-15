@@ -153,7 +153,7 @@ model ReadingSchema {
   // the name of the event that provides the sensor data.  
   eventName           String        @map("event_name") @db.VarChar(32) // "*#air.qo"
   spec                Json          // type descriptor for the event schema. Most typically just `{ count: number }`.
-
+  prereq              Json?         // prerequisites that should appear in the event
   unitSymbol          String?       @db.VarChar(10)
   unit                String?
   valueType           ReadingSchemaValueType

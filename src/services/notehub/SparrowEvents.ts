@@ -98,7 +98,8 @@ function bodyAugmentedWithMetadata(
  */
 export function normalizeSparrowEvent(
   file: string,
-  note?: string
+  note?: string,
+  body?: { [key: string]: any }
 ): NormalizedEventName {
   let eventName: string;
   let nodeID: string | undefined;
@@ -110,6 +111,16 @@ export function normalizeSparrowEvent(
     if (idx > 0) {
       eventName = file.slice(idx + 1);
       nodeID = file.slice(0, idx);
+    } else if (
+      file === "_health.qo" &&
+      body &&
+      body.method === "sensor-provision" &&
+      body.text
+    ) {
+      eventName = file;
+      nodeID = body.text as string;
+      const rework = body; // avoid no-param-reassign eslint
+      rework.provisioned = 1;
     } else {
       eventName = file;
       nodeID = note;
@@ -128,7 +139,8 @@ export function sparrowEventFromNotehubRoutedEvent(
   if (!event.project.id) {
     throw eventError("project.id is not defined", event);
   }
-  const normalized = normalizeSparrowEvent(event.file, event.note);
+
+  const normalized = normalizeSparrowEvent(event.file, event.note, event.body);
   const locations = locationAlternativesFromRoutedEvent(event);
   const location = bestLocation(locations);
   const body = bodyAugmentedWithMetadata(event, locations);
@@ -153,7 +165,7 @@ export function sparrowEventFromNotehubEvent(
     throw eventError("device uid is not defined", event);
   }
 
-  const normalized = normalizeSparrowEvent(event.file, event.note);
+  const normalized = normalizeSparrowEvent(event.file, event.note, event.body);
   const location = bestLocation(event);
   const body = bodyAugmentedWithMetadata(event, event);
 
