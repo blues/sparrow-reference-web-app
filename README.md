@@ -429,7 +429,7 @@ information.
 
 > Note: Timeouts happen after 10 seconds on Netlify web requests. If you want
 > to run a long Bulk Data Iimport you will want to run it on your local dev
-> machine with your local .env pointed at your cloud database.
+> machine with your local `.env` file pointed at your cloud database.
 
 ### Deploy on Vercel
 
