@@ -20,7 +20,12 @@ const GatewayDetails = ({
   viewModel,
 }: GatewayDetailsData) => (
   <>
-    {err && <h2 className={styles.errorMessage}>{err}</h2>}
+    {err && (
+      <h2
+        className={styles.errorMessage}
+        dangerouslySetInnerHTML={{ __html: err }}
+      />
+    )}
 
     {viewModel.gateway && (
       <div>

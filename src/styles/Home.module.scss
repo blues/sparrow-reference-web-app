@@ -56,7 +56,7 @@
     z-index: 2;
     color: $bw-color--brand4;
     opacity: 0.5;
-    top: 12%;
+    top: 50%;
   }
 
   :global .ant-carousel .slick-prev:focus,
@@ -128,7 +128,15 @@
   .container {
     :global .ant-carousel .slick-next,
     :global .ant-carousel .slick-prev {
-      top: 7%;
+      top: 4%;
+    }
+
+    :global .ant-carousel .slick-next {
+      right: -19px;
+    }
+
+    :global .ant-carousel .slick-prev {
+      left: -19px;
     }
   }
 }
