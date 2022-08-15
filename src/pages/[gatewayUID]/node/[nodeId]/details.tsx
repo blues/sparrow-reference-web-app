@@ -156,7 +156,12 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
 
   return (
     <>
-      {err && <h2 className={styles.errorMessage}>{err}</h2>}
+      {err && (
+        <h2
+          className={styles.errorMessage}
+          dangerouslySetInnerHTML={{ __html: err }}
+        />
+      )}
       {viewModel.node && (
         <div>
           <h2 data-testid="node-name" className={styles.sectionTitle}>
@@ -196,7 +201,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   <Tooltip title={`LoRa signal: ${viewModel.node.barsTooltip}`}>
                     <Image
                       src={viewModel.node.barsIconPath}
-                      width={24}
+                      width={20}
                       alt="Node Lora signal strength"
                       data-testid="signal-strength"
                     />
@@ -267,7 +272,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                 </Col>
               </Row>
               <Row>
-                <Col span={8}>
+                <Col xs={12} sm={12} md={8} lg={8}>
                   <p className={detailsStyles.dateRangeLabel}>
                     Chart date range
                   </p>

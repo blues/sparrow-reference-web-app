@@ -16,11 +16,10 @@ import CellOne from "../elements/signal-strength-images/cell/cell-one-bar.svg";
 import CellTwo from "../elements/signal-strength-images/cell/cell-two-bars.svg";
 import CellThree from "../elements/signal-strength-images/cell/cell-three-bars.svg";
 import CellFull from "../elements/signal-strength-images/cell/cell-full.svg";
-import LoraOff from "../elements/signal-strength-images/lora/lora-off.svg";
-import LoraOne from "../elements/signal-strength-images/lora/lora-one-bar.svg";
-import LoraTwo from "../elements/signal-strength-images/lora/lora-two-bars.svg";
-import LoraThree from "../elements/signal-strength-images/lora/lora-three-bars.svg";
-import LoraFull from "../elements/signal-strength-images/lora/lora-full.svg";
+import LoraOff from "../elements/signal-strength-images/lora/lora-off_v1.svg";
+import LoraOne from "../elements/signal-strength-images/lora/lora-one-bar_v1.svg";
+import LoraTwo from "../elements/signal-strength-images/lora/lora-two-bar_v1.svg";
+import LoraFull from "../elements/signal-strength-images/lora/lora-full_v1.svg";
 import { SIGNAL_STRENGTH_TOOLTIP } from "../../constants/ui";
 
 export const getFormattedLastSeenDate = (date: Date) =>
@@ -113,7 +112,7 @@ export const calculateLoraSignalStrength = (signalBars: SignalStrengths) => {
     "0": LoraOff,
     "1": LoraOne,
     "2": LoraTwo,
-    "3": LoraThree,
+    "3": LoraFull,
     "4": LoraFull,
   };
   return signalLookup[signalBars];
