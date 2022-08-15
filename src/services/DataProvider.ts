@@ -39,7 +39,13 @@ export interface DataProvider {
 
   getNodes: (gatewayUIDs: string[]) => Promise<NodeDEPRECATED[]>;
 
-  getNode: (gatewayUID: string, nodeId: string) => Promise<NodeDEPRECATED>;
+  /**
+   * Some implementations require the gatewayUID, others don't.
+   */
+  getNode: (
+    gatewayUID: string | null,
+    nodeId: string
+  ) => Promise<NodeDEPRECATED>;
 
   getNodeData: (
     gatewayUID: string,

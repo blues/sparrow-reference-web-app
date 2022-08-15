@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { flattenDeep } from "lodash";
 import GatewayDEPRECATED from "../alpha-models/Gateway";
@@ -21,8 +22,6 @@ import VoltageSensorReading from "../alpha-models/readings/VoltageSensorReading"
 import CountSensorReading from "../alpha-models/readings/CountSensorReading";
 import TotalSensorReading from "../alpha-models/readings/TotalSensorReading";
 import {
-  Gateway,
-  Gateways,
   GatewayWithNodes,
   Node,
   Project,
@@ -141,7 +140,7 @@ export default class NotehubDataProvider implements DataProvider {
     throw new Error("Method not implemented.");
   }
 
-  async getGateways() : Promise<GatewayDEPRECATED[]> {
+  async getGateways(): Promise<GatewayDEPRECATED[]> {
     const gateways: GatewayDEPRECATED[] = [];
     const rawDevices = await this.notehubAccessor.getDevices();
     rawDevices.forEach((device) => {
@@ -303,9 +302,15 @@ export default class NotehubDataProvider implements DataProvider {
     return allLatestNodeData;
   }
 
-  async getNode(gatewayUID: string, nodeId: string) {
-    const nodes = await this.getNodes([gatewayUID]);
-    const match = nodes.filter((node) => node.nodeId === nodeId)[0];
+  /**
+   * This implementation requires the gatewayUID
+   */
+  async getNode(gatewayUID: string | null, nodeId: string) {
+    let match;
+    if (gatewayUID) {
+      const nodes = await this.getNodes([gatewayUID]);
+      match = nodes.filter((node) => node.nodeId === nodeId)[0];
+    }
     if (!match) {
       throw getError(ERROR_CODES.NODE_NOT_FOUND);
     }

@@ -4,4 +4,8 @@ export interface UrlManager {
   notehubProject(notehubUrl: string, projectUID: string): string;
   bulkDataImport(): string;
   performBulkDataImportApi(): string;
+
+  gatewayDetails(gatewayUID: string): string;
+  nodeDetails(gatewayUID: string, nodeId: string): string;
+  nodeSettings(gatewayUID: string, nodeId: string): string;
 }

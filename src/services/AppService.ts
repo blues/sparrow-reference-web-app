@@ -18,7 +18,7 @@ interface AppServiceInterface {
   getGateway: (gatewayUID: string) => Promise<Gateway>;
   setGatewayName: (gatewayUID: string, name: string) => Promise<void>;
   getNodes: (gatewayUIDs: string[]) => Promise<Node[]>;
-  getNode: (gatewayUID: string, nodeId: string) => Promise<Node>;
+  getNode: (gatewayUID: string | null, nodeId: string) => Promise<Node>;
   getNodeData: (
     gatewayUID: string,
     nodeId: string,
@@ -80,7 +80,7 @@ export default class AppService implements AppServiceInterface {
     return this.dataProvider.getNodes(gatewayUIDs);
   }
 
-  async getNode(gatewayUID: string, nodeId: string) {
+  async getNode(gatewayUID: string | null, nodeId: string) {
     return this.dataProvider.getNode(gatewayUID, nodeId);
   }
 

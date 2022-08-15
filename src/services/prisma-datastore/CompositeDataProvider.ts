@@ -45,7 +45,7 @@ export default class CompositeDataProvider implements DataProvider {
     return this.prismaDataProvider.getNodes(gatewayUIDs);
   }
 
-  getNode(gatewayUID: string, nodeId: string): Promise<Node> {
+  getNode(gatewayUID: string | null, nodeId: string): Promise<Node> {
     return this.prismaDataProvider.getNode(gatewayUID, nodeId);
   }
 

@@ -49,6 +49,8 @@ model Gateway {
   readingSource     ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
   reading_source_id Int           @unique
 
+  pin               String?   @db.VarChar(20) // MAX_PIN_LENGTH
+
   @@index([project_id])
   @@index([deviceUID])
   @@map("gateway")
@@ -71,6 +73,8 @@ model Node {
   //notecard        Gateway?    // set if this node is the lora radio for a gateway
   readingSource     ReadingSource @relation(fields: [reading_source_id], references: [id], onDelete: Cascade)
   reading_source_id Int           @unique
+
+  pin               String?   @db.VarChar(20)   // MAX_PIN_LENGTH
 
   @@index([gateway_id])
   @@map("node")
@@ -99,7 +103,7 @@ model Sensor {
   readings          Reading[]         
 
   latest            Reading?          @relation(name: "latest", fields: [latest_id], references: [id])
-  latest_id         Int?
+  latest_id         Int?              @unique
 
   @@unique([reading_source_id, schema_id])    // natural key
 

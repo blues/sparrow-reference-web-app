@@ -11,6 +11,7 @@ const HTTP_STATUS = {
   NOT_FOUND_GATEWAY: "Unable to locate Gateway",
   NOT_FOUND_CONFIG: "Unable to locate Node config",
   UNAUTHORIZED: "Unauthorized to access this project",
+  INVALID_REQUEST: "The request is not valid.",
 };
 
 // HTTP headers
