@@ -31,8 +31,8 @@ import detailsStyles from "../../../../styles/Details.module.scss";
 interface SparrowQueryInterface extends ParsedUrlQuery {
   gatewayUID: string;
   nodeId: string;
-  minutesBeforeNow?: string; // this value is a string to it can be a query param
-  showDetails?: string;
+  minutesBeforeNow?: string; // this value is a string so it can be a query param
+  settings?: string;
 }
 
 type NodeDetailsData = {
@@ -48,7 +48,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
   const { query } = useRouter();
 
   // neither of these values will ever be null because the URL path depends on them to render this page
-  const { gatewayUID, nodeId, showDetails } = query as SparrowQueryInterface;
+  const { gatewayUID, nodeId, settings } = query as SparrowQueryInterface;
   // todo - can we use the UrlManager here?
   const nodeUrl = `/${gatewayUID}/node/${nodeId}/details`;
 
@@ -177,8 +177,8 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
             Gateway:{` `}
             {viewModel?.gateway?.name && viewModel.gateway.name}
           </h3>
-          <Tabs defaultActiveKey={showDetails ? "2" : "1"}>
-            <TabPane tab="Summary" key="1">
+          <Tabs defaultActiveKey={settings ? "2" : "1"}>
+            <TabPane tab="Details" key="1">
               <h3
                 data-testid="current-readings"
                 className={detailsStyles.tabSectionTitle}
@@ -407,7 +407,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                 </Col>
               </Row>
             </TabPane>
-            <TabPane tab="Device Details" key="2">
+            <TabPane tab="Settings" key="2">
               <Form
                 formItems={formItems}
                 onFinish={formOnFinish}

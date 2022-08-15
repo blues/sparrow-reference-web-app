@@ -13,7 +13,7 @@ function asString(x: unknown): string {
 }
 
 async function handleRedirect(req: NextApiRequest, res: NextApiResponse) {
-  const { pin, sensor, gateway, showDetails } = req.query;
+  const { pin, sensor, gateway, settings } = req.query;
   // query params can be arrays too, though we don't support multiple values here.
   if (isString(gateway) === isString(sensor) || !isString(pin)) {
     res.status(400).json({ err: HTTP_STATUS.INVALID_REQUEST });
@@ -26,9 +26,9 @@ async function handleRedirect(req: NextApiRequest, res: NextApiResponse) {
   if (device?.gatewayUID) {
     const urlManager = services().getUrlManager();
     const url = device.nodeID
-      ? showDetails
-        ? urlManager.nodeDetails(device.gatewayUID, device.nodeID)
-        : urlManager.nodeSummary(device.gatewayUID, device.nodeID)
+      ? settings
+        ? urlManager.nodeSettings(device.gatewayUID, device.nodeID)
+        : urlManager.nodeDetails(device.gatewayUID, device.nodeID)
       : urlManager.gatewayDetails(device.gatewayUID);
     res.redirect(url);
   } else {
