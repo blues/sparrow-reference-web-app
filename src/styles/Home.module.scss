@@ -128,7 +128,15 @@
   .container {
     :global .ant-carousel .slick-next,
     :global .ant-carousel .slick-prev {
-      top: 7%;
+      top: 4%;
+    }
+
+    :global .ant-carousel .slick-next {
+      right: -19px;
+    }
+
+    :global .ant-carousel .slick-prev {
+      left: -19px;
     }
   }
 }

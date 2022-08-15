@@ -272,7 +272,7 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                 </Col>
               </Row>
               <Row>
-                <Col span={8}>
+                <Col xs={12} sm={12} md={8} lg={8}>
                   <p className={detailsStyles.dateRangeLabel}>
                     Chart date range
                   </p>

@@ -1,4 +1,4 @@
-import { Layout } from "antd";
+import { Layout, Col } from "antd";
 import Config from "../../../config";
 import styles from "../../styles/Footer.module.scss";
 
@@ -10,14 +10,16 @@ const FooterComponent = () => {
       <Footer className={styles.footer}>
         <div>
           Cloud-connected by{` `}
-          <a
-            target="_blank"
-            href="https://blues.io/products"
-            rel="noreferrer"
-            data-testid="notecard-link"
-          >
-            Notecard
-          </a>
+          <span>
+            <a
+              target="_blank"
+              href="https://blues.io/products"
+              rel="noreferrer"
+              data-testid="notecard-link"
+            >
+              Notecard
+            </a>
+          </span>
         </div>
         <div>
           <details>
@@ -29,14 +31,16 @@ const FooterComponent = () => {
         </div>
         <div>
           Developed by{` `}
-          <a
-            target="_blank"
-            href="https://blues.io"
-            rel="noreferrer"
-            data-testid="blues-link"
-          >
-            Blues Inc.
-          </a>
+          <span>
+            <a
+              target="_blank"
+              href="https://blues.io"
+              rel="noreferrer"
+              data-testid="blues-link"
+            >
+              Blues Inc.
+            </a>
+          </span>
         </div>
       </Footer>
     </div>
