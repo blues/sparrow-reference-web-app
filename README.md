@@ -236,7 +236,7 @@ If all went well, you should see a screen in your terminal that looks like the i
 
 To verify everything worked correctly, you can try loading the URL you just copied in a web browser; you should see your reference app’s home page.
 
-### Set up a Notehub route to your tunnel
+### Set up a Notehub route and dashboard URL to your tunnel
 
 With a tunnel in place, your next step is to create a route in Notehub that forwards events to your local app.
 
@@ -252,9 +252,17 @@ To set up the route complete the following steps:
 
 And with that your route is now complete. When Notehub receives an event it should automatically route that event to your tunnel, and ultimately to your local app.
 
-> **NOTE** Event routing only happens when Notehub receives an event—therefore, your Sparrow hardware needs to generate new data and send it to Notehub for Notehub to invoke your route.
+> **NOTE** Event routing only happens when Notehub receives an event, therefore your Sparrow hardware needs to generate new data and send it to Notehub for Notehub to invoke your route.
 
-Now that you have both a tunnel and route in place, your last step to get up and running is to create the database itself.
+### Setup a Project Dashbaord URL to your tunnel
+
+- Visit [Notehub](https://notehub.io) and open the project you’re using for your Sparrow app.
+- Select **Settings** in the navigation on the left-hand side of the screen.
+- Scroll down to **Device Dashbaord URL**.
+- Click the pencil icon to edit the URL, and paste the localtunnel or ngrok URL you copied earlier followed by `api/go?gateway=[device]&sensor=[sensor]&pin=[pin]`. For example, `https://bb18-217-180-218-163.ngrok.io/api/go?gateway=[device]&sensor=[sensor]&pin=[pin]`.
+- Click the checkmark on the right to save the changes.
+
+Now that you have both a tunnel, route and Device dashbaord URL in place, your last step to get up and running is to create the database itself.
 
 ### Database
 
