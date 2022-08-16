@@ -5,7 +5,7 @@ import { GatewayOrNode } from "../../services/AttributeStore";
 import { services } from "../../services/ServiceLocatorServer";
 
 function isString(x: unknown): x is string {
-  return typeof x === "string";
+  return typeof x === "string" && x;
 }
 
 function asString(x: unknown): string {
