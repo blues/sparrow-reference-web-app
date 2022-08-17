@@ -26,7 +26,7 @@ const FooterComponent = () => {
             <summary style={{ listStyle: "none", cursor: "pointer" }}>
               About
             </summary>
-            {Config.buildVersion !== "ver n/a" ? Config.buildVersion : null}
+            {Config.isBuildVersionSet() ? Config.buildVersion : <></>}
           </details>
         </div>
         <div>

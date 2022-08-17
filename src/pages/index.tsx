@@ -12,6 +12,7 @@ import CarouselArrowFixRight from "../components/elements/CarouselArrowFixRight"
 import CarouselArrowFixLeft from "../components/elements/CarouselArrowFixLeft";
 import { getCombinedGatewayNodeInfo } from "../components/presentation/gatewayNodeInfo";
 import styles from "../styles/Home.module.scss";
+import Config from "../../config";
 
 type HomeData = {
   gatewayNodeData: Gateway[];
@@ -47,7 +48,12 @@ const Home: NextPage<HomeData> = ({ gatewayNodeData, err }) => {
         />
       ) : (
         <>
-          <Alert description={sparrowInfoMessage} type="info" closable />
+          {Config.isBuildVersionSet() ? (
+            <Alert description={sparrowInfoMessage} type="info" closable />
+          ) : (
+            <></>
+          )}
+
           <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
             Gateway
           </h2>
