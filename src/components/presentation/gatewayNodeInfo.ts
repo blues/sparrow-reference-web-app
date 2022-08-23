@@ -26,6 +26,7 @@ export function getCombinedGatewayNodeInfo(
       );
       const gatewaySignalTooltip = calculateSignalTooltip(gateway.cellBars);
 
+      // eslint-disable-next-line no-param-reassign
       gateway = {
         ...gateway,
         cellIconPath: gatewaySignalStrengthIconPath,
@@ -37,6 +38,7 @@ export function getCombinedGatewayNodeInfo(
       );
       const gatewaySignalTooltip = calculateSignalTooltip(gateway.wifiBars);
 
+      // eslint-disable-next-line no-param-reassign
       gateway = {
         ...gateway,
         wifiIconPath: gatewaySignalStrengthIconPath,

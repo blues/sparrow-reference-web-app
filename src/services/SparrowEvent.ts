@@ -1,6 +1,7 @@
 import NotehubLocation from "./notehub/models/NotehubLocation";
+import { _health } from "./notehub/SparrowEvents";
 
-interface SparrowEvent {
+export interface SparrowEvent {
   // replace these IDs with typed IDs?
 
   /**
@@ -45,6 +46,13 @@ interface SparrowEvent {
   readonly gatewayName?: string;
 }
 
+export interface SparrowNodeEvent extends SparrowEvent {
+  /**
+   * Events that relate to a specific node have this value set to the node EUI.
+   */
+  readonly nodeID: string;
+}
+
 export class BasicSparrowEvent implements SparrowEvent {
   constructor(
     readonly projectUID: string,
@@ -58,8 +66,48 @@ export class BasicSparrowEvent implements SparrowEvent {
   ) {}
 }
 
-interface SparrowEventHandler {
+export interface SparrowEventHandler {
   handleEvent(event: SparrowEvent, isHistorical?: boolean): Promise<void>;
 }
 
-export type { SparrowEventHandler, SparrowEvent };
+export type SparrowHealthMethodBody = {
+  readonly eventBody: {
+    method: string;
+    text: string;
+  };
+};
+
+export type SparrowNodeProvisionedEvent = SparrowHealthMethodBody &
+  SparrowNodeEvent;
+
+export function isSparrowNodeEvent(e: SparrowEvent): e is SparrowNodeEvent {
+  return !!e.nodeID;
+}
+
+export function isSparrowHealthEvent(e: SparrowEvent): e is SparrowEvent {
+  return e.eventName === _health.qo;
+}
+
+export function isSparrowHealthMethodBody(
+  e: SparrowEvent
+): e is SparrowHealthMethodBody & SparrowEvent {
+  const body: any = e.eventBody;
+  return Boolean(isSparrowHealthEvent(e) && body?.method && body?.text);
+}
+
+/**
+ *
+ * @param e A providioning event is both a node event and a health method event, with the method
+ * indicating node pairing.
+ * @returns
+ */
+export function isSparrowNodeProvisionedEvent(
+  e: SparrowEvent
+): e is SparrowNodeProvisionedEvent {
+  const body: any = e.eventBody;
+  return Boolean(
+    isSparrowNodeEvent(e) &&
+      isSparrowHealthMethodBody(e) &&
+      body.method === _health.SENSOR_PROVISION
+  );
+}

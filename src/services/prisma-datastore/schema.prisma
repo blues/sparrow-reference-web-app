@@ -99,8 +99,8 @@ model Sensor {
   schema            ReadingSchema     @relation(fields: [schema_id], references: [id])
   schema_id         Int
 
-  // all the readings produced by this sensor 
-  readings          Reading[]         
+  // all the readings produced by this sensor
+  readings          Reading[]
 
   latest            Reading?          @relation(name: "latest", fields: [latest_id], references: [id])
   latest_id         Int?              @unique
@@ -187,4 +187,12 @@ model Reading {
   @@unique([sensor_id, when, value])    // natural key
   @@index([sensor_id])
   @@map("reading")
+}
+
+model Notification {
+  id                  String        @db.Uuid @default(uuid()) @unique
+  type                String        @db.VarChar(50)
+  content             Json
+  when                DateTime
+  @@map("notification")
 }

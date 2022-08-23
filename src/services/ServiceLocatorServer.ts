@@ -21,6 +21,10 @@ import PrismaAttributeStore from "./prisma-datastore/PrismaAttributeStore";
 import CompositeAttributeStore from "./prisma-datastore/CompositeAttributeStore";
 import { getPrismaClient } from "./prisma-datastore/prisma-util";
 import { serverLogInfo } from "../pages/api/log";
+import { NotificationsStore, TransientNotificationStore } from "./NotificationsStore";
+import { CompositeEventHandler } from "./CompositeEventHandler";
+import { NotificationEventHandler } from "./NotificationEventHandler";
+import PrismaNotificationsStore from "./prisma-datastore/PrismaNotificationsStore";
 
 // ServiceLocator is the top-level consturction and dependency injection tool
 // for server-side node code.
@@ -41,6 +45,8 @@ class ServiceLocatorServer {
 
   private prismaDataProvider?: PrismaDataProvider;
 
+  private notificationsStore?: NotificationsStore;
+
   constructor() {
     const { notehubProvider } = Config;
     const { databaseURL } = Config;
@@ -58,7 +64,8 @@ class ServiceLocatorServer {
         new SimpleIDBuilder(),
         this.getDataProvider(),
         this.getAttributeStore(),
-        this.getEventHandler()
+        this.getEventHandler(),
+        this.getNotificationsStore()
       );
     }
     return this.appService;
@@ -103,7 +110,10 @@ class ServiceLocatorServer {
   private getEventHandler(): SparrowEventHandler {
     if (!this.eventHandler) {
       this.eventHandler = this.prisma
-        ? new PrismaDatastoreEventHandler(this.prisma)
+        ? new CompositeEventHandler([
+            new NotificationEventHandler(this.getNotificationsStore()),
+            new PrismaDatastoreEventHandler(this.prisma),
+          ])
         : new NoopSparrowEventHandler();
     }
     return this.eventHandler;
@@ -150,6 +160,13 @@ class ServiceLocatorServer {
       this.urlManager = NextJsUrlManager;
     }
     return this.urlManager;
+  }
+
+  getNotificationsStore(): NotificationsStore {
+    if (!this.notificationsStore) {
+      this.notificationsStore = this.prisma ? new PrismaNotificationsStore(this.prisma) : new TransientNotificationStore();
+    }
+    return this.notificationsStore;
   }
 }
 

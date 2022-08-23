@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { services } from "../services/ServiceLocatorServer";
+import { services } from "../services/ServiceLocatorClient";
 
 export async function changeGatewayName(gatewayUID: string, name: string) {
   const endpoint = services().getUrlManager().gatewayNameUpdate(gatewayUID);

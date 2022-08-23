@@ -53,6 +53,8 @@ export interface DataProvider {
     minutesBeforeNow: number
   ) => Promise<ReadingDEPRECATED<unknown>[]>;
 
+  gatewayWithNode(nodeId: string): Promise<GatewayDEPRECATED | null>;
+
   // queryProject?(f: SimpleFilter): Query<SimpleFilter, Project>;
 
   /**

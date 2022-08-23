@@ -22,11 +22,16 @@ import LoraTwo from "../elements/signal-strength-images/lora/lora-two-bar_v1.svg
 import LoraFull from "../elements/signal-strength-images/lora/lora-full_v1.svg";
 import { SIGNAL_STRENGTH_TOOLTIP } from "../../constants/ui";
 
-export const getFormattedLastSeenDate = (date: Date) =>
-  formatDistanceToNow(date, {
-    addSuffix: true,
-  });
-
+export const getFormattedLastSeenDate = (date: Date) => {
+  try {
+    return formatDistanceToNow(date, {
+      addSuffix: true,
+    });
+  } catch (e) {
+    console.log(e, date);
+    return "N/A";
+  }
+};
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
   getFormattedLastSeenDate(new Date(date));

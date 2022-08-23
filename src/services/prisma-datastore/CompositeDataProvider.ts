@@ -24,6 +24,9 @@ export default class CompositeDataProvider implements DataProvider {
     private notehubProvider: NotehubDataProvider,
     private prismaDataProvider: PrismaDataProvider
   ) {}
+  gatewayWithNode(nodeId: string): Promise<Gateway | null> {
+    return this.prismaDataProvider.gatewayWithNode(nodeId);
+  }
 
   async doBulkImport(): Promise<BulkImport> {
     const b = await this.prismaDataProvider.doBulkImport(
