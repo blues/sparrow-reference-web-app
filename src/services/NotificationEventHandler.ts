@@ -29,7 +29,6 @@ export class NotificationEventHandler implements SparrowEventHandler {
   }
 
   async healthEventHandler(event: SparrowEvent): Promise<void> {
-    console.log("handling notification event", event);
     if (isSparrowNodeProvisionedEvent(event)) {
       const notification: NodePairedNotification = {
         type: SPARROW_NODE_PROVISIONED_NOTIFICATION,

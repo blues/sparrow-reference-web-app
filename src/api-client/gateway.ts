@@ -8,5 +8,3 @@ export async function changeGatewayName(gatewayUID: string, name: string) {
   return response.status === 200;
 }
 
-const DEFAULT = { changeGatewayName };
-export default DEFAULT;

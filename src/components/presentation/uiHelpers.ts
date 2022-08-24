@@ -28,7 +28,7 @@ export const getFormattedLastSeenDate = (date: Date) => {
       addSuffix: true,
     });
   } catch (e) {
-    console.log(e, date);
+    console.error(e, date);
     return "N/A";
   }
 };

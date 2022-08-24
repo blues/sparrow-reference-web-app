@@ -24,15 +24,10 @@ export async function presentNotifications() : Promise<AppNotifications> {
 
 /**
  * Retrieves the "raw" notifications, as they were added to the API.
- * @returns 
+ * @returns
  */
 export async function fetchNotifications() {
   const endpoint = services().getUrlManager().notifications();
   const response: AxiosResponse = await axios.get(endpoint);
   return response.data;
 }
-
-
-
-const DEFAULT = { removeNotification };
-export default DEFAULT;

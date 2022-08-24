@@ -13,6 +13,3 @@ export async function changeNodeName(
   const response: AxiosResponse = await axios.post(endpoint, postBody);
   return response.status === 200;
 }
-
-const DEFAULT = { changeNodeName };
-export default DEFAULT;
