@@ -18,7 +18,7 @@ export const NextJsUrlManager = {
 
   notificationsImpl(present: boolean, ...notificationIDs: string[]) {
     let url = `/api/notifications`;
-    let params = present ? "?present=1" : "";
+    let params = present ? "?format=app" : "";
     if (notificationIDs.length) {
       if (!params) {
         params = "?";

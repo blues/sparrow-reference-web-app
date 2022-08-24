@@ -12,12 +12,13 @@ export default async function notificationsHandler(
   try {
     switch (req.method) {
       case "GET": {
-        const { format } = req.query;  // presentation mode
+        const { format } = req.query;  // app notifications
         const notifications = await (format===APP_FORMAT ?
           services().getAppService().getAppNotifications() :
           services().getNotificationsStore().getNotifications());
         res.status(200).json({ notifications });
       }
+      break;
       case "DELETE": {
         const id = req.query.id;
         const notificationIDs = typeof id === "string" ? [id] : id;
@@ -25,8 +26,8 @@ export default async function notificationsHandler(
           .getNotificationsStore()
           .removeNotifications(notificationIDs);
         res.status(200).json(notificationIDs);
-        break;
       }
+      break;
       default:
         // Other methods not allowed at this route
         res.status(405).json({ err: HTTP_STATUS.METHOD_NOT_ALLOWED });

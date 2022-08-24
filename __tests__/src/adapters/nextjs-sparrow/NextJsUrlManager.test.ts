@@ -17,20 +17,20 @@ describe(NextJsUrlManager.nodeNameUpdate, () => {
 describe(NextJsUrlManager.presentNotifications, () => {
   it("returns the base API endpoint when no ids are present", () => {
     expect(NextJsUrlManager.presentNotifications()).toMatchInlineSnapshot(
-      `"/api/notifications?present=1"`
+      `"/api/notifications?format=app"`
     );
   });
 
   it("returns a single ID as an 'id' query parameter", () => {
     expect(NextJsUrlManager.presentNotifications("foo")).toMatchInlineSnapshot(
-      `"/api/notifications?present=1&id=foo"`
+      `"/api/notifications?format=app&id=foo"`
     );
   });
 
   it("returns multiple ID as multiple 'id' query parameters", () => {
     expect(
       NextJsUrlManager.presentNotifications("foo", "bar", "baz")
-    ).toMatchInlineSnapshot(`"/api/notifications?present=1&id=foo&id=bar&id=baz"`);
+    ).toMatchInlineSnapshot(`"/api/notifications?format=app&id=foo&id=bar&id=baz"`);
   });
 
 
