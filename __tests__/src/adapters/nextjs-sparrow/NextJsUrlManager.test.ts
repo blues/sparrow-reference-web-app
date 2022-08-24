@@ -21,7 +21,7 @@ describe(NextJsUrlManager.presentNotifications, () => {
     );
   });
 
-  it("returns a signle ID as an 'id' query parameter", () => {
+  it("returns a single ID as an 'id' query parameter", () => {
     expect(NextJsUrlManager.presentNotifications("foo")).toMatchInlineSnapshot(
       `"/api/notifications?present=1&id=foo"`
     );
