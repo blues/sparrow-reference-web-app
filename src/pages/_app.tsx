@@ -5,6 +5,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import Layout from "../components/layout/Layout";
 import "../styles/globals.css";
+import Notifications from "../components/elements/Notifications";
 
 require("../styles/antd-variables.less");
 
@@ -39,6 +40,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         />
       </Head>
       <Layout isLoading={isLoading}>
+        <Notifications items={[]}/>
         <Component {...pageProps} />
       </Layout>
     </QueryClientProvider>

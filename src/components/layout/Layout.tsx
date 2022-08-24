@@ -4,7 +4,6 @@ import Header from "./Header";
 import Footer from "./Footer";
 import styles from "../../styles/Layout.module.scss";
 import { LoadingSpinner } from "./LoadingSpinner";
-import Notifications from "../elements/Notifications";
 
 const LayoutComponent = ({
   children,
@@ -19,7 +18,6 @@ const LayoutComponent = ({
       <Header />
       <LoadingSpinner isLoading={isLoading}>
         <Content className={styles.mainContent}>
-          <Notifications items={[]}/>
           {children}
         </Content>
       </LoadingSpinner>
