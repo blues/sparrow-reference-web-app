@@ -13,16 +13,13 @@ import CarouselArrowFixLeft from "../components/elements/CarouselArrowFixLeft";
 import { getCombinedGatewayNodeInfo } from "../components/presentation/gatewayNodeInfo";
 import styles from "../styles/Home.module.scss";
 import Config from "../../config";
-import Notifications from "../components/elements/Notifications";
-import { AppNotification } from "../components/presentation/notifications";
 
 type HomeData = {
   gatewayNodeData: Gateway[];
   err?: string;
-  notifications: AppNotification[];
 };
 
-const Home: NextPage<HomeData> = ({ gatewayNodeData, err, notifications }) => {
+const Home: NextPage<HomeData> = ({ gatewayNodeData, err }) => {
   const carouselRef = useRef<CarouselRef>(null);
 
   const sparrowInfoMessage = (
@@ -44,7 +41,6 @@ const Home: NextPage<HomeData> = ({ gatewayNodeData, err, notifications }) => {
 
   return (
     <div className={styles.container}>
-      <Notifications items={notifications} />
       {err ? (
         <h2
           className={styles.errorMessage}
@@ -89,7 +85,7 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   let latestNodeDataList: Node[] = [];
   let gatewayNodeData: Gateway[] = [];
   let err = "";
-  let notifications: AppNotification[] = [];
+
   try {
     const appService = services().getAppService();
     gateways = await appService.getGateways();
@@ -101,10 +97,8 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
     if (gatewayNodeData.length === 0) {
       err = ERROR_MESSAGE.NO_GATEWAYS_FOUND;
     }
-    // todo - this would be better done outside each page so the notifications can appear on any page.
-    notifications = await appService.getAppNotifications();
     return {
-      props: { gatewayNodeData, err, notifications },
+      props: { gatewayNodeData, err },
     };
   } catch (e) {
     err = getErrorMessage(
@@ -113,6 +107,6 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   }
 
   return {
-    props: { gatewayNodeData, err, notifications },
+    props: { gatewayNodeData, err },
   };
 };

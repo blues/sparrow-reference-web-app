@@ -1,6 +1,6 @@
 import { Alert, Button } from "antd";
 import { NextRouter, useRouter } from "next/router";
-import { fetchNotifications, presentNotifications as apiAppNotifications, removeNotification } from "../../api-client/notification";
+import { presentNotifications as apiAppNotifications, removeNotification } from "../../api-client/notification";
 import { services } from "../../services/ServiceLocatorClient";
 import {
   AppNotification,
@@ -9,6 +9,8 @@ import {
 } from "../presentation/notifications";
 import { useQuery } from "react-query";
 import React from "react";
+import styles from "../../styles/Home.module.scss";
+import notificationsStyles from "../../styles/Notifications.module.scss";
 
 async function nodePairedAction(n: NodePairedWithGatewayAppNotification, router: NextRouter) {
   console.log("redirecting", n);
@@ -64,12 +66,12 @@ function renderNotification(notification: AppNotification, router: NextRouter) {
 const NotificationsComponent = (props: NotificationProps) => {
   const router = useRouter();
   const { data, status } = useQuery("notifications", apiAppNotifications, { refetchInterval: 5000 });
-  return <> {
+  return <div className={notificationsStyles.notifications}> {
       status==="success" &&
       data?.notifications.map((notification) =>
         renderNotification(notification, router)
       ).filter(n => n)
-  }</>;
+  }</div>;
 };
 
 export default NotificationsComponent;
