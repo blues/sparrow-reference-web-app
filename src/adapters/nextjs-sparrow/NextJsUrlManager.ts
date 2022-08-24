@@ -18,10 +18,13 @@ export const NextJsUrlManager = {
 
   notificationsImpl(present: boolean, ...notificationIDs: string[]) {
     let url = `/api/notifications`;
-    let params = present ? "?present=1&" : "";
-    if (notificationIDs) {
+    let params = present ? "?present=1" : "";
+    if (notificationIDs.length) {
       if (!params) {
         params = "?";
+      }
+      else {
+        params += "&";
       }
       // id=abc&id=def
       params += `${notificationIDs.map((id) => `id=${id}`).join("&")}`;
