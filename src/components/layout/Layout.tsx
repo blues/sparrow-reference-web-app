@@ -17,7 +17,9 @@ const LayoutComponent = ({
     <Layout>
       <Header />
       <LoadingSpinner isLoading={isLoading}>
-        <Content className={styles.mainContent}>{children}</Content>
+        <Content className={styles.mainContent}>
+          {children}
+        </Content>
       </LoadingSpinner>
       <Footer />
     </Layout>

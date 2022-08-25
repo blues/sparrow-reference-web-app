@@ -5,6 +5,11 @@ import NotehubRoutedEvent, {
   NotehubRoutedEventLocationFields,
 } from "./models/NotehubRoutedEvent";
 
+export const _health = {
+  qo: "_health.qo",
+  SENSOR_PROVISION: "sensor-provision",
+};
+
 function eventError(msg: string, event: NotehubRoutedEvent | NotehubEvent) {
   return new Error(msg);
 }
@@ -112,9 +117,9 @@ export function normalizeSparrowEvent(
       eventName = file.slice(idx + 1);
       nodeID = file.slice(0, idx);
     } else if (
-      file === "_health.qo" &&
+      file === _health.qo &&
       body &&
-      body.method === "sensor-provision" &&
+      body.method === _health.SENSOR_PROVISION &&
       body.text
     ) {
       eventName = file;

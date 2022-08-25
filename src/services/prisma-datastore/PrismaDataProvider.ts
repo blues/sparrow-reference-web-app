@@ -280,13 +280,13 @@ export class PrismaDataProvider implements DataProvider {
   }
 
   async fetchNode(
-    sensorUID: string
+    nodeID: string
   ): Promise<(NodeWithGateway & NodeWithLatestReadings) | null> {
     // const project = await this.currentProject();
     // todo - constraint to the project
     const node = await this.prisma.node.findUnique({
       where: {
-        nodeEUI: sensorUID,
+        nodeEUI: nodeID,
       },
       include: {
         gateway: true,
@@ -505,5 +505,12 @@ export class PrismaDataProvider implements DataProvider {
     query: QueryHistoricalReadings
   ): Promise<QueryResult<QueryHistoricalReadings, ProjectHistoricalData>> {
     throw new Error("Method not implemented.");
+  }
+
+  async gatewayWithNode(nodeId: string): Promise<GatewayDEPRECATED | null> {
+    const node = await this.fetchNode(nodeId);
+    return node && node?.gateway
+      ? sparrowGatewayFromPrismaGateway(node.gateway)
+      : null;
   }
 }

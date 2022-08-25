@@ -200,7 +200,9 @@ const NodeDetails: NextPage<NodeDetailsData> = ({ viewModel, err }) => {
                   {viewModel?.node?.voltage}
                 </span>
                 {viewModel.node?.barsIconPath ? (
-                  <Tooltip title={`LoRa signal: ${viewModel.node.barsTooltip}`}>
+                  <Tooltip
+                    title={`LoRa signal: ${viewModel.node.barsTooltip || ""}`}
+                  >
                     <Image
                       src={viewModel.node.barsIconPath}
                       width={20}

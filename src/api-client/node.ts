@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { services } from "../services/ServiceLocatorServer";
+import { services } from "../services/ServiceLocatorClient";
 
 export async function changeNodeName(
   gatewayUID: string,
@@ -13,6 +13,3 @@ export async function changeNodeName(
   const response: AxiosResponse = await axios.post(endpoint, postBody);
   return response.status === 200;
 }
-
-const DEFAULT = { changeNodeName };
-export default DEFAULT;

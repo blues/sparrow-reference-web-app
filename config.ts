@@ -16,7 +16,7 @@ const env = {
   NEXT_PUBLIC_COMPANY_NAME: process.env.NEXT_PUBLIC_COMPANY_NAME,
   DATABASE_URL: process.env.DATABASE_URL,
   READ_ONLY: process.env.READ_ONLY,
-  NOTEHUB_PROVIDER: process.env.NOTEHUB_PROVIDER
+  NOTEHUB_PROVIDER: process.env.NOTEHUB_PROVIDER,
 };
 
 const optionalEnvVar = (varName: keyof typeof env, defaultValue: string) => {
@@ -38,6 +38,10 @@ const requiredEnvVar = (varName: keyof typeof env) => {
 };
 
 const Config = {
+  isBuildVersionSet() {
+    return !!optionalEnvVar("NEXT_PUBLIC_BUILD_VERSION", "");
+  },
+
   // These are getters so undefined required variables do not throw errors at build time.
   get buildVersion() {
     return optionalEnvVar("NEXT_PUBLIC_BUILD_VERSION", "ver n/a");
@@ -69,7 +73,7 @@ const Config = {
   },
   get notehubProvider() {
     return Boolean(optionalEnvVar("NOTEHUB_PROVIDER", ""));
-  }
+  },
 };
 
 const toString = (c: typeof Config | typeof env) => {

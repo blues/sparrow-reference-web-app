@@ -12,6 +12,7 @@ import CarouselArrowFixRight from "../components/elements/CarouselArrowFixRight"
 import CarouselArrowFixLeft from "../components/elements/CarouselArrowFixLeft";
 import { getCombinedGatewayNodeInfo } from "../components/presentation/gatewayNodeInfo";
 import styles from "../styles/Home.module.scss";
+import Config from "../../config";
 
 type HomeData = {
   gatewayNodeData: Gateway[];
@@ -43,11 +44,16 @@ const Home: NextPage<HomeData> = ({ gatewayNodeData, err }) => {
       {err ? (
         <h2
           className={styles.errorMessage}
+          // life in the fast lane...
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: err }}
         />
       ) : (
         <>
-          <Alert description={sparrowInfoMessage} type="info" closable />
+          {Config.isBuildVersionSet() ? (
+            <Alert description={sparrowInfoMessage} type="info" closable />
+          ) : null}
+
           <h2 data-testid="gateway-header" className={styles.sectionSubTitle}>
             Gateway
           </h2>
@@ -79,6 +85,7 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
   let latestNodeDataList: Node[] = [];
   let gatewayNodeData: Gateway[] = [];
   let err = "";
+
   try {
     const appService = services().getAppService();
     gateways = await appService.getGateways();
@@ -90,7 +97,6 @@ export const getServerSideProps: GetServerSideProps<HomeData> = async () => {
     if (gatewayNodeData.length === 0) {
       err = ERROR_MESSAGE.NO_GATEWAYS_FOUND;
     }
-
     return {
       props: { gatewayNodeData, err },
     };

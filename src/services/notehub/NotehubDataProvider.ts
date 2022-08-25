@@ -68,6 +68,18 @@ export default class NotehubDataProvider implements DataProvider {
     private readonly projectID: ProjectID
   ) {}
 
+  async gatewayWithNode(nodeId: string): Promise<GatewayDEPRECATED | null> {
+    const all = await this.getGateways();
+    all.forEach((g) => {
+      g.nodeList.forEach((n) => {
+        if (n.nodeId === nodeId) {
+          return n;
+        }
+      });
+    });
+    return null;
+  }
+
   // eslint-disable-next-line class-methods-use-this
   doBulkImport(): Promise<never> {
     throw new Error("It's not possible to do bulk import of data to Notehub");

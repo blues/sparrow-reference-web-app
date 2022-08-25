@@ -11,6 +11,17 @@ import { IDBuilder } from "./IDBuilder";
 // eslint-disable-next-line import/no-named-as-default
 import AppModelBuilder from "./AppModelBuilder";
 import * as AppModel from "./AppModel";
+import {
+  AppNotification,
+  NodePairedWithGatewayAppNotification,
+  NodePairedWithGatewayAppNotificationType,
+} from "../components/presentation/notifications";
+import { NotificationsStore, Notification } from "./NotificationsStore";
+import {
+  NodePairedNotification,
+  SPARROW_NODE_PROVISIONED_NOTIFICATION,
+} from "./NotificationEventHandler";
+import { serverLogError } from "../pages/api/log";
 
 // this class / interface combo passes data and functions to the service locator file
 interface AppServiceInterface {
@@ -41,6 +52,8 @@ interface AppServiceInterface {
   handleEvent(event: SparrowEvent): Promise<void>;
 
   performBulkDataImport(): Promise<AppModel.BulkDataImportStatus>;
+
+  getAppNotifications(): Promise<AppNotification[]>;
 }
 
 export type { AppServiceInterface };
@@ -53,7 +66,8 @@ export default class AppService implements AppServiceInterface {
     private readonly idBuilder: IDBuilder,
     private dataProvider: DataProvider,
     private attributeStore: AttributeStore,
-    private sparrowEventHandler: SparrowEventHandler
+    private sparrowEventHandler: SparrowEventHandler,
+    private notificationStore: NotificationsStore
   ) {
     this.projectID = this.idBuilder.buildProjectID(projectUID);
   }
@@ -153,5 +167,47 @@ export default class AppService implements AppServiceInterface {
         state: "failed",
       };
     }
+  }
+
+  async getAppNotifications(): Promise<AppNotification[]> {
+    const notifications: Notification[] =
+      await this.notificationStore.getNotifications();
+    const result = (
+      await Promise.all(
+        notifications.map(async (n) => await this.appNotification(n))
+      )
+    ).filter((e): e is AppNotification => e !== null);
+    return result;
+  }
+
+  private async appNotification(
+    notification: Notification
+  ): Promise<AppNotification | null> {
+    switch (true) {
+      case notification.type === SPARROW_NODE_PROVISIONED_NOTIFICATION:
+        return await this.buildNodePairedModel(
+          notification as NodePairedNotification
+        );
+    }
+    serverLogError(`unknown notification ${notification}`);
+    return null;
+  }
+
+  async buildNodePairedModel(
+    notification: NodePairedNotification
+  ): Promise<AppNotification | null> {
+    const gateway = await this.getGateway(notification.content.gatewayID);
+    const node: Node = await this.getNode(
+      notification.content.gatewayID,
+      notification.content.nodeID
+    );
+    const result: NodePairedWithGatewayAppNotification = {
+      id: notification.id,
+      type: NodePairedWithGatewayAppNotificationType,
+      gateway,
+      node,
+      when: notification.when.getTime()
+    };
+    return result;
   }
 }
