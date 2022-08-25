@@ -152,7 +152,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
     if ("err" in resp.data) {
       const { err } = resp.data as NotehubErr;
 
-      if (err.includes("note-noexist")) {
+      if (err.includes("note-noexist") || err.includes("notefile-noexist")) {
         // Because the mac address cannot be found the API will return a
         // “note-noexist” error, which we ignore because that just means
         // the sensor does not have a name / location yet.
