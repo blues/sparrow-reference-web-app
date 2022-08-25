@@ -11,30 +11,21 @@ import { useQuery } from "react-query";
 import React from "react";
 import styles from "../../styles/Home.module.scss";
 import notificationsStyles from "../../styles/Notifications.module.scss";
+import { getFormattedLastSeenDate } from "../presentation/uiHelpers";
 
 async function nodePairedAction(n: NodePairedWithGatewayAppNotification, router: NextRouter) {
-  console.log("redirecting", n);
-  try {
-    await removeNotification(n.id);
-  }
-  catch (e) {
-    console.log(e);
-  }
-  console.log("removed notification", n);
-
+  await removeNotification(n.id);
   const url = services()
     .getUrlManager()
     .nodeSettings(n.gateway.uid, n.node.nodeId);
-  console.log("redirecting to", url);
-
   await router.push(url);
 }
 
 function renderNodePairedNotification(n: NodePairedWithGatewayAppNotification, router: NextRouter) {
 
-  const note = <span>A new node was recently paired.</span>;
+  const whenPaired = getFormattedLastSeenDate(new Date(n.when));
+  const note = <span>Node ending <span title={n.node.nodeId}>{n.node.nodeId.slice(-5)}</span> was <span title={whenPaired}>recently</span> paired {whenPaired} with gateway <span>{n.gateway.name}</span>.</span>;
   //const details = <span>Node ID: <span>{n.node.nodeId}</span></span>
-  const ref: React.Ref<HTMLElement> = React.createRef();
   return (
     <Alert key={n.id}
       banner
@@ -43,8 +34,8 @@ function renderNodePairedNotification(n: NodePairedWithGatewayAppNotification, r
       closable
       onClose={async () => await removeNotification(n.id)}
       action={
-        <Button ref={ref} type="primary" onClick={async () => await nodePairedAction(n, router)}>
-          Setup
+        <Button type="primary" onClick={async () => await nodePairedAction(n, router)}>
+          Node Settings
         </Button>
       }
     />
@@ -62,10 +53,11 @@ function renderNotification(notification: AppNotification, router: NextRouter) {
   return null;
 }
 
+const NOTIFICATION_REFETCH_INTERVAL = 5000;
 
 const NotificationsComponent = (props: NotificationProps) => {
   const router = useRouter();
-  const { data, status } = useQuery("notifications", apiAppNotifications, { refetchInterval: 5000 });
+  const { data, status } = useQuery("notifications", apiAppNotifications, { refetchInterval: NOTIFICATION_REFETCH_INTERVAL });
   return <div className={notificationsStyles.notifications}> {
       status==="success" &&
       data?.notifications.map((notification) =>
