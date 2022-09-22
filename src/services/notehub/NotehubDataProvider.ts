@@ -11,7 +11,7 @@ import {
   QueryResult,
 } from "../DataProvider";
 import { NotehubAccessor } from "./NotehubAccessor";
-import NotehubEvent from "./models/NotehubEvent";
+import NotehubRoutedEvent from "./models/NotehubRoutedEvent";
 import ReadingDEPRECATED from "../alpha-models/readings/Reading";
 import { ERROR_CODES, getError } from "../Errors";
 import { NotehubLocationAlternatives } from "./models/NotehubLocation";
@@ -178,7 +178,7 @@ export default class NotehubDataProvider implements DataProvider {
 
       // filter out all latest_events that are not `motion.qo` or `air.qo` files - those indicate they are node files
       const filteredNodeData = latestNodeEvents.latest_events.filter(
-        (event: NotehubEvent) => {
+        (event: NotehubRoutedEvent) => {
           if (
             event.file.includes("#motion.qo") ||
             event.file.includes("#air.qo")
@@ -199,7 +199,7 @@ export default class NotehubDataProvider implements DataProvider {
         voltage: event.body.voltage,
         total: event.body.total,
         count: event.body.count,
-        lastActivity: event.captured,
+        lastActivity: new Date(event.when*1000).toISOString(),
       }));
       return latestNodeData;
     };
@@ -334,7 +334,7 @@ export default class NotehubDataProvider implements DataProvider {
     nodeId: string,
     minutesBeforeNow: number
   ) {
-    let nodeEvents: NotehubEvent[];
+    let nodeEvents: NotehubRoutedEvent[];
     if (minutesBeforeNow) {
       const epochDateString: string = getEpochChartDataDate(minutesBeforeNow);
       nodeEvents = await this.notehubAccessor.getEvents(epochDateString);
@@ -343,20 +343,21 @@ export default class NotehubDataProvider implements DataProvider {
     }
 
     // filter for a specific node ID
-    const filteredEvents: NotehubEvent[] = nodeEvents.filter(
-      (event: NotehubEvent) =>
+    const filteredEvents: NotehubRoutedEvent[] = nodeEvents.filter(
+      (event: NotehubRoutedEvent) =>
         event.file &&
         event.file.includes(`${nodeId}`) &&
         (event.file.includes("#air.qo") || event.file.includes("#motion.qo")) &&
-        event.device_uid === gatewayUID
+        event.device === gatewayUID
     );
     const readingsToReturn: ReadingDEPRECATED<unknown>[] = [];
-    filteredEvents.forEach((event: NotehubEvent) => {
+    filteredEvents.forEach((event: NotehubRoutedEvent) => {
+      const captured = new Date(event.when*1000).toISOString();
       if (event.body.temperature) {
         readingsToReturn.push(
           new TemperatureSensorReading({
             value: event.body.temperature,
-            captured: event.captured,
+            captured
           })
         );
       }
@@ -364,7 +365,7 @@ export default class NotehubDataProvider implements DataProvider {
         readingsToReturn.push(
           new HumiditySensorReading({
             value: event.body.humidity,
-            captured: event.captured,
+            captured
           })
         );
       }
@@ -373,7 +374,7 @@ export default class NotehubDataProvider implements DataProvider {
           new PressureSensorReading({
             // Convert from Pa to kPa
             value: event.body.pressure / 1000,
-            captured: event.captured,
+            captured
           })
         );
       }
@@ -381,7 +382,7 @@ export default class NotehubDataProvider implements DataProvider {
         readingsToReturn.push(
           new VoltageSensorReading({
             value: event.body.voltage,
-            captured: event.captured,
+            captured
           })
         );
       }
@@ -389,7 +390,7 @@ export default class NotehubDataProvider implements DataProvider {
         readingsToReturn.push(
           new CountSensorReading({
             value: event.body.count,
-            captured: event.captured,
+            captured
           })
         );
       }
@@ -397,7 +398,7 @@ export default class NotehubDataProvider implements DataProvider {
         readingsToReturn.push(
           new TotalSensorReading({
             value: event.body.total,
-            captured: event.captured,
+            captured
           })
         );
       }

@@ -1,5 +1,4 @@
 import { BasicSparrowEvent, SparrowEvent } from "../SparrowEvent";
-import NotehubEvent from "./models/NotehubEvent";
 import { NotehubLocationAlternatives } from "./models/NotehubLocation";
 import NotehubRoutedEvent, {
   NotehubRoutedEventLocationFields,
@@ -10,7 +9,7 @@ export const _health = {
   SENSOR_PROVISION: "sensor-provision",
 };
 
-function eventError(msg: string, event: NotehubRoutedEvent | NotehubEvent) {
+function eventError(msg: string, _event: NotehubRoutedEvent) {
   return new Error(msg);
 }
 
@@ -78,7 +77,7 @@ export const bestLocation = (object: NotehubLocationAlternatives) =>
   object.gps_location || object.triangulated_location || object.tower_location;
 
 function bodyAugmentedWithMetadata(
-  event: NotehubEvent | NotehubRoutedEvent,
+  event: NotehubRoutedEvent,
   locations: NotehubLocationAlternatives
 ) {
   // eslint-disable-next-line prefer-destructuring
@@ -135,15 +134,18 @@ export function normalizeSparrowEvent(
 }
 
 export function sparrowEventFromNotehubRoutedEvent(
-  event: NotehubRoutedEvent
+  event: NotehubRoutedEvent,
+  projectUID?: string
 ): SparrowEvent {
   if (!event.device) {
     throw eventError("device is not defined", event);
   }
 
-  if (!event.project.id) {
-    throw eventError("project.id is not defined", event);
+  const app = event.app || event.project?.id || projectUID;
+  if (!app) {
+    throw eventError("app is not defined", event);
   }
+  event.app = app;
 
   const normalized = normalizeSparrowEvent(event.file, event.note, event.body);
   const locations = locationAlternativesFromRoutedEvent(event);
@@ -151,7 +153,7 @@ export function sparrowEventFromNotehubRoutedEvent(
   const body = bodyAugmentedWithMetadata(event, locations);
 
   return new BasicSparrowEvent(
-    event.project.id,
+    event.app,
     event.device,
     new Date(event.when * 1000),
     normalized.eventName,
@@ -161,30 +163,6 @@ export function sparrowEventFromNotehubRoutedEvent(
     event.sn
   );
 }
-
-export function sparrowEventFromNotehubEvent(
-  event: NotehubEvent,
-  projectUID: string
-): SparrowEvent {
-  if (!event.device_uid) {
-    throw eventError("device uid is not defined", event);
-  }
-
-  const normalized = normalizeSparrowEvent(event.file, event.note, event.body);
-  const location = bestLocation(event);
-  const body = bodyAugmentedWithMetadata(event, event);
-
-  return new BasicSparrowEvent(
-    projectUID,
-    event.device_uid,
-    new Date(event.captured),
-    normalized.eventName,
-    normalized.nodeID,
-    location,
-    body
-  );
-}
-
 interface NormalizedEventName {
   eventName: string;
   nodeID?: string;

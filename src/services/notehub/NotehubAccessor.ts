@@ -1,6 +1,6 @@
 import NotehubDevice from "./models/NotehubDevice";
 import NotehubEnvVars from "./models/NotehubEnvVars";
-import NotehubEvent from "./models/NotehubEvent";
+import NotehubRoutedEvent from "./models/NotehubRoutedEvent";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubSensorConfig from "./models/NotehubNodeConfig";
 import NoteSensorConfigBody from "./models/NoteNodeConfigBody";
@@ -10,7 +10,7 @@ interface NotehubAccessor {
   getDevices: () => Promise<NotehubDevice[]>;
   getDevice: (hubDeviceUID: string) => Promise<NotehubDevice>;
   getLatestEvents: (hubDeviceUID: string) => Promise<NotehubLatestEvents>;
-  getEvents: (startDate?: string) => Promise<NotehubEvent[]>;
+  getEvents: (startDate?: string) => Promise<NotehubRoutedEvent[]>;
   getConfig: (
     hubDeviceUID: string,
     nodeId: string

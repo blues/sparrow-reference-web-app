@@ -30,7 +30,7 @@ import {
 } from "../../pages/api/log";
 import { NotehubAccessor } from "../notehub/NotehubAccessor";
 import { SparrowEventHandler } from "../SparrowEvent";
-import { sparrowEventFromNotehubEvent } from "../notehub/SparrowEvents";
+import { sparrowEventFromNotehubRoutedEvent } from "../notehub/SparrowEvents";
 import NotehubDataProvider from "../notehub/NotehubDataProvider";
 import { gatewayTransformUpsert, nodeTransformUpsert } from "./importTransform";
 import {
@@ -151,13 +151,14 @@ export class PrismaDataProvider implements DataProvider {
       i += 1;
       try {
         await target.handleEvent(
-          sparrowEventFromNotehubEvent(event, project.projectUID),
+          sparrowEventFromNotehubRoutedEvent(event, project.projectUID),
           isHistorical
         );
         b.itemCount += 1;
       } catch (cause) {
+        const eventString = JSON.stringify(event);
         serverLogError(
-          `Error loading event ${event.uid}. Cause: ${String(cause)}`
+          `Error loading event ${eventString}. Cause: ${String(cause)}`
         );
         b.errorCount += 1;
       }

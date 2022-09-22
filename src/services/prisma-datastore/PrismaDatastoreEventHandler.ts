@@ -11,6 +11,7 @@ import {
   Gateway,
   Reading,
 } from "@prisma/client";
+import _ from "lodash";
 import { ErrorWithCause } from "pony-cause";
 import { serverLogError, serverLogInfo } from "../../pages/api/log";
 import NotehubLocation from "../notehub/models/NotehubLocation";
@@ -187,7 +188,7 @@ export default class PrismaDatastoreEventHandler
       if (
         typeof schema?.prereq !== "object" ||
         typeof value !== "object" ||
-        { ...schema.prereq, ...value } !== value
+        !_.isEqual({ ...schema.prereq, ...value }, (value))
       ) {
         return Promise.resolve("skipped");
       }

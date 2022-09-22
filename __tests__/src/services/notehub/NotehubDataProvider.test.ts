@@ -22,7 +22,7 @@ describe("Notehub data provider service functions", () => {
   const mockedGatewayJson =
     notehubData.successfulNotehubDeviceResponse as NotehubDevice;
   const mockedNotehubLatestEventsJson =
-    notehubData.successfulNotehubLatestEventsResponse as NotehubLatestEvents;
+    notehubData.successfulNotehubLatestEventsResponse as unknown as NotehubLatestEvents;
   const mockedNotehubEventsJson = notehubData.successfulNotehubEventResponse
     .events as NotehubResponse;
   const mockedNotehubConfigJson =
@@ -90,7 +90,7 @@ describe("Notehub data provider service functions", () => {
     const res = await notehubDataProviderMock.getNodeData(
       sparrowData.mockedGatewayUID2,
       sparrowData.mockedNodeId2,
-      1000
+      0
     );
 
     expect(JSON.stringify(res[0].schema)).toEqual(

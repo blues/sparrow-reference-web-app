@@ -4,7 +4,7 @@
   "mockedNodeId": "123456a",
   "mockedNodeId2": "456789b",
   "successfulGatewaySparrowDataResponse": {
-    "lastActivity": "2021-12-14T07:47:29Z",
+    "lastActivity": "2021-12-14T07:47:29.000Z",
     "name": "9101112",
     "uid": "dev:5678",
     "voltage": 3.8,
@@ -16,7 +16,7 @@
       "gatewayUID": "dev:5678",
       "name": "My Mocked Node 1",
       "voltage": 2.7,
-      "lastActivity": "2021-11-30T14:31:24Z",
+      "lastActivity": "2022-01-21T20:02:58.000Z",
       "location": "Kitchen",
       "humidity": 27.2,
       "pressure": 101.152,
@@ -28,7 +28,7 @@
     {
       "nodeId": "456789b",
       "gatewayUID": "dev:5678",
-      "lastActivity": "2021-10-01T17:57:26Z",
+      "lastActivity": "2022-01-21T20:02:58.000Z",
       "humidity": 38.1,
       "pressure": 101.95,
       "temperature": 24.3,

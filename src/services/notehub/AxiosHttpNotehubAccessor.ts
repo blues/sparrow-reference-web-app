@@ -7,7 +7,7 @@ import { getError, ERROR_CODES } from "../Errors";
 import NotehubLatestEvents from "./models/NotehubLatestEvents";
 import NotehubNodeConfig from "./models/NotehubNodeConfig";
 import NotehubErr from "./models/NotehubErr";
-import NotehubEvent from "./models/NotehubEvent";
+import NotehubRoutedEvent from "./models/NotehubRoutedEvent";
 import NotehubResponse from "./models/NotehubResponse";
 import NoteNodeConfigBody from "./models/NoteNodeConfigBody";
 import NotehubEnvVars from "./models/NotehubEnvVars";
@@ -98,7 +98,7 @@ export default class AxiosHttpNotehubAccessor implements NotehubAccessor {
 
     // Take the start date from the argument first, but fall back to the environment
     // variable.
-    let events: NotehubEvent[] = [];
+    let events: NotehubRoutedEvent[] = [];
     const initialEndpoint = `${this.hubBaseURL}/v1/projects/${this.hubProjectUID}/events?startDate=${startDateValue}`;
     try {
       const resp: AxiosResponse<NotehubResponse> = await axios.get(

@@ -8,6 +8,7 @@ import NotehubEnvVars from "../../../../src/services/notehub/models/NotehubEnvVa
 import NotehubLatestEvents from "../../../../src/services/notehub/models/NotehubLatestEvents";
 import NotehubNodeConfig from "../../../../src/services/notehub/models/NotehubNodeConfig";
 import notehubData from "../__serviceMocks__/notehubData.json";
+import NotehubRoutedEvent from "../../../../src/services/notehub/models/NotehubRoutedEvent";
 
 let mock: MockAdapter;
 const mockBaseURL = "http://example.io";
@@ -95,7 +96,7 @@ describe("Event handling", () => {
   });
 
   const mockNotehubLatestEventData =
-    notehubData.successfulNotehubLatestEventsResponse as NotehubLatestEvents;
+    notehubData.successfulNotehubLatestEventsResponse as unknown as NotehubLatestEvents;
   const mockNotehubEventData = notehubData.successfulNotehubEventResponse;
 
   it("should return a list of latest events when getLatestEvents is called with a valid hub device UID", async () => {
