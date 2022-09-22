@@ -34,7 +34,7 @@ export const getFormattedLastSeenDate = (date: Date) => {
 };
 // eslint-disable-next-line import/prefer-default-export
 export const getFormattedLastSeen = (date: string) =>
-  getFormattedLastSeenDate(new Date(date));
+  date ? getFormattedLastSeenDate(new Date(date)) : "N/A";
 
 export const getFormattedChartData = (
   readings: Reading<unknown>[],

@@ -40,7 +40,7 @@ export function getNodeDetailsPresentation(
     node: node
       ? {
           name: node.name || NODE_MESSAGE.NO_NAME,
-          lastActivity: getFormattedLastSeen(node.lastActivity),
+          lastActivity: node.lastActivity ? getFormattedLastSeen(node.lastActivity) : NODE_MESSAGE.NEVER_SEEN,
           location: node?.location || NODE_MESSAGE.NO_LOCATION,
           temperature:
             getFormattedTemperatureData(node.temperature) ||
