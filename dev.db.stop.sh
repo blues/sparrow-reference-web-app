@@ -3,6 +3,10 @@
 # Bash strict
 set -euo pipefail
 
-docker stop sparrow-postgresql-container
+readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+source $SCRIPT_DIR/dev.env.sh
+
+docker stop $POSTGRES_CONTAINER
 
 echo stopped

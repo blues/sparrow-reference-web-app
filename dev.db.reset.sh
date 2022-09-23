@@ -8,6 +8,9 @@ readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 &&
 cd "$SCRIPT_DIR" # cd to this script's dir
 source ./dev.env.sh
 
-#### Manage the database with a webapp
-yarn prisma studio
-
+#### Reset the Datastore and generate the datastore tables
+yarn db:reset
+#### Seed the datastore
+yarn db:init
+#### Update the datastore schema
+yarn prisma db push --accept-data-loss
