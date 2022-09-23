@@ -14,7 +14,7 @@ set +o allexport
 # docker container with database stored on host OS filesystem so it persists
 docker run --rm \
   -d `# detached` \
-  --net=sparrow-net \
+  --net=host \
   --name sparrow-postgresql-container \
   -p $POSTGRES_PORT:5432 \
   -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \

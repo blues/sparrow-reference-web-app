@@ -14,7 +14,7 @@ set +o allexport
 # To run a docker image with a clean database
 docker run --rm \
   -d `# detached` \
-  --net=sparrow-net \
+  --net=host \
   --name sparrow-postgresql-container \
   -p $POSTGRES_PORT:5432 \
   -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
