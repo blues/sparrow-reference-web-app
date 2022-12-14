@@ -254,15 +254,15 @@ And with that your route is now complete. When Notehub receives an event it shou
 
 > **NOTE** Event routing only happens when Notehub receives an event, therefore your Sparrow hardware needs to generate new data and send it to Notehub for Notehub to invoke your route.
 
-### Setup a Project Dashbaord URL to your tunnel
+### Set up a Project Dashboard URL to your tunnel
 
 - Visit [Notehub](https://notehub.io) and open the project you’re using for your Sparrow app.
 - Select **Settings** in the navigation on the left-hand side of the screen.
-- Scroll down to **Device Dashbaord URL**.
+- Scroll down to **Device Dashboard URL**.
 - Click the pencil icon to edit the URL, and paste the localtunnel or ngrok URL you copied earlier followed by `api/go?gateway=[device]&sensor=[sensor]&pin=[pin]`. For example, `https://bb18-217-180-218-163.ngrok.io/api/go?gateway=[device]&sensor=[sensor]&pin=[pin]`.
 - Click the checkmark on the right to save the changes.
 
-Now that you have both a tunnel, route and Device dashbaord URL in place, your last step to get up and running is to create the database itself.
+Now that you have both a tunnel, route and Device dashboard URL in place, your last step to get up and running is to create the database itself.
 
 ### Database
 
@@ -336,7 +336,7 @@ manipulate data, filter, query, etc.
 
 If you manually created your PostgreSQL database instead of using one of the
 scripts above to automatically create one in Docker you will want to configure
-the `DATABASE_*` environment varialbes in `.env` and then use the
+the `DATABASE_*` environment variables in `.env` and then use the
 `./prod.db.init.sh` script to initialize the database.
 
 ```
