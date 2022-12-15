@@ -1,7 +1,7 @@
 [build]
   command = "sed -i \"s|process.env.DEPLOY_URL|'${DEPLOY_URL}'|g\" config.ts && yarn build"
   publish = ".next"
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF || git log -n1 | grep '\[(skip build|skip ci|ci skip|no ci|skip actions|actions skip)\]'"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF || git log -n1 | egrep '\[(skip build|skip deploy|skip ci|ci skip|no ci|skip actions|actions skip)\]'"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
