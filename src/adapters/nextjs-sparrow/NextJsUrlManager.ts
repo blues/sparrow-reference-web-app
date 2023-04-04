@@ -1,9 +1,6 @@
-import { UrlManager } from "../../components/presentation/UrlManager";
 import { NotificationID } from "../../services/NotificationsStore";
 
 export const NextJsUrlManager = {
-  bulkDataImport: () => `/admin/bulk-data-import`,
-  performBulkDataImportApi: () => `/api/admin/bulk-data-import`,
   gatewayNameUpdate: (gatewayUID: string) => `/api/gateway/${gatewayUID}/name`,
   nodeNameUpdate: (gatewayUID: string, nodeId: string) => `/api/gateway/${gatewayUID}/node/${nodeId}/config`,
   notehubProject: (notehubUrl: string, projectUID: string) => `${notehubUrl}/project/${projectUID}`,
