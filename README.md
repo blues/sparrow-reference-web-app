@@ -251,7 +251,9 @@ To set up the route complete the following steps:
 
 And with that your route is now complete. When Notehub receives an event it should automatically route that event to your tunnel, and ultimately to your local app.
 
-> **NOTE** Event routing only happens when Notehub receives an event, therefore your Sparrow hardware needs to generate new data and send it to Notehub for Notehub to invoke your route.
+> **NOTE** Event routing only happens when Notehub receives an event, therefore your Sparrow hardware needs to generate new data and send it to Notehub for Notehub to invoke your route OR you can manually route an existing event from Notehub by clicking the "Route Event" button in the righthand corner of an individual event. Learn more about [manually routing events](https://dev.blues.io/notehub/notehub-walkthrough/#manually-routing-events) here.
+
+![Screenshot of route event button inside of Notehub event](./readme-route-event-from-notehub.png)
 
 ### Set up a Project Dashboard URL to your tunnel
 
