@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: crazy-max/ghaction-dump-context@v1
       - uses: actions/checkout@v2
