@@ -8,6 +8,7 @@ interface NotehubDevice {
   contact: string;
   product_uid: string;
   fleet_uids: string[];
+  best_location?: NotehubLocation;
   tower_location?: NotehubLocation;
   gps_location?: NotehubLocation;
   triangulated_location?: NotehubLocation;

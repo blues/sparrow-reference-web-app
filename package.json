@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
-    "@prisma/client": "^3.9.2",
+    "@prisma/client": "^3.13.0",
     "@types/lodash": "^4.14.178",
     "@types/react-slick": "^0.23.8",
     "antd": "^4.19.1",
@@ -33,7 +33,7 @@
     "next": "12.1.0",
     "next-plugin-antd-less": "^1.8.0",
     "pony-cause": "^1.1.1",
-    "prisma": "^3.9.2",
+    "prisma": "^3.13.0",
     "rc-field-form": "^1.22.0",
     "react": "17.0.2",
     "react-chartjs-2": "^4.0.0",

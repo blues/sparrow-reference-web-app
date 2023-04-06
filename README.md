@@ -22,7 +22,6 @@ An example web application to configure and view sensor data from Blues Wireless
       - [Custom PostgreSQL Server](#custom-postgresql-server)
       - [Troubleshooting Sparrow getting data from Postgres](#troubleshooting-sparrow-getting-data-from-postgres)
     - [Web App Development](#web-app-development)
-    - [Bulk Data Import](#bulk-data-import)
   - [Cloud Deployment](#cloud-deployment)
     - [Deploy on Netlify (recommended)](#deploy-on-netlify-recommended)
     - [Deploy on Vercel](#deploy-on-vercel)
@@ -252,7 +251,9 @@ To set up the route complete the following steps:
 
 And with that your route is now complete. When Notehub receives an event it should automatically route that event to your tunnel, and ultimately to your local app.
 
-> **NOTE** Event routing only happens when Notehub receives an event, therefore your Sparrow hardware needs to generate new data and send it to Notehub for Notehub to invoke your route.
+> **NOTE** Event routing only happens when Notehub receives an event, therefore your Sparrow hardware needs to generate new data and send it to Notehub for Notehub to invoke your route OR you can manually route an existing event from Notehub by clicking the "Route Event" button in the righthand corner of an individual event. Learn more about [manually routing events](https://dev.blues.io/notehub/notehub-walkthrough/#manually-routing-events) here.
+
+![Screenshot of route event button inside of Notehub event](./readme-route-event-from-notehub.png)
 
 ### Set up a Project Dashboard URL to your tunnel
 
@@ -327,7 +328,7 @@ explore.
 
 This will open up a new browser window at http://localhost:5555 where you can
 see your Prisma DB, its tables, and any data that currently resides therein—
-whether it came from a bulk data import or was routed in by Notehub.
+which was routed in by Notehub.
 
 And just like any other database GUI, you can click into models to view data,
 manipulate data, filter, query, etc.
@@ -393,23 +394,6 @@ server without triggering a full-page reload.
 > tutorial](https://nextjs.org/learn/basics/create-nextjs-app) is a great way to
 > learn the basics, and understand how the Sparrow Reference Web App works.
 
-### Bulk Data Import
-
-The Sparrow Reference Web App can do a bulk import of historic data from Notehub
-to populate your database with any data from the past 10 days. This can help
-when you’re first getting started, or if you want to import events you might
-have missed during web app or database downtime.
-
-To run the bulk import first make sure your web app is running, and then complete
-the following steps.
-
-- Go to <http://localhost:4000/admin/bulk-data-import>.
-- Click the **Import** button.
-- Wait. If you're curious, watch the detailed information in your web app’s server logs
-  (in the terminal where you ran `yarn dev`).
-
-  ![Imported 3085 items in 1 minutes.](readme.bulk.data.import.png)
-
 ## Cloud Deployment
 
 The Sparrow Reference Web App is a Next.js project, and is therefore easily deployable to any platform that supports Next.js applications. Below are specific instructions to deploy to a handful of common platforms.
@@ -433,10 +417,6 @@ This repo contains [Netlify configuration](netlify.toml) that allows you to depl
 
 Read our step-by-step guide to [deploying the Sparrow Reference Web App app on Netlify](https://bluesinc.atlassian.net/wiki/spaces/SPAR/pages/4686203/Deploy+Sparrow+Reference+Web+App+with+Netlify) for more
 information.
-
-> Note: Timeouts happen after 10 seconds on Netlify web requests. If you want
-> to run a long Bulk Data Iimport you will want to run it on your local dev
-> machine with your local `.env` file pointed at your cloud database.
 
 ### Deploy on Vercel
 

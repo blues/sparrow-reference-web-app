@@ -1,5 +1,4 @@
 import {
-  BulkImport,
   DataProvider,
   QueryHistoricalReadings,
   QueryResult,
@@ -26,14 +25,6 @@ export default class CompositeDataProvider implements DataProvider {
   ) {}
   gatewayWithNode(nodeId: string): Promise<Gateway | null> {
     return this.prismaDataProvider.gatewayWithNode(nodeId);
-  }
-
-  async doBulkImport(): Promise<BulkImport> {
-    const b = await this.prismaDataProvider.doBulkImport(
-      this.notehubAccessor,
-      this.eventHandler
-    );
-    return b;
   }
 
   getGateways(): Promise<Gateway[]> {

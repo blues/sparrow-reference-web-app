@@ -23,8 +23,6 @@ import CountSensorReading from "../alpha-models/readings/CountSensorReading";
 import TotalSensorReading from "../alpha-models/readings/TotalSensorReading";
 import {
   GatewayWithNodes,
-  Node,
-  Project,
   ProjectHierarchy,
   ProjectHistoricalData,
   ProjectID,
@@ -32,9 +30,7 @@ import {
   Reading,
   SensorHost,
   SensorHostReadingsSnapshot,
-  SensorType,
   SensorTypeNames,
-  TimePeriod,
 } from "../DomainModel";
 import Config from "../../../config";
 import { getEpochChartDataDate } from "../../components/presentation/uiHelpers";
@@ -47,7 +43,10 @@ interface HasNodeId {
 // N.B.: Noteub defines 'best' location with more nuance than we do here (e.g
 // considering staleness). Also this algorthm is copy-pasted in a couple places.
 export const getBestLocation = (object: NotehubLocationAlternatives) =>
-  object.gps_location || object.triangulated_location || object.tower_location;
+  object.best_location ||
+  object.gps_location ||
+  object.triangulated_location ||
+  object.tower_location;
 
 export function notehubDeviceToSparrowGateway(device: NotehubDevice) {
   return {
@@ -80,11 +79,6 @@ export default class NotehubDataProvider implements DataProvider {
     return null;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  doBulkImport(): Promise<never> {
-    throw new Error("It's not possible to do bulk import of data to Notehub");
-  }
-
   /**
    * We made the interface more general (accepting a projectID) but the implementation has the
    * ID fixed. This is a quick check to be sure the project ID is the one expected.
@@ -113,12 +107,10 @@ export default class NotehubDataProvider implements DataProvider {
     const results: ProjectReadingsSnapshot = {
       when: Date.now(),
       project,
-      hostReadings: function (
-        sensorHost: SensorHost
-      ): SensorHostReadingsSnapshot {
+      hostReadings(sensorHost: SensorHost): SensorHostReadingsSnapshot {
         throw new Error("Function not implemented.");
       },
-      hostReadingByName: function (
+      hostReadingByName(
         sensorHost: SensorHost,
         readingName: SensorTypeNames
       ): Reading | undefined {

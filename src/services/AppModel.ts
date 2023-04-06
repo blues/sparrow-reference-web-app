@@ -80,11 +80,3 @@ export interface ProjectReadingsSnapshot {
 }
 
 export { NodeSensorTypeNames, GatewaySensorTypeNames } from "./DomainModel";
-
-export interface BulkDataImportStatus {
-  err?: string;
-  importedItemCount: number;
-  erroredItemCount: number;
-  elapsedTimeMs: number;
-  state: "unstarted" | "ongoing" | "done" | "failed";
-}

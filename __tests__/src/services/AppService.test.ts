@@ -38,35 +38,35 @@ describe("App Service", () => {
     dataProviderMock = {
       getGateway: jest.fn().mockResolvedValueOnce(mockedGatewaySparrowData),
       getGateways: jest.fn().mockResolvedValueOnce(mockedGatewaysSparrowData),
+      gatewayWithNode: jest.fn(),
       getNode: jest.fn().mockResolvedValueOnce(mockedNodeSparrowData),
       getNodes: jest.fn().mockResolvedValueOnce(mockedNodesSparrowData),
       getNodeData: jest.fn().mockResolvedValueOnce(mockedSparrowNodeData),
       queryProjectLatestValues: jest.fn(),
       queryProjectReadingSeries: jest.fn(),
-      doBulkImport: jest.fn(),
       queryProjectReadingCount: jest.fn(),
     };
     attributeStoreMock = {
       updateGatewayName: jest.fn(),
       updateNodeName: jest.fn(),
       updateNodeLocation: jest.fn(),
+      updateDevicePin: jest.fn(),
     };
     const mockEventHandler = {
       handleEvent: jest.fn(),
     };
     const mockIDBuilder: IDBuilder = {
-      buildProjectID: (projectUID: string): AppModel.ProjectID => {
-        return { projectUID, type: "ProjectID" };
-      },
-      buildGatewayID: function (gatewayDeviceUID: string): AppModel.GatewayID {
+      buildProjectID: (projectUID: string): AppModel.ProjectID => ({
+        projectUID,
+        type: "ProjectID",
+      }),
+      buildGatewayID(gatewayDeviceUID: string): AppModel.GatewayID {
         throw new Error("Function not implemented.");
       },
-      buildNodeID: function (nodeID: string): AppModel.NodeID {
+      buildNodeID(nodeID: string): AppModel.NodeID {
         throw new Error("Function not implemented.");
       },
-      buildSensorTypeID: function (
-        readingSchemaName: string
-      ): AppModel.SensorTypeID {
+      buildSensorTypeID(readingSchemaName: string): AppModel.SensorTypeID {
         throw new Error("Function not implemented.");
       },
     };
