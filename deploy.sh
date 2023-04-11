@@ -107,7 +107,6 @@ function add_date_to_docker_image_env() {
 
 function configure_environment() {
   load_env_file '.env'
-  load_env_file '.env.local'
   load_env_file '.env.production.local'
   add_date_to_docker_image_env
 }
