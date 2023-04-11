@@ -487,7 +487,7 @@ The Sparrow Reference Web App’s testing setup requires a test-specific environ
 
 1. Create a `.env.test.local` file in the root of your project.
 1. Copy the contents of the repo’s [`.env.test.local.example`](.env.test.local.example) file and paste it into your `.env.test.local` file.
-1. Change the values in your `.env.test.local` file to your own values. (You can likely copy and paste them from your `.env.local` file.)
+1. Change the values in your `.env.test.local` file to your own values. (You can likely copy and paste them from your `.env` file.)
 
 **Running Unit Tests**
 
