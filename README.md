@@ -1,6 +1,6 @@
 # 🐦 Sparrow Reference Web App
 
-An example web application to configure and view sensor data from Blues Wireless Sparrow devices.
+An example web application to configure and view sensor data from Blues Sparrow devices.
 
 - [🐦 Sparrow Reference Web App](#-sparrow-reference-web-app)
   - [Development Overview](#development-overview)
@@ -16,7 +16,8 @@ An example web application to configure and view sensor data from Blues Wireless
     - [Create a tunnel to a server running the reference app](#create-a-tunnel-to-a-server-running-the-reference-app)
       - [Localtunnel](#localtunnel)
       - [Ngrok](#ngrok)
-    - [Set up a Notehub route to your tunnel](#set-up-a-notehub-route-to-your-tunnel)
+    - [Set up a Notehub route and dashboard URL to your tunnel](#set-up-a-notehub-route-and-dashboard-url-to-your-tunnel)
+    - [Set up a Project Dashboard URL to your tunnel](#set-up-a-project-dashboard-url-to-your-tunnel)
     - [Database](#database)
       - [Create the database](#create-the-database)
       - [Custom PostgreSQL Server](#custom-postgresql-server)
@@ -548,4 +549,4 @@ yarn cypress:open
 
 If you run into any issues using this repo, feel free to create an
 [issue](issues/new) on this repository, or to reach out on our developer
-[forum](https://discuss.blues.io/).
+[forum](https://discuss.blues.com/).
